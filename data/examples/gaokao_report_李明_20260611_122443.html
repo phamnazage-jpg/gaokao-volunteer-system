@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>高考志愿填报方案 - 李明</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans SC", sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        .header h1 { font-size: 2.5em; margin-bottom: 10px; }
+        .header .subtitle { font-size: 1.2em; opacity: 0.9; }
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 30px;
+            background: #f8f9fa;
+        }
+        .info-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .info-card .label { color: #666; font-size: 0.9em; margin-bottom: 5px; }
+        .info-card .value { font-size: 1.5em; font-weight: bold; color: #667eea; }
+        .section {
+            padding: 40px;
+            border-bottom: 1px solid #eee;
+        }
+        .section:last-child { border-bottom: none; }
+        .section-title {
+            font-size: 1.8em;
+            color: #333;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .chart-container {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+        .school-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        .school-table th, .school-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        .school-table th {
+            background: #667eea;
+            color: white;
+        }
+        .school-table tr:hover { background: #f8f9fa; }
+        .badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+        .badge-red { background: #ffebee; color: #c62828; }
+        .badge-yellow { background: #fff3e0; color: #ef6c00; }
+        .badge-green { background: #e8f5e9; color: #2e7d32; }
+        .heatmap { display: flex; flex-direction: column; gap: 10px; }
+        .heat-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .heat-bar {
+            flex: 1;
+            height: 20px;
+            background: linear-gradient(90deg, #ff6b6b 0%, #ffd93d 50%, #6bcf7f 100%);
+            border-radius: 10px;
+            position: relative;
+        }
+        .heat-marker {
+            position: absolute;
+            top: -5px;
+            width: 30px;
+            height: 30px;
+            background: #667eea;
+            border-radius: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 2px 10px rgba(102,126,234,0.5);
+        }
+        .risk-list { list-style: none; }
+        .risk-item {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .risk-danger { background: #ffebee; border-left: 4px solid #c62828; }
+        .risk-warning { background: #fff3e0; border-left: 4px solid #ef6c00; }
+        .risk-safe { background: #e8f5e9; border-left: 4px solid #2e7d32; }
+        .footer {
+            background: #333;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        @media print {
+            body { background: white; }
+            .container { box-shadow: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎓 高考志愿填报方案</h1>
+            <p class="subtitle">李明 | 浙江省 | 612分 | 位次: 15230</p>
+            <p style="margin-top: 10px; opacity: 0.8;">生成时间: 2026年06月11日 12:24</p>
+        </div>
+        
+        <div class="info-grid">
+            <div class="info-card">
+                <div class="label">考生姓名</div>
+                <div class="value">李明</div>
+            </div>
+            <div class="info-card">
+                <div class="label">高考总分</div>
+                <div class="value">612分</div>
+            </div>
+            <div class="info-card">
+                <div class="label">全省位次</div>
+                <div class="value">15230</div>
+            </div>
+            <div class="info-card">
+                <div class="label">综合匹配</div>
+                <div class="value">89.5/10</div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2 class="section-title">📊 考生画像分析</h2>
+            <div class="chart-container">
+                <canvas id="radarChart" width="400" height="300"></canvas>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2 class="section-title">🎯 志愿方案对比</h2>
+            <table class="school-table">
+                <thead>
+                    <tr>
+                        <th>类型</th>
+                        <th>院校</th>
+                        <th>专业</th>
+                        <th>录取概率</th>
+                        <th>匹配度</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    <tr>
+                        <td>
+                            
+                            <span class="badge badge-red">🔴 冲</span>
+                            
+                        </td>
+                        <td>浙江大学</td>
+                        <td>计算机类</td>
+                        <td>
+                            <div style="background: #eee; border-radius: 10px; overflow: hidden;">
+                                <div style="background: linear-gradient(90deg, #ff6b6b, #ffd93d, #6bcf7f); 
+                                            height: 20px; width: 35%;
+                                            display: flex; align-items: center; justify-content: center;
+                                            color: white; font-size: 0.8em; font-weight: bold;">
+                                    35%
+                                </div>
+                            </div>
+                        </td>
+                        <td>95分</td>
+                    </tr>
+                    
+                    <tr>
+                        <td>
+                            
+                            <span class="badge badge-yellow">🟡 稳</span>
+                            
+                        </td>
+                        <td>杭州电子科技大学</td>
+                        <td>计算机类</td>
+                        <td>
+                            <div style="background: #eee; border-radius: 10px; overflow: hidden;">
+                                <div style="background: linear-gradient(90deg, #ff6b6b, #ffd93d, #6bcf7f); 
+                                            height: 20px; width: 70%;
+                                            display: flex; align-items: center; justify-content: center;
+                                            color: white; font-size: 0.8em; font-weight: bold;">
+                                    70%
+                                </div>
+                            </div>
+                        </td>
+                        <td>92分</td>
+                    </tr>
+                    
+                    <tr>
+                        <td>
+                            
+                            <span class="badge badge-yellow">🟡 稳</span>
+                            
+                        </td>
+                        <td>浙江工业大学</td>
+                        <td>软件工程</td>
+                        <td>
+                            <div style="background: #eee; border-radius: 10px; overflow: hidden;">
+                                <div style="background: linear-gradient(90deg, #ff6b6b, #ffd93d, #6bcf7f); 
+                                            height: 20px; width: 80%;
+                                            display: flex; align-items: center; justify-content: center;
+                                            color: white; font-size: 0.8em; font-weight: bold;">
+                                    80%
+                                </div>
+                            </div>
+                        </td>
+                        <td>88分</td>
+                    </tr>
+                    
+                    <tr>
+                        <td>
+                            
+                            <span class="badge badge-green">🟢 保</span>
+                            
+                        </td>
+                        <td>浙江理工大学</td>
+                        <td>软件工程</td>
+                        <td>
+                            <div style="background: #eee; border-radius: 10px; overflow: hidden;">
+                                <div style="background: linear-gradient(90deg, #ff6b6b, #ffd93d, #6bcf7f); 
+                                            height: 20px; width: 95%;
+                                            display: flex; align-items: center; justify-content: center;
+                                            color: white; font-size: 0.8em; font-weight: bold;">
+                                    95%
+                                </div>
+                            </div>
+                        </td>
+                        <td>82分</td>
+                    </tr>
+                    
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="section">
+            <h2 class="section-title">🔥 专业匹配度热力图</h2>
+            <div class="heatmap">
+                
+                <div class="heat-item">
+                    <span style="width: 120px; font-weight: bold;">计算机类</span>
+                    <div class="heat-bar">
+                        <div class="heat-marker" style="left: 95%;"></div>
+                    </div>
+                    <span style="width: 60px; text-align: right; font-weight: bold;">95%</span>
+                </div>
+                
+                <div class="heat-item">
+                    <span style="width: 120px; font-weight: bold;">计算机类</span>
+                    <div class="heat-bar">
+                        <div class="heat-marker" style="left: 92%;"></div>
+                    </div>
+                    <span style="width: 60px; text-align: right; font-weight: bold;">92%</span>
+                </div>
+                
+                <div class="heat-item">
+                    <span style="width: 120px; font-weight: bold;">软件工程</span>
+                    <div class="heat-bar">
+                        <div class="heat-marker" style="left: 88%;"></div>
+                    </div>
+                    <span style="width: 60px; text-align: right; font-weight: bold;">88%</span>
+                </div>
+                
+                <div class="heat-item">
+                    <span style="width: 120px; font-weight: bold;">软件工程</span>
+                    <div class="heat-bar">
+                        <div class="heat-marker" style="left: 82%;"></div>
+                    </div>
+                    <span style="width: 60px; text-align: right; font-weight: bold;">82%</span>
+                </div>
+                
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2 class="section-title">🚦 风险检测报告</h2>
+            
+            <div class="risk-item risk-safe">
+                ✓ <strong>恭喜！当前方案未检测到高风险，可以安全填报</strong>
+            </div>
+            
+        </div>
+        
+        <div class="footer">
+            <p>© 2026 高考志愿填报智能系统</p>
+            <p style="margin-top: 10px; opacity: 0.7;">本报告仅供参考，请以官方信息为准</p>
+        </div>
+    </div>
+    
+    <script>
+        // 雷达图
+        const ctx = document.getElementById('radarChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'radar',
+            data: {
+                labels: ['兴趣匹配', '能力匹配', '就业匹配', '家庭适配'],
+                datasets: [{
+                    label: '匹配度',
+                    data: [85, 90, 88, 95],
+                    backgroundColor: 'rgba(102, 126, 234, 0.2)',
+                    borderColor: 'rgba(102, 126, 234, 1)',
+                    borderWidth: 2,
+                    pointBackgroundColor: 'rgba(102, 126, 234, 1)',
+                    pointSize: 6
+                }]
+            },
+            options: {
+                scales: {
+                    r: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: {
+                            stepSize: 20
+                        }
+                    }
+                },
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

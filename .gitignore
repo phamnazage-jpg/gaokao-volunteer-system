@@ -1,0 +1,60 @@
+# 临时文件
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+*.log
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.eggs/
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+*.egg
+.mypy_cache/
+.ruff_cache/
+venv/
+.venv/
+env/
+
+# 编辑器
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# 浏览器生成
+browser_screenshot_*.png
+
+# 用户数据（不应提交）
+data/private/
+*.user
+
+# 大文件
+*.pdf
+!docs/**/*.pdf
+!data/examples/*.pdf
+*.zip
+*.tar.gz
+*.rar
+
+# 系统
+.fuse_hidden*
+.Trash-*
+
+# 本地配置
+.env
+.env.local
+*.local
+config.local.*
