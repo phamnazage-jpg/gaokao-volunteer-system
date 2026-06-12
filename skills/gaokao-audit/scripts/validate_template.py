@@ -49,7 +49,7 @@ def main() -> int:
             return 1
     print(f"OK: all {len(REQUIRED_PLACEHOLDERS)} required placeholders present")
 
-    env = Environment(autoescape=False)
+    env = Environment(autoescape=True)
     try:
         template = env.from_string(text)
     except TemplateSyntaxError as e:
@@ -109,9 +109,33 @@ def main() -> int:
     print(f"OK: rendered {len(rendered)} chars with mock payload")
 
     # Tag balance check (lightweight)
-    open_tags = len(re.findall(r"<(?!\/)(?!!)([a-zA-Z][a-zA-Z0-9]*)\b", rendered))
-    close_tags = len(re.findall(r"<\/([a-zA-Z][a-zA-Z0-9]*)\s*>", rendered))
-    print(f"INFO: open={open_tags} close={close_tags} (HTML5 void elements ignored)")
+    # Note: the regex below counts ANY non-closing tag opening, including
+    # HTML5 void elements (meta/link/br/img/input/hr). To get a tighter
+    # check, subtract void-element occurrences from the open count.
+    VOID_ELEMENTS = {
+        "area",
+        "base",
+        "br",
+        "col",
+        "embed",
+        "hr",
+        "img",
+        "input",
+        "link",
+        "meta",
+        "param",
+        "source",
+        "track",
+        "wbr",
+    }
+    raw_open_tags = re.findall(r"<(?!/)(?!!)([a-zA-Z][a-zA-Z0-9]*)\b", rendered)
+    close_tags = len(re.findall(r"</([a-zA-Z][a-zA-Z0-9]*)\s*>", rendered))
+    void_count = sum(1 for t in raw_open_tags if t.lower() in VOID_ELEMENTS)
+    open_tags = len(raw_open_tags) - void_count
+    print(
+        f"INFO: open={open_tags} close={close_tags} "
+        f"(void elements excluded: {void_count})"
+    )
 
     # Sanity: the rendered report must contain key user-visible strings
     must_contain = [
