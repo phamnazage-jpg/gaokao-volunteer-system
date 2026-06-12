@@ -1,6 +1,7 @@
 # 高考志愿填报智能系统
 
 [![CI](https://github.com/phamnazage-jpg/gaokao-volunteer-system/actions/workflows/ci.yml/badge.svg)](https://github.com/phamnazage-jpg/gaokao-volunteer-system/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/phamnazage-jpg/gaokao-volunteer-system/graph/badge.svg)](https://codecov.io/gh/phamnazage-jpg/gaokao-volunteer-system)
 [![Python](https://img.shields.io/badge/Python-3.10%20%7C%203.11%20%7C%203.12-blue)](https://www.python.org/)
 
 > 一套完整的、专业的、可扩展的高考志愿填报辅助系统

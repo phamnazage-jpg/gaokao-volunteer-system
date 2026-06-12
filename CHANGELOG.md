@@ -19,9 +19,28 @@
 - ✨ `pytest.ini` — 统一本地与 CI 测试发现配置
 - ✨ README 顶部 CI 状态徽章
 
+#### 新增（T10.2 已完成）
+
+- ✨ **Codecov 覆盖率报告与徽章**
+  - `.github/workflows/ci.yml` 集成 `codecov/codecov-action@v4`，3.11 单点上传 coverage.xml
+  - `codecov.yml` 定义 project 目标 60% / 核心 skills 目标 80% / patch 目标 70%，与 T5.5 硬门槛对齐
+  - `fail_ci_if_error: false`：codecov 不可达时不影响 CI 通过（适配多镜像仓库场景）
+  - README 顶部新增 codecov 覆盖率徽章
+- ✨ PR 浮动容忍 1%（project）/ 2%（core），避免噪声红灯
+
+#### 新增（T2.3 已完成）
+
+- ✨ **扎堆检测算法**（`data/crowd_db/crowd_detector.py`）
+  - `detect_crowd_risk(plan, user_score, province) → list[RiskFinding]`：遍历方案每条志愿，匹配该分数段内的 crowd_db 记录，返回风险列表 + 替代方案
+  - 风险等级映射：frequency ≥4 high / 2-3 medium / 1 low / 0 跳过
+  - 院校模糊匹配（互相包含），专业可选（计划未指定专业时按院校命中）
+  - 多种 plan 形态：dict / CrowdRecommendation / tuple / list
+  - 支持注入 `loader` 便于测试，频率降序排序
+  - 20 个单元测试覆盖：高/中风险识别、替代方案、分数段边界、模糊匹配、专业匹配、空/异常输入、部分命中、排序
+- ✨ `data/crowd_db/tests/test_crowd_detector.py` — 20 个测试覆盖算法各分支
+
 ### 📅 计划中
 
-- T10.2 codecov 集成 + 覆盖率徽章
 - T10.3 多仓库同步脚本
 - T5.5 覆盖率硬门槛（核心 ≥80% / 整体 ≥60%）
 
