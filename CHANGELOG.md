@@ -8,6 +8,17 @@
 
 ### 🚧 进行中
 
+#### 新增（T7.1 已完成）
+
+- ✨ **短链接生成**（`data/share/short_link.py` + `scripts/gaokao-shortlink`）
+  - base62 短码生成（默认 6 位，4-16 位可配，加密随机 + 冲突重试）
+  - SQLite 映射表 `share_links`（WAL 模式，code 主键 + report/owner/expires 三索引）
+  - `ShortLinkService` 完整 API：`create / get / resolve / revoke / list_by_report / list_by_owner / get_stats / purge_expired`
+  - 访问控制：`permission`（read/comment/edit/admin）+ 密码（sha256）+ `expires_at` + `revoked`
+  - `route_short_link(code, password, base_url)` 路由辅助，可挂载任意 Web 框架的 `/s/<code>`
+  - CLI：`create / resolve / revoke / list / stats / purge`，全部子命令 JSON 输出
+  - 25 个 pytest 用例全部通过（base62 编解码、碰撞重试、TTL、密码、撤销、列表、统计、清理、路由）
+
 #### 新增（T10.1 已完成）
 
 - ✨ **GitHub Actions CI 流水线**
