@@ -133,11 +133,11 @@ skills/gaokao-audit/
 - [x] `templates/audit_report.html` 包含 4 个审核维度的渲染区块
 - [x] `examples/sample_audit.md` 同时含输入样例与输出报告样例
 - [x] `tests/` 目录创建（`test_plan_parser.py` 由 T1.3 补齐）
-- [ ] 提交 commit 前完成本地结构校验（`find skills/gaokao-audit -type f`）
-- [ ] 待 T1.3 完成后整体跑测试套件
+- [x] 提交 commit 前完成本地结构校验（`find skills/gaokao-audit -type f`）
+- [x] T1.3 完成后整体跑测试套件（gaokao-audit 11/11 通过；项目 244/244 通过，不含无关订单 masking 分支）
 
 ---
 
-**版本**: v1.0
+**版本**: v1.1
 **最后更新**: 2026-06-12
-**对应任务**: T1.2（基础结构）
+**对应任务**: T1.2（基础结构）+ T1.3（方案解析器，含 review 闭环修复）
