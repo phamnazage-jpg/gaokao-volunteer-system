@@ -54,19 +54,34 @@ def _normalize_entry(entry: PlanEntry) -> Dict[str, Any]:
     - dict（必须有 school，可选 major）
     - CrowdRecommendation（name -> school, major 保留）
     - tuple / list（[school, major] 或 [school]）
+    - 其他形态：str() 兜底
     """
     if isinstance(entry, dict):
-        return {
-            "school": entry.get("school") or entry.get("name") or "",
-            "major": entry.get("major"),
-        }
+        school_val = entry.get("school") or entry.get("name") or ""
+        # 防御: school 是非字符串（如 0/None）时降级为 str
+        if not isinstance(school_val, str):
+            school_val = str(school_val) if school_val else ""
+        return {"school": school_val, "major": entry.get("major")}
     if isinstance(entry, CrowdRecommendation):
         return {"school": entry.name, "major": entry.major}
     if isinstance(entry, (tuple, list)):
         if len(entry) >= 2:
-            return {"school": entry[0], "major": entry[1]}
+            school_val = entry[0]
+            return {
+                "school": school_val
+                if isinstance(school_val, str)
+                else str(school_val),
+                "major": entry[1],
+            }
         if len(entry) == 1:
-            return {"school": entry[0], "major": None}
+            school_val = entry[0]
+            return {
+                "school": school_val
+                if isinstance(school_val, str)
+                else str(school_val),
+                "major": None,
+            }
+    # 兜底: 任意对象 str() 化
     return {"school": str(entry), "major": None}
 
 
@@ -82,10 +97,23 @@ def _risk_level_from_frequency(frequency: int) -> str:
 
 
 def _school_matches(school_a: str, school_b: str) -> bool:
-    """院校名模糊匹配：任一方向包含即视为匹配。"""
+    """院校名匹配。
+
+    规则：
+    - 完全相等：命中
+    - 简称/全称包含：仅当较短一方长度 >= 4 时命中
+
+    这样既保留“长沙民政” -> “长沙民政职业技术学院”的常用简称匹配，
+    也避免“大学”“学院”“湖南”这类过短泛词产生系统性误报。
+    """
+    school_a = school_a.strip()
+    school_b = school_b.strip()
     if not school_a or not school_b:
         return False
-    return school_a in school_b or school_b in school_a
+    if school_a == school_b:
+        return True
+    shorter_len = min(len(school_a), len(school_b))
+    return shorter_len >= 4 and (school_a in school_b or school_b in school_a)
 
 
 def _major_matches(plan_major: Optional[str], rec_major: str) -> bool:
@@ -96,8 +124,7 @@ def _major_matches(plan_major: Optional[str], rec_major: str) -> bool:
     if not plan_major:
         return True
     if not rec_major:
-        # 数据库中无专业信息时退化为按院校
-        return True
+        return False
     return plan_major.strip() == rec_major.strip()
 
 
@@ -143,26 +170,37 @@ def detect_crowd_risk(
 
         # 3) 在该分数段 recs 中查找匹配
         for rec in recs:
-            if not _school_matches(school, rec["name"]):
+            # 防御: loader 可能混入非 dict 元素（如 None / 字符串 / 数字）
+            if not isinstance(rec, dict):
+                continue
+            rec_name = rec.get("name")
+            # 防御: name 缺失或非字符串时跳过（避免 .strip() 抛错）
+            if not isinstance(rec_name, str) or not rec_name.strip():
+                continue
+            if not _school_matches(school, rec_name):
                 continue
             if not _major_matches(major, rec.get("major", "")):
                 continue
-            freq = int(rec.get("frequency", 0))
+            freq_raw = rec.get("frequency", 0)
+            # 防御: frequency 字段异常（非数值）时按 0 处理
+            try:
+                freq = int(freq_raw)
+            except (TypeError, ValueError):
+                freq = 0
             if freq <= 0:
                 continue
             findings.append(
                 RiskFinding(
-                    school=rec["name"],
+                    school=rec_name,
                     major=rec.get("major") or major,
                     frequency=freq,
                     risk_level=_risk_level_from_frequency(freq),
-                    platforms=list(rec.get("platforms", [])),
-                    predicted_increase=int(rec.get("predicted_increase", 0)),
-                    alternatives=list(rec.get("alternatives", [])),
+                    platforms=list(rec.get("platforms") or []),
+                    predicted_increase=int(rec.get("predicted_increase") or 0),
+                    alternatives=list(rec.get("alternatives") or []),
                 )
             )
             break  # 一条 plan entry 命中一次即可
-
     # 4) 按风险等级排序（frequency 降序 → 等级高→低）
     findings.sort(key=lambda f: f.frequency, reverse=True)
     return findings

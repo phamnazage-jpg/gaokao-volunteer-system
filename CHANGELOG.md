@@ -8,6 +8,32 @@
 
 ### 🚧 进行中
 
+#### 新增（T6.2 已完成）
+
+- ✨ **管理后台仪表盘 — 真实 SQL 聚合层 `admin/stats.py`**（434 行）
+  - **端点落地**：`GET /api/stats/dashboard`（一站式仪表盘）+ `GET /api/stats/orders`（沿用 T6.1 stub 字段名，去掉 `_stub` 标记）
+  - **纯函数聚合层**：`build_dashboard_payload` / `compute_summary` / `compute_by_status` / `compute_by_source` / `compute_by_service_version` / `compute_trends` / `generate_day_series`
+  - **响应契约**：`summary`(订单/用户/收入 + 今日/7d/30d 切片 9 字段) + `by_status` / `by_source` / `by_service_version` (完整 0 填充) + `trends` (today=1, 7d=7, 30d=30 个点, 日粒度, 0 填充) + `generated_at`
+  - **关键口径**：
+    - 收入 = `paid / serving / delivered / completed` 四态订单的 `amount_cents` 累计值；`pending`（未付款）与 `refunded`（已退款）排除
+    - 趋势桶粒度 = 日（UTC，`YYYY-MM-DD`），用 `substr(created_at, 1, 10)` 切片
+    - 0 填充 = 窗口内的"无订单日"也返回 0 点，前端拿到稠密序列
+    - 数据源隔离 = `orders` 走 `GAOKAO_ORDERS_DB_PATH`（默认 `data/orders.db`），`admin_users` 走 `GAOKAO_DB_PATH`（默认 `data/orders/admin.db`）
+    - 不读 PII：统计路径只触碰 `amount_cents` / `status` / `source` / `service_version` / `created_at`
+  - **配置新增**：`Settings.orders_db_path`（`GAOKAO_ORDERS_DB_PATH` 环境变量，默认 `data/orders.db`），与 `data.channel_sync.webhook_server` 已有的同名变量对齐
+  - **测试 12 个全部通过**（`admin/tests/test_routes_stats_dashboard.py`）：
+    - 鉴权（无 token 401 / 有 token 200）
+    - 空库形状契约：summary / by\_\* / trends 三层结构稳定
+    - 趋势序列：1 / 7 / 30 个点，按日期严格升序
+    - 0 填充点：包含完整三字段（`date` / `orders` / `revenue_cents`）
+    - 真实数据：窗口边界（45 天前的订单被 30d 窗口排除，但计入 total）
+    - 收入口径：pending / refunded 不计入 revenue
+    - 0 填充：范围内无订单的日也返回 0 点
+    - 兼容层：`/api/stats/orders` 字段名不变，`_stub` 标记已移除
+  - **T9.3 已知缺口已闭环**：`admin/tests/conftest.py` 新增 `orders_db` autouse fixture（T6.2 起，所有测试默认带空 orders DB），`pytest -q admin/tests` 87/87 通过
+  - **测试套件**：`pytest -q admin/tests` 87/87 passed；`pytest -q` 仓库全量 392/392 passed；`ruff check admin/stats.py admin/routes/stats.py admin/tests/test_routes_stats_dashboard.py admin/tests/conftest.py admin/config.py admin/tests/test_routes.py` All checks passed
+  - **文档同步**：`docs/plans/T6-admin-mvp.md` 新增 §10（T6.2 设计与 DoD）；§12 后续任务衔接标 [x]；`README.md` 新增 T6.2 章节；`CHANGELOG.md` 本条
+
 #### 新增（T9.3 已完成）
 
 - ✨ **结构化 JSON 日志 `admin/logging_utils.py`**
@@ -18,7 +44,7 @@
   - `admin/errors/exceptions.py` 的 `BusinessError` / `HTTPException` / `RequestValidationError` / 兜底异常日志全部升级为结构化事件
   - 新增 `admin/tests/test_logging.py` 8 个测试，覆盖 formatter、上下文绑定、异常 traceback、FastAPI 端到端 JSON 日志
   - 定向验证通过：`pytest -q admin/tests/test_logging.py admin/tests/test_errors.py` = 34/34 passed；`ruff check admin/app.py admin/errors/exceptions.py admin/logging_utils.py admin/tests/test_logging.py admin/tests/test_errors.py` 通过
-  - 当前已知缺口：`pytest -q admin/tests` 仍有 1 个非 T9.3 既有失败（`admin/tests/test_routes.py::test_stats_orders_real_shape`，`sqlite3.OperationalError: no such table: orders`）
+  - 已知缺口（T6.2 已闭环）：`pytest -q admin/tests` 之前有 1 个非 T9.3 失败（`test_stats_orders_real_shape` 报 `sqlite3.OperationalError: no such table: orders`）— 根因是 stats 端点读 orders 表，但 T6.1 阶段 conftest 没建 orders DB；T6.2 在 conftest 加 `orders_db` autouse fixture 闭环，当前 `pytest -q admin/tests` 87/87 通过
 
 #### 新增（T4.2 已完成）
 
@@ -58,6 +84,27 @@
   - 仓库全量 pytest：392 passed
   - `ruff check data/crowd_db/ scripts/verify_t2_4_e2e.py` — All checks passed
   - `validate_template.py` 仍 PASS（模板字段契约未破坏）
+
+#### 新增（T2.5 已完成）
+
+- ✅ **扎堆检测单元测试 T2.5** — `data/crowd_db/tests/test_crowd_detector.py` 由 35 增至 55 个测试（新增 20 个）
+  - **用例 1 高风险识别**：`test_high_risk_use_case_frequency_4_full_payload`（freq=4 全平台 + predicted_increase + alternatives）/ `test_high_risk_boundary_frequency_exactly_4`（>=4 闭合区间边界）/ `test_high_risk_distinct_from_medium_and_low`（high/medium 互不混淆）
+  - **用例 2 替代方案**：`test_alternatives_use_case_contains_required_keys`（每个 alt 必须含 name/major/score, 0-100 区间）/ `test_alternatives_use_case_sortable_by_score`（detector 透传 alternatives 字段不丢）/ `test_alternatives_use_case_empty_list_is_valid`（空列表合法）
+  - **用例 3 跨省份**：`test_cross_province_hunan_hit_guangdong_miss`（湖南 575 命中 vs 广东 575 无数据隔离）/ `test_cross_province_beijing_at_690`（同校不同省命中不同记录 — 清华 工科试验班）/ `test_cross_province_loader_called_with_correct_province`（province 透传给 loader, 不做全局查询）
+  - **用例 4 异常处理**：`test_exception_use_case_loader_returns_none_field`（name=None 不崩）/ `test_exception_use_case_loader_returns_non_dict`（混入 None/str/int 时优雅过滤）/ `test_exception_use_case_loader_raises_propagates`（loader 抛错向上传播）/ `test_exception_use_case_unrecognized_entry_type`（int/float/object 走 str 兜底）/ `test_exception_use_case_entry_with_int_school_dict`（school=0 falsy 跳过）/ `test_exception_use_case_province_is_none`（province=None 不抛）/ `test_exception_use_case_tuple_with_non_string_school`（tuple 元组非 str school 走 str() 兜底）/ `test_exception_use_case_dict_with_truthy_non_string_school`（0.5 这种 truthy 非 str school 走 str() 兜底）/ `test_exception_use_case_dict_with_name_truthy_non_string`（name 字段 truthy 非 str 同样兜底）/ `test_exception_use_case_single_element_tuple_non_string`（单元素 tuple 非 str 兜底）/ `test_exception_use_case_malformed_frequency_in_record`（frequency="not a number"/None 时 try/except 按 0 处理）
+- 🛡️ **`crowd_detector.py` 根因加固** — 与测试同步，detector 主循环加入三层防御：
+  - `if not isinstance(rec, dict): continue` — 防止 loader 混入非 dict 元素时 `rec["name"]` 抛 TypeError
+  - `if not isinstance(rec_name, str) or not rec_name.strip(): continue` — 防止 name 缺失/非 str 时 `.strip()` 抛 AttributeError
+  - `try/except (TypeError, ValueError): freq = 0` — 防止 frequency 字段异常时 `int(...)` 崩溃
+  - `_normalize_entry` 增加 truthy 非 str school 的 str() 兜底（dict / tuple / list 三分支）
+  - 取值统一用 `or` 兜底空值：`rec.get("platforms") or []` / `rec.get("predicted_increase") or 0` / `rec.get("alternatives") or []`
+- ✅ **质量门禁**
+  - `crowd_detector.py` 单模块覆盖率：**93%**（101 statements / 7 missed 仅 `__main__` CLI demo 块）
+  - 远高于 T2.5 PRD 阈值 **≥80%**
+  - `data/crowd_db/tests/test_crowd_detector.py` 55/55 passed
+  - `data/crowd_db/tests/` 全量 125/125 passed（不动 T2.1/T2.2/T2.4 既有测试）
+  - `pytest -q --ignore=data/orders` 仓库全量 249 passed
+  - `ruff check data/crowd_db/` — All checks passed
 
 #### 新增（T1.3 已完成）
 
