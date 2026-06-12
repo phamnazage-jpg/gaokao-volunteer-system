@@ -8,6 +8,30 @@
 
 ### 🚧 进行中
 
+#### 新增（T2.4 已完成）
+
+- ✨ **扎堆报告生成器 `risk_report.py`**（`data/crowd_db/risk_report.py`，183 行）
+  - `build_crowd_risks(plan, user_score, province, loader=None)` — 把 `crowd_detector.detect_crowd_risk` 的 `RiskFinding` 列表转换为 `templates/audit_report.html` 模板所需的 `crowd_risks` 字典格式
+  - 三色 emoji 标识：high → 🔴、medium → 🟡、low → 🟢（随 `RISK_LEVEL_META` 自动匹配）
+  - 模板字段完整：`school / major / frequency / predicted_increase / risk_level / risk_level_label / risk_emoji / platforms / alternatives`
+  - alternatives 字段重映射：`name` → `school`，`score` 强制 `int`（防御非数字字符串）
+  - 辅助能力：
+    - `group_by_risk()` — 按风险等级分组（永远返回 high/medium/low 三个 key）
+    - `format_risk_summary()` — 单行汇总（如 "🔴 1 个高风险、🟡 2 个中风险"），给报告顶部用
+    - `render_risk_table()` — CLI / 微信消息场景的纯文本表格（含替代院校行）
+  - 类型设计：用 `Protocol` 定义 `_LoaderProtocol`，避免对 `CrowdDBLoader` 强依赖（支持 mock 注入与未来的不同实现）
+  - 22 个 pytest 单元测试全部通过（三色 emoji / 字段完整性 / 替代项重映射 / 防御性 fallback / 空方案 / 不存在省份 / 自定义 loader 注入）
+- ✨ **端到端集成验证脚本 `scripts/verify_t2_4_e2e.py`**（95 行）
+  - 用真实湖南 575 分数据 + `audit_report.html` 模板渲染一遍
+  - 断言：模板必需字段全部存在 / alternatives 重映射正确 / 三色 emoji 在渲染输出可见
+  - 跑法：`python3 scripts/verify_t2_4_e2e.py`
+  - 6/6 集成断言通过
+- ✅ **质量门禁**
+  - `data/crowd_db/tests/` 105/105 通过（含本次新增 22 + 历史 83）
+  - 仓库全量 pytest：392 passed
+  - `ruff check data/crowd_db/ scripts/verify_t2_4_e2e.py` — All checks passed
+  - `validate_template.py` 仍 PASS（模板字段契约未破坏）
+
 #### 新增（T1.3 已完成）
 
 - ✨ **方案解析器 `plan_parser.py`**（`skills/gaokao-audit/scripts/plan_parser.py`，295 行）
