@@ -8,6 +8,17 @@
 
 ### 🚧 进行中
 
+#### 新增（T1.2 已完成）
+
+- ✨ **AI方案审核服务 Skill**（`skills/gaokao-audit/`）
+  - `SKILL.md`（143 行）— 角色边界 + 49 元服务定价 + 四维审核框架 + 合规红线 + DoD
+  - `templates/audit_report.html`（262 行，Jinja2）— 报告模板，含政策合规/扎堆风险/数据存疑/改进建议 4 区块 + 升级到 99 元完整方案卡片
+  - `examples/sample_audit.md`（144 行）— 输入样例（大厂AI方案文本/PDF/截图）+ 输出报告样例 + 渲染数据契约表
+  - `scripts/validate_template.py`（137 行）— 模板渲染校验器，16 个占位符 + 7 个渲染输出字符串断言
+  - `tests/test_validate_template.py`（33 行）— pytest 入口，1 用例通过
+  - 关键设计：T1.1 review 暴露的 4 个反模式（吞错、模糊 substring、vacuous 测试、缺失档位）已显式列入"对齐 T1.1 review 教训"表，由 T1.3 实施时强制规避
+  - T1.2 测试套件：**1/1 通过**（含项目原有 6 个 spec_checker 测试 → 7/7 通过）
+
 #### 新增（T7.1 已完成）
 
 - ✨ **短链接生成**（`data/share/short_link.py` + `scripts/gaokao-shortlink`）
