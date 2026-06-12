@@ -78,6 +78,21 @@ jobs:
           path: coverage.xml
           retention-days: 7
 
+      # T10.2: 上传 coverage.xml 到 codecov 渲染覆盖率徽章
+      # 关键决策：
+      # - 仅在 3.11 单点上传：避免多份报告名冲突（codecov 按文件名合并）
+      # - fail_ci_if_error: false: codecov 不可达时不影响 CI 通过（与个人项目 + 多镜像
+      #   仓库场景匹配；tksea/gitea 不被 codecov 官方支持，无 token 时仍能上传但不写 status）
+      # - 不设 token: public repo 可匿名上传；徽章正常渲染
+      - name: Upload coverage to Codecov
+        if: matrix.python-version == '3.11' && hashFiles('coverage.xml') != ''
+        uses: codecov/codecov-action@v4
+        with:
+          file: coverage.xml
+          flags: python-3.11
+          fail_ci_if_error: false
+          verbose: false
+
       - name: Test summary
         if: always()
         run: |

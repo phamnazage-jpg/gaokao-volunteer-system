@@ -1,0 +1,52 @@
+# codecov 配置 — T10.2
+# 与 docs/IMPLEMENTATION_PLAN_v2.md T5.5 覆盖率门槛对齐：
+#   整体 ≥ 60% / 核心 ≥ 80%
+# PR 阶段加 1% 自动缓冲避免噪声红灯；T5.5 启用 --cov-fail-under 后 CI 仍守硬门槛
+codecov:
+  require_ci_to_pass: false # CI 失败不阻塞 codecov 上传（公网/镜像场景）
+  notify:
+    after_n_builds: 1 # 单点（3.11）上传即可，无需等矩阵全完
+  coverage:
+    precision: 2 # 徽章显示 2 位小数
+    round: down
+    range: "60...80" # 徽章颜色区间：红→黄→绿
+    status:
+      project:
+        default:
+          target: 60% # 整体目标（与 T5.5 --cov-fail-under 对齐）
+          threshold: 1% # PR 浮动容忍 1%（防噪声）
+          if_ci_failed: error # CI 失败时降级为 error（不阻断 PR）
+        # 核心模块单独门槛 — 与 T5.5 "核心 ≥80%" 对齐
+        core:
+          target: 80%
+          threshold: 2%
+          paths:
+            - "skills/gaokao-spec-checker/.*"
+            - "skills/gaokao-college-advisor/.*"
+      patch: # PR 新增代码的覆盖要求
+        default:
+          target: 70%
+          threshold: 5%
+    # 不参与覆盖率统计的目录（纯配置/文档/测试自身）
+    ignore:
+      - "docs/**"
+      - "tests/**"
+      - "data/examples/**"
+      - "rules/**" # 规则数据，非代码
+      - "scripts/gaokao-shortlink" # 已废弃的链接脚本
+      - "**/__pycache__/**"
+      - "**/tests.py"
+      - "**/test_*.py"
+
+# PR 评论与徽章展示策略
+comment:
+  layout: "header, diff, flags, components, files, footer"
+  behavior: default # 新 PR 评论、push 更新
+  require_changes: false # coverage 下降时不要求必须改
+  require_base: false # 没有 base 时也显示
+  require_head: true
+  hide_project_coverage: false
+
+# GitHub Checks 状态（无 token 时仅显示为 pending，但徽章仍渲染）
+github_checks:
+  annotations: true
