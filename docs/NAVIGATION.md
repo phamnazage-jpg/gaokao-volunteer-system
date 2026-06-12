@@ -55,6 +55,9 @@
 | [ADMIN_DESIGN.md](ADMIN_DESIGN.md)                 | 管理后台设计       |
 | [BUSINESS_SCENE.md](BUSINESS_SCENE.md)             | 业务场景与推广     |
 | [COMPETITIVE_ANALYSIS.md](COMPETITIVE_ANALYSIS.md) | 竞品分析(大厂AI)   |
+| [TECH_ARCHITECTURE.md](TECH_ARCHITECTURE.md)       | 技术架构设计 🆕    |
+| [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md)   | v2.1实施计划 🆕    |
+| [plans/](plans/)                                   | 详细任务计划 🆕    |
 
 ### 🔍 规则文档（rules/）
 
