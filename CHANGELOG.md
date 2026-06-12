@@ -8,6 +8,33 @@
 
 ### 🚧 进行中
 
+#### 新增（T9.3 已完成）
+
+- ✨ **结构化 JSON 日志 `admin/logging_utils.py`**
+  - 新增 `JsonLogFormatter`：单行 JSON 输出 `ts / level / logger / msg / ctx / exc`
+  - 新增 `log_event()` / `log_event_exc()`：业务侧一行写结构化事件，避免散落字符串拼接
+  - 新增 `contextvars` 请求上下文：自动注入 `request_id / path / method`，并在请求结束后清理，避免串请求污染
+  - `admin/app.py` 新增 `request_context_middleware` 与 `--log-format json|plain` 启动参数；CLI 默认输出 JSON，保留 plain 便于本地调试
+  - `admin/errors/exceptions.py` 的 `BusinessError` / `HTTPException` / `RequestValidationError` / 兜底异常日志全部升级为结构化事件
+  - 新增 `admin/tests/test_logging.py` 8 个测试，覆盖 formatter、上下文绑定、异常 traceback、FastAPI 端到端 JSON 日志
+  - 定向验证通过：`pytest -q admin/tests/test_logging.py admin/tests/test_errors.py` = 34/34 passed；`ruff check admin/app.py admin/errors/exceptions.py admin/logging_utils.py admin/tests/test_logging.py admin/tests/test_errors.py` 通过
+  - 当前已知缺口：`pytest -q admin/tests` 仍有 1 个非 T9.3 既有失败（`admin/tests/test_routes.py::test_stats_orders_real_shape`，`sqlite3.OperationalError: no such table: orders`）
+
+#### 新增（T4.2 已完成）
+
+- ✨ **订单 DAO 数据访问层 `data/orders/dao.py`**（530 行，`OrdersDAO` 类）
+  - **CRUD 完整**：`create()` / `get()` / `get_by_external_id()` / `find_by_phone()` / `list()` / `count()` / `stats_by_status()` / `update()` / `delete()`
+  - **事务守护**：`dao.transaction()` 上下文管理器；嵌套语义（外层在事务中时内层不重复 commit，异常统一回滚外层）
+  - **加密透明化**：API 入口接收 `Order` dataclass（明文 PII），DAO 内部用 `to_db_row()` 加密落盘 / `from_db_row()` 解密读回；调用方无需接触 `*_enc` 字段
+  - **状态机守护**：`transition_status()` 走 `assert_valid_transition()` 单事务内 `UPDATE orders` + `INSERT order_status_history`；非法抛 `InvalidStateTransition` 并回滚
+  - **时间戳联动**：`paid → paid_at` / `serving → started_at` / `delivered → delivered_at` / `completed → completed_at` 由状态自动置位（`COALESCE` 保留首次值）
+  - **幂等 upsert**：`upsert_by_external_id()` 接管 T8.1 闲鱼 Webhook 路径，4 种 `action` 与 `data/channel_sync/dao_extension.py` 完全对齐（`inserted` / `updated` / `unchanged` / `illegal_transition`）
+  - **防御设计**：`_row_factory_ctx()` 临时切 `sqlite3.Row`、退出后恢复外部 row_factory；`update()` 显式拒绝 `status` 字段（强制走 `transition_status()`）
+  - **51 个 pytest 用例全绿**（覆盖加密透明化、状态机合法/非法路径、事务回滚、upsert 4 种 action、状态历史时间线、row_factory 不污染、删除 cascade）
+  - **data/orders 模块总测试 163/163 通过**（含 T4.1 既有 112 + T4.2 新增 51）；`data/` 全模块 386/386 通过；ruff 0 warning
+- 🔧 **`data/orders/__init__.py` 导出 DAO 公共 API**：`OrdersDAO` / `UpsertResult` / `StatusChange` / `OrderNotFound` / `DuplicateOrder` 一行 import
+- 📝 **`data/orders/README.md`** 更新 T4.2 DAO 一览表、加密透明化边界表、DoD 勾选、API 下游衔接
+
 #### 新增（T2.4 已完成）
 
 - ✨ **扎堆报告生成器 `risk_report.py`**（`data/crowd_db/risk_report.py`，183 行）
@@ -70,6 +97,26 @@
   - `route_short_link(code, password, base_url)` 路由辅助，可挂载任意 Web 框架的 `/s/<code>`
   - CLI：`create / resolve / revoke / list / stats / purge`，全部子命令 JSON 输出
   - 25 个 pytest 用例全部通过（base62 编解码、碰撞重试、TTL、密码、撤销、列表、统计、清理、路由）
+
+#### 新增（T7.3 已完成）
+
+- ✨ **分享权限策略**（`data/share/permission.py`）
+  - 新增 `PermissionPolicy.for_permission(permission)`：把 `read/comment/edit/admin` 归一化成分享页能力策略
+  - 能力判断：`can_view / can_comment / can_edit / allows_field / can("...")`
+  - 安全兜底：未知 permission 一律回退到最严格的 `read` 策略，防止越权
+- ✨ **姓名脱敏策略复用**
+  - 复用 `data/orders/masking.py::mask_name`，避免在分享链路重复实现脱敏算法
+  - `read/comment` 默认不暴露姓名；若后续 UI 白名单显式放开姓名字段，则自动按 `mask_name` 规则脱敏
+  - `edit`（以及历史兼容 `admin`）下姓名原样展示
+- ✨ **权限感知路由辅助**（`data.share.short_link.route_short_link_with_report`）
+  - 在 `route_short_link()` 之上叠加报告 payload 渲染，支持 `report=` 直接注入或 `report_loader(report_id)` 懒加载
+  - resolve 失败（not_found / revoked / expired / password_required / password_wrong）时不下发 `rendered` payload，避免泄露报告元数据
+  - `render_report_payload(permission, report, share_url=...)` 输出统一结构：`policy + visible_fields + payload + masked_fields`
+- ✅ **测试验证**
+  - 新增 `data/share/tests/test_permission.py`，33 个 pytest 用例覆盖：三档权限、admin alias、未知 permission fallback、字段裁剪、姓名脱敏、route + report_loader 端到端
+  - `python3 -m pytest data/share/tests/ -q` → **58 passed**
+  - `python3 -m pytest data/share/ data/orders/ -q` → **221 passed**
+  - `python3 -m ruff check data/share/permission.py data/share/tests/test_permission.py` → **All checks passed**
 
 #### 新增（T10.1 已完成）
 
