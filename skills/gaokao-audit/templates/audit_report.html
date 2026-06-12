@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI方案审核报告 — 高考志愿方案审核服务</title>
+    <style>
+      body {
+        font-family: "Microsoft YaHei", -apple-system, sans-serif;
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 20px;
+        background: #f5f7fa;
+        color: #2c3e50;
+        line-height: 1.6;
+      }
+      .header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      }
+      .header h1 { margin: 0 0 10px 0; font-size: 28px; }
+      .header p { margin: 4px 0; opacity: 0.95; }
+      .section {
+        margin: 20px 0;
+        padding: 20px;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        background: white;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      }
+      .section h2 { margin-top: 0; font-size: 20px; }
+      .fatal { background: #fee; border-left: 4px solid #f44; }
+      .warning { background: #fff8e1; border-left: 4px solid #fdcb6e; }
+      .success { background: #e8f5e9; border-left: 4px solid #28a745; }
+      .info { background: #e3f2fd; border-left: 4px solid #2196f3; }
+      .risk-high { color: #d63031; font-weight: bold; }
+      .risk-medium { color: #e17055; font-weight: bold; }
+      .risk-low { color: #00b894; }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 10px 0;
+      }
+      th, td {
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        text-align: left;
+      }
+      th { background: #f8f9fa; font-weight: 600; }
+      tr:nth-child(even) { background: #fafbfc; }
+      .score-badge {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 12px;
+        font-weight: bold;
+        font-size: 18px;
+      }
+      .score-good { background: #d4edda; color: #155724; }
+      .score-warn { background: #fff3cd; color: #856404; }
+      .score-bad { background: #f8d7da; color: #721c24; }
+      .upgrade-card {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        color: white;
+        padding: 20px;
+        border-radius: 8px;
+        text-align: center;
+        margin: 20px 0;
+      }
+      .upgrade-card h2 { margin-top: 0; }
+      .upgrade-card .price {
+        font-size: 32px;
+        font-weight: bold;
+        margin: 10px 0;
+      }
+      .footer {
+        text-align: center;
+        margin-top: 30px;
+        padding: 20px;
+        color: #888;
+        font-size: 12px;
+        border-top: 1px solid #e0e0e0;
+      }
+      .meta-tag {
+        display: inline-block;
+        background: #e0e0e0;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        margin-right: 6px;
+      }
+      ol li { margin: 8px 0; }
+      .rule-id {
+        display: inline-block;
+        background: #fff;
+        color: #d63031;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-family: monospace;
+        font-size: 12px;
+        margin-right: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h1>🔍 AI志愿方案审核报告</h1>
+      <p><span class="meta-tag">审核对象</span> {{ source | default('未注明来源', true) }}</p>
+      <p><span class="meta-tag">考生</span> {{ candidate_info | default('未提供', true) }}</p>
+      <p><span class="meta-tag">审核时间</span> {{ audit_time }}</p>
+      <p><span class="meta-tag">报告编号</span> {{ report_id }}</p>
+    </div>
+
+    <div class="section">
+      <h2>📊 审核总览</h2>
+      <table>
+        <tr>
+          <th>项目</th>
+          <th>结果</th>
+        </tr>
+        <tr>
+          <td>综合评分</td>
+          <td>
+            <span class="score-badge
+              {% if overall_score >= 80 %}score-good
+              {% elif overall_score >= 60 %}score-warn
+              {% else %}score-bad{% endif %}">
+              {{ overall_score }}/100
+            </span>
+          </td>
+        </tr>
+        <tr>
+          <td>🔴 致命错误</td>
+          <td class="risk-high">{{ fatal_count }} 个 — 必须修正</td>
+        </tr>
+        <tr>
+          <td>🟡 严重警告</td>
+          <td class="risk-medium">{{ warning_count }} 个 — 建议关注</td>
+        </tr>
+        <tr>
+          <td>🟢 一般提示</td>
+          <td class="risk-low">{{ info_count }} 个 — 可选优化</td>
+        </tr>
+        <tr>
+          <td>审核结论</td>
+          <td>
+            {% if fatal_count > 0 %}
+              <strong class="risk-high">❌ 不通过 — 存在致命错误，请修正后重新提交</strong>
+            {% elif warning_count >= 3 %}
+              <strong class="risk-medium">⚠️ 需关注 — 严重警告较多，建议调整</strong>
+            {% else %}
+              <strong class="risk-low">✅ 通过 — 可作为填报参考</strong>
+            {% endif %}
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    {% if policy_errors %}
+    <div class="section fatal">
+      <h2>🔴 致命错误（必须修正）</h2>
+      <p>本部分问题直接来自 <code>gaokao-spec-checker</code> 的省份规则库核对结果，违背即可能退档或无效志愿。</p>
+      <ol>
+        {% for error in policy_errors %}
+        <li>
+          <span class="rule-id">{{ error.rule_id }}</span>
+          <strong>{{ error.rule }}</strong><br />
+          ❌ <strong>问题：</strong>{{ error.description }}<br />
+          ✅ <strong>修正：</strong>{{ error.fix }}
+        </li>
+        {% endfor %}
+      </ol>
+    </div>
+    {% endif %}
+
+    {% if crowd_risks %}
+    <div class="section warning">
+      <h2>🟡 扎堆风险（建议关注）</h2>
+      <p>本部分基于 <code>data/crowd_db/&lt;省份&gt;.json</code> 的大厂AI推荐频次统计。frequency 越高表示越多大厂AI 推荐同一院校，扎堆概率越大。</p>
+      <table>
+        <tr>
+          <th>院校</th>
+          <th>专业</th>
+          <th>推荐频次</th>
+          <th>预测上涨</th>
+          <th>风险等级</th>
+          <th>替代方案</th>
+        </tr>
+        {% for risk in crowd_risks %}
+        <tr>
+          <td>{{ risk.school }}</td>
+          <td>{{ risk.major }}</td>
+          <td>{{ risk.frequency }}/4</td>
+          <td>+{{ risk.predicted_increase }} 分</td>
+          <td class="risk-{{ risk.risk_level }}">{{ risk.risk_level_label }}</td>
+          <td>
+            {% for alt in risk.alternatives %}
+              • {{ alt.school }}（{{ alt.score }} 分）<br />
+            {% endfor %}
+          </td>
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
+    {% endif %}
+
+    {% if data_issues %}
+    <div class="section warning">
+      <h2>🟡 数据存疑（需澄清）</h2>
+      <p>本部分列出方案中无法溯源的主观表述或跨年份数据混用情况。</p>
+      <ul>
+        {% for issue in data_issues %}
+        <li>
+          <strong>{{ issue.location }}</strong>：{{ issue.description }}
+          {% if issue.recommendation %}
+            <br />📌 建议：{{ issue.recommendation }}
+          {% endif %}
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+
+    {% if suggestions %}
+    <div class="section success">
+      <h2>🟢 改进建议（可选优化）</h2>
+      <ul>
+        {% for sug in suggestions %}
+        <li>{{ sug }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+
+    <div class="section info">
+      <h2>📋 审核方法说明</h2>
+      <ul>
+        <li><strong>政策合规</strong>：基于 <code>skills/gaokao-spec-checker/scripts/spec_checker.py</code> 的 regex 规则库（已支持 27 省 2026 年最新政策）</li>
+        <li><strong>扎堆风险</strong>：基于 <code>data/crowd_db/&lt;省份&gt;.json</code> 的大厂AI推荐频次统计</li>
+        <li><strong>数据溯源</strong>：人工核对所有"录取概率"、"分数线"等关键数据是否标注来源</li>
+        <li><strong>改进建议</strong>：基于冲稳保比例、选科-专业组匹配、备选院校完整度等通用检查</li>
+      </ul>
+    </div>
+
+    <div class="upgrade-card">
+      <h2>🔧 升级到完整方案</h2>
+      <p>如需定制完整的 45 志愿方案 + 龙老师 30 分钟一对一咨询：</p>
+      <div class="price">补 ¥50 → ¥99 完整方案</div>
+      <p>包含：完整 45 志愿方案（冲稳保 3:4:3 配比）+ 个性化专业组匹配 + 调剂策略建议</p>
+      <p>📱 微信咨询：xxxxx（添加时备注"审核升级"）</p>
+    </div>
+
+    <div class="footer">
+      <p>审核专家：龙老师 | 联系方式：微信 xxxxx</p>
+      <p>数据来源：基于大厂AI 公开推荐数据 + 27 省 2026 年政策规则库</p>
+      <p><strong>免责声明</strong>：本审核仅供建议，最终填报以官方公布为准。任何因采用本审核建议产生的录取结果差异，审核方不承担责任。</p>
+      <p>— 高考志愿方案审核服务 v1.0 | 报告生成时间 {{ audit_time }} —</p>
+    </div>
+  </body>
+</html>
