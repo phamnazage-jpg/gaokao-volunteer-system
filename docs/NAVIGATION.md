@@ -41,23 +41,26 @@
 
 ### 📘 核心文档（docs/）
 
-| 文档                                               | 用途               |
-| -------------------------------------------------- | ------------------ |
-| [TUTORIAL.md](TUTORIAL.md)                         | 使用教程、API参考  |
-| [DEVELOPMENT.md](DEVELOPMENT.md)                   | 开发规范、贡献流程 |
-| [ARCHITECTURE.md](ARCHITECTURE.md)                 | 系统架构、设计原则 |
-| [API.md](API.md)                                   | API接口文档        |
-| [RELEASE.md](RELEASE.md)                           | 版本发布说明       |
-| [AUTHORS.md](AUTHORS.md)                           | 作者与贡献者       |
-| [NAVIGATION.md](NAVIGATION.md)                     | 文档导航索引       |
-| [UX_DESIGN.md](UX_DESIGN.md)                       | 用户体验设计       |
-| [SHARING_DESIGN.md](SHARING_DESIGN.md)             | 分享功能设计       |
-| [ADMIN_DESIGN.md](ADMIN_DESIGN.md)                 | 管理后台设计       |
-| [BUSINESS_SCENE.md](BUSINESS_SCENE.md)             | 业务场景与推广     |
-| [COMPETITIVE_ANALYSIS.md](COMPETITIVE_ANALYSIS.md) | 竞品分析(大厂AI)   |
-| [TECH_ARCHITECTURE.md](TECH_ARCHITECTURE.md)       | 技术架构设计 🆕    |
-| [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md)   | v2.1实施计划 🆕    |
-| [plans/](plans/)                                   | 详细任务计划 🆕    |
+| 文档                                                                         | 用途                          |
+| ---------------------------------------------------------------------------- | ----------------------------- |
+| [TUTORIAL.md](TUTORIAL.md)                                                   | 使用教程、API参考             |
+| [DEVELOPMENT.md](DEVELOPMENT.md)                                             | 开发规范、贡献流程            |
+| [ARCHITECTURE.md](ARCHITECTURE.md)                                           | 系统架构、设计原则            |
+| [API.md](API.md)                                                             | API接口文档                   |
+| [RELEASE.md](RELEASE.md)                                                     | 版本发布说明                  |
+| [AUTHORS.md](AUTHORS.md)                                                     | 作者与贡献者                  |
+| [NAVIGATION.md](NAVIGATION.md)                                               | 文档导航索引                  |
+| [UX_DESIGN.md](UX_DESIGN.md)                                                 | 用户体验设计                  |
+| [SHARING_DESIGN.md](SHARING_DESIGN.md)                                       | 分享功能设计                  |
+| [ADMIN_DESIGN.md](ADMIN_DESIGN.md)                                           | 管理后台设计                  |
+| [BUSINESS_SCENE.md](BUSINESS_SCENE.md)                                       | 业务场景与推广                |
+| [COMPETITIVE_ANALYSIS.md](COMPETITIVE_ANALYSIS.md)                           | 竞品分析(大厂AI)              |
+| [TECH_ARCHITECTURE.md](TECH_ARCHITECTURE.md)                                 | 技术架构设计 🆕               |
+| [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md)                             | v2.1实施计划 v1.0             |
+| [IMPLEMENTATION_PLAN_v2.md](IMPLEMENTATION_PLAN_v2.md)                       | v2.1实施计划 v2.0（修订版）🆕 |
+| [AUDIT_REPORT_2026-06-11.md](AUDIT_REPORT_2026-06-11.md)                     | 审核报告 🆕                   |
+| [REMEDIATION_TASK_BOARD_2026-06-11.md](REMEDIATION_TASK_BOARD_2026-06-11.md) | 修复任务板 🆕                 |
+| [plans/](plans/)                                                             | 详细任务计划 🆕               |
 
 ### 🔍 规则文档（rules/）
 
