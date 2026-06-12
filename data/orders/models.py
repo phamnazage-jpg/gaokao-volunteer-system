@@ -11,9 +11,17 @@ import random
 import string
 from dataclasses import dataclass, field, asdict
 from datetime import datetime, timezone
-from typing import Any, List, Optional
+from typing import Any, List, Optional, Union
 
 from .crypto import encrypt, decrypt, hash_for_index
+from .masking import mask_sensitive_dict
+
+
+# 解密策略:
+# - True  : 完整明文(权限内接口使用,如后台人工核对)
+# - False : 完全移除明文字段(对外公开统计/审计日志)
+# - "mask": 部分遮罩(列表/详情默认,138****1234)
+DecryptPolicy = Union[bool, str]
 
 
 def utc_now_iso() -> str:
@@ -145,13 +153,22 @@ class Order:
         data.pop("candidate_id_card_enc", None)
         return cls(**data)
 
-    def to_dict(self, decrypt_sensitive: bool = True) -> dict[str, Any]:
+    def to_dict(self, decrypt_sensitive: DecryptPolicy = "mask") -> dict[str, Any]:
         """导出为字典。
 
-        decrypt_sensitive=True 时敏感字段以明文返回（API 响应）；False 时只返回 hash。
+        decrypt_sensitive 取值:
+        - True   : 敏感字段以明文返回(权限内 API,如后台人工核对)
+        - False  : 完全移除明文字段(对外公开统计/审计日志,仅保留 hash)
+        - "mask" : 部分遮罩(列表/详情默认,如 138****1234,推荐)
+
+        当传入未知字符串时,回退为 "mask",保证前端拿到的是遮罩而非明文 — 默认安全。
         """
         data = asdict(self)
-        if not decrypt_sensitive:
+        if decrypt_sensitive is True:
+            return data
+        if decrypt_sensitive is False:
             data.pop("customer_phone", None)
             data.pop("candidate_id_card", None)
-        return data
+            return data
+        # 默认 / "mask" / 其他字符串:走遮罩路径
+        return mask_sensitive_dict(data)
