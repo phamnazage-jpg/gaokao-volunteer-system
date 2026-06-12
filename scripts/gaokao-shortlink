@@ -1,0 +1,271 @@
+#!/usr/bin/env python3
+"""
+gaokao-shortlink — T7.1 短链接生成器命令行工具
+
+子命令:
+    create   创建短链接
+    resolve  解析短链接 (查询/校验)
+    revoke   撤销短链接
+    list     列出某报告 / 某用户的所有链接
+    stats    查看某链接的访问统计
+    purge    清理过期记录 (维护)
+
+示例:
+    # 创建: 关联报告 R-2026-001, 30 天有效, 只读权限
+    python scripts/gaokao-shortlink create \\
+        --report-id R-2026-001 --owner alice --permission read --ttl-days 30
+
+    # 创建: 带密码
+    python scripts/gaokao-shortlink create \\
+        --report-id R-2026-001 --owner alice --permission comment \\
+        --password s3cr3t --ttl-days 7
+
+    # 解析
+    python scripts/gaokao-shortlink resolve ABC123
+    python scripts/gaokao-shortlink resolve ABC123 --password s3cr3t
+
+    # 撤销
+    python scripts/gaokao-shortlink revoke ABC123 --owner alice
+
+    # 列表
+    python scripts/gaokao-shortlink list --report R-2026-001
+    python scripts/gaokao-shortlink list --owner alice
+
+    # 统计
+    python scripts/gaokao-shortlink stats ABC123
+"""
+
+import argparse
+import json
+import os
+import sys
+from pathlib import Path
+
+# 把项目根目录加入 sys.path
+PROJ_ROOT = Path(__file__).resolve().parent.parent
+if str(PROJ_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJ_ROOT))
+
+from data.share.short_link import (  # noqa: E402
+    DEFAULT_DB_PATH,
+    PERM_ADMIN,
+    PERM_COMMENT,
+    PERM_EDIT,
+    PERM_READ,
+    ShortLinkService,
+    STATUS_OK,
+    STATUS_NOT_FOUND,
+    STATUS_PASSWORD_REQUIRED,
+    STATUS_PASSWORD_WRONG,
+    STATUS_REVOKED,
+    STATUS_EXPIRED,
+    VALID_PERMISSIONS,
+    build_url,
+)
+
+
+def _out(data, as_json: bool = True) -> None:
+    """统一输出"""
+    if as_json:
+        print(json.dumps(data, ensure_ascii=False, indent=2, default=str))
+    else:
+        # 人类可读
+        if isinstance(data, dict):
+            for k, v in data.items():
+                print(f"{k}: {v}")
+        else:
+            print(data)
+
+
+def cmd_create(args) -> int:
+    """创建短链接"""
+    svc = ShortLinkService(db_path=args.db)
+    try:
+        link = svc.create(
+            report_id=args.report_id,
+            owner_id=args.owner,
+            permission=args.permission,
+            password=args.password,
+            ttl_seconds=args.ttl_seconds,
+            ttl_days=args.ttl_days,
+            code_length=args.length,
+            note=args.note,
+        )
+    except (ValueError, RuntimeError) as e:
+        print(f"创建失败: {e}", file=sys.stderr)
+        return 2
+    out = {
+        "code": link.code,
+        "url": build_url(link.code, base=args.base_url),
+        "report_id": link.report_id,
+        "owner_id": link.owner_id,
+        "permission": link.permission,
+        "expires_at_iso": (
+            link.to_dict()["expires_at_iso"] if link.expires_at else None
+        ),
+        "created_at_iso": link.to_dict()["created_at_iso"],
+        "has_password": link.password_hash is not None,
+    }
+    _out(out, as_json=not args.human)
+    return 0
+
+
+def cmd_resolve(args) -> int:
+    """解析短链接"""
+    svc = ShortLinkService(db_path=args.db)
+    res = svc.resolve(args.code, password=args.password, record_access=not args.dry_run)
+    payload = {
+        "code": res.code,
+        "status": res.status,
+        "reason": res.reason,
+        "url": build_url(res.code, base=args.base_url),
+    }
+    if res.link is not None:
+        payload["report_id"] = res.link.report_id
+        payload["owner_id"] = res.link.owner_id
+        payload["permission"] = res.link.permission
+        payload["access_count"] = res.link.access_count
+        payload["last_access_at_iso"] = (
+            res.link.to_dict()["last_access_at_iso"]
+            if res.link.last_access_at else None
+        )
+        payload["expires_at_iso"] = (
+            res.link.to_dict()["expires_at_iso"]
+            if res.link.expires_at else None
+        )
+    _out(payload, as_json=not args.human)
+    return 0 if res.status == STATUS_OK else 1
+
+
+def cmd_revoke(args) -> int:
+    """撤销短链接"""
+    svc = ShortLinkService(db_path=args.db)
+    ok = svc.revoke(args.code, owner_id=args.owner)
+    if not ok:
+        print(
+            f"撤销失败: code={args.code} 不存在或 owner 不匹配",
+            file=sys.stderr,
+        )
+        return 1
+    _out({"code": args.code, "revoked": True, "owner": args.owner},
+         as_json=not args.human)
+    return 0
+
+
+def cmd_list(args) -> int:
+    """列出某报告 / 某用户的链接"""
+    if not args.report and not args.owner:
+        print("必须指定 --report 或 --owner", file=sys.stderr)
+        return 2
+    svc = ShortLinkService(db_path=args.db)
+    if args.report:
+        links = svc.list_by_report(args.report)
+    else:
+        links = svc.list_by_owner(args.owner, limit=args.limit)
+    rows = []
+    for link in links:
+        d = link.to_dict()
+        d["active"] = link.is_active()
+        rows.append(d)
+    _out({"count": len(rows), "links": rows}, as_json=not args.human)
+    return 0
+
+
+def cmd_stats(args) -> int:
+    """查看某链接访问统计"""
+    svc = ShortLinkService(db_path=args.db)
+    stats = svc.get_stats(args.code)
+    if stats is None:
+        print(f"未找到 code={args.code}", file=sys.stderr)
+        return 1
+    _out(stats, as_json=not args.human)
+    return 0
+
+
+def cmd_purge(args) -> int:
+    """清理过期记录"""
+    svc = ShortLinkService(db_path=args.db)
+    n = svc.purge_expired()
+    _out({"purged": n}, as_json=not args.human)
+    return 0
+
+
+def build_parser() -> argparse.ArgumentParser:
+    p = argparse.ArgumentParser(
+        prog="gaokao-shortlink",
+        description="T7.1 短链接生成器 (base62 + SQLite)",
+    )
+    p.add_argument(
+        "--db",
+        default=str(DEFAULT_DB_PATH),
+        help=f"SQLite 数据库路径 (默认: {DEFAULT_DB_PATH})",
+    )
+    p.add_argument(
+        "--base-url",
+        default="http://localhost:8000",
+        help="用于构造 /s/{code} 完整 URL (默认 http://localhost:8000)",
+    )
+    p.add_argument(
+        "--human", action="store_true",
+        help="人类可读输出 (默认 JSON)",
+    )
+    sub = p.add_subparsers(dest="cmd", required=True)
+
+    # ---- create ----
+    pc = sub.add_parser("create", help="创建一条短链接")
+    pc.add_argument("--report-id", required=True, help="关联报告 ID")
+    pc.add_argument("--owner", default="anonymous", help="创建者 ID")
+    pc.add_argument(
+        "--permission", default=PERM_COMMENT, choices=sorted(VALID_PERMISSIONS),
+        help=f"权限 (默认 {PERM_COMMENT}; {', '.join(sorted(VALID_PERMISSIONS))})",
+    )
+    pc.add_argument("--password", help="访问密码 (可选)")
+    pc.add_argument("--ttl-seconds", type=int, help="有效期(秒), 与 --ttl-days 互斥")
+    pc.add_argument("--ttl-days", type=int, help="有效期(天), 与 --ttl-seconds 互斥")
+    pc.add_argument("--length", type=int, default=6, help="短码长度 (4-16, 默认 6)")
+    pc.add_argument("--note", help="备注")
+    pc.set_defaults(func=cmd_create)
+
+    # ---- resolve ----
+    pr = sub.add_parser("resolve", help="解析短链接")
+    pr.add_argument("code", help="短码, 如 ABC123")
+    pr.add_argument("--password", help="访问密码")
+    pr.add_argument(
+        "--dry-run", action="store_true",
+        help="不记录访问 (查询但不计数)",
+    )
+    pr.set_defaults(func=cmd_resolve)
+
+    # ---- revoke ----
+    px = sub.add_parser("revoke", help="撤销短链接")
+    px.add_argument("code", help="短码")
+    px.add_argument("--owner", help="owner 校验 (可选, 不传则不强校)")
+    px.set_defaults(func=cmd_revoke)
+
+    # ---- list ----
+    pl = sub.add_parser("list", help="列出某报告/某用户的链接")
+    pl.add_argument("--report", help="按 report_id 过滤")
+    pl.add_argument("--owner", help="按 owner_id 过滤")
+    pl.add_argument("--limit", type=int, default=100, help="最多返回条数")
+    pl.set_defaults(func=cmd_list)
+
+    # ---- stats ----
+    ps = sub.add_parser("stats", help="查看短链接统计")
+    ps.add_argument("code", help="短码")
+    ps.set_defaults(func=cmd_stats)
+
+    # ---- purge ----
+    pp = sub.add_parser("purge", help="清理过期记录")
+    pp.set_defaults(func=cmd_purge)
+
+    return p
+
+
+def main(argv=None) -> int:
+    parser = build_parser()
+    args = parser.parse_args(argv)
+    return args.func(args)
+
+
+if __name__ == "__main__":
+    sys.exit(main())
