@@ -4,6 +4,29 @@
 
 ---
 
+## v2.1 (开发中)
+
+### 🚧 进行中
+
+#### 新增（T10.1 已完成）
+
+- ✨ **GitHub Actions CI 流水线**
+  - 自动化测试（push / pull_request 触发）
+  - 多 Python 版本矩阵（3.10 / 3.11 / 3.12）
+  - pytest + pytest-cov 覆盖率报告（XML 产物供 T10.2 codecov 集成）
+  - pip 依赖缓存（加速运行）
+- ✨ `requirements-dev.txt` — 测试依赖（pytest / pytest-cov / pytest-timeout / pytest-xdist）
+- ✨ `pytest.ini` — 统一本地与 CI 测试发现配置
+- ✨ README 顶部 CI 状态徽章
+
+### 📅 计划中
+
+- T10.2 codecov 集成 + 覆盖率徽章
+- T10.3 多仓库同步脚本
+- T5.5 覆盖率硬门槛（核心 ≥80% / 整体 ≥60%）
+
+---
+
 ## v2.0 (2026-06-11)
 
 ### 🎉 重大变化
