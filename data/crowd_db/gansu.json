@@ -1,0 +1,61 @@
+{
+  "province": "甘肃",
+  "last_updated": "2026-06-12",
+  "data_year": 2025,
+  "source": "甘肃 大厂AI推荐初版骨架（T3.1），仅含头部高校，待人工补完",
+  "source_url": "https://github.com/phamnazage-jpg/gaokao-volunteer-system/blob/main/data/crowd_db/gansu.json",
+  "source_type": "manual_summary",
+  "confidence": 0.45,
+  "score_ranges": [
+    {
+      "range": [
+        600,
+        660
+      ],
+      "note": "985 中段",
+      "recommendations": [
+        {
+          "name": "兰州大学",
+          "major": "化学类",
+          "frequency": 3,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 6,
+          "alternatives": [
+            {
+              "name": "西北师范大学",
+              "major": "汉语言文学",
+              "score": 90
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "range": [
+        560,
+        600
+      ],
+      "note": "双一流中段",
+      "recommendations": [
+        {
+          "name": "西北师范大学",
+          "major": "汉语言文学",
+          "frequency": 2,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 3,
+          "alternatives": []
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,122 @@
+{
+  "province": "江苏",
+  "last_updated": "2026-06-12",
+  "data_year": 2025,
+  "source": "江苏 大厂AI推荐初版骨架（T3.1），仅含头部高校，待人工补完",
+  "source_url": "https://github.com/phamnazage-jpg/gaokao-volunteer-system/blob/main/data/crowd_db/jiangsu.json",
+  "source_type": "manual_summary",
+  "confidence": 0.45,
+  "score_ranges": [
+    {
+      "range": [
+        640,
+        700
+      ],
+      "note": "985 顶尖",
+      "recommendations": [
+        {
+          "name": "南京大学",
+          "major": "物理学类",
+          "frequency": 4,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 9,
+          "alternatives": [
+            {
+              "name": "东南大学",
+              "major": "建筑学",
+              "score": 96
+            }
+          ]
+        },
+        {
+          "name": "东南大学",
+          "major": "建筑学",
+          "frequency": 3,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 8,
+          "alternatives": []
+        }
+      ]
+    },
+    {
+      "range": [
+        600,
+        640
+      ],
+      "note": "985/211 中段",
+      "recommendations": [
+        {
+          "name": "南京航空航天大学",
+          "major": "航空航天类",
+          "frequency": 3,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 7,
+          "alternatives": []
+        },
+        {
+          "name": "南京理工大学",
+          "major": "武器发射工程",
+          "frequency": 2,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 5,
+          "alternatives": []
+        }
+      ]
+    },
+    {
+      "range": [
+        560,
+        600
+      ],
+      "note": "211 中段",
+      "recommendations": [
+        {
+          "name": "河海大学",
+          "major": "水利水电工程",
+          "frequency": 3,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 5,
+          "alternatives": []
+        },
+        {
+          "name": "南京师范大学",
+          "major": "汉语言文学",
+          "frequency": 3,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 6,
+          "alternatives": []
+        }
+      ]
+    }
+  ]
+}

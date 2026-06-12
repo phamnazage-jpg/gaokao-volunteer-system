@@ -1,0 +1,109 @@
+{
+  "province": "陕西",
+  "last_updated": "2026-06-12",
+  "data_year": 2025,
+  "source": "陕西 大厂AI推荐初版骨架（T3.1），仅含头部高校，待人工补完",
+  "source_url": "https://github.com/phamnazage-jpg/gaokao-volunteer-system/blob/main/data/crowd_db/shaanxi.json",
+  "source_type": "manual_summary",
+  "confidence": 0.45,
+  "score_ranges": [
+    {
+      "range": [
+        640,
+        700
+      ],
+      "note": "西交西工段",
+      "recommendations": [
+        {
+          "name": "西安交通大学",
+          "major": "能源与动力工程",
+          "frequency": 4,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 10,
+          "alternatives": [
+            {
+              "name": "西北工业大学",
+              "major": "航空航天类",
+              "score": 97
+            }
+          ]
+        },
+        {
+          "name": "西北工业大学",
+          "major": "航空航天类",
+          "frequency": 3,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 8,
+          "alternatives": []
+        }
+      ]
+    },
+    {
+      "range": [
+        600,
+        640
+      ],
+      "note": "985/211 中段",
+      "recommendations": [
+        {
+          "name": "西安电子科技大学",
+          "major": "电子信息工程",
+          "frequency": 3,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 8,
+          "alternatives": []
+        },
+        {
+          "name": "长安大学",
+          "major": "交通运输",
+          "frequency": 2,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 5,
+          "alternatives": []
+        }
+      ]
+    },
+    {
+      "range": [
+        560,
+        600
+      ],
+      "note": "211 中段",
+      "recommendations": [
+        {
+          "name": "陕西师范大学",
+          "major": "汉语言文学",
+          "frequency": 3,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 5,
+          "alternatives": []
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,87 @@
+{
+  "province": "天津",
+  "last_updated": "2026-06-12",
+  "data_year": 2025,
+  "source": "天津 大厂AI推荐初版骨架（T3.1），仅含头部高校，待人工补完",
+  "source_url": "https://github.com/phamnazage-jpg/gaokao-volunteer-system/blob/main/data/crowd_db/tianjin.json",
+  "source_type": "manual_summary",
+  "confidence": 0.45,
+  "score_ranges": [
+    {
+      "range": [
+        620,
+        680
+      ],
+      "note": "985 中段",
+      "recommendations": [
+        {
+          "name": "南开大学",
+          "major": "数学类",
+          "frequency": 4,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 8,
+          "alternatives": [
+            {
+              "name": "天津大学",
+              "major": "化工与制药类",
+              "score": 95
+            }
+          ]
+        },
+        {
+          "name": "天津大学",
+          "major": "化工与制药类",
+          "frequency": 3,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 6,
+          "alternatives": []
+        }
+      ]
+    },
+    {
+      "range": [
+        580,
+        620
+      ],
+      "note": "211 中段",
+      "recommendations": [
+        {
+          "name": "天津医科大学",
+          "major": "临床医学",
+          "frequency": 3,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 8,
+          "alternatives": []
+        },
+        {
+          "name": "河北工业大学",
+          "major": "电气工程",
+          "frequency": 2,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 5,
+          "alternatives": []
+        }
+      ]
+    }
+  ]
+}

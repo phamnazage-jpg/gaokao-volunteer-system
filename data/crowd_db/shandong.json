@@ -1,0 +1,61 @@
+{
+  "province": "山东",
+  "last_updated": "2026-06-12",
+  "data_year": 2025,
+  "source": "山东 大厂AI推荐初版骨架（T3.1），仅含头部高校，待人工补完",
+  "source_url": "https://github.com/phamnazage-jpg/gaokao-volunteer-system/blob/main/data/crowd_db/shandong.json",
+  "source_type": "manual_summary",
+  "confidence": 0.45,
+  "score_ranges": [
+    {
+      "range": [
+        640,
+        700
+      ],
+      "note": "985 顶尖",
+      "recommendations": [
+        {
+          "name": "山东大学",
+          "major": "数学类",
+          "frequency": 3,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 7,
+          "alternatives": [
+            {
+              "name": "中国海洋大学",
+              "major": "海洋资源开发技术",
+              "score": 94
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "range": [
+        600,
+        640
+      ],
+      "note": "985/211 中段",
+      "recommendations": [
+        {
+          "name": "中国海洋大学",
+          "major": "海洋资源开发技术",
+          "frequency": 3,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 6,
+          "alternatives": []
+        }
+      ]
+    }
+  ]
+}

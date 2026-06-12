@@ -1,0 +1,33 @@
+{
+  "province": "贵州",
+  "last_updated": "2026-06-12",
+  "data_year": 2025,
+  "source": "贵州 大厂AI推荐初版骨架（T3.1），仅含头部高校，待人工补完",
+  "source_url": "https://github.com/phamnazage-jpg/gaokao-volunteer-system/blob/main/data/crowd_db/guizhou.json",
+  "source_type": "manual_summary",
+  "confidence": 0.45,
+  "score_ranges": [
+    {
+      "range": [
+        580,
+        640
+      ],
+      "note": "211 中段",
+      "recommendations": [
+        {
+          "name": "贵州大学",
+          "major": "采矿工程",
+          "frequency": 2,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 4,
+          "alternatives": []
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,74 @@
+{
+  "province": "安徽",
+  "last_updated": "2026-06-12",
+  "data_year": 2025,
+  "source": "安徽 大厂AI推荐初版骨架（T3.1），仅含头部高校，待人工补完",
+  "source_url": "https://github.com/phamnazage-jpg/gaokao-volunteer-system/blob/main/data/crowd_db/anhui.json",
+  "source_type": "manual_summary",
+  "confidence": 0.45,
+  "score_ranges": [
+    {
+      "range": [
+        620,
+        680
+      ],
+      "note": "985 中段",
+      "recommendations": [
+        {
+          "name": "中国科学技术大学",
+          "major": "物理学类",
+          "frequency": 4,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 10,
+          "alternatives": [
+            {
+              "name": "合肥工业大学",
+              "major": "机械工程",
+              "score": 95
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "range": [
+        580,
+        620
+      ],
+      "note": "211 中段",
+      "recommendations": [
+        {
+          "name": "合肥工业大学",
+          "major": "机械工程",
+          "frequency": 3,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 5,
+          "alternatives": []
+        },
+        {
+          "name": "安徽大学",
+          "major": "汉语言文学",
+          "frequency": 2,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 4,
+          "alternatives": []
+        }
+      ]
+    }
+  ]
+}

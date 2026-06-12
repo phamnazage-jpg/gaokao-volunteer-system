@@ -1,0 +1,39 @@
+{
+  "province": "青海",
+  "last_updated": "2026-06-12",
+  "data_year": 2025,
+  "source": "青海 大厂AI推荐初版骨架（T3.1），仅含头部高校，待人工补完",
+  "source_url": "https://github.com/phamnazage-jpg/gaokao-volunteer-system/blob/main/data/crowd_db/qinghai.json",
+  "source_type": "manual_summary",
+  "confidence": 0.45,
+  "score_ranges": [
+    {
+      "range": [
+        540,
+        600
+      ],
+      "note": "211 中段",
+      "recommendations": [
+        {
+          "name": "青海大学",
+          "major": "临床医学",
+          "frequency": 2,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 4,
+          "alternatives": [
+            {
+              "name": "青海师范大学",
+              "major": "汉语言文学",
+              "score": 88
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

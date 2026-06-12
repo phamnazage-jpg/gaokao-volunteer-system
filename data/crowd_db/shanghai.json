@@ -1,0 +1,122 @@
+{
+  "province": "上海",
+  "last_updated": "2026-06-12",
+  "data_year": 2025,
+  "source": "上海 大厂AI推荐初版骨架（T3.1），仅含头部高校，待人工补完",
+  "source_url": "https://github.com/phamnazage-jpg/gaokao-volunteer-system/blob/main/data/crowd_db/shanghai.json",
+  "source_type": "manual_summary",
+  "confidence": 0.45,
+  "score_ranges": [
+    {
+      "range": [
+        660,
+        700
+      ],
+      "note": "复交段",
+      "recommendations": [
+        {
+          "name": "复旦大学",
+          "major": "经济学类",
+          "frequency": 4,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 10,
+          "alternatives": [
+            {
+              "name": "上海交通大学",
+              "major": "工科试验班",
+              "score": 98
+            }
+          ]
+        },
+        {
+          "name": "上海交通大学",
+          "major": "电子信息类",
+          "frequency": 4,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 10,
+          "alternatives": []
+        }
+      ]
+    },
+    {
+      "range": [
+        620,
+        660
+      ],
+      "note": "985 中段",
+      "recommendations": [
+        {
+          "name": "同济大学",
+          "major": "建筑学",
+          "frequency": 3,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 8,
+          "alternatives": []
+        },
+        {
+          "name": "华东师范大学",
+          "major": "汉语言文学",
+          "frequency": 3,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 6,
+          "alternatives": []
+        }
+      ]
+    },
+    {
+      "range": [
+        580,
+        620
+      ],
+      "note": "211 中段",
+      "recommendations": [
+        {
+          "name": "上海财经大学",
+          "major": "金融学",
+          "frequency": 4,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 10,
+          "alternatives": []
+        },
+        {
+          "name": "上海外国语大学",
+          "major": "翻译",
+          "frequency": 3,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 7,
+          "alternatives": []
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,81 @@
+{
+  "province": "河北",
+  "last_updated": "2026-06-12",
+  "data_year": 2025,
+  "source": "河北 大厂AI推荐初版骨架（T3.1），仅含头部高校，待人工补完",
+  "source_url": "https://github.com/phamnazage-jpg/gaokao-volunteer-system/blob/main/data/crowd_db/hebei.json",
+  "source_type": "manual_summary",
+  "confidence": 0.45,
+  "score_ranges": [
+    {
+      "range": [
+        620,
+        680
+      ],
+      "note": "985 中段",
+      "recommendations": [
+        {
+          "name": "华北电力大学(北京)",
+          "major": "电气工程",
+          "frequency": 3,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 8,
+          "alternatives": []
+        },
+        {
+          "name": "东北大学",
+          "major": "自动化",
+          "frequency": 3,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 6,
+          "alternatives": []
+        }
+      ]
+    },
+    {
+      "range": [
+        580,
+        620
+      ],
+      "note": "211 中段",
+      "recommendations": [
+        {
+          "name": "河北工业大学",
+          "major": "电气工程",
+          "frequency": 3,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 6,
+          "alternatives": []
+        },
+        {
+          "name": "燕山大学",
+          "major": "机械工程",
+          "frequency": 2,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 4,
+          "alternatives": []
+        }
+      ]
+    }
+  ]
+}

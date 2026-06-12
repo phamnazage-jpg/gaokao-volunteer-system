@@ -54,3 +54,27 @@ def test_crowd_recommendation_dataclass():
     )
     assert rec.frequency == 4
     assert rec.risk_level == "high"  # frequency=4 应该是高风险
+
+
+def test_crowd_recommendation_risk_level_full_range():
+    """验证 CrowdRecommendation.risk_level 在 frequency 0-5 全段与 detector 一致
+
+    频率边界（与 crowd_detector._risk_level_from_frequency 保持一致）：
+    - 0 → 'none' (不构成风险)
+    - 1 → 'low'
+    - 2, 3 → 'medium'
+    - 4, 5 → 'high'
+    """
+    expected = {0: "none", 1: "low", 2: "medium", 3: "medium", 4: "high", 5: "high"}
+    for freq, want in expected.items():
+        rec = CrowdRecommendation(
+            name="x",
+            major="y",
+            frequency=freq,
+            platforms=[],
+            predicted_increase=0,
+            alternatives=[],
+        )
+        assert rec.risk_level == want, (
+            f"frequency={freq} → expected '{want}', got '{rec.risk_level}'"
+        )

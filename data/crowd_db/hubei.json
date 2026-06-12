@@ -1,0 +1,109 @@
+{
+  "province": "湖北",
+  "last_updated": "2026-06-12",
+  "data_year": 2025,
+  "source": "湖北 大厂AI推荐初版骨架（T3.1），仅含头部高校，待人工补完",
+  "source_url": "https://github.com/phamnazage-jpg/gaokao-volunteer-system/blob/main/data/crowd_db/hubei.json",
+  "source_type": "manual_summary",
+  "confidence": 0.45,
+  "score_ranges": [
+    {
+      "range": [
+        640,
+        700
+      ],
+      "note": "985 顶尖",
+      "recommendations": [
+        {
+          "name": "武汉大学",
+          "major": "测绘类",
+          "frequency": 3,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 8,
+          "alternatives": [
+            {
+              "name": "华中科技大学",
+              "major": "机械设计制造及其自动化",
+              "score": 97
+            }
+          ]
+        },
+        {
+          "name": "华中科技大学",
+          "major": "机械设计制造及其自动化",
+          "frequency": 4,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 10,
+          "alternatives": []
+        }
+      ]
+    },
+    {
+      "range": [
+        600,
+        640
+      ],
+      "note": "985 中段",
+      "recommendations": [
+        {
+          "name": "中国地质大学(武汉)",
+          "major": "地质学",
+          "frequency": 2,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 5,
+          "alternatives": []
+        },
+        {
+          "name": "武汉理工大学",
+          "major": "材料科学与工程",
+          "frequency": 3,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 6,
+          "alternatives": []
+        }
+      ]
+    },
+    {
+      "range": [
+        560,
+        600
+      ],
+      "note": "211 中段",
+      "recommendations": [
+        {
+          "name": "华中师范大学",
+          "major": "汉语言文学",
+          "frequency": 3,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 6,
+          "alternatives": []
+        }
+      ]
+    }
+  ]
+}

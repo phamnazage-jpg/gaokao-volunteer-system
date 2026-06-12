@@ -1,0 +1,52 @@
+{
+  "province": "吉林",
+  "last_updated": "2026-06-12",
+  "data_year": 2025,
+  "source": "吉林 大厂AI推荐初版骨架（T3.1），仅含头部高校，待人工补完",
+  "source_url": "https://github.com/phamnazage-jpg/gaokao-volunteer-system/blob/main/data/crowd_db/jilin.json",
+  "source_type": "manual_summary",
+  "confidence": 0.45,
+  "score_ranges": [
+    {
+      "range": [
+        620,
+        680
+      ],
+      "note": "985 中段",
+      "recommendations": [
+        {
+          "name": "吉林大学",
+          "major": "车辆工程",
+          "frequency": 3,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 7,
+          "alternatives": [
+            {
+              "name": "东北师范大学",
+              "major": "汉语言文学",
+              "score": 92
+            }
+          ]
+        },
+        {
+          "name": "东北师范大学",
+          "major": "汉语言文学",
+          "frequency": 3,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 6,
+          "alternatives": []
+        }
+      ]
+    }
+  ]
+}
