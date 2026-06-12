@@ -203,6 +203,33 @@
 - ✅ **测试验证**：data/orders/tests 全套 112 用例通过（含原有 80 + 新增 32）；全仓 344/344 通过；`ruff check` 0 warning；`ruff format --check` 3 文件已规范
 - 🔒 **与 T4.1 落盘加密的关系**：crypto.py 负责"落盘形态"（密文 + hash），masking.py 负责"展示形态"（部分遮罩），两者正交 — 落盘加密是底层保险，脱敏展示是上层最小特权
 
+#### 新增（T8.3 已完成）
+
+- ✨ **企业微信最小客户端**（`data/channel_sync/wecom_adapter.py`）
+  - `WeComBotClient.from_env()`：从 `GAOKAO_WECOM_BOT_KEY` / `GAOKAO_WECOM_API_BASE` / `GAOKAO_WECOM_TIMEOUT_SECONDS` 读取机器人 webhook 配置，缺失时 fail-fast
+  - `WeComAppClient.from_env()`：从 `GAOKAO_WECOM_CORP_ID` / `GAOKAO_WECOM_CORP_SECRET` / `GAOKAO_WECOM_AGENT_ID` / `GAOKAO_WECOM_API_BASE` / `GAOKAO_WECOM_TIMEOUT_SECONDS` 读取应用消息配置
+  - 机器人消息：`send_text(...)` 覆盖文本通知，支持 `mentioned_list` / `mentioned_mobile_list`
+  - 应用消息：`send_text(...)` 覆盖 `touser` / `toparty` / `totag` 文本推送，支持 `safe` 与重复消息检查参数
+  - access_token 自动缓存 + 提前刷新窗口：避免每次应用推送都重新拉 token
+  - 错误模型统一：HTTP 非 2xx、上游 `errcode != 0`、transport 异常、非 JSON 响应统一包装为 `WeComAPIError`
+- ✨ **企业微信集成测试**（`data/channel_sync/tests/test_wecom_adapter.py`）
+  - 覆盖机器人 webhook payload、应用 token 缓存/消息 payload、上游 errcode、transport 异常、环境变量缺失 fail-fast
+  - 同时补上 `WeChatClient` transport 异常包装回归，避免标准库 transport 网络错误直接泄漏原始异常
+
+#### 新增（T8.2 已完成）
+
+- ✨ **微信 SDK 最小客户端**（`data/channel_sync/wechat_adapter.py`）
+  - `WeChatClient.from_env()`：从 `GAOKAO_WECHAT_APP_ID` / `GAOKAO_WECHAT_APP_SECRET` / `GAOKAO_WECHAT_API_BASE` / `GAOKAO_WECHAT_TIMEOUT_SECONDS` 读取配置，缺失时 fail-fast
+  - access_token 自动缓存 + 提前刷新窗口：避免每次发送都重新拉 token，也避免临近过期 token 被继续复用
+  - 订阅消息：`send_subscribe_message(...)` 自动规范化 `data` 为 `{key: {value: ...}}` 形状，并透传 `page / miniprogram_state / lang`
+  - 客服消息：`send_custom_message(...)` / `send_custom_text(...)` 覆盖文本客服场景，支持可选 `kf_account`
+  - 纯标准库 HTTP：`UrllibTransport` + 可注入 `Transport` 协议，便于测试 fake transport 与后续 T8.3 复用
+  - 错误模型统一：HTTP 非 2xx、上游 `errcode != 0`、非 JSON 响应全部包装为 `WeChatAPIError`
+- ✨ **微信集成测试**（`data/channel_sync/tests/test_wechat_adapter.py`）
+  - 覆盖 token 缓存/刷新、订阅消息 payload、客服文本消息 payload、上游 errcode、HTTP 500、环境变量缺失 fail-fast
+  - `pytest --cov=data.channel_sync.wechat_adapter` 覆盖率 **90%**（8/8 通过）
+  - `pytest -q data/channel_sync/tests` → **75 passed**；`ruff check data/channel_sync/wechat_adapter.py data/channel_sync/tests/test_wechat_adapter.py data/channel_sync/__init__.py` → **All checks passed**
+
 #### 新增（T8.1 已完成）
 
 - ✨ **闲鱼 Webhook + poller 兜底同步**（`data/channel_sync/`）
