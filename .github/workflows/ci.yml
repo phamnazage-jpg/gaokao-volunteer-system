@@ -62,8 +62,7 @@ jobs:
           pytest --version
 
       - name: Run tests with coverage
-        # 覆盖率硬门槛（--cov-fail-under）由 T5.5 任务负责
-        # 本任务（T10.1）只生成 coverage.xml 供 T10.2 codecov 集成使用
+        # T5.5: 整体覆盖率 >=60%，核心模块（spec-checker + visual report）>=80%
         run: |
           pytest \
             --cov=admin \
@@ -72,7 +71,9 @@ jobs:
             --cov=scripts \
             --cov-report=term-missing \
             --cov-report=xml \
+            --cov-fail-under=60 \
             -v
+          python scripts/check_coverage_gate.py coverage.xml
 
       - name: Upload coverage artifact
         if: always() && matrix.python-version == '3.11' && hashFiles('coverage.xml') != ''
