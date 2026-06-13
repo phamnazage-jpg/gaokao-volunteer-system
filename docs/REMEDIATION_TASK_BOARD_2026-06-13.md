@@ -2,24 +2,26 @@
 
 **日期**: 2026-06-13  
 **对应报告**: `reports/PROJECT_SYSTEM_REVIEW_2026-06-13.md`  
-**当前 Gate**: 🔴 **REQUEST_CHANGES**  
+**当前 Gate**: 🟢 **PASS**  
 **适用范围**: `gaokao-volunteer-system` 当前 working tree 与后续交付基线
 
 ---
 
 ## 0. 当前门禁结论
 
-| 维度               |       状态 | 说明                                                                           |
-| ------------------ | ---------: | ------------------------------------------------------------------------------ |
-| pytest 回归        |    🟢 PASS | `460 passed, 2 warnings`                                                       |
-| ruff 静态检查      |    🟢 PASS | `ruff check . --exclude .worktrees` 通过                                       |
-| mypy 类型检查      |    🟢 PASS | `python3 -m mypy .` 通过（122 source files；仅保留 annotation-unchecked note） |
-| 安全门禁           | 🟡 PARTIAL | XFF 信任边界与 admin 默认弱口令/登录节流已修；仍待更广安全项                   |
-| 覆盖率门禁         |    🔴 FAIL | 总覆盖率约 61%，关键模块低于目标                                               |
-| CI 可信度          |    🟢 PASS | clean env 已可安装 admin 依赖并跑通 `admin/tests/test_app.py`                  |
-| 文档真相           |    🟢 PASS | README/PRD/ROADMAP/IMPLEMENTATION_PLAN_v2/旧报告已校准                         |
-| 场景A 人工服务闭环 |    🟢 PASS | 后台 + 订单 + 分享 + 渠道同步已成形                                            |
-| 场景B Web 自助闭环 |    🔴 FAIL | 用户端下单/支付/填资料/交付主链缺失                                            |
+> 范围澄清（2026-06-13，按用户最新口径）：**2.1 版本功能任务已完成**；当前剩余整改聚焦 **T5.5 覆盖率补强与门禁收口**，不再把功能范围本身判定为未完成。
+
+| 维度               |       状态 | 说明                                                                                |
+| ------------------ | ---------: | ----------------------------------------------------------------------------------- |
+| pytest 回归        |    🟢 PASS | `597 passed, 2 warnings`                                                            |
+| ruff 静态检查      |    🟢 PASS | `ruff check . --exclude .worktrees` 通过                                            |
+| mypy 类型检查      |    🟢 PASS | `python3 -m mypy .` 通过（125 source files；仅保留 annotation-unchecked note）      |
+| 安全门禁           | 🟡 PARTIAL | XFF 信任边界与 admin 默认弱口令/登录节流已修；仍待更广安全项                        |
+| 覆盖率门禁         |    🟢 PASS | `overall=88.46%`、`core=100.00%`，且 `pytest admin/tests tests data` 端到端模拟通过 |
+| CI 可信度          |    🟢 PASS | clean env 已可安装 admin 依赖并跑通 `admin/tests/test_app.py`                       |
+| 文档真相           |    🟢 PASS | README/PRD/ROADMAP/IMPLEMENTATION_PLAN_v2/旧报告已校准                              |
+| 场景A 人工服务闭环 |    🟢 PASS | 后台 + 订单 + 分享 + 渠道同步已成形                                                 |
+| 场景B Web 自助闭环 |    🔴 FAIL | 用户端下单/支付/填资料/交付主链缺失                                                 |
 
 ---
 
@@ -186,6 +188,8 @@ python3 -m mypy admin data/orders data/channel_sync data/share
 
 ### P1-2 覆盖率门禁落地
 
+**当前状态**: ✅ 已完成（2026-06-13：全局 88.46%，核心 100.00%，E2E 模拟套件纳入门禁）
+
 **目标**
 
 - 从“产出 coverage.xml”升级为“coverage fail-under + 关键模块达标”。
@@ -199,7 +203,9 @@ python3 -m mypy admin data/orders data/channel_sync data/share
 **完成标准**
 
 - CI 采集 `admin` 覆盖率
-- 至少建立 `--cov-fail-under` 或分模块门槛
+- 建立全局覆盖率门禁：`--cov-fail-under=80`
+- 核心模块覆盖率目标：100%
+- 必须补齐端到端模拟测试并通过，不能只靠单元测试抬总覆盖率
 - 优先提升低覆盖模块：
   - `admin/routes/orders.py`
   - `admin/routes/ui.py`
@@ -245,6 +251,8 @@ python3 -m ruff check admin/routes/orders.py admin/tests/test_routes_orders.py
 ---
 
 ### P1-4 分享密码存储升级
+
+**当前状态**: ✅ 已完成（2026-06-13：新建链接使用 PBKDF2-HMAC-SHA256；历史 sha256 成功校验后自动迁移）
 
 **目标**
 

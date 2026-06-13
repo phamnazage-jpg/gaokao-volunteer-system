@@ -1,6 +1,6 @@
 # codecov 配置 — T10.2
 # 与 docs/IMPLEMENTATION_PLAN_v2.md T5.5 覆盖率门槛对齐：
-#   整体 ≥ 60% / 核心 ≥ 80%
+#   整体 ≥ 80% / 核心 = 100%
 # PR 阶段加 1% 自动缓冲避免噪声红灯；T5.5 启用 --cov-fail-under 后 CI 仍守硬门槛
 codecov:
   require_ci_to_pass: false # CI 失败不阻塞 codecov 上传（公网/镜像场景）
@@ -9,16 +9,16 @@ codecov:
   coverage:
     precision: 2 # 徽章显示 2 位小数
     round: down
-    range: "60...80" # 徽章颜色区间：红→黄→绿
+    range: "80...100" # 徽章颜色区间：红→黄→绿
     status:
       project:
         default:
-          target: 60% # 整体目标（与 T5.5 --cov-fail-under 对齐）
+          target: 80% # 整体目标（与 T5.5 --cov-fail-under 对齐）
           threshold: 1% # PR 浮动容忍 1%（防噪声）
           if_ci_failed: error # CI 失败时降级为 error（不阻断 PR）
-        # 核心模块单独门槛 — 与 T5.5 "核心 ≥80%" 对齐
+        # 核心模块单独门槛 — 与 T5.5 "核心 =100%" 对齐
         core:
-          target: 80%
+          target: 100%
           threshold: 2%
           paths:
             - "skills/gaokao-spec-checker/.*"

@@ -62,16 +62,16 @@ jobs:
           pytest --version
 
       - name: Run tests with coverage
-        # T5.5: 整体覆盖率 >=60%，核心模块（spec-checker + visual report）>=80%
+        # T5.5: 整体覆盖率 >=80%，核心模块（spec-checker + visual report）=100%，且端到端模拟测试必须通过
         run: |
-          pytest \
+          pytest admin/tests tests data \
             --cov=admin \
             --cov=data \
             --cov=skills \
             --cov=scripts \
             --cov-report=term-missing \
             --cov-report=xml \
-            --cov-fail-under=60 \
+            --cov-fail-under=80 \
             -v
           python scripts/check_coverage_gate.py coverage.xml
 

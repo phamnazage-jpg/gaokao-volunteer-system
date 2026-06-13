@@ -193,14 +193,13 @@ PROVINCE_RULES = {
         "official_url": "https://ea.hainan.gov.cn/",
         "exam_subject_total": 900,
     },
-    
     # 专业+学校模式
     "浙江": {
         "mode": "专业+学校",
         "batch": "普通批",
         "max_volunteers": 80,
         "max_majors_per_group": 1,  # 每个志愿只填1个专业
-        "has_adjustment": False,    # 无调剂
+        "has_adjustment": False,  # 无调剂
         "adjustment_scope": "无",
         "retrieval_rule": "分数优先、遵循志愿、一次投档",
         "collection_count": 1,
@@ -299,7 +298,6 @@ PROVINCE_RULES = {
         "official_url": "https://www.jleea.com.cn/",
         "exam_subject_total": 750,
     },
-    
     # 传统模式
     "河南": {
         "mode": "传统",
@@ -412,14 +410,14 @@ def detect_province(text):
     for prov in PROVINCE_RULES.keys():
         if prov in text:
             return prov
-    
+
     # 2. 匹配简称
     for alias, prov in PROVINCE_ALIASES.items():
         # 排除"其他"等含简称的词
         pattern = f"({alias}[省市区]?)|(省{alias})"
         if re.search(pattern, text):
             return prov
-    
+
     # 3. 匹配省份全称
     prov_full_names = {
         "北京": "北京",
@@ -454,11 +452,11 @@ def detect_province(text):
         "宁夏": "宁夏",
         "新疆": "新疆",
     }
-    
+
     for full_name in prov_full_names.keys():
         if full_name in text:
-            return full_name if full_name in PROVINCE_RULES else None
-    
+            return full_name
+
     return None
 
 
@@ -467,7 +465,7 @@ class GaokaoSpecCheckerV2:
     高考志愿填报规范检查器 V2.0
     支持多省份自动识别
     """
-    
+
     def __init__(self, province=None):
         self.province = province
         self.province_rule = None
@@ -476,7 +474,7 @@ class GaokaoSpecCheckerV2:
             "serious": [],
             "warning": [],
         }
-        
+
     def auto_detect_and_check(self, text):
         """
         自动检测省份并检查
@@ -484,15 +482,15 @@ class GaokaoSpecCheckerV2:
         # 自动检测省份
         if not self.province:
             self.province = detect_province(text)
-        
+
         if not self.province:
             return self._report_no_province()
-        
+
         if self.province not in PROVINCE_RULES:
             return self._report_unsupported_province()
-        
+
         self.province_rule = PROVINCE_RULES[self.province]
-        
+
         # 执行检查
         self._check_volunteer_unit(text)
         self._check_volunteer_count(text)
@@ -501,14 +499,14 @@ class GaokaoSpecCheckerV2:
         self._check_data_accuracy(text)
         self._check_subject_requirements(text)
         self._check_risk_disclosure(text)
-        
+
         return self._generate_report()
-    
+
     def _check_volunteer_unit(self, text):
         """检查志愿单位"""
         max_v = self.province_rule["max_volunteers"]
         mode = self.province_rule["mode"]
-        
+
         if mode == "院校专业组":
             # 检查1：是否说"学校"或"院校"
             wrong_patterns = [
@@ -521,47 +519,47 @@ class GaokaoSpecCheckerV2:
                     self.errors["fatal"].append({
                         "rule": f"志愿单位错误（{self.province}）",
                         "description": f"{self.province}是{mode}模式，应该是{self.province_rule['max_volunteers']}个'{mode}'，不是{max_v}个'学校'或'院校'",
-                        "fix": f"改为'{max_v}个院校专业组'"
+                        "fix": f"改为'{max_v}个院校专业组'",
                     })
                     break
-            
+
             # 检查2：模式本身
             if "院校专业组" not in text and "专业组" not in text:
                 self.errors["serious"].append({
                     "rule": f"未提及'{mode}'概念（{self.province}）",
                     "description": f"{self.province}采用{mode}模式，应在方案中明确",
-                    "fix": "明确使用'院校专业组'概念"
+                    "fix": "明确使用'院校专业组'概念",
                 })
-        
+
         elif mode == "专业+学校":
             # 浙江、山东等模式
             if "专业组" in text and "组内" in text:
                 self.errors["fatal"].append({
                     "rule": f"模式错误（{self.province}）",
                     "description": f"{self.province}是'专业+学校'模式，不是'院校专业组'模式，无调剂选项",
-                    "fix": "改为'专业+学校'，删除'组内服从'等概念"
+                    "fix": "改为'专业+学校'，删除'组内服从'等概念",
                 })
-            
+
             if "调剂" in text and "无" not in text.split("调剂")[0][-10:]:
                 # 简单检测：如果提到调剂但没说"无"
                 if "不服从" not in text and "无需" not in text and "没有" not in text:
                     self.errors["serious"].append({
                         "rule": f"调剂概念错误（{self.province}）",
                         "description": f"{self.province}采用'专业+学校'模式，**没有调剂选项**",
-                        "fix": "删除所有'服从调剂'相关描述"
+                        "fix": "删除所有'服从调剂'相关描述",
                     })
-    
+
     def _check_volunteer_count(self, text):
         """检查志愿数量"""
         max_v = self.province_rule["max_volunteers"]
-        
+
         # 提取方案中提到的志愿数
         count_patterns = [
-            r'共(\d+)个',
-            r'填报(\d+)个',
-            r'填了(\d+)个',
+            r"共(\d+)个",
+            r"填报(\d+)个",
+            r"填了(\d+)个",
         ]
-        
+
         for pattern in count_patterns:
             matches = re.findall(pattern, text)
             for match in matches:
@@ -570,39 +568,39 @@ class GaokaoSpecCheckerV2:
                     self.errors["fatal"].append({
                         "rule": f"志愿数量超标（{self.province}）",
                         "description": f"方案提到{count}个志愿，超过{self.province}本批次的{max_v}个上限",
-                        "fix": f"志愿数不超过{max_v}个"
+                        "fix": f"志愿数不超过{max_v}个",
                     })
                 elif count < max_v * 0.5 and "少" not in text:
-                    self.warnings = getattr(self, 'warnings', [])
+                    self.warnings = getattr(self, "warnings", [])
                     self.warnings.append({
                         "rule": f"志愿数量较少（{self.province}）",
                         "description": f"方案只填了{count}个，建议填满{max_v}个（除非明确不需要）",
-                        "fix": f"建议填满{max_v}个志愿"
+                        "fix": f"建议填满{max_v}个志愿",
                     })
-    
+
     def _check_majors_per_group(self, text):
         """检查每组专业数"""
         max_m = self.province_rule["max_majors_per_group"]
         mode = self.province_rule["mode"]
-        
+
         if mode == "院校专业组" and max_m > 1:
             # 院校专业组模式：每组最多6个专业
             if "6个专业" not in text and "六个专业" not in text:
                 self.errors["warning"].append({
                     "rule": f"专业数说明缺失（{self.province}）",
                     "description": f"未说明每个专业组最多{max_m}个专业",
-                    "fix": f"明确说明每组最多{max_m}个专业"
+                    "fix": f"明确说明每组最多{max_m}个专业",
                 })
-        
+
         elif mode == "专业+学校":
             # 专业+学校模式：每志愿1个专业
             if "1个专业" not in text and "1所学校" not in text:
                 self.errors["warning"].append({
                     "rule": f"专业数说明缺失（{self.province}）",
                     "description": f"未说明{self.province}是'专业+学校'模式，每志愿只填1个专业",
-                    "fix": "明确'每个志愿1个专业'"
+                    "fix": "明确'每个志愿1个专业'",
                 })
-    
+
     def _check_adjustment_rule(self, text):
         """检查调剂规则"""
         if not self.province_rule["has_adjustment"]:
@@ -611,7 +609,7 @@ class GaokaoSpecCheckerV2:
                 self.errors["fatal"].append({
                     "rule": f"调剂规则错误（{self.province}）",
                     "description": f"{self.province}采用'专业+学校'模式，**没有调剂选项**",
-                    "fix": "删除所有'服从调剂'相关描述"
+                    "fix": "删除所有'服从调剂'相关描述",
                 })
         else:
             # 有调剂模式
@@ -621,52 +619,57 @@ class GaokaoSpecCheckerV2:
                     self.errors["fatal"].append({
                         "rule": f"调剂范围错误（{self.province}）",
                         "description": f"{self.province}的调剂范围是'组内专业'，不是'全部专业'",
-                        "fix": "改为'组内专业调剂'"
+                        "fix": "改为'组内专业调剂'",
                     })
-    
+
     def _check_data_accuracy(self, text):
         """检查数据准确性"""
         # 主观概率
-        prob_pattern = r'(\d{2,3})\s*%\s*[\u4e00-\u9fa5]*(?:录取|概率|机会|把握)'
+        prob_pattern = r"(\d{2,3})\s*%\s*[\u4e00-\u9fa5]*(?:录取|概率|机会|把握)"
         matches = re.findall(prob_pattern, text)
         if matches:
             self.errors["serious"].append({
                 "rule": "主观概率估算",
                 "description": f"方案中含主观概率{set(matches)}，未基于真实数据",
-                "fix": "删除主观概率，改用2025年位次作为参考"
+                "fix": "删除主观概率，改用2025年位次作为参考",
             })
-        
+
         # 2026年位次未说明
-        if "位次" in text and "2026" in text and "待官方" not in text and "以官方为准" not in text:
+        if (
+            "位次" in text
+            and "2026" in text
+            and "待官方" not in text
+            and "以官方为准" not in text
+        ):
             self.errors["serious"].append({
                 "rule": "2026年位次",
                 "description": "2026年位次待官方公布（6月25日出分后），不应假设",
-                "fix": "明确'2026年位次待官方公布'"
+                "fix": "明确'2026年位次待官方公布'",
             })
-    
+
     def _check_subject_requirements(self, text):
         """检查选科要求"""
         if self.province_rule["subject_mode"] == "3+1+2":
             # 检查是否有"物+化+生"一刀切
-            if re.search(r'会计.{0,20}物.{0,5}化.{0,5}生', text):
+            if re.search(r"会计.{0,20}物.{0,5}化.{0,5}生", text):
                 self.errors["serious"].append({
                     "rule": "选科要求一刀切",
                     "description": "财经类专业选科要求因校而异，不能假设都要求'物+化+生'",
-                    "fix": "逐校核实选科要求"
+                    "fix": "逐校核实选科要求",
                 })
-    
+
     def _check_risk_disclosure(self, text):
         """检查风险提示"""
         risk_keywords = ["退档", "风险", "调剂", "体检", "单科"]
         has_risk = any(kw in text for kw in risk_keywords)
-        
+
         if not has_risk:
             self.errors["serious"].append({
                 "rule": "风险提示缺失",
                 "description": "方案未明确说明退档风险（体检/单科/不服从调剂）",
-                "fix": "增加风险提示章节"
+                "fix": "增加风险提示章节",
             })
-    
+
     def _report_no_province(self):
         """未检测到省份的报告"""
         return """
@@ -688,7 +691,7 @@ class GaokaoSpecCheckerV2:
   "湖南考生，578分..."
   "浙江省，630分..."
 """
-    
+
     def _report_unsupported_province(self):
         """省份不支持的报告"""
         return f"""
@@ -700,12 +703,12 @@ class GaokaoSpecCheckerV2:
 当前检查器暂不支持{self.province}的具体规则检查。
 
 【已支持的省份】
-{', '.join(sorted(PROVINCE_RULES.keys()))}
+{", ".join(sorted(PROVINCE_RULES.keys()))}
 
 【后续计划】
 将持续添加更多省份支持。
 """
-    
+
     def _generate_report(self):
         """生成检查报告"""
         report = f"""
@@ -713,72 +716,72 @@ class GaokaoSpecCheckerV2:
 ║             ✅ 志愿方案规范检查报告                              ║
 ╠══════════════════════════════════════════════════════════════════╣
 ║  检测省份：{self.province}                                              ║
-║  志愿模式：{self.province_rule['mode']}                                       ║
-║  志愿数量：{self.province_rule['max_volunteers']}个（{self.province_rule['batch']}）                    ║
-║  每组专业：{self.province_rule['max_majors_per_group']}个                                            ║
-║  调剂选项：{'有' if self.province_rule['has_adjustment'] else '无'}                                              ║
-║  调剂范围：{self.province_rule['adjustment_scope']}                                       ║
-║  选科模式：{self.province_rule['subject_mode']}                                          ║
-║  检查时间：{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}                             ║
+║  志愿模式：{self.province_rule["mode"]}                                       ║
+║  志愿数量：{self.province_rule["max_volunteers"]}个（{self.province_rule["batch"]}）                    ║
+║  每组专业：{self.province_rule["max_majors_per_group"]}个                                            ║
+║  调剂选项：{"有" if self.province_rule["has_adjustment"] else "无"}                                              ║
+║  调剂范围：{self.province_rule["adjustment_scope"]}                                       ║
+║  选科模式：{self.province_rule["subject_mode"]}                                          ║
+║  检查时间：{datetime.now().strftime("%Y-%m-%d %H:%M:%S")}                             ║
 ╚══════════════════════════════════════════════════════════════════╝
 """
-        
+
         if self.errors["fatal"]:
             report += "\n🔴 【致命错误】\n" + "─" * 70 + "\n"
             for i, err in enumerate(self.errors["fatal"], 1):
                 report += f"""
-  {i}. {err['rule']}
-     ❌ 问题：{err['description']}
-     ✅ 修正：{err['fix']}
+  {i}. {err["rule"]}
+     ❌ 问题：{err["description"]}
+     ✅ 修正：{err["fix"]}
 """
-        
+
         if self.errors["serious"]:
             report += "\n🟡 【严重错误】\n" + "─" * 70 + "\n"
             for i, err in enumerate(self.errors["serious"], 1):
                 report += f"""
-  {i}. {err['rule']}
-     ⚠️  问题：{err['description']}
-     🔧 修正：{err['fix']}
+  {i}. {err["rule"]}
+     ⚠️  问题：{err["description"]}
+     🔧 修正：{err["fix"]}
 """
-        
+
         if self.errors["warning"]:
             report += "\n🟢 【一般警告】\n" + "─" * 70 + "\n"
             for i, warn in enumerate(self.errors["warning"], 1):
                 report += f"""
-  {i}. {warn['rule']}
-     💡 建议：{warn['description']}
-     📌 做法：{warn['fix']}
+  {i}. {warn["rule"]}
+     💡 建议：{warn["description"]}
+     📌 做法：{warn["fix"]}
 """
-        
+
         total = sum(len(v) for v in self.errors.values())
         report += f"""
 ═══════════════════════════════════════════════════════════════════
 📊 【检查统计】
 ═══════════════════════════════════════════════════════════════════
-  🔴 致命错误：{len(self.errors['fatal'])} 个
-  🟡 严重错误：{len(self.errors['serious'])} 个
-  🟢 一般警告：{len(self.errors['warning'])} 个
+  🔴 致命错误：{len(self.errors["fatal"])} 个
+  🟡 严重错误：{len(self.errors["serious"])} 个
+  🟢 一般警告：{len(self.errors["warning"])} 个
   📊 问题总数：{total} 个
 """
-        
+
         if total == 0:
             report += "\n  🎉 方案基本合规！\n"
         elif len(self.errors["fatal"]) > 0:
             report += "\n  ❌ 必须修改致命错误后才能使用\n"
         else:
             report += "\n  ⚠️ 建议补充完善后使用\n"
-        
+
         report += f"""
 ═══════════════════════════════════════════════════════════════════
 📌 【重要提醒】
 ═══════════════════════════════════════════════════════════════════
   • 最终以{self.province}省教育考试院官方信息为准
-  • 官方网址：{self.province_rule['official_url']}
+  • 官方网址：{self.province_rule["official_url"]}
   • 2026年招生计划6月15-20日公布
   • 2026年实际位次6月25日出分后确定
 ═══════════════════════════════════════════════════════════════════
 """
-        
+
         return report
 
 
@@ -789,28 +792,28 @@ if __name__ == "__main__":
         print("用法: python spec_checker_v2.py <方案文件> [省份]")
         print("或: python spec_checker_v2.py (无参数时显示测试)")
         print()
-        
+
         # 测试：湖南方案
         print("=" * 70)
         print("测试1：湖南方案（错误版）")
         print("=" * 70)
-        
+
         bad_plan = """
         湖南578分考生志愿方案
         本次共填报45个学校志愿：
         志愿01：江西财经大学，会计学
         录取概率35%
         """
-        
+
         checker = GaokaoSpecCheckerV2()
         print(checker.auto_detect_and_check(bad_plan))
-        
+
         # 测试：浙江方案
         print("\n\n")
         print("=" * 70)
         print("测试2：浙江方案（专业+学校模式）")
         print("=" * 70)
-        
+
         zj_plan = """
         浙江省，630分，选科物化生
         本次共填报80个专业+学校志愿：
@@ -818,32 +821,32 @@ if __name__ == "__main__":
         志愿02：浙江工业大学，软件工程
         每个志愿填1个专业。
         """
-        
+
         checker = GaokaoSpecCheckerV2()
         print(checker.auto_detect_and_check(zj_plan))
-        
+
         # 测试：山东方案
         print("\n\n")
         print("=" * 70)
         print("测试3：山东方案")
         print("=" * 70)
-        
+
         sd_plan = """
         山东高考，620分
         填报96个志愿：
         01-山东大学-会计学
         02-中国海洋大学-金融学
         """
-        
+
         checker = GaokaoSpecCheckerV2()
         print(checker.auto_detect_and_check(sd_plan))
     else:
         # 从文件读取方案
         filename = sys.argv[1]
         province = sys.argv[2] if len(sys.argv) > 2 else None
-        
-        with open(filename, 'r', encoding='utf-8') as f:
+
+        with open(filename, "r", encoding="utf-8") as f:
             plan = f.read()
-        
+
         checker = GaokaoSpecCheckerV2(province)
         print(checker.auto_detect_and_check(plan))

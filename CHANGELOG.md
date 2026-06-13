@@ -179,7 +179,7 @@
   - base62 短码生成（默认 6 位，4-16 位可配，加密随机 + 冲突重试）
   - SQLite 映射表 `share_links`（WAL 模式，code 主键 + report/owner/expires 三索引）
   - `ShortLinkService` 完整 API：`create / get / resolve / revoke / list_by_report / list_by_owner / get_stats / purge_expired`
-  - 访问控制：`permission`（read/comment/edit/admin）+ 密码（sha256）+ `expires_at` + `revoked`
+  - 访问控制：`permission`（read/comment/edit/admin）+ 密码（PBKDF2-HMAC-SHA256，兼容历史 sha256 读时迁移）+ `expires_at` + `revoked`
   - `route_short_link(code, password, base_url)` 路由辅助，可挂载任意 Web 框架的 `/s/<code>`
   - CLI：`create / resolve / revoke / list / stats / purge`，全部子命令 JSON 输出
   - 25 个 pytest 用例全部通过（base62 编解码、碰撞重试、TTL、密码、撤销、列表、统计、清理、路由）
@@ -220,7 +220,7 @@
 
 - ✨ **Codecov 覆盖率报告与徽章**
   - `.github/workflows/ci.yml` 集成 `codecov/codecov-action@v4`，3.11 单点上传 coverage.xml
-  - `codecov.yml` 定义 project 目标 60% / 核心 skills 目标 80% / patch 目标 70%，与 T5.5 硬门槛对齐
+  - `codecov.yml` 定义 project 目标 80% / 核心 skills 目标 100% / patch 目标 70%，与 T5.5 硬门槛对齐
   - `fail_ci_if_error: false`：codecov 不可达时不影响 CI 通过（适配多镜像仓库场景）
   - README 顶部新增 codecov 覆盖率徽章
 - ✨ PR 浮动容忍 1%（project）/ 2%（core），避免噪声红灯
@@ -318,7 +318,7 @@
 
 ### 📅 计划中
 
-- T5.5 覆盖率硬门槛（核心 ≥80% / 整体 ≥60%）
+- T5.5 覆盖率硬门槛（全局 ≥80% / 核心 =100% / E2E模拟通过）
 
 ---
 

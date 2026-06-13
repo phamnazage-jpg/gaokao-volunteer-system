@@ -7,8 +7,8 @@ import sys
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
-OVERALL_MIN = 0.60
-CORE_MIN = 0.80
+OVERALL_MIN = 0.80
+CORE_MIN = 1.00
 CORE_FILES = (
     "gaokao-spec-checker/scripts/spec_checker_v2.py",
     "gaokao-college-advisor/scripts/gaokao_visual_report.py",

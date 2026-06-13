@@ -108,6 +108,12 @@ python3 ~/.local/bin/gaokao-visual-report-v2.py
 python3 ~/.local/bin/gaokao-quick-3min.py
 ```
 
+### T7 分享链路安全说明
+
+- `data/share/short_link.py` 现已使用 **PBKDF2-HMAC-SHA256** 存储分享访问密码（16B salt + 200k iterations）
+- 历史短链接若仍是旧的无盐 sha256，系统会在**密码校验成功后自动迁移**到新格式
+- 分享权限页与短链接 payload 继续默认隐藏 `password_hash` 等内部字段
+
 ### T6.1 管理后台 FastAPI 骨架
 
 管理后台代码位于 `admin/`。当前已落地：服务启动、JWT 登录/鉴权、Swagger/OpenAPI、T6.2 仪表盘、T6.3 用户管理，以及 T6.4 订单管理（手工录单 / 状态流转 / CSV 导出 / 退款）。当前更准确的项目标签是“运营后台 + 人工服务增强链路”，不是完整用户端 Web 自助产品。

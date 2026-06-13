@@ -69,7 +69,7 @@ CREATE TABLE IF NOT EXISTS share_links (
     report_id       TEXT NOT NULL,
     owner_id        TEXT NOT NULL DEFAULT 'anonymous',
     permission      TEXT NOT NULL DEFAULT 'comment',
-    password_hash   TEXT,            -- sha256 hex (无盐, 简单场景)
+    password_hash   TEXT,            -- pbkdf2 salt_hex$digest_hex（兼容历史 sha256 迁移）
     expires_at      REAL,            -- unix timestamp, NULL=永久
     revoked         INTEGER NOT NULL DEFAULT 0,
     access_count    INTEGER NOT NULL DEFAULT 0,
@@ -164,7 +164,7 @@ def short_link(code):
 
 ### 已知限制 (P2)
 
-- 密码用 sha256 无盐哈希, 简单场景够用; 真实部署应换 argon2
+- 当前使用 PBKDF2-HMAC-SHA256（16B salt + 200k iterations）；历史无盐 sha256 会在成功校验后自动迁移
 - DB 单文件, 不支持水平扩展; 高 QPS 时建议迁 Redis
 - 暂未做 IP 限流 / 访问频率限制 (T7.4 之后再补)
 

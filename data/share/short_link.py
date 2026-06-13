@@ -39,7 +39,9 @@ BASE62_LEN = len(BASE62_ALPHABET)  # 62
 DEFAULT_CODE_LEN = 6
 
 PBKDF2_SALT_BYTES = 16
-PBKDF2_ITERATIONS = 100_000
+PBKDF2_HASH_BYTES = 32
+PBKDF2_ITERATIONS = 200_000
+PBKDF2_SEPARATOR = "$"
 
 # 默认数据库路径
 DEFAULT_DB_PATH = Path(__file__).resolve().parent / "short_links.db"
@@ -57,7 +59,6 @@ STATUS_NOT_FOUND = "not_found"
 STATUS_REVOKED = "revoked"
 STATUS_EXPIRED = "expired"
 STATUS_PASSWORD_REQUIRED = "password_required"
-STATUS_PASSWORD_WRONG = "password_wrong"
 STATUS_PASSWORD_WRONG = "password_wrong"
 
 
@@ -199,12 +200,13 @@ def _hash_password(password: str) -> str:
         password.encode("utf-8"),
         salt,
         PBKDF2_ITERATIONS,
+        dklen=PBKDF2_HASH_BYTES,
     )
-    return f"{salt.hex()}${digest.hex()}"
+    return f"{salt.hex()}{PBKDF2_SEPARATOR}{digest.hex()}"
 
 
 def _is_legacy_sha256_hash(password_hash: str) -> bool:
-    return len(password_hash) == 64 and "$" not in password_hash
+    return len(password_hash) == 64 and PBKDF2_SEPARATOR not in password_hash
 
 
 def _verify_password(password: str, password_hash: str) -> bool:
@@ -214,16 +216,20 @@ def _verify_password(password: str, password_hash: str) -> bool:
         legacy = hashlib.sha256(password.encode("utf-8")).hexdigest()
         return hmac.compare_digest(legacy, password_hash)
 
-    salt_hex, _, digest_hex = password_hash.partition("$")
+    salt_hex, _, digest_hex = password_hash.partition(PBKDF2_SEPARATOR)
     if not salt_hex or not digest_hex:
         return False
-    salt = bytes.fromhex(salt_hex)
-    expected = bytes.fromhex(digest_hex)
+    try:
+        salt = bytes.fromhex(salt_hex)
+        expected = bytes.fromhex(digest_hex)
+    except ValueError:
+        return False
     candidate = hashlib.pbkdf2_hmac(
         "sha256",
         password.encode("utf-8"),
         salt,
         PBKDF2_ITERATIONS,
+        dklen=PBKDF2_HASH_BYTES,
     )
     return hmac.compare_digest(candidate, expected)
 

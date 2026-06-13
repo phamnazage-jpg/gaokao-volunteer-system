@@ -1,5 +1,7 @@
 import importlib.util
 import json
+import runpy
+import sys
 from pathlib import Path
 from types import ModuleType
 
@@ -38,6 +40,13 @@ def test_detect_province_alias_branch():
     assert spec_checker.detect_province("湘考生，578分，志愿方案") == "湖南"
 
 
+def test_detect_province_full_name_branch(monkeypatch):
+    trimmed_rules = dict(spec_checker.PROVINCE_RULES)
+    trimmed_rules.pop("广东")
+    monkeypatch.setattr(spec_checker, "PROVINCE_RULES", trimmed_rules)
+    assert spec_checker.detect_province("广东省考生，630分，志愿方案") == "广东"
+
+
 def test_report_unsupported_province_branch():
     checker = GaokaoSpecCheckerV2(province="火星")
     report = checker.auto_detect_and_check("火星考生志愿方案")
@@ -47,18 +56,16 @@ def test_report_unsupported_province_branch():
 def test_checker_hits_core_warning_and_validation_branches():
     checker = GaokaoSpecCheckerV2(province="湖南")
     report = checker.auto_detect_and_check(
-        "\n".join(
-            [
-                "湖南2026高考志愿填报方案",
-                "本次共填报20个院校专业组志愿。",
-                "每组最多6个专业。",
-                "全部专业服从调剂。",
-                "会计专业普遍要求物化生。",
-                "88%录取概率。",
-                "2026年位次预计5000名。",
-                "请关注退档风险。",
-            ]
-        )
+        "\n".join([
+            "湖南2026高考志愿填报方案",
+            "本次共填报20个院校专业组志愿。",
+            "每组最多6个专业。",
+            "全部专业服从调剂。",
+            "会计专业普遍要求物化生。",
+            "88%录取概率。",
+            "2026年位次预计5000名。",
+            "请关注退档风险。",
+        ])
     )
     assert "调剂范围错误（湖南）" in report
     assert "主观概率估算" in report
@@ -69,15 +76,13 @@ def test_checker_hits_core_warning_and_validation_branches():
 def test_checker_hits_professional_school_mode_error():
     checker = GaokaoSpecCheckerV2(province="浙江")
     report = checker.auto_detect_and_check(
-        "\n".join(
-            [
-                "浙江省630分志愿方案",
-                "本次共填报80个专业+学校志愿。",
-                "每个志愿填1个专业。",
-                "仍保留专业组概念，并支持组内调剂。",
-                "风险提示：注意退档风险。",
-            ]
-        )
+        "\n".join([
+            "浙江省630分志愿方案",
+            "本次共填报80个专业+学校志愿。",
+            "每个志愿填1个专业。",
+            "仍保留专业组概念，并支持组内调剂。",
+            "风险提示：注意退档风险。",
+        ])
     )
     assert "模式错误（浙江）" in report
 
@@ -85,18 +90,54 @@ def test_checker_hits_professional_school_mode_error():
 def test_checker_can_generate_clean_report():
     checker = GaokaoSpecCheckerV2(province="浙江")
     report = checker.auto_detect_and_check(
-        "\n".join(
-            [
-                "浙江省630分志愿方案",
-                "本次共填报80个专业+学校志愿。",
-                "每个志愿填1个专业。",
-                "无调剂。",
-                "风险提示：注意退档与体检限制。",
-            ]
-        )
+        "\n".join([
+            "浙江省630分志愿方案",
+            "本次共填报80个专业+学校志愿。",
+            "每个志愿填1个专业。",
+            "无调剂。",
+            "风险提示：注意退档与体检限制。",
+        ])
     )
     assert "方案基本合规" in report
     assert "问题总数：0 个" in report
+
+
+def test_checker_hits_volunteer_overflow_branch():
+    checker = GaokaoSpecCheckerV2(province="湖南")
+    report = checker.auto_detect_and_check(
+        "\n".join([
+            "湖南2026高考志愿填报方案",
+            "本次共填报46个院校专业组志愿。",
+            "每组最多6个专业。",
+            "组内专业服从调剂。",
+            "风险提示：注意退档风险。",
+        ])
+    )
+    assert "志愿数量超标（湖南）" in report
+
+
+def test_spec_checker_main_without_args_runs_demo_output(capsys, monkeypatch):
+    monkeypatch.setattr(sys, "argv", [str(SPEC_CHECKER_PATH)])
+    runpy.run_path(str(SPEC_CHECKER_PATH), run_name="__main__")
+    output = capsys.readouterr().out
+    assert "测试1：湖南方案（错误版）" in output
+    assert "测试2：浙江方案（专业+学校模式）" in output
+    assert "测试3：山东方案" in output
+
+
+def test_spec_checker_main_with_file_argument_outputs_report(
+    tmp_path, capsys, monkeypatch
+):
+    plan_path = tmp_path / "plan.txt"
+    plan_path.write_text(
+        "湖南考生，578分，志愿方案\n每组最多6个专业。\n风险提示：注意退档风险。",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(sys, "argv", [str(SPEC_CHECKER_PATH), str(plan_path), "湖南"])
+    runpy.run_path(str(SPEC_CHECKER_PATH), run_name="__main__")
+    output = capsys.readouterr().out
+    assert "志愿方案规范检查报告" in output
+    assert "检测省份：湖南" in output
 
 
 def test_visual_report_usage_message(capsys, monkeypatch):
@@ -154,3 +195,26 @@ def test_visual_report_json_input(tmp_path, capsys, monkeypatch):
     assert observed["output_format"] == "all"
     output = capsys.readouterr().out
     assert "/tmp/from-json.html" in output
+
+
+def test_visual_report_main_guard_executes_script(tmp_path, capsys, monkeypatch):
+    payload = {
+        "student": {"name": "张三", "province": "浙江省", "score": 620},
+        "volunteers": [
+            {
+                "school": "浙江大学",
+                "major": "计算机类",
+                "match_score": 95,
+                "type": "稳",
+                "probability": 70,
+                "required_subjects": ["数学", "physical"],
+            }
+        ],
+    }
+    data_path = tmp_path / "student.json"
+    data_path.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(sys, "argv", [str(VISUAL_REPORT_PATH), str(data_path)])
+    runpy.run_path(str(VISUAL_REPORT_PATH), run_name="__main__")
+    output = capsys.readouterr().out
+    assert "生成完成" in output

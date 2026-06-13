@@ -287,6 +287,23 @@ def test_wrong_password_does_not_migrate_legacy_hash():
     )
 
 
+def test_resolve_malformed_password_hash_returns_wrong_password():
+    svc = make_svc()
+    link = svc.create(report_id="R-1", password="s3cr3t")
+    with svc._connect() as conn:
+        conn.execute(
+            "UPDATE share_links SET password_hash = ? WHERE code = ?",
+            ("garbage$not-hex", link.code),
+        )
+
+    res = svc.resolve(link.code, password="s3cr3t")
+    _eq(
+        res.status,
+        STATUS_PASSWORD_WRONG,
+        "malformed stored hash treated as wrong password",
+    )
+
+
 def test_resolve_expired():
     svc = make_svc()
     link = svc.create(report_id="R-1", ttl_seconds=1)
