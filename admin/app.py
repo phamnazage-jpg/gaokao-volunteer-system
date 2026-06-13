@@ -45,6 +45,7 @@ from admin.routes import (
     stats_router,
     ui_router,
     users_router,
+    web_public_router,
 )
 from data.cases.schema import apply_schema as apply_cases_schema
 from data.orders.schema import apply_schema as apply_orders_schema
@@ -157,6 +158,7 @@ def create_app(settings: Optional[Settings] = None) -> FastAPI:
     app.include_router(ui_router)
     app.include_router(meta_router)
     app.include_router(users_router)
+    app.include_router(web_public_router)
 
     static_dir = Path(__file__).resolve().parent / "static"
     app.mount("/static", StaticFiles(directory=static_dir), name="static")
