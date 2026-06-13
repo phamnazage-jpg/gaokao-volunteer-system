@@ -19,16 +19,38 @@ class PaymentError(ValueError):
     pass
 
 
+def _build_provider(*, provider_name: str, base_url: str, webhook_secret: str):
+    normalized = (provider_name or "mock").strip().lower()
+    if normalized == "mock":
+        return MockPaymentProvider(base_url=base_url, secret=webhook_secret)
+    if normalized == "alipay":
+        raise PaymentError(
+            "alipay provider 尚未实装；请先完成 docs/PAYMENT_PROVIDER_ONBOARDING.md 中的真实接入项"
+        )
+    raise PaymentError(f"unsupported payment provider: {normalized}")
+
+
 @dataclass
 class ProviderBundle:
     provider: MockPaymentProvider
 
 
 class PaymentService:
-    def __init__(self, *, db_path: str, base_url: str, webhook_secret: str) -> None:
+    def __init__(
+        self,
+        *,
+        db_path: str,
+        base_url: str,
+        webhook_secret: str,
+        provider_name: str = "mock",
+    ) -> None:
         self.db_path = db_path
         self.base_url = base_url
-        self.provider = MockPaymentProvider(base_url=base_url, secret=webhook_secret)
+        self.provider = _build_provider(
+            provider_name=provider_name,
+            base_url=base_url,
+            webhook_secret=webhook_secret,
+        )
 
     @classmethod
     def for_db(
@@ -37,8 +59,14 @@ class PaymentService:
         *,
         base_url: str,
         webhook_secret: str = "dev-mock-payment-secret",
+        provider_name: str = "mock",
     ) -> "PaymentService":
-        return cls(db_path=db_path, base_url=base_url, webhook_secret=webhook_secret)
+        return cls(
+            db_path=db_path,
+            base_url=base_url,
+            webhook_secret=webhook_secret,
+            provider_name=provider_name,
+        )
 
     def create_checkout(self, order_id: str, *, portal_token: str) -> PaymentCheckout:
         with OrdersDAO.connect(self.db_path) as orders_dao:

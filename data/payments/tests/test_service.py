@@ -24,7 +24,9 @@ def _seed_order(db_path: str, order_id: str = "GKO-20260614-PAY") -> Order:
 def test_create_checkout_is_idempotent_for_pending_payment(settings):
     order = _seed_order(settings.orders_db_path)
     service = PaymentService.for_db(
-        settings.orders_db_path, base_url="http://testserver"
+        settings.orders_db_path,
+        base_url=settings.payment_base_url,
+        webhook_secret=settings.payment_webhook_secret,
     )
 
     first = service.create_checkout(order.id, portal_token="portal-token")
@@ -45,7 +47,9 @@ def test_create_checkout_is_idempotent_for_pending_payment(settings):
 def test_request_refund_is_idempotent_after_payment_success(settings):
     order = _seed_order(settings.orders_db_path, order_id="GKO-20260614-REFUND-SVC")
     service = PaymentService.for_db(
-        settings.orders_db_path, base_url="http://testserver"
+        settings.orders_db_path,
+        base_url=settings.payment_base_url,
+        webhook_secret=settings.payment_webhook_secret,
     )
     checkout = service.create_checkout(order.id, portal_token="portal-token")
 

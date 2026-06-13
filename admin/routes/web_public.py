@@ -103,8 +103,9 @@ def create_public_order_endpoint(
     portal_token = issue_portal_token(order.id, settings.jwt_secret)
     payment_service = PaymentService.for_db(
         settings.orders_db_path,
-        base_url="http://testserver",
-        webhook_secret=settings.jwt_secret,
+        base_url=settings.payment_base_url,
+        webhook_secret=settings.payment_webhook_secret,
+        provider_name=settings.payment_provider,
     )
     checkout = payment_service.create_checkout(order.id, portal_token=portal_token)
     return PublicOrderCreated(
@@ -129,8 +130,9 @@ def mock_payment_webhook(
     signature = request.headers.get("X-Mock-Signature", "")
     service = PaymentService.for_db(
         settings.orders_db_path,
-        base_url="http://testserver",
-        webhook_secret=settings.jwt_secret,
+        base_url=settings.payment_base_url,
+        webhook_secret=settings.payment_webhook_secret,
+        provider_name=settings.payment_provider,
     )
     try:
         result = service.handle_webhook(payload, signature)
@@ -149,8 +151,9 @@ def mock_payment_page(
 ) -> HTMLResponse:
     service = PaymentService.for_db(
         settings.orders_db_path,
-        base_url="http://testserver",
-        webhook_secret=settings.jwt_secret,
+        base_url=settings.payment_base_url,
+        webhook_secret=settings.payment_webhook_secret,
+        provider_name=settings.payment_provider,
     )
     payment = service.get_payment(payment_id)
     if payment is None:
@@ -168,8 +171,9 @@ def complete_mock_payment(
 ) -> RedirectResponse:
     service = PaymentService.for_db(
         settings.orders_db_path,
-        base_url="http://testserver",
-        webhook_secret=settings.jwt_secret,
+        base_url=settings.payment_base_url,
+        webhook_secret=settings.payment_webhook_secret,
+        provider_name=settings.payment_provider,
     )
     payment = service.get_payment(payment_id)
     if payment is None:
@@ -315,8 +319,9 @@ def _resolve_order_from_token(token: str, settings: Settings) -> Order:
 def _build_portal_context(order: Order, settings: Settings) -> dict[str, Any]:
     payment_service = PaymentService.for_db(
         settings.orders_db_path,
-        base_url="http://testserver",
-        webhook_secret=settings.jwt_secret,
+        base_url=settings.payment_base_url,
+        webhook_secret=settings.payment_webhook_secret,
+        provider_name=settings.payment_provider,
     )
     payment = payment_service.get_payment_by_order(order.id)
     intake_store = IntakeStore.for_db(settings.orders_db_path)

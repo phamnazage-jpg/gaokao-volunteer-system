@@ -25,8 +25,8 @@ def test_mock_payment_webhook_marks_order_paid_and_is_idempotent(client, setting
     order = _seed_order(settings.orders_db_path)
     service = PaymentService.for_db(
         settings.orders_db_path,
-        base_url="http://testserver",
-        webhook_secret=settings.jwt_secret,
+        base_url=settings.payment_base_url,
+        webhook_secret=settings.payment_webhook_secret,
     )
     checkout = service.create_checkout(order.id, portal_token="portal-token")
     payload, headers = service.provider.build_webhook_request(
@@ -60,8 +60,8 @@ def test_mock_payment_webhook_rejects_amount_mismatch(client, settings):
     order = _seed_order(settings.orders_db_path, order_id="GKO-20260614-WEBHOOK-AMOUNT")
     service = PaymentService.for_db(
         settings.orders_db_path,
-        base_url="http://testserver",
-        webhook_secret=settings.jwt_secret,
+        base_url=settings.payment_base_url,
+        webhook_secret=settings.payment_webhook_secret,
     )
     checkout = service.create_checkout(order.id, portal_token="portal-token")
     payload, headers = service.provider.build_webhook_request(

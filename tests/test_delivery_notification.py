@@ -26,8 +26,8 @@ def _seed_order(db_path: str, order_id: str = "GKO-20260614-NOTIFY") -> Order:
 def _mark_paid(settings, order: Order) -> None:
     service = PaymentService.for_db(
         settings.orders_db_path,
-        base_url="http://testserver",
-        webhook_secret=settings.jwt_secret,
+        base_url=settings.payment_base_url,
+        webhook_secret=settings.payment_webhook_secret,
     )
     checkout = service.create_checkout(order.id, portal_token="portal-token")
     payload, headers = service.provider.build_webhook_request(
