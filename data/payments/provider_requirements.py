@@ -21,6 +21,7 @@ class ProviderReadinessReport:
 
 _PROVIDER_REQUIREMENTS: dict[str, list[str]] = {
     "mock": [],
+    "alipay_sim": [],
     "alipay": [
         "GAOKAO_PAYMENT_APP_ID",
         "GAOKAO_PAYMENT_PRIVATE_KEY_PATH",
@@ -70,6 +71,11 @@ def build_provider_readiness_report(
 
     if normalized == "mock":
         report.notes.append("mock provider 仅用于本地/测试闭环，不代表真实收款上线")
+    elif normalized == "alipay_sim":
+        report.notes.extend([
+            "alipay_sim 用于上线前模拟支付宝支付/回调验证，不代表真实支付宝已联通。",
+            "上线前仍必须以真实 app_id/证书/notify_url 完成一次真实支付宝测试。",
+        ])
     elif normalized == "alipay":
         report.notes.extend([
             "建议先用支付宝作为首个真实 Web 支付 provider；当前架构更贴合 checkout_url 跳转模式。",

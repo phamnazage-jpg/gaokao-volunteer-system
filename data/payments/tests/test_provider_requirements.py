@@ -10,6 +10,13 @@ def test_mock_provider_report_is_ready_without_credentials():
     assert report.missing_env_vars == []
 
 
+def test_alipay_sim_report_is_ready_without_real_credentials():
+    report = build_provider_readiness_report("alipay_sim", env={})
+    assert report.provider == "alipay_sim"
+    assert report.ready is True
+    assert report.missing_env_vars == []
+
+
 def test_alipay_provider_report_detects_missing_credentials():
     report = build_provider_readiness_report("alipay", env={})
     assert report.provider == "alipay"

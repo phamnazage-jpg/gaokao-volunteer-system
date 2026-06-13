@@ -12,6 +12,7 @@ from data.payments.models import (
     RefundRequestResult,
     WebhookHandleResult,
 )
+from data.payments.providers.alipay_sim import AlipaySimProvider
 from data.payments.providers.mock_gateway import MockPaymentProvider
 
 
@@ -23,6 +24,8 @@ def _build_provider(*, provider_name: str, base_url: str, webhook_secret: str):
     normalized = (provider_name or "mock").strip().lower()
     if normalized == "mock":
         return MockPaymentProvider(base_url=base_url, secret=webhook_secret)
+    if normalized == "alipay_sim":
+        return AlipaySimProvider(base_url=base_url, secret=webhook_secret)
     if normalized == "alipay":
         raise PaymentError(
             "alipay provider 尚未实装；请先完成 docs/PAYMENT_PROVIDER_ONBOARDING.md 中的真实接入项"
@@ -122,7 +125,8 @@ class PaymentService:
     def handle_webhook(self, payload: dict, signature: str) -> WebhookHandleResult:
         if not self.provider.verify_signature(payload, signature):
             raise PaymentError("invalid payment signature")
-        payment_id = str(payload.get("payment_id") or "")
+        normalized_payload = self.provider.normalize_webhook_payload(payload)
+        payment_id = str(normalized_payload.get("payment_id") or "")
         if not payment_id:
             raise PaymentError("missing payment_id")
         payments = PaymentDAO.for_db(self.db_path)
@@ -130,7 +134,10 @@ class PaymentService:
             payment = payments.get(payment_id)
             if payment is None:
                 raise PaymentError("payment not found")
-            if int(payload.get("amount_cents") or -1) != payment.amount_cents:
+            if (
+                int(normalized_payload.get("amount_cents") or -1)
+                != payment.amount_cents
+            ):
                 raise PaymentError("payment amount mismatch")
             if payment.status == "paid":
                 with OrdersDAO.connect(self.db_path) as orders_dao:
@@ -145,7 +152,9 @@ class PaymentService:
                 payment.id,
                 status="paid",
                 provider_trade_no=str(
-                    payload.get("provider_trade_no") or payment.provider_trade_no or ""
+                    normalized_payload.get("provider_trade_no")
+                    or payment.provider_trade_no
+                    or ""
                 ),
                 callback_payload=payload,
             )

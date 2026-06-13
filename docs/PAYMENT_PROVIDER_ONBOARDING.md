@@ -15,6 +15,7 @@
 ## 当前代码口径
 
 - 本地闭环 provider: `mock`
+- 上线前模拟支付宝 provider: `alipay_sim`
 - 配置键：
   - `GAOKAO_PAYMENT_PROVIDER`
   - `GAOKAO_PAYMENT_BASE_URL`
@@ -36,6 +37,7 @@ python3 scripts/payment_provider_doctor.py
 ### 期望结果
 
 - `provider=mock`：ready=true，只代表本地/测试闭环
+- `provider=alipay_sim`：ready=true，代表“上线前模拟支付宝 checkout/回调验证”已可本地执行，但不代表真实支付宝已联通
 - `provider=alipay`：若缺少 app_id / key_path / notify_url / return_url，会返回 ready=false
 
 ## 支付宝最小上线前置
@@ -70,6 +72,12 @@ export GAOKAO_PAYMENT_ALIPAY_PUBLIC_KEY_PATH=/secure/path/alipay_public.pem
 - 无生产域名备案验收证据
 
 ## 真正完成 T12 的下一跳
+
+当上面四类外部条件具备前，建议先做：
+
+1. `GAOKAO_PAYMENT_PROVIDER=alipay_sim python3 scripts/payment_provider_doctor.py`
+2. `pytest -q data/payments/tests/test_provider_alipay_sim.py`
+3. 以 `alipay_sim` 跑本地 checkout / webhook 模拟验收
 
 当上面四类外部条件具备后，继续执行：
 

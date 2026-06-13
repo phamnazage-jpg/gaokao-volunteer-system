@@ -32,6 +32,14 @@ class MockPaymentProvider:
         sig = self.sign_payload(payload)
         return payload, {"X-Mock-Signature": sig}
 
+    def normalize_webhook_payload(self, payload: dict[str, Any]) -> dict[str, Any]:
+        return {
+            "payment_id": str(payload.get("payment_id") or ""),
+            "amount_cents": int(payload.get("amount_cents") or 0),
+            "provider_trade_no": str(payload.get("provider_trade_no") or ""),
+            "status": str(payload.get("status") or "paid"),
+        }
+
     def sign_payload(self, payload: dict[str, Any]) -> str:
         body = json.dumps(payload, separators=(",", ":"), ensure_ascii=False)
         return hmac.new(
