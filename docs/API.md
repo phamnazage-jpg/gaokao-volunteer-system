@@ -1,326 +1,502 @@
-# API参考
+# API 参考（当前真相）
 
-本文档提供给开发者使用的API参考。
+本文档描述 2026-06-13 当前仓库中已落地、可验证的接口与命令行入口。
 
----
+适用范围：
 
-## 🎯 规范检查器 API
+- 管理后台 FastAPI API
+- 已交付 CLI（审核 / 订单 / 数据溯源）
+- 关键数据契约与鉴权约定
 
-### `GaokaoSpecCheckerV2` 类
+不包含：
 
-用于检查志愿方案的规范性。
-
-#### 构造函数
-
-```python
-from spec_checker_v2 import GaokaoSpecCheckerV2
-
-checker = GaokaoSpecCheckerV2(province=None)
-```
-
-**参数**:
-
-- `province` (str, 可选): 省份名称，如"湖南"、"浙江"。如果未指定，会自动检测。
-
-#### 方法
-
-##### `auto_detect_and_check(text)`
-
-自动检测省份并检查方案。
-
-**参数**:
-
-- `text` (str): 志愿方案文本
-
-**返回值**:
-
-- `str`: 检查报告（Markdown格式）
-
-**示例**:
-
-```python
-checker = GaokaoSpecCheckerV2()
-report = checker.auto_detect_and_check("我是湖南考生，578分...")
-print(report)
-```
-
-##### `check_volunteer_unit(text)`
-
-检查志愿单位是否正确。
-
-**检测条件**:
-
-- 省份模式为"院校专业组"时，应使用"院校专业组"而非"学校"
-- 省份模式为"专业+学校"时，不应使用"组内服从"
-
-##### `check_volunteer_count(text)`
-
-检查志愿数量是否合规。
-
-**检测条件**:
-
-- 是否超过本省最大志愿数
-- 是否填满建议志愿数
-
-##### `check_majors_per_group(text)`
-
-检查每组专业数。
-
-**检测条件**:
-
-- 院校专业组模式：每组最多6个
-- 专业+学校模式：每组1个
-
-##### `check_adjustment_rule(text)`
-
-检查调剂规则。
-
-**检测条件**:
-
-- 调剂范围是否符合本省模式
-- 是否提到"组内专业"
+- 旧版 `spec_checker_v2.py` 的逐函数说明
+- 尚未落地的用户端 Web 自助下单/支付/资料填写闭环
 
 ---
 
-## 🗺️ 省份规则 API
+## 1. 当前接口面
 
-### `PROVINCE_RULES` 字典
+### 1.1 HTTP / FastAPI
 
-包含27个省份的志愿填报规则。
+服务入口：`python3 -m admin.app --port 8000`
 
-```python
-from spec_checker_v2 import PROVINCE_RULES
+基础约定：
 
-# 获取湖南规则
-hunan_rule = PROVINCE_RULES["湖南"]
+- 健康检查：`GET /health`
+- 登录：`POST /api/auth/login`
+- Bearer 鉴权：除 `/health`、`/dashboard`、`/s/{code}` 外，管理 API 默认需要 JWT
+- OpenAPI：`GET /openapi.json`
+- Swagger：`GET /docs`
 
-print(hunan_rule["mode"])              # "院校专业组"
-print(hunan_rule["max_volunteers"])    # 45
-print(hunan_rule["adjustment_scope"])  # "组内专业"
-```
+### 1.2 CLI
 
-### 规则字段
+当前仓库内已落地的主要 CLI：
 
-| 字段                   | 类型 | 说明       | 示例                                |
-| ---------------------- | ---- | ---------- | ----------------------------------- |
-| `mode`                 | str  | 志愿模式   | "院校专业组" / "专业+学校" / "传统" |
-| `max_volunteers`       | int  | 最大志愿数 | 45                                  |
-| `max_majors_per_group` | int  | 每组专业数 | 6                                   |
-| `has_adjustment`       | bool | 是否有调剂 | True                                |
-| `adjustment_scope`     | str  | 调剂范围   | "组内专业" / "全部专业" / "无"      |
-| `retrieval_rule`       | str  | 检索规则   | "分数优先、遵循志愿、一次投档"      |
-| `collection_count`     | int  | 征集次数   | 2                                   |
-| `subject_mode`         | str  | 选科模式   | "3+1+2" / "3+3" / "传统"            |
-| `official_url`         | str  | 官方网址   | "http://jyt.hunan.gov.cn/"          |
-| `exam_subject_total`   | int  | 总分       | 750                                 |
+- `python3 -m skills.gaokao-audit.scripts.audit_cli <input>`
+- `python3 scripts/gaokao-order-manager ...`
+- `python3 scripts/gaokao-data-trace <school_name>`
+- `python3 scripts/gaokao-quick-3min.py`
+- `python3 scripts/gaokao-channel-fallback ...`
 
 ---
 
-## 🔍 省份检测 API
+## 2. 管理后台 HTTP API
 
-### `detect_province(text)`
+### 2.1 健康检查
 
-从文本中自动检测省份。
+#### `GET /health`
 
-```python
-from spec_checker_v2 import detect_province
+用途：进程/配置级健康检查。
 
-province = detect_province("我是湖南考生...")
-print(province)  # "湖南"
+响应示例：
 
-province = detect_province("浙江省，620分")
-print(province)  # "浙江"
-```
-
-**支持检测形式**:
-
-- 全称："湖南"、"浙江省"
-- 简称："湘"、"浙"
-
----
-
-## 🔤 错误模式 API
-
-### 错误分类
-
-#### 🔴 致命错误
-
-```python
+```json
 {
-    "rule": "错误名称（省份）",
-    "description": "问题描述",
-    "fix": "修正建议"
+  "status": "ok"
 }
 ```
 
-**检测函数**: `_check_volunteer_unit()`
+---
 
-#### 🟡 严重错误
+### 2.2 认证 API
 
-```python
+#### `POST /api/auth/login`
+
+用途：管理员登录，获取 Bearer JWT。
+
+请求体：
+
+```json
 {
-    "rule": "错误名称",
-    "description": "问题描述",
-    "fix": "修正建议"
+  "username": "admin",
+  "password": "admin123"
 }
 ```
 
-**检测函数**: `_check_data_accuracy()`
+成功响应：
 
-#### 🟢 一般警告
-
-```python
+```json
 {
-    "rule": "警告名称",
-    "description": "建议描述",
-    "fix": "补充建议"
+  "access_token": "<jwt>",
+  "token_type": "bearer",
+  "expires_in": 3600,
+  "user": {
+    "id": "...",
+    "username": "admin",
+    "role": "admin"
+  }
 }
 ```
 
-**检测函数**: `_check_risk_disclosure()`
+使用方式：
 
----
+```bash
+curl -X POST http://127.0.0.1:8000/api/auth/login \
+  -H 'Content-Type: application/json' \
+  -d '{"username":"admin","password":"admin123"}'
+```
 
-## 📝 报告生成 API
+#### `GET /api/auth/me`
 
-### 检查报告格式
+用途：获取当前登录管理员信息。
 
-检查器返回的Markdown格式报告：
+请求头：
 
-```markdown
-╔══════════════════════════════════════════════════════════════════╗
-║ ✅ 志愿方案规范检查报告 ║
-╠══════════════════════════════════════════════════════════════════╣
-║ 检测省份：湖南 ║
-║ 志愿模式：院校专业组 ║
-║ ...
-╚══════════════════════════════════════════════════════════════════╝
-
-🔴 【致命错误】
-└──────────────────────────────────────────────────────────────────────
-
-1. 错误名称
-   ❌ 问题：...
-   ✅ 修正：...
-
-🟡 【严重错误】
-└──────────────────────────────────────────────────────────────────────
-
-1. 错误名称
-   ⚠️ 问题：...
-   🔧 修正：...
-
-🟢 【一般警告】
-└──────────────────────────────────────────────────────────────────────
-
-1. 警告名称
-   💡 建议：...
-   📌 做法：...
+```text
+Authorization: Bearer <token>
 ```
 
 ---
 
-## 🧪 测试 API
+### 2.3 元数据 API
 
-### `test_hunan_bad_plan()`
+#### `GET /api/meta`
 
-测试湖南错误版方案检测能力。
+用途：返回后台前端使用的枚举/元信息。
 
-**预期**: 检测出1个致命错误（"45个学校"）
+典型用途：
 
-### `test_hunan_good_plan()`
-
-测试湖南修正版方案合规性。
-
-**预期**: 通过基础检查
-
-### `test_zhejiang_wrong_mode()`
-
-测试浙江模式错误检测。
-
-**预期**: 检测出E005模式错误
+- 订单状态枚举
+- 来源渠道枚举
+- 服务版本枚举
+- 案例审核状态等
 
 ---
 
-## 🔧 扩展开发
+### 2.4 用户 API（T6.3）
 
-### 添加新省份
+#### `GET /api/users`
 
-```python
-# 在 PROVINCE_RULES 中添加
-PROVINCE_RULES["新省份"] = {
-    "mode": "院校专业组",  # 或 "专业+学校" / "传统"
-    "batch": "本科批",     # 或 "本科一批" / "普通批"
-    "max_volunteers": 45,
-    "max_majors_per_group": 6,
-    "has_adjustment": True,
-    "adjustment_scope": "组内专业",
-    "retrieval_rule": "分数优先、遵循志愿、一次投档",
-    "collection_count": 2,
-    "subject_mode": "3+1+2",  # 或 "3+3" / "传统"
-    "official_url": "http://...",  # 官方网址
-    "exam_subject_total": 750,
+用途：分页列出用户，默认返回脱敏字段。
+
+常见查询参数：
+
+- `limit`
+- `offset`
+- 其他筛选项以 OpenAPI 为准
+
+#### `GET /api/users/{user_key}`
+
+用途：查看单个用户详情。
+
+说明：`user_key` 可为内部 id 或路由支持的用户标识。
+
+---
+
+### 2.5 订单 API（T6.4）
+
+#### `GET /api/orders`
+
+用途：分页列出订单。
+
+常见查询参数：
+
+- `status`
+- `source`
+- `limit`
+- `offset`
+
+说明：
+
+- 列表默认走脱敏输出
+- 不应依赖该接口获取完整明文手机号/身份证号
+
+#### `GET /api/orders/export`
+
+用途：导出订单 CSV。
+
+说明：
+
+- 当前导出路径复用后台查询条件
+- 输出仍遵循后台脱敏边界
+- 如需对外发送报表，建议二次审核 CSV 内容
+
+#### `GET /api/orders/{order_id}`
+
+用途：查看订单详情与状态历史。
+
+#### `POST /api/orders`
+
+用途：手工录单。
+
+典型字段：
+
+```json
+{
+  "source": "xianyu",
+  "service_version": "audit",
+  "amount_cents": 4900,
+  "customer_name": "王家长",
+  "customer_phone": "13800001234",
+  "candidate_name": "李明",
+  "candidate_province": "湖南",
+  "candidate_score": 578,
+  "candidate_rank": 26800
 }
 ```
 
-### 添加新错误检测
+说明：
 
-```python
-# 在 GaokaoSpecCheckerV2 类中添加方法
+- `external_id` 可留空，支持人工补录
+- 写路径复用 `OrdersDAO` 状态机与落库逻辑
 
-def _check_new_error(self, text):
-    """检查新错误类型"""
-    error_pattern = r'错误正则'
-    if re.search(error_pattern, text):
-        self.errors["fatal"].append({
-            "rule": "新错误名称",
-            "description": "问题描述",
-            "fix": "修正建议"
-        })
+#### `PATCH /api/orders/{order_id}`
+
+用途：更新订单业务字段、推进状态、处理退款。
+
+说明：
+
+- 非法状态流转会被拒绝
+- 订单状态机为：`pending -> paid -> serving -> delivered -> completed`，另有 `refunded`
+- 文档应以 OpenAPI 和 `data/orders/state_machine.py` 为最终事实源
+
+---
+
+### 2.6 案例 API（T6.5）
+
+#### `GET /api/cases`
+
+用途：案例列表。
+
+#### `POST /api/cases`
+
+用途：创建案例。
+
+#### `GET /api/cases/{case_id}`
+
+用途：查看案例详情。
+
+#### `PATCH /api/cases/{case_id}`
+
+用途：更新案例。
+
+#### `POST /api/cases/{case_id}/review`
+
+用途：案例审核。
+
+#### `DELETE /api/cases/{case_id}`
+
+用途：删除案例。
+
+---
+
+### 2.7 统计 API（T6.2）
+
+#### `GET /api/stats/dashboard`
+
+用途：一站式仪表盘数据。
+
+响应结构：
+
+- `summary`
+- `by_status`
+- `by_source`
+- `by_service_version`
+- `trends`
+- `generated_at`
+
+关键口径：
+
+- 收入 = `paid / serving / delivered / completed` 四态订单的 `amount_cents` 累计值
+- `pending`、`refunded` 不计入收入
+- 趋势桶粒度为天（UTC）
+- 空日期补 0，前端得到稠密序列
+- 统计路径不读取 PII
+
+#### `GET /api/stats/orders`
+
+用途：兼容订单统计接口；字段名沿用早期 stub 版本，但已接真实 SQL 聚合。
+
+---
+
+### 2.8 UI 路由
+
+#### `GET /dashboard`
+
+用途：极简后台仪表盘页面。
+
+说明：
+
+- 页面本身可公开访问
+- 数据请求仍依赖登录态/JWT
+
+#### `GET /s/{code}`
+
+用途：分享页短链接访问入口。
+
+说明：
+
+- 由 `data/share/short_link.py` 与 `admin/share_page.py` 提供能力
+- 权限控制支持 `read/comment/edit/admin`
+
+---
+
+## 3. CLI 接口
+
+### 3.1 AI 审核 CLI
+
+入口：`python3 -m skills.gaokao-audit.scripts.audit_cli`
+
+命令格式：
+
+```bash
+python3 -m skills.gaokao-audit.scripts.audit_cli plan.txt \
+  --output plan.audit.pdf \
+  --format text \
+  --json
 ```
 
+参数：
+
+- `input`：方案文件路径
+- `--output`：PDF 输出路径；默认 `<input>.audit.pdf`
+- `--format`：`text | pdf_text | screenshot_ocr`
+- `--json`：额外输出审核结果 JSON
+
+标准输出包含：
+
+- 输入文件路径
+- 识别省份
+- 综合评分
+- PDF 报告路径
+- 可选 JSON payload
+
+主链能力：
+
+- 方案解析
+- 规范检查集成
+- 扎堆风险检测
+- HTML/PDF 报告输出
+
 ---
 
-## 📦 导入路径
+### 3.2 订单管理 CLI
 
-### 从项目根目录
+入口：`python3 scripts/gaokao-order-manager`
 
-```python
-import sys
-sys.path.insert(0, '/home/long/project/gaokao-volunteer-system/skills/gaokao-spec-checker/scripts')
+通用参数：
 
-from spec_checker_v2 import GaokaoSpecCheckerV2, PROVINCE_RULES, detect_province
+- `--db <path>`：订单库路径，默认 `data/orders.db`
+- `--human`：终端友好文本输出；默认 JSON
+- `--actor`：操作者标识
+
+已落地子命令：
+
+- `create`
+- `list`
+- `show`
+- `update`
+- `pay`
+- `deliver`
+- `upgrade`
+- `stats`
+- `export`
+
+示例：
+
+```bash
+python3 scripts/gaokao-order-manager --db data/orders.db create \
+  --source xianyu \
+  --service-version audit \
+  --amount-cents 4900 \
+  --customer-name 王家长 \
+  --customer-phone 13800001234 \
+  --candidate-name 李明 \
+  --candidate-province 湖南 \
+  --candidate-score 578
 ```
 
-### 从Skill目录
-
-```python
-# 相对路径（在Skill内使用）
-from scripts.spec_checker_v2 import GaokaoSpecCheckerV2
+```bash
+python3 scripts/gaokao-order-manager --db data/orders.db pay <order_id>
+python3 scripts/gaokao-order-manager --db data/orders.db deliver <order_id>
+python3 scripts/gaokao-order-manager --db data/orders.db export --output orders.csv
 ```
 
----
+行为约束：
 
-## 🎨 输出格式
-
-### 返回类型
-
-所有API返回标准的Python数据类型：
-
-- `str`: Markdown格式的检查报告
-- `dict`: 省份规则配置
-- `list`: 错误列表
-- `bool`: 检测结果
+- 详情默认返回状态历史
+- `update` 仅允许业务字段，`status` 不允许直接硬改
+- 状态流转必须走状态机
+- 默认输出经过 `Order.to_dict()` 脱敏处理
 
 ---
 
-## 📞 更多信息
+### 3.3 数据溯源 CLI
 
-- 完整实现: [skills/gaokao-spec-checker/scripts/spec_checker_v2.py](skills/gaokao-spec-checker/scripts/spec_checker_v2.py)
-- 规则文档: [rules/provinces.md](rules/provinces.md)
-- 错误模式: [rules/errors/ERRORS.md](rules/errors/ERRORS.md)
+入口：`python3 scripts/gaokao-data-trace`
+
+命令格式：
+
+```bash
+python3 scripts/gaokao-data-trace "中南大学"
+python3 scripts/gaokao-data-trace "中南大学" --human
+```
+
+参数：
+
+- `school_name`：院校名称，支持包含匹配
+- `--human`：终端友好输出；默认 JSON
+
+输出字段：
+
+- `province`
+- `school`
+- `major`
+- `frequency`
+- `platforms`
+- `predicted_increase`
+- `alternatives`
+- `score_range`
+- `data_year`
+- `source`
+- `source_url`
+- `source_type`
+- `confidence`
+- `last_updated`
+
+用途：
+
+- 查询某院校/专业推荐的来源信息
+- 向审核报告补充“为什么这样推荐”的数据依据
 
 ---
 
-**版本**: v2.0  
-**最后更新**: 2026-06-11
+## 4. 关键数据契约
+
+### 4.1 订单状态机
+
+当前文档级约定：
+
+- `pending`
+- `paid`
+- `serving`
+- `delivered`
+- `completed`
+- `refunded`
+
+注意：
+
+- 直接写状态属于越界使用
+- HTTP 与 CLI 都应复用 `OrdersDAO.transition_status()`
+
+### 4.2 订单隐私边界
+
+默认脱敏字段包括但不限于：
+
+- 手机号
+- 身份证号
+- 部分姓名
+
+明文敏感数据不应通过普通列表接口、CSV 报表或分享页直接暴露。
+
+### 4.3 统计口径
+
+仪表盘与统计接口共享以下前提：
+
+- `GAOKAO_DB_PATH`：admin 用户库
+- `GAOKAO_ORDERS_DB_PATH`：订单库
+- 收入统计只看订单金额和状态，不读取 PII
+
+---
+
+## 5. 环境变量
+
+常用运行变量：
+
+- `GAOKAO_ENV`
+- `GAOKAO_DB_PATH`
+- `GAOKAO_ORDERS_DB_PATH`
+- `GAOKAO_JWT_SECRET`
+- `GAOKAO_ADMIN_USER`
+- `GAOKAO_ADMIN_PASS`
+- `GAOKAO_ORDERS_FERNET_KEY`
+
+最低要求：
+
+- 生产环境必须提供高熵 `GAOKAO_JWT_SECRET`
+- 订单/用户相关路径需要 `GAOKAO_ORDERS_FERNET_KEY`
+- 生产环境不得使用默认弱口令 `admin123`
+
+---
+
+## 6. 验证建议
+
+查看最新 API 真相：
+
+```bash
+python3 -m admin.app --port 8000
+curl http://127.0.0.1:8000/openapi.json
+```
+
+验证 T5 主链测试：
+
+```bash
+python3 -m pytest tests/test_t5_e2e_workflows.py tests/test_t5_performance.py -q
+```
+
+如本文与代码不一致，优先级顺序为：
+
+1. 代码与实跑结果
+2. OpenAPI / CLI `--help`
+3. 本文档

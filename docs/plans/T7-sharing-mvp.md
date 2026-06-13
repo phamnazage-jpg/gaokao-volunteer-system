@@ -1,7 +1,7 @@
 # T7: 分享功能 MVP — 实施计划
 
 **版本**: v1.0
-**状态**: 设计 → 实施中 (T7.1 已完成, T7.2 等待)
+**状态**: 设计 → 实施中 (T7.1/T7.2/T7.3/T7.4 已完成, T7.5 待办)
 **关联文档**:
 
 - [产品设计 v1 - 分享](../PRODUCT_DESIGN_v1.md)
@@ -17,12 +17,12 @@ T7 包含 5 个子任务 (来自 IMPLEMENTATION_PLAN_v2.md §T7):
 | ID   | 任务           | 优先级 | 状态      | 工时 |
 | ---- | -------------- | :----: | --------- | :--: |
 | T7.1 | 短链接生成     |   P1   | ✅ 已完成 |  1d  |
-| T7.2 | 海报生成 (PIL) |   P1   | ⏳ 待办   | 1.5d |
-| T7.3 | 权限控制 (3级) |   P1   | ⏳ 待办   |  1d  |
-| T7.4 | 撤销与统计     |   P1   | ⏳ 待办   |  1d  |
+| T7.2 | 海报生成 (PIL) |   P1   | ✅ 已完成 | 1.5d |
+| T7.3 | 权限控制 (3级) |   P1   | ✅ 已完成 |  1d  |
+| T7.4 | 撤销与统计     |   P1   | ✅ 已完成 |  1d  |
 | T7.5 | 分享页 WebUI   |   P1   | ⏳ 待办   | 0.5d |
 
-**本文档将按子任务分节详细化设计; T7.1 已实现, 其它章节为待办设计草案。**
+**本文档将按子任务分节详细化设计; T7.1-T7.4 已实现, T7.5 为待办设计草案。**
 
 ---
 
@@ -192,25 +192,104 @@ def short_link(code):
 
 ---
 
-## T7.3 权限控制 (3级) ⏳
+## T7.3 权限控制 (3级) ✅
 
-| 级别 | 字段值    | UI 行为            |
-| ---- | --------- | ------------------ |
-| 只读 | `read`    | 隐藏所有编辑入口   |
-| 评论 | `comment` | 显示「提建议」入口 |
-| 编辑 | `edit`    | 显示完整编辑权限   |
+### 目标
 
-T7.1 已在 `permission` 字段落地 (4 级: read/comment/edit/admin), UI 层 T7.5 实施。
+把短链接层的 `permission` 字段真正翻译成分享页可执行的 UI 能力与字段可见性策略：
+
+| 级别 | 字段值    | UI 行为                    | 姓名展示              |
+| ---- | --------- | -------------------------- | --------------------- |
+| 只读 | `read`    | 隐藏所有编辑/评论入口      | 脱敏显示（如 `张**`） |
+| 评论 | `comment` | 显示「提建议」入口，禁编辑 | 脱敏显示（如 `张**`） |
+| 编辑 | `edit`    | 显示完整编辑权限           | 原样展示              |
+
+### 本次落地
+
+- **策略模块**：`data/share/permission.py`
+  - `PermissionPolicy.for_permission(permission)`：把 `read/comment/edit/admin` 归一化成前端能力策略
+  - `allows_field(field)` / `can("view|comment|edit")`：统一权限判断
+  - 未知 permission 一律回退到最严格的 `read` 拒止策略（防止越权）
+- **姓名脱敏复用**：复用 `data/orders/masking.py::mask_name`
+  - 仅策略层决定 "该不该脱敏"
+  - 基础脱敏算法仍由订单模块统一维护；公开分享场景再做保守收敛：3 字及以上中文名统一为 `姓+**`，非中文名统一为 `**`
+- **路由辅助扩展**：`data.share.short_link.route_short_link_with_report(...)`
+  - 在 T7.1 的 `route_short_link()` 之上叠加报告 payload 渲染
+  - 支持 `report=` 直接注入，或 `report_loader(report_id)` 回调懒加载
+  - resolve 失败（not_found / revoked / expired / password_required / password_wrong）时不下发 `rendered`，避免泄露元数据
+- **字段裁剪规则**：
+  - `read`：回传最小元信息 + 脱敏姓名（公开场景采用更严格的 `张**` / `**` 收敛规则）
+  - `comment`：回传 `title / summary / recommendations / volunteers / score / rank / year / province` + 脱敏姓名，但不暴露手机号/身份证/内部备注/哈希
+  - `edit`：开放完整编辑所需业务字段，但仍强制隐藏 `password_hash / internal_note / note / debug_info / raw_payload` 等内部字段
+
+### Python API
+
+```python
+from data.share.permission import PermissionPolicy, render_report_payload
+from data.share.short_link import route_short_link_with_report
+
+policy = PermissionPolicy.for_permission("comment")
+assert policy.can_view is True
+assert policy.can_comment is True
+assert policy.can_edit is False
+
+rendered = render_report_payload("comment", report_dict, share_url="https://gk.example.com/s/ABC123")
+# rendered = {
+#   "permission": "comment",
+#   "policy": {"can_view": True, "can_comment": True, "can_edit": False, "mask_name": True},
+#   "visible_fields": [...],
+#   "payload": {...},
+#   "masked_fields": [...],
+# }
+
+out = route_short_link_with_report(
+    "ABC123",
+    password="s3cr3t",
+    base_url="https://gk.example.com",
+    report_loader=lambda report_id: load_report(report_id),
+)
+```
+
+### 验证
+
+- `python3 -m pytest data/share/tests/test_permission.py -q` → **34 passed**
+- `python3 -m pytest data/share/tests/ -q` → **61 passed**
+- `python3 -m pytest data/share/ data/orders/ -q` → **231 passed**
+- `python3 -m ruff check data/share/permission.py data/share/tests/test_permission.py data/share/short_link.py` → **All checks passed**
+
+### 设计取舍 / 已知限制
+
+- `admin` 作为 T7.1 历史兼容值，当前按 `edit` alias 处理；T7.3 的业务语义仍是 3 级权限模型
+- `edit` 允许手机号/身份证等编辑所需业务字段，但 `password_hash / internal_note / note / debug_info / raw_payload` 这类内部字段仍被策略层强制隐藏
+- 当前 `read/comment` 采用"最小字段白名单"，优先防泄露；如果 T7.5 UI 需要额外字段，应在策略表中显式增补，而不是默认放开
 
 ---
 
-## T7.4 撤销与统计 ⏳
+## T7.4 撤销与统计 ✅
 
-T7.1 已提供 `revoke` 和 `get_stats`。T7.4 增量:
+### 本次落地
 
-- 批量撤销: `revoke_by_report(report_id, owner_id)`
-- 统计: 按日 / 按地域 (IP 反查, P2)
-- 自动清理: cron 跑 `purge_expired` 每天一次
+- 批量撤销: `ShortLinkService.revoke_by_report(report_id, owner_id=None)`
+  - 同一 report 下可一次性撤销全部分享；传 `owner_id` 时只撤销该 owner 创建的链接，避免越权
+  - CLI 新增 `python scripts/gaokao-shortlink revoke-report --report-id R-2026-001 --owner alice`
+- 访问统计升级: 基于 `share_link_access_events` 访问事件表记录每次成功 resolve
+  - 保留 T7.1 的 `access_count / last_access_at`
+  - 新增 `unique_visitors`（按 `visitor_token` 去重）
+  - 新增 `daily_accesses`（按 UTC 日聚合 `access_count / unique_visitors`）
+- 报告级统计: `ShortLinkService.get_report_stats(report_id, owner_id=None, days=7)`
+  - 返回 `total_links / active_links / revoked_links / expired_links / total_access_count / unique_visitors / daily_accesses`
+  - CLI 新增 `python scripts/gaokao-shortlink stats-report --report-id R-2026-001 --days 7`
+
+### 设计取舍
+
+- 本期先做访问事件表，支撑按日趋势和访客去重；地域统计仍保持 P2，待后续接入 IP 反查/风控链路时再补
+- `visitor_token` 由调用方透传（如 openid / session id / cookie 指纹）；未传时仍统计访问次数，但 `unique_visitors` 不会虚构数据
+- 每次成功 `resolve(record_access=True)` 同时更新汇总字段与事件表，兼顾现有接口兼容性和后续统计扩展
+
+### 验证
+
+- `python3 -m pytest data/share/tests/test_short_link.py -q` → 27 passed
+- 覆盖新增用例：`revoke_by_report` owner 隔离、报告级批量撤销、按日趋势聚合、访客去重、报告级汇总统计
 
 ---
 

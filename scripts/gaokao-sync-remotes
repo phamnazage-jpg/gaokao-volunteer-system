@@ -1,0 +1,146 @@
+#!/usr/bin/env python3
+"""gaokao-sync-remotes — T10.3 三仓同步脚本。"""
+
+from __future__ import annotations
+
+import argparse
+import subprocess
+import sys
+from dataclasses import dataclass
+
+DEFAULT_REMOTES = ("gitea", "origin", "tksea")
+
+
+@dataclass(frozen=True)
+class PushResult:
+    remote: str
+    branch: str
+    local_head: str
+
+
+class SyncError(RuntimeError):
+    """Raised when sync preconditions or push verification fail."""
+
+
+def _run_git(*args: str) -> subprocess.CompletedProcess[str]:
+    return subprocess.run(
+        ["git", *args],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+
+
+def _git_stdout(*args: str) -> str:
+    result = _run_git(*args)
+    if result.returncode != 0:
+        raise SyncError(result.stderr.strip() or f"git {' '.join(args)} failed")
+    return result.stdout.strip()
+
+
+def _resolve_branch(explicit_branch: str | None) -> str:
+    if explicit_branch:
+        return explicit_branch
+    branch = _git_stdout("branch", "--show-current")
+    if not branch:
+        raise SyncError("detached HEAD: 请显式传入 --branch")
+    return branch
+
+
+def _ensure_required_remotes(remotes: tuple[str, ...]) -> None:
+    configured = {
+        line.strip()
+        for line in _git_stdout("remote").splitlines()
+        if line.strip()
+    }
+    missing = [remote for remote in remotes if remote not in configured]
+    if missing:
+        raise SyncError(f"missing remotes: {', '.join(missing)}")
+
+
+def _current_head(branch: str) -> str:
+    return _git_stdout("rev-parse", branch)
+
+
+def _remote_head(remote: str, branch: str) -> str:
+    result = _run_git("ls-remote", "--heads", remote, branch)
+    if result.returncode != 0:
+        raise SyncError(result.stderr.strip() or f"git ls-remote {remote} {branch} failed")
+    output = result.stdout.strip()
+    if not output:
+        raise SyncError(f"remote {remote} missing branch {branch} after push")
+    return output.split()[0]
+
+
+def sync_remotes(remotes: tuple[str, ...], branch: str, dry_run: bool) -> list[PushResult]:
+    _ensure_required_remotes(remotes)
+    local_head = _current_head(branch)
+    results: list[PushResult] = []
+
+    for remote in remotes:
+        if dry_run:
+            print(f"[DRY-RUN] git push {remote} {branch}")
+            results.append(PushResult(remote=remote, branch=branch, local_head=local_head))
+            continue
+
+        push = _run_git("push", remote, branch)
+        if push.returncode != 0:
+            stderr = push.stderr.strip() or push.stdout.strip() or f"git push {remote} {branch} failed"
+            raise SyncError(f"push failed for {remote}: {stderr}")
+
+        remote_head = _remote_head(remote, branch)
+        if remote_head != local_head:
+            raise SyncError(
+                f"verify failed for {remote}: local {local_head} != remote {remote_head}"
+            )
+        results.append(PushResult(remote=remote, branch=branch, local_head=local_head))
+
+    return results
+
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        prog="gaokao-sync-remotes",
+        description="Push 当前分支到 gitea / origin / tksea 并校验 remote HEAD。",
+    )
+    parser.add_argument(
+        "--branch",
+        help="要同步的本地分支，默认取当前分支",
+    )
+    parser.add_argument(
+        "--remote",
+        dest="remotes",
+        action="append",
+        help="指定要同步的 remote，可重复传入；默认 gitea/origin/tksea",
+    )
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="只打印将执行的 git push，不真正推送",
+    )
+    return parser
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = build_parser()
+    args = parser.parse_args(argv)
+
+    try:
+        branch = _resolve_branch(args.branch)
+        remotes = tuple(args.remotes or DEFAULT_REMOTES)
+        results = sync_remotes(remotes=remotes, branch=branch, dry_run=args.dry_run)
+    except SyncError as exc:
+        print(str(exc), file=sys.stderr)
+        return 2
+
+    if args.dry_run:
+        print(f"DRY-RUN OK: {branch} -> {', '.join(result.remote for result in results)}")
+        return 0
+
+    for result in results:
+        print(f"OK {result.remote}: {result.branch} @ {result.local_head}")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

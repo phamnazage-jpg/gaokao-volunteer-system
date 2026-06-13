@@ -1,0 +1,17 @@
+#!/usr/bin/env python3
+"""gaokao-channel-fallback — T8.4 渠道兜底巡检入口。"""
+
+from __future__ import annotations
+
+import sys
+from pathlib import Path
+
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
+from data.channel_sync.monitor import main  # noqa: E402
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

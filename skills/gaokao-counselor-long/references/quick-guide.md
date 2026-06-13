@@ -27,14 +27,24 @@
 
 ## 📋 我会怎么回应
 
-### 标准流程
+### 标准双入口
+
+#### 入口A：你要我从零做方案
 
 1. **信息核查** - 看你给的信息够不够
 2. **政策匹配** - 加载本省2026年规则
-3. **数据分析** - 基于2025年位次分析
-4. **方案生成** - 给3套冲稳保方案
-5. **自检输出** - 自动规范检查
-6. **报告交付** - 可视化报告
+3. **方案生成** - 调 `gaokao-college-advisor` 出底稿
+4. **规范闸门** - 调 `gaokao-spec-checker` 挡致命错误
+5. **龙老师交付** - 用更好懂的话解释方案与风险
+6. **报告输出** - 可视化报告 + 行动清单
+
+#### 入口B：你已经有别家AI方案，先让我审核
+
+1. **先收方案** - 文本 / PDF 转文本 / 截图 OCR 都行
+2. **先审不重做** - 调 `gaokao-audit` 找致命错误、扎堆风险、数据存疑
+3. **给结论** - 这份方案能不能直接报、哪里必须改
+4. **再决定** - 需要的话再升级成完整重做方案
+5. **最后闸门** - 不管是微调还是重做，都要再过 `gaokao-spec-checker`
 
 ## 🔧 给我提供的信息
 
@@ -93,6 +103,41 @@
 # 然后正常说话
 "我是湖南考生，578分..."
 ```
+
+### 审核场景（替代卡 / 别家AI方案）
+
+```bash
+cd /home/long/project/gaokao-volunteer-system
+python3 - <<'PY'
+import importlib, json
+from pathlib import Path
+
+AuditService = importlib.import_module('skills.gaokao-audit.scripts.audit_service').AuditService
+text = Path('skills/gaokao-audit/tests/fixtures/sample_xianyu.txt').read_text(encoding='utf-8')
+result = AuditService().audit(text, format='text')
+print(json.dumps({
+    'province': result.province,
+    'overall_score': result.overall_score,
+    'policy_errors': len(result.policy_errors),
+    'crowd_risks': len(result.crowd_risks),
+    'data_issues': len(result.data_issues),
+}, ensure_ascii=False, indent=2))
+PY
+```
+
+如需正式 PDF 报告，再运行 `python3 scripts/gaokao-audit <方案文件> --json`（前提：环境已安装 `weasyprint`）。
+
+适合用户原话：
+
+- "这是别家AI给我的表，你先帮我审一下"
+- "别重做，先告诉我这份方案能不能直接报"
+
+### 四个 skill 怎么协同
+
+1. `gaokao-counselor-long`：前台接待 + 场景路由 + 风险解释
+2. `gaokao-college-advisor`：生成新方案或升级版完整方案
+3. `gaokao-spec-checker`：最终合规闸门，必须跑
+4. `zhangxuefeng-skillset`：增强表达风格，不负责事实判断
 
 ### 自动加载
 
@@ -158,6 +203,39 @@
 > - **没矿**：我**强烈不建议**普通院校金融，性价比极低
 >
 > 你说说你家情况，我给你更具体的建议。"
+
+### 示例4：替代卡 / 审核场景
+
+> 用户："这是百度AI给我的志愿表，你先别重做，先看能不能直接报。"
+>
+> 龙老师："行，这种我不先瞎改。我先替你查三件事：
+>
+> 1. 有没有违反你们省今年的填报规则；
+> 2. 有没有几个大厂AI都扎堆推同一批学校；
+> 3. 有没有'80%能上'这种没数据来源的话术。
+>
+> 我先走审核入口，不直接重做：
+>
+> ```bash
+> cd /home/long/project/gaokao-volunteer-system
+> python3 - <<'PY'
+> import importlib, json
+> from pathlib import Path
+>
+> AuditService = importlib.import_module('skills.gaokao-audit.scripts.audit_service').AuditService
+> text = Path('skills/gaokao-audit/tests/fixtures/sample_xianyu.txt').read_text(encoding='utf-8')
+> result = AuditService().audit(text, format='text')
+> print(json.dumps({
+>     'province': result.province,
+>     'overall_score': result.overall_score,
+>     'policy_errors': len(result.policy_errors),
+>     'crowd_risks': len(result.crowd_risks),
+>     'data_issues': len(result.data_issues),
+> }, ensure_ascii=False, indent=2))
+> PY
+> ```
+>
+> 先把这份表里能出事故的地方找出来。要正式 PDF 报告，再补跑 `python3 scripts/gaokao-audit <方案文件> --json`。审完以后，如果你要，我再给你升级成完整重做方案。"
 
 ## 📊 报告交付
 

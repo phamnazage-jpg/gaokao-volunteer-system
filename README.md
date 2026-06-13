@@ -4,7 +4,7 @@
 [![codecov](https://codecov.io/gh/phamnazage-jpg/gaokao-volunteer-system/graph/badge.svg)](https://codecov.io/gh/phamnazage-jpg/gaokao-volunteer-system)
 [![Python](https://img.shields.io/badge/Python-3.10%20%7C%203.11%20%7C%203.12-blue)](https://www.python.org/)
 
-> 一套完整的、专业的、可扩展的高考志愿填报辅助系统
+> 一套面向人工服务运营的高考志愿填报系统：管理后台、订单/分享/渠道同步、AI 审核链路已成形；用户端 Web 自助闭环仍在推进中。
 
 ## 📋 项目简介
 
@@ -43,9 +43,11 @@ gaokao-volunteer-system/
 │   ├── gaokao-quick-3min.py          # 3分钟问卷
 │   ├── gaokao-collect-info.py        # 完整收集
 │   ├── gaokao-checker                # 规范检查（多省份）
+│   ├── gaokao-shortlink              # T7.1 分享短链接 CLI
 │   └── legacy/                       # 历史版本
 │
 ├── data/                     # 数据
+│   ├── share/                # T7 分享能力（短链接/权限策略/测试）
 │   ├── templates/            # 模板
 │   └── examples/             # 示例
 │
@@ -105,6 +107,167 @@ python3 ~/.local/bin/gaokao-visual-report-v2.py
 # 显示问卷
 python3 ~/.local/bin/gaokao-quick-3min.py
 ```
+
+### T6.1 管理后台 FastAPI 骨架
+
+管理后台代码位于 `admin/`。当前已落地：服务启动、JWT 登录/鉴权、Swagger/OpenAPI、T6.2 仪表盘、T6.3 用户管理，以及 T6.4 订单管理（手工录单 / 状态流转 / CSV 导出 / 退款）。当前更准确的项目标签是“运营后台 + 人工服务增强链路”，不是完整用户端 Web 自助产品。
+
+```bash
+# 安装管理后台依赖（与测试依赖分离）
+pip install -r requirements-admin.txt -r requirements-dev.txt
+
+# 启动服务
+export GAOKAO_JWT_SECRET="$(python3 -c 'import secrets; print(secrets.token_hex(32))')"
+python3 -m admin.app --port 8000
+
+# 验证 Swagger / OpenAPI
+curl http://127.0.0.1:8000/health
+curl http://127.0.0.1:8000/openapi.json
+xdg-open http://127.0.0.1:8000/docs
+```
+
+默认会在空库 bootstrap 一个管理员账号；生产环境必须显式设置强密码 `GAOKAO_ADMIN_PASS`（禁止 `admin123`，至少 10 位且覆盖 3 类字符）与高熵 `GAOKAO_JWT_SECRET`。首次启动后应立即轮换默认管理员密码。
+
+### T6.7 Docker Compose 一键启动
+
+仓库根目录已提供 `Dockerfile`、`docker-compose.yml` 与 `.env.docker.example`。默认镜像会把运行数据写入容器外部卷 `/var/lib/gaokao`，避免覆盖仓库里的 Python 包 `data/`。默认 compose 只绑定 `127.0.0.1` 且以 `dev` 模式启动，适合本机自测；正式部署前请复制 `.env.docker.example` 到 `.env` 并替换密钥/密码。
+
+```bash
+# 可选：复制示例环境变量并替换生产密钥
+cp .env.docker.example .env
+
+# 构建并启动
+docker compose up --build -d
+
+# 查看健康状态
+docker compose ps
+curl http://127.0.0.1:8000/health
+
+# 停止并保留数据卷
+docker compose down
+```
+
+**关键环境变量**
+
+- `GAOKAO_JWT_SECRET`：JWT 签名密钥；生产环境至少 32 字符
+- `GAOKAO_ORDERS_FERNET_KEY`：订单敏感字段加密密钥；缺失会导致订单/用户相关路由不可用
+- `GAOKAO_ADMIN_PASS`：默认管理员密码；生产环境禁止 `admin123`，首次启动后应立即替换
+- `GAOKAO_ADMIN_BIND`：宿主机绑定地址；默认 `127.0.0.1`，生产环境如需对外暴露请显式改成 `0.0.0.0`
+- `GAOKAO_ADMIN_PORT`：宿主机暴露端口，默认 `8000`
+
+### T8.4 渠道失败兜底（巡检 + 人工补录）
+
+当前巡检事实源以 `xianyu` 的 webhook/poller 表为准；其他渠道先视为“人工补录模板复用”。当 `xianyu` 链路异常时，先执行巡检，再决定是否走人工补录：
+
+```bash
+# 巡检（0=ok, 1=warn, 2=critical）
+python3 scripts/gaokao-channel-fallback --db data/orders.db check --source xianyu --human
+
+# 打印人工兜底模板
+python3 scripts/gaokao-channel-fallback --db data/orders.db manual-template --source xianyu --human
+```
+
+完整值班流程见 `docs/T8-4-fallback-sop.md`。
+
+### T6.2 仪表盘（一站式数据统计）
+
+T6.1 阶段 `/api/stats/orders` 为占位端点（`_stub=True`）。T6.2 接入真实 SQL 聚合，并新增一站式仪表盘端点 `/api/stats/dashboard` 与极简页面 `/dashboard`。
+
+**端点**
+
+| 方法 | 路径                   | 鉴权 | 说明                                        |
+| ---- | ---------------------- | ---- | ------------------------------------------- |
+| GET  | `/api/stats/dashboard` | JWT  | 一站式仪表盘 payload（汇总 + 分布 + 趋势）  |
+| GET  | `/api/stats/orders`    | JWT  | 订单维度统计（沿用 T6.1 stub 字段名）       |
+| GET  | `/dashboard`           | 公开 | 极简仪表盘页面（登录后拉取 dashboard JSON） |
+
+**配置**
+
+| 环境变量                | 默认值                 | 说明                                      |
+| ----------------------- | ---------------------- | ----------------------------------------- |
+| `GAOKAO_DB_PATH`        | `data/orders/admin.db` | admin_users 所在 DB                       |
+| `GAOKAO_ORDERS_DB_PATH` | `data/orders.db`       | orders 所在 DB（与 `data.orders.*` 共享） |
+
+**关键口径**
+
+- **收入 (revenue_cents)** = `paid` / `serving` / `delivered` / `completed` 四态订单的 `amount_cents` 累计值；`pending`（未付款）与 `refunded`（已退款）不计入。
+- **趋势桶粒度** = 日（UTC，`YYYY-MM-DD`）。
+- **0 填充** = 窗口内的"无订单日"也返回 0 点，前端拿到稠密序列。
+- **不读 PII** = 统计路径只触碰 `amount_cents` / `status` / `source` / `service_version` / `created_at`。
+
+**响应示例**（`/api/stats/dashboard`）
+
+```json
+{
+  "summary": {
+    "total_orders": 6, "total_revenue_cents": 100000, "total_users": 1,
+    "orders_today": 3, "orders_7d": 4, "orders_30d": 5,
+    "revenue_today_cents": 20000, "revenue_7d_cents": 70000, "revenue_30d_cents": 100000
+  },
+  "by_status":         {"pending": 2, "paid": 1, "serving": 1, "delivered": 0, "completed": 1, "refunded": 1},
+  "by_source":         {"xianyu": 3, "wechat": 1, "web": 1, "school": 1},
+  "by_service_version":{"audit": 0, "basic": 6, "standard": 0, "premium": 0},
+  "trends": {
+    "today": [{"date": "2026-06-12", "orders": 3, "revenue_cents": 20000}],
+    "7d":    [{"date": "2026-06-06", "orders": 0, "revenue_cents": 0}, ... 共 7 个点 ...],
+    "30d":   [{"date": "2026-05-14", "orders": 0, "revenue_cents": 0}, ... 共 30 个点 ...]
+  },
+  "generated_at": "2026-06-12T16:30:00+00:00"
+}
+```
+
+**本地联调**
+
+```bash
+# 1) 启动 FastAPI 服务
+export GAOKAO_JWT_SECRET="$(python3 -c 'import secrets; print(secrets.token_hex(32))')"
+python3 -m admin.app --port 8000
+
+# 2) 验证 JSON 端点
+curl -s -X POST http://127.0.0.1:8000/api/auth/login \
+  -H 'Content-Type: application/json' \
+  -d '{"username":"admin","password":"admin123"}'
+
+# 3) 打开极简页面（页面内可直接登录并加载）
+xdg-open http://127.0.0.1:8000/dashboard
+```
+
+### T6.3 用户管理（列表 / 详情 / 脱敏 / 搜索）
+
+T6.3 在 `orders` 表之上补齐用户管理读路径：`/api/admin/users` 返回按用户聚合后的列表，`/api/admin/users/{user_key}` 返回该用户的订单详情。默认展示形态为脱敏字段，便于运营核对且不直接暴露完整 PII。
+
+**端点**
+
+| 方法 | 路径                          | 鉴权 | 说明                                             |
+| ---- | ----------------------------- | ---- | ------------------------------------------------ |
+| GET  | `/api/admin/users`            | JWT  | 用户列表；支持 `q` 搜索、`limit` / `offset` 分页 |
+| GET  | `/api/admin/users/{user_key}` | JWT  | 用户详情；返回该用户的脱敏订单明细               |
+
+**聚合口径**
+
+- 优先按 `customer_phone_hash` 聚合同一用户；无手机号时退回 `customer_wechat` 指纹；再退回订单号，避免孤立记录丢失。
+- 搜索支持姓名 / 手机号 / 微信 / 订单号等常见运营核对字段。
+- 返回的 `customer_name` / `candidate_name` / `customer_phone` / `candidate_id_card` 默认走脱敏展示。
+
+### T6.4 订单管理（录单 / 状态流转 / 导出 / 退款）
+
+T6.4 在已有 `data/orders` DAO 与状态机之上补齐管理后台写路径。运营人员现在可以通过 FastAPI 直接手工录单、更新业务字段、推进状态、导出 CSV，以及将订单推进到 `refunded`。
+
+**端点**
+
+| 方法  | 路径                 | 鉴权 | 说明                                                    |
+| ----- | -------------------- | ---- | ------------------------------------------------------- |
+| GET   | `/api/orders`        | JWT  | 订单列表；支持 `status` / `source` / `limit` / `offset` |
+| GET   | `/api/orders/export` | JWT  | CSV 导出；默认脱敏敏感字段                              |
+| GET   | `/api/orders/{id}`   | JWT  | 订单详情；附带状态历史与可流转下一状态                  |
+| POST  | `/api/orders`        | JWT  | 手工录单；`external_id` 可空                            |
+| PATCH | `/api/orders/{id}`   | JWT  | 业务字段更新、状态流转、退款                            |
+
+**约束**
+
+- 写路径复用 `OrdersDAO`：业务字段更新走 `update()`，状态变化强制走 `transition_status()`，不绕过 6 态状态机。
+- 导出默认脱敏：`customer_phone` / `candidate_id_card` 在 CSV 中也不返回明文，避免把完整 PII 直接写入浏览器下载文件。
+- 退款不主动调用第三方渠道 API；管理后台只把本地订单推进为 `refunded`，与 `docs/CHANNEL_INTEGRATION.md` 的合规边界一致。
 
 ## 📊 已支持省份
 

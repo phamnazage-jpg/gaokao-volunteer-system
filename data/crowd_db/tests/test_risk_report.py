@@ -143,6 +143,33 @@ def test_risk_dict_field_types():
     assert isinstance(r["alternatives"], list)
 
 
+def test_risk_dict_includes_provenance_fields():
+    """每条风险必须附带省份级溯源元数据，供报告展示来源/报告/估算标识"""
+    plan = [plan_entry("长沙理工大学", "计算机科学与技术")]
+    risks = build_crowd_risks(plan, user_score=575, province="湖南")
+    r = risks[0]
+    for key in (
+        "source_type",
+        "raw_source_type",
+        "source_type_label",
+        "source_type_icon",
+        "source",
+        "source_url",
+        "confidence",
+        "last_updated",
+        "data_year",
+    ):
+        assert key in r, f"missing provenance field: {key}"
+    assert r["source_type"] == "report"
+    assert r["raw_source_type"] == "manual_summary"
+    assert r["source_type_label"] == "报告"
+    assert r["source_type_icon"] == "⚠️"
+    assert r["source_url"].startswith("https://")
+    assert r["last_updated"] == "2026-06-12"
+    assert r["data_year"] == 2025
+    assert 0 <= r["confidence"] <= 1
+
+
 def test_alternatives_remapped_to_school_field():
     """crowd_db 里 alternatives 项的 name 字段必须重映射为模板需要的 school"""
     plan = [plan_entry("长沙理工大学", "计算机科学与技术")]

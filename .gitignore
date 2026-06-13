@@ -60,3 +60,14 @@ data/private/
 .env.local
 *.local
 config.local.*
+
+# 本地工作树 / 临时验证产物
+.worktrees/
+.hermes_test_tmp.txt
+admin/_tmp_test.txt
+
+# 运行时 SQLite 数据库
+/data/*.db
+/data/*.db-*
+/data/orders/*.db
+/data/orders/*.db-*

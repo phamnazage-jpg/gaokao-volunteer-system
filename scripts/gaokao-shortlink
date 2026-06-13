@@ -3,12 +3,14 @@
 gaokao-shortlink — T7.1 短链接生成器命令行工具
 
 子命令:
-    create   创建短链接
-    resolve  解析短链接 (查询/校验)
-    revoke   撤销短链接
-    list     列出某报告 / 某用户的所有链接
-    stats    查看某链接的访问统计
-    purge    清理过期记录 (维护)
+    create         创建短链接
+    resolve        解析短链接 (查询/校验)
+    revoke         撤销单条短链接
+    revoke-report  按 report 批量撤销短链接
+    list           列出某报告 / 某用户的所有链接
+    stats          查看某链接的访问统计
+    stats-report   查看某报告的访问统计
+    purge          清理过期记录 (维护)
 
 示例:
     # 创建: 关联报告 R-2026-001, 30 天有效, 只读权限
@@ -26,13 +28,15 @@ gaokao-shortlink — T7.1 短链接生成器命令行工具
 
     # 撤销
     python scripts/gaokao-shortlink revoke ABC123 --owner alice
+    python scripts/gaokao-shortlink revoke-report --report-id R-2026-001 --owner alice
 
     # 列表
     python scripts/gaokao-shortlink list --report R-2026-001
     python scripts/gaokao-shortlink list --owner alice
 
     # 统计
-    python scripts/gaokao-shortlink stats ABC123
+    python scripts/gaokao-shortlink stats ABC123 --days 7
+    python scripts/gaokao-shortlink stats-report --report-id R-2026-001 --days 7
 """
 
 import argparse
@@ -152,6 +156,19 @@ def cmd_revoke(args) -> int:
     return 0
 
 
+def cmd_revoke_report(args) -> int:
+    """按 report 批量撤销短链接"""
+    svc = ShortLinkService(db_path=args.db)
+    revoked = svc.revoke_by_report(args.report_id, owner_id=args.owner)
+    payload = {
+        "report_id": args.report_id,
+        "owner_id": args.owner,
+        "revoked_count": revoked,
+    }
+    _out(payload, as_json=not args.human)
+    return 0 if revoked > 0 else 1
+
+
 def cmd_list(args) -> int:
     """列出某报告 / 某用户的链接"""
     if not args.report and not args.owner:
@@ -174,10 +191,18 @@ def cmd_list(args) -> int:
 def cmd_stats(args) -> int:
     """查看某链接访问统计"""
     svc = ShortLinkService(db_path=args.db)
-    stats = svc.get_stats(args.code)
+    stats = svc.get_stats(args.code, days=args.days)
     if stats is None:
         print(f"未找到 code={args.code}", file=sys.stderr)
         return 1
+    _out(stats, as_json=not args.human)
+    return 0
+
+
+def cmd_stats_report(args) -> int:
+    """查看某报告的分享访问统计"""
+    svc = ShortLinkService(db_path=args.db)
+    stats = svc.get_report_stats(args.report_id, owner_id=args.owner, days=args.days)
     _out(stats, as_json=not args.human)
     return 0
 
@@ -242,6 +267,12 @@ def build_parser() -> argparse.ArgumentParser:
     px.add_argument("--owner", help="owner 校验 (可选, 不传则不强校)")
     px.set_defaults(func=cmd_revoke)
 
+    # ---- revoke-report ----
+    pxx = sub.add_parser("revoke-report", help="按 report 批量撤销短链接")
+    pxx.add_argument("--report-id", required=True, help="关联报告 ID")
+    pxx.add_argument("--owner", help="owner 校验 (可选)")
+    pxx.set_defaults(func=cmd_revoke_report)
+
     # ---- list ----
     pl = sub.add_parser("list", help="列出某报告/某用户的链接")
     pl.add_argument("--report", help="按 report_id 过滤")
@@ -252,7 +283,15 @@ def build_parser() -> argparse.ArgumentParser:
     # ---- stats ----
     ps = sub.add_parser("stats", help="查看短链接统计")
     ps.add_argument("code", help="短码")
+    ps.add_argument("--days", type=int, default=7, help="返回最近 N 天趋势 (默认 7)")
     ps.set_defaults(func=cmd_stats)
+
+    # ---- stats-report ----
+    psr = sub.add_parser("stats-report", help="查看报告级分享统计")
+    psr.add_argument("--report-id", required=True, help="关联报告 ID")
+    psr.add_argument("--owner", help="按 owner_id 过滤 (可选)")
+    psr.add_argument("--days", type=int, default=7, help="返回最近 N 天趋势 (默认 7)")
+    psr.set_defaults(func=cmd_stats_report)
 
     # ---- purge ----
     pp = sub.add_parser("purge", help="清理过期记录")

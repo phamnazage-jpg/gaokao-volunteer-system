@@ -4,24 +4,20 @@
 新增：HTML导出、PDF导出、精美样式
 """
 
-import json
-import sys
-import os
-import base64
-import tempfile
 from datetime import datetime
-from pathlib import Path
 
 # 尝试导入可选依赖
 try:
     from jinja2 import Template
+
     HAS_JINJA = True
 except ImportError:
     HAS_JINJA = False
     print("警告: jinja2 未安装，HTML模板功能将受限")
 
 try:
-    from weasyprint import HTML, CSS
+    from weasyprint import HTML  # type: ignore[import-not-found]
+
     HAS_WEASYPRINT = True
 except ImportError:
     HAS_WEASYPRINT = False
@@ -38,31 +34,31 @@ def generate_student_radar(student_profile):
         "就业匹配度": student_profile.get("employment_match", 0),
         "家庭适配度": student_profile.get("family_match", 0),
     }
-    
+
     # 综合得分计算
     weighted_score = (
-        scores["兴趣匹配度"] * 0.3 +
-        scores["能力匹配度"] * 0.3 +
-        scores["就业匹配度"] * 0.25 +
-        scores["家庭适配度"] * 0.15
+        scores["兴趣匹配度"] * 0.3
+        + scores["能力匹配度"] * 0.3
+        + scores["就业匹配度"] * 0.25
+        + scores["家庭适配度"] * 0.15
     )
-    
+
     # 生成ASCII雷达图
     radar_chart = f"""
 ┌─────────────────────────────────────────────────────────────────┐
-│                    🎯 {student_profile.get('name', '考生')} 画像雷达图                          │
+│                    🎯 {student_profile.get("name", "考生")} 画像雷达图                          │
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                  │
 │                        兴趣匹配度                                │
-│                             {scores['兴趣匹配度']:>3}/10                             │
+│                             {scores["兴趣匹配度"]:>3}/10                             │
 │                              │                                   │
-│              {min(scores['能力匹配度'], 10):>2}/10 ─────────┼───────── {min(scores['就业匹配度'], 10):>2}/10          │
+│              {min(scores["能力匹配度"], 10):>2}/10 ─────────┼───────── {min(scores["就业匹配度"], 10):>2}/10          │
 │                能力匹配度     │     就业匹配度                    │
 │                               │                                   │
 │                         【{weighted_score:.1f}/10】                           │
 │                         综合得分                                │
 │                               │                                   │
-│                      {scores['家庭适配度']:>3}/10                                   │
+│                      {scores["家庭适配度"]:>3}/10                                   │
 │                        家庭适配度                                │
 │                                                                  │
 ├─────────────────────────────────────────────────────────────────┤
@@ -87,19 +83,21 @@ def generate_school_comparison(volunteer_list):
 │   志愿类型  │    院校    │   专业   │ 录取概率│ 匹配指数│  推荐指数 │
 ├────────────┼────────────┼──────────┼─────────┼─────────┼───────────┤
 """
-    
+
     for idx, vol in enumerate(volunteer_list, 1):
-        v_type = vol.get('type', '稳')
-        emoji = {'冲': '🔴', '稳': '🟡', '保': '🟢'}.get(v_type, '⚪')
-        
-        prob_bar = '█' * int(vol.get('probability', 0) / 10) + '░' * (10 - int(vol.get('probability', 0) / 10))
-        match_score = vol.get('match_score', 0)
-        stars = '⭐' * int(match_score / 20) + '☆' * (5 - int(match_score / 20))
-        
-        table += f"""│ {emoji} {v_type:>2} {idx:>2} │ {vol.get('school', '待定'):<10} │ {vol.get('major', '待定'):<8} │ {prob_bar} │   {match_score:>3}   │ {stars} │
+        v_type = vol.get("type", "稳")
+        emoji = {"冲": "🔴", "稳": "🟡", "保": "🟢"}.get(v_type, "⚪")
+
+        prob_bar = "█" * int(vol.get("probability", 0) / 10) + "░" * (
+            10 - int(vol.get("probability", 0) / 10)
+        )
+        match_score = vol.get("match_score", 0)
+        stars = "⭐" * int(match_score / 20) + "☆" * (5 - int(match_score / 20))
+
+        table += f"""│ {emoji} {v_type:>2} {idx:>2} │ {vol.get("school", "待定"):<10} │ {vol.get("major", "待定"):<8} │ {prob_bar} │   {match_score:>3}   │ {stars} │
 ├────────────┼────────────┼──────────┼─────────┼─────────┼───────────┤
 """
-    
+
     table += """│                                                                  │
 │ 图例：                                                           │
 │ 录取概率 █████ 90%+  ████░ 80%+  ███░░ 60%+  ██░░░ 40%+  █░░░░ <20%│
@@ -119,33 +117,33 @@ def generate_major_heatmap(majors):
 ├──────────────────────────────────────────────────────────────────────┤
 │                                                                      │
 """
-    
+
     for major in majors:
-        name = major.get('name', '')
-        score = major.get('match_score', 0)
-        
+        name = major.get("name", "")
+        score = major.get("match_score", 0)
+
         # 生成热力条
         if score >= 90:
-            bar = '█' * 20
-            status = '强烈推荐'
+            bar = "█" * 20
+            status = "强烈推荐"
         elif score >= 80:
-            bar = '█' * 17 + '░' * 3
-            status = '推荐选择'
+            bar = "█" * 17 + "░" * 3
+            status = "推荐选择"
         elif score >= 70:
-            bar = '█' * 14 + '░' * 6
-            status = '可以考虑'
+            bar = "█" * 14 + "░" * 6
+            status = "可以考虑"
         elif score >= 60:
-            bar = '█' * 11 + '░' * 9
-            status = '谨慎考虑'
+            bar = "█" * 11 + "░" * 9
+            status = "谨慎考虑"
         elif score >= 40:
-            bar = '█' * 8 + '░' * 12
-            status = '不太建议'
+            bar = "█" * 8 + "░" * 12
+            status = "不太建议"
         else:
-            bar = '█' * 5 + '░' * 15
-            status = '不推荐'
-        
+            bar = "█" * 5 + "░" * 15
+            status = "不推荐"
+
         heatmap += f"│  {name:<12} {bar}  {score:>3}%  {status:<12} │\n"
-    
+
     heatmap += """│                                                                      │
 │ 热力指数：████ 90-100%  ████ 80-90%  ███░ 70-80%  ██░░ 60-70%        │
 │            █░░░ 30-60%  ░░░░ <30% (不推荐)                          │
@@ -159,44 +157,44 @@ def detect_risks(student_profile, volunteer_list):
     智能风险检测
     """
     risks = []
-    
+
     # 检查位次差距
     for vol in volunteer_list:
-        if vol.get('type') == '冲':
-            if vol.get('probability', 0) < 30:
+        if vol.get("type") == "冲":
+            if vol.get("probability", 0) < 30:
                 risks.append({
-                    'level': 'warning',
-                    'item': f"{vol.get('school')}录取概率过低",
-                    'desc': f"录取概率仅{vol.get('probability')}%，需要增加相近备选"
+                    "level": "warning",
+                    "item": f"{vol.get('school')}录取概率过低",
+                    "desc": f"录取概率仅{vol.get('probability')}%，需要增加相近备选",
                 })
-    
+
     # 检查学科匹配
-    weak_subjects = student_profile.get('weak_subjects', [])
+    weak_subjects = student_profile.get("weak_subjects", [])
     for vol in volunteer_list:
-        required = vol.get('required_subjects', [])
+        required = vol.get("required_subjects", [])
         for subj in required:
             if subj in weak_subjects:
                 risks.append({
-                    'level': 'danger',
-                    'item': f"{vol.get('school')}-{vol.get('major')}学科不匹配",
-                    'desc': f"该专业需要{subj}，但考生{subj}为弱项"
+                    "level": "danger",
+                    "item": f"{vol.get('school')}-{vol.get('major')}学科不匹配",
+                    "desc": f"该专业需要{subj}，但考生{subj}为弱项",
                 })
-    
+
     # 检查梯度合理性
-    types_count = {'冲': 0, '稳': 0, '保': 0}
+    types_count = {"冲": 0, "稳": 0, "保": 0}
     for vol in volunteer_list:
-        v_type = vol.get('type', '稳')
+        v_type = vol.get("type", "稳")
         types_count[v_type] = types_count.get(v_type, 0) + 1
-    
+
     total = len(volunteer_list)
     if total > 0:
-        if types_count['保'] / total < 0.2:
+        if types_count["保"] / total < 0.2:
             risks.append({
-                'level': 'danger',
-                'item': '保底志愿不足',
-                'desc': f"保底志愿仅占{types_count['保']/total*100:.0f}%，建议至少30%"
+                "level": "danger",
+                "item": "保底志愿不足",
+                "desc": f"保底志愿仅占{types_count['保'] / total * 100:.0f}%，建议至少30%",
             })
-    
+
     # 生成风险报告
     risk_report = """
 ┌──────────────────────────────────────────────────────────────────────┐
@@ -204,27 +202,33 @@ def detect_risks(student_profile, volunteer_list):
 ├──────────────────────────────────────────────────────────────────────┤
 │                                                                      │
 """
-    
-    danger_list = [r for r in risks if r['level'] == 'danger']
-    warning_list = [r for r in risks if r['level'] == 'warning']
-    
+
+    danger_list = [r for r in risks if r["level"] == "danger"]
+    warning_list = [r for r in risks if r["level"] == "warning"]
+
     if danger_list:
-        risk_report += "│  🔴 高风险项目（必须修改）：                                        │\n"
+        risk_report += (
+            "│  🔴 高风险项目（必须修改）：                                        │\n"
+        )
         for risk in danger_list:
             risk_report += f"│     ✗ {risk['item']:<30}                            │\n"
             risk_report += f"│       → {risk['desc']:<50}                │\n"
             risk_report += "│                                                                      │\n"
-    
+
     if warning_list:
-        risk_report += "│  🟡 中风险项目（建议调整）：                                        │\n"
+        risk_report += (
+            "│  🟡 中风险项目（建议调整）：                                        │\n"
+        )
         for risk in warning_list:
             risk_report += f"│     ⚠ {risk['item']:<30}                            │\n"
             risk_report += f"│       → {risk['desc']:<50}                │\n"
             risk_report += "│                                                                      │\n"
-    
+
     if not risks:
-        risk_report += "│  🟢 恭喜！未检测到高风险项目，当前方案可以安全填报               │\n"
-    
+        risk_report += (
+            "│  🟢 恭喜！未检测到高风险项目，当前方案可以安全填报               │\n"
+        )
+
     risk_report += """│                                                                      │
 └──────────────────────────────────────────────────────────────────────┘
 """
@@ -239,18 +243,18 @@ def generate_html_report(student_data, volunteer_list, output_file=None):
         print("错误: 需要安装 jinja2 才能生成HTML报告")
         print("运行: pip3 install --user jinja2")
         return None
-    
+
     # 计算雷达图数据
     radar_data = {
-        'interest': student_data.get('interest_match', 0),
-        'ability': student_data.get('ability_match', 0),
-        'employment': student_data.get('employment_match', 0),
-        'family': student_data.get('family_match', 0)
+        "interest": student_data.get("interest_match", 0),
+        "ability": student_data.get("ability_match", 0),
+        "employment": student_data.get("employment_match", 0),
+        "family": student_data.get("family_match", 0),
     }
-    radar_data['average'] = sum(radar_data.values()) / 4
-    
+    radar_data["average"] = sum(radar_data.values()) / 4
+
     # HTML模板
-    html_template = '''<!DOCTYPE html>
+    html_template = """<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -545,33 +549,36 @@ def generate_html_report(student_data, volunteer_list, output_file=None):
         });
     </script>
 </body>
-</html>'''
-    
+</html>"""
+
     template = Template(html_template)
-    
+
     # 准备数据
-    majors = [{'name': vol['major'], 'match_score': vol['match_score']} for vol in volunteer_list]
+    majors = [
+        {"name": vol["major"], "match_score": vol["match_score"]}
+        for vol in volunteer_list
+    ]
     _, risks = detect_risks(student_data, volunteer_list)
-    
+
     html_content = template.render(
-        name=student_data.get('name', '考生'),
-        province=student_data.get('province', '未知'),
-        score=student_data.get('score', 0),
-        rank=student_data.get('rank', 0),
+        name=student_data.get("name", "考生"),
+        province=student_data.get("province", "未知"),
+        score=student_data.get("score", 0),
+        rank=student_data.get("rank", 0),
         radar=radar_data,
         volunteers=volunteer_list,
         majors=majors,
         risks=risks,
-        generated_at=datetime.now().strftime('%Y年%m月%d日 %H:%M')
+        generated_at=datetime.now().strftime("%Y年%m月%d日 %H:%M"),
     )
-    
+
     # 保存HTML
     if output_file is None:
         output_file = f"/tmp/gaokao_report_{student_data.get('name', 'unknown')}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.html"
-    
-    with open(output_file, 'w', encoding='utf-8') as f:
+
+    with open(output_file, "w", encoding="utf-8") as f:
         f.write(html_content)
-    
+
     print(f"✓ HTML报告已生成: {output_file}")
     return output_file
 
@@ -584,10 +591,10 @@ def generate_pdf_from_html(html_file, pdf_file=None):
         print("错误: 需要安装 weasyprint 才能生成PDF")
         print("运行: pip3 install --user weasyprint")
         return None
-    
+
     if pdf_file is None:
-        pdf_file = html_file.replace('.html', '.pdf')
-    
+        pdf_file = html_file.replace(".html", ".pdf")
+
     try:
         HTML(filename=html_file).write_pdf(pdf_file)
         print(f"✓ PDF报告已生成: {pdf_file}")
@@ -597,31 +604,31 @@ def generate_pdf_from_html(html_file, pdf_file=None):
         return None
 
 
-def generate_visual_report(student_data, volunteer_list, output_format='all'):
+def generate_visual_report(student_data, volunteer_list, output_format="all"):
     """
     生成完整可视化报告（支持多种格式）
-    
+
     参数:
         student_data: 考生数据
         volunteer_list: 志愿列表
         output_format: 输出格式 ('md', 'html', 'pdf', 'all')
-    
+
     返回:
         生成的文件路径列表
     """
     results = []
-    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     base_name = f"gaokao_report_{student_data.get('name', 'unknown')}_{timestamp}"
-    
+
     # 1. 生成Markdown报告
-    if output_format in ['md', 'all']:
+    if output_format in ["md", "all"]:
         md_content = f"""# 高考志愿填报方案报告
 
-**生成时间**: {datetime.now().strftime('%Y年%m月%d日 %H:%M')}  
-**考生姓名**: {student_data.get('name', '考生')}  
-**考生省份**: {student_data.get('province', '未知')}  
-**高考总分**: {student_data.get('score', 0)}分  
-**全省位次**: {student_data.get('rank', 0)}名  
+**生成时间**: {datetime.now().strftime("%Y年%m月%d日 %H:%M")}  
+**考生姓名**: {student_data.get("name", "考生")}  
+**考生省份**: {student_data.get("province", "未知")}  
+**高考总分**: {student_data.get("score", 0)}分  
+**全省位次**: {student_data.get("rank", 0)}名  
 
 ---
 
@@ -631,39 +638,42 @@ def generate_visual_report(student_data, volunteer_list, output_format='all'):
         radar_chart, weighted_score, scores = generate_student_radar(student_data)
         md_content += radar_chart
         md_content += f"\n**综合匹配指数**: {weighted_score:.1f}/10\n\n"
-        
+
         md_content += "## 二、志愿方案可视化对比\n\n"
         md_content += generate_school_comparison(volunteer_list)
-        
+
         md_content += "## 三、专业匹配度热力图\n\n"
-        majors = [{'name': vol['major'], 'match_score': vol['match_score']} for vol in volunteer_list]
+        majors = [
+            {"name": vol["major"], "match_score": vol["match_score"]}
+            for vol in volunteer_list
+        ]
         md_content += generate_major_heatmap(majors)
-        
+
         md_content += "## 四、风险检测报告\n\n"
         risk_report, _ = detect_risks(student_data, volunteer_list)
         md_content += risk_report
-        
+
         md_file = f"/tmp/{base_name}.md"
-        with open(md_file, 'w', encoding='utf-8') as f:
+        with open(md_file, "w", encoding="utf-8") as f:
             f.write(md_content)
         print(f"✓ Markdown报告已生成: {md_file}")
         results.append(md_file)
-    
+
     # 2. 生成HTML报告
     html_file = None
-    if output_format in ['html', 'pdf', 'all']:
+    if output_format in ["html", "pdf", "all"]:
         html_file = f"/tmp/{base_name}.html"
         html_file = generate_html_report(student_data, volunteer_list, html_file)
         if html_file:
             results.append(html_file)
-    
+
     # 3. 生成PDF报告
-    if output_format in ['pdf', 'all'] and html_file:
+    if output_format in ["pdf", "all"] and html_file:
         pdf_file = f"/tmp/{base_name}.pdf"
         pdf_file = generate_pdf_from_html(html_file, pdf_file)
         if pdf_file:
             results.append(pdf_file)
-    
+
     return results
 
 
@@ -671,61 +681,61 @@ def generate_visual_report(student_data, volunteer_list, output_format='all'):
 if __name__ == "__main__":
     # 示例考生数据
     student = {
-        'name': '李明',
-        'province': '浙江省',
-        'score': 612,
-        'rank': 15230,
-        'interest_match': 85,
-        'ability_match': 90,
-        'employment_match': 88,
-        'family_match': 95,
-        'weak_subjects': ['化学', '语文']
+        "name": "李明",
+        "province": "浙江省",
+        "score": 612,
+        "rank": 15230,
+        "interest_match": 85,
+        "ability_match": 90,
+        "employment_match": 88,
+        "family_match": 95,
+        "weak_subjects": ["化学", "语文"],
     }
-    
+
     # 示例志愿列表
     volunteers = [
         {
-            'school': '浙江大学',
-            'major': '计算机类',
-            'type': '冲',
-            'probability': 35,
-            'match_score': 95,
-            'required_subjects': ['数学', '物理']
+            "school": "浙江大学",
+            "major": "计算机类",
+            "type": "冲",
+            "probability": 35,
+            "match_score": 95,
+            "required_subjects": ["数学", "物理"],
         },
         {
-            'school': '杭州电子科技大学',
-            'major': '计算机类',
-            'type': '稳',
-            'probability': 70,
-            'match_score': 92,
-            'required_subjects': ['数学', '物理']
+            "school": "杭州电子科技大学",
+            "major": "计算机类",
+            "type": "稳",
+            "probability": 70,
+            "match_score": 92,
+            "required_subjects": ["数学", "物理"],
         },
         {
-            'school': '浙江工业大学',
-            'major': '软件工程',
-            'type': '稳',
-            'probability': 80,
-            'match_score': 88,
-            'required_subjects': ['数学']
+            "school": "浙江工业大学",
+            "major": "软件工程",
+            "type": "稳",
+            "probability": 80,
+            "match_score": 88,
+            "required_subjects": ["数学"],
         },
         {
-            'school': '浙江理工大学',
-            'major': '软件工程',
-            'type': '保',
-            'probability': 95,
-            'match_score': 82,
-            'required_subjects': ['数学']
-        }
+            "school": "浙江理工大学",
+            "major": "软件工程",
+            "type": "保",
+            "probability": 95,
+            "match_score": 82,
+            "required_subjects": ["数学"],
+        },
     ]
-    
+
     print("=" * 60)
     print("高考志愿填报可视化报告生成器 V2.0")
     print("=" * 60)
     print()
-    
+
     # 生成所有格式
-    files = generate_visual_report(student, volunteers, output_format='all')
-    
+    files = generate_visual_report(student, volunteers, output_format="all")
+
     print()
     print("=" * 60)
     print("生成完成！文件列表：")

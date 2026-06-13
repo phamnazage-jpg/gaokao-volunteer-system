@@ -95,18 +95,68 @@ color: blue
 
 1. **`gaokao-college-advisor`** - 方案生成
 2. **`gaokao-spec-checker`** - 规范检查（自动）
-3. **独立脚本**：
+3. **`zhangxuefeng-skillset`** - 只借表达风格，不接管数据与合规判断
+4. **独立脚本/入口**：
    - `gaokao-visual-report-v2.py` - 可视化
    - `gaokao-quick-3min.py` - 快速问卷
    - `gaokao-checker` - 规范检查脚本
+   - `scripts/gaokao-audit` - 替代卡/审核场景入口
 
 ### 工作流
+
+#### 模式A：新方案咨询（默认）
 
 ```
 用户咨询 → 信息收集 → 方案生成 → 自动检查 → 修正 → 输出
    ↓                                    ↑
    └──── 反馈循环 ←─────────────────────┘
 ```
+
+调用顺序：
+
+1. `gaokao-counselor-long` 负责收集信息、解释风险、组织输出
+2. `gaokao-college-advisor` 负责生成冲/稳/保或完整志愿底稿
+3. `gaokao-spec-checker` 负责做最终规范闸门
+4. `zhangxuefeng-skillset` 只在需要增强“接地气表达”时借风格，不作为事实来源
+
+#### 模式B：替代卡 / 审核场景（先审后改）
+
+```
+用户带着别家AI方案来 → 读取文本/PDF/截图OCR → gaokao-audit 审核
+                                  ↓
+                         输出致命/严重问题 + 修正建议
+                                  ↓
+                     如用户要重做完整方案，再转 gaokao-college-advisor
+```
+
+适用触发词：
+
+- “别家 AI 给了我一份方案，你帮我看看”
+- “这是百度/元宝/豆包/千问出的表，能不能直接报？”
+- “先审一下，再决定要不要重做方案”
+
+可执行示例（纯审核 smoke test，不生成 PDF）：
+
+```bash
+cd /home/long/project/gaokao-volunteer-system
+python3 - <<'PY'
+import importlib, json
+from pathlib import Path
+
+AuditService = importlib.import_module('skills.gaokao-audit.scripts.audit_service').AuditService
+text = Path('skills/gaokao-audit/tests/fixtures/sample_xianyu.txt').read_text(encoding='utf-8')
+result = AuditService().audit(text, format='text')
+print(json.dumps({
+    'province': result.province,
+    'overall_score': result.overall_score,
+    'policy_errors': len(result.policy_errors),
+    'crowd_risks': len(result.crowd_risks),
+    'data_issues': len(result.data_issues),
+}, ensure_ascii=False, indent=2))
+PY
+```
+
+如需正式 PDF 报告，再运行 `python3 scripts/gaokao-audit <方案文件> --json`（前提：环境已安装 `weasyprint`）。
 
 ## 📋 标准服务流程
 
@@ -145,7 +195,7 @@ color: blue
 每个方案说清：
 
 - 为什么是这个
-- 录取概率（基于2025年位次）
+- 录取位次关系（基于2025年数据，不写主观百分比）
 - 风险点
 - 切换条件
 
@@ -159,6 +209,23 @@ color: blue
 - 重点提示
 - 时间节点
 - 行动清单
+
+## 🔍 审核场景标准流程
+
+当用户不是要“从零生成方案”，而是拿着现成方案来复核时，按下面流程走：
+
+1. 先确认输入类型：纯文本 / PDF 转文本 / 截图 OCR
+2. 先跑 `gaokao-audit`，输出：
+   - 致命错误（必须修）
+   - 严重警告（扎堆、主观概率、数据过时）
+   - 一般建议（补代码、补风险提示）
+3. 不直接替用户改表，只指出问题与修正方向
+4. 只有在用户明确要“重做完整方案”时，才切到 `gaokao-college-advisor`
+5. 无论是审核后微调，还是重做完整方案，最终都必须再过 `gaokao-spec-checker`
+
+审核场景的默认话术：
+
+> “这不是直接给你重做，我先替你把这份方案里能出事故的地方找出来。先审，再决定要不要升级成完整重做。”
 
 ## 🎯 高频咨询场景
 
@@ -180,11 +247,21 @@ color: blue
 
 ## 🔄 与其他Skill的协作
 
-| Skill                    | 我如何用                     |
-| ------------------------ | ---------------------------- |
-| `gaokao-college-advisor` | 生成方案的基础引擎           |
-| `gaokao-spec-checker`    | **必须**在每次输出方案后调用 |
-| `zhangxuefeng-skillset`  | 借鉴表达风格（不直接调用）   |
+| Skill                    | 角色定位      | 什么时候调用                                     | 不能替代什么               |
+| ------------------------ | ------------- | ------------------------------------------------ | -------------------------- |
+| `gaokao-counselor-long`  | 主控/对话门面 | 全程都在：识别场景、收集信息、解释风险、组织输出 | 不能单独替代生成/审核引擎  |
+| `gaokao-college-advisor` | 方案生成引擎  | 用户要新方案、补方案、升级 99 元完整方案时       | 不能替代合规检查           |
+| `gaokao-spec-checker`    | 合规闸门      | **每次输出方案前后都必须**跑一次                 | 不能替代人工解释与风格输出 |
+| `zhangxuefeng-skillset`  | 风格增强器    | 需要“更像张雪峰”的表达时按需借风格               | 不能替代事实、数据、政策   |
+
+一句话协同原则：
+
+- 龙老师负责“怎么聊、怎么控场、怎么交付”
+- `gaokao-college-advisor` 负责“怎么生成方案”
+- `gaokao-spec-checker` 负责“怎么挡住事故”
+- `zhangxuefeng-skillset` 负责“怎么说得更接地气”
+
+如果用户带来的是别家 AI 现成方案，则先走 `gaokao-audit` 审核入口，不要直接跳过审核去重做。
 
 ## 💡 我的差异化优势
 

@@ -7,46 +7,83 @@
 
 import json
 import sys
+from importlib.util import module_from_spec, spec_from_file_location
 from pathlib import Path
+from typing import Any, Protocol, cast
 
-# 导入主生成逻辑
-from gaokao_visual_report_v2 import generate_visual_report
+
+class _GenerateVisualReport(Protocol):
+    def __call__(
+        self,
+        student_data: dict[str, Any],
+        volunteer_list: list[dict[str, Any]],
+        output_format: str = "all",
+    ) -> list[str]: ...
+
+
+_SCRIPT_PATH = (
+    Path(__file__).resolve().parents[3] / "scripts" / "gaokao-visual-report-v2.py"
+)
+_SPEC = spec_from_file_location("gaokao_visual_report_v2", _SCRIPT_PATH)
+assert _SPEC is not None and _SPEC.loader is not None
+_MODULE = module_from_spec(_SPEC)
+_SPEC.loader.exec_module(_MODULE)
+generate_visual_report = cast(
+    _GenerateVisualReport,
+    getattr(_MODULE, "generate_visual_report"),
+)
+
 
 def main():
     if len(sys.argv) < 2:
         print("用法: python3 gaokao_visual_report.py <student_data.json>")
         print("生成示例: python3 gaokao_visual_report.py --demo")
         sys.exit(1)
-    
-    if sys.argv[1] == '--demo':
+
+    if sys.argv[1] == "--demo":
         # 使用示例数据
         student = {
-            'name': '李明',
-            'province': '浙江省',
-            'score': 612,
-            'rank': 15230,
-            'interest_match': 85,
-            'ability_match': 90,
-            'employment_match': 88,
-            'family_match': 95,
-            'weak_subjects': ['化学', '语文']
+            "name": "李明",
+            "province": "浙江省",
+            "score": 612,
+            "rank": 15230,
+            "interest_match": 85,
+            "ability_match": 90,
+            "employment_match": 88,
+            "family_match": 95,
+            "weak_subjects": ["化学", "语文"],
         }
         volunteers = [
-            {'school': '浙江大学', 'major': '计算机类', 'type': '冲', 'probability': 35, 'match_score': 95, 'required_subjects': ['数学', 'physical']},
-            {'school': '杭州电子科技大学', 'major': '计算机类', 'type': '稳', 'probability': 70, 'match_score': 92, 'required_subjects': ['数学', 'physical']},
+            {
+                "school": "浙江大学",
+                "major": "计算机类",
+                "type": "冲",
+                "probability": 35,
+                "match_score": 95,
+                "required_subjects": ["数学", "physical"],
+            },
+            {
+                "school": "杭州电子科技大学",
+                "major": "计算机类",
+                "type": "稳",
+                "probability": 70,
+                "match_score": 92,
+                "required_subjects": ["数学", "physical"],
+            },
         ]
     else:
         # 从JSON文件加载
-        with open(sys.argv[1], 'r') as f:
+        with open(sys.argv[1], "r") as f:
             data = json.load(f)
-            student = data['student']
-            volunteers = data['volunteers']
-    
-    files = generate_visual_report(student, volunteers, output_format='all')
-    
+            student = data["student"]
+            volunteers = data["volunteers"]
+
+    files = generate_visual_report(student, volunteers, output_format="all")
+
     print("\n✓ 生成完成:")
     for f in files:
         print(f"  • {f}")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

@@ -18,6 +18,7 @@ from data.orders.masking import (
     mask_name,
     mask_phone,
     mask_sensitive_dict,
+    mask_wechat,
 )
 
 
@@ -154,11 +155,23 @@ def test_mask_name_mixed_chinese_and_digits_treats_as_non_cjk():
 # ---------------------- mask_sensitive_dict ----------------------
 
 
+def test_mask_wechat_keeps_prefix_suffix():
+    assert mask_wechat("wx-li") == "wx*li"
+    assert mask_wechat("wechat_user") == "we*******er"
+
+
+def test_mask_wechat_none_and_empty_are_safe():
+    assert mask_wechat(None) is None
+    assert mask_wechat("") == ""
+    assert mask_wechat("ab") == "**"
+
+
 def test_mask_sensitive_dict_handles_all_known_fields():
     data = {
         "customer_phone": "13800001234",
         "candidate_id_card": "430102200501011234",
         "customer_name": "张三",
+        "customer_wechat": "wx-li",
         "candidate_name": "李四光",
         "customer_phone_hash": "abc",
         "amount_cents": 1000,
@@ -167,6 +180,7 @@ def test_mask_sensitive_dict_handles_all_known_fields():
     assert out["customer_phone"] == "138****1234"
     assert out["candidate_id_card"] == "430102********1234"
     assert out["customer_name"] == "张*"
+    assert out["customer_wechat"] == "wx*li"
     assert out["candidate_name"] == "李*光"  # 3 字姓名 → 姓 + * + 名末字
     assert out["customer_phone_hash"] == "abc"
     assert out["amount_cents"] == 1000

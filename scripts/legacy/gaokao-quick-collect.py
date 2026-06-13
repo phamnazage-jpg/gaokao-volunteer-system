@@ -96,46 +96,46 @@ def parse_collected_info(text: str) -> dict:
     """
     解析用户填写的信息
     """
-    info = {
+    info: dict[str, dict[str, object]] = {
         "basic_info": {},
         "exam_info": {},
         "interest_profile": {},
         "ability_assessment": {},
         "career_goals": {},
         "family_background": {},
-        "preferences": {}
+        "preferences": {},
     }
-    
-    lines = text.strip().split('\n')
-    
+
+    lines = text.strip().split("\n")
+
     for line in lines:
         line = line.strip()
         if not line:
             continue
-            
+
         # 尝试解析 "数字. 项目：答案" 格式
-        if '：' in line or ':' in line:
-            parts = line.replace(':', '：').split('：', 1)
+        if "：" in line or ":" in line:
+            parts = line.replace(":", "：").split("：", 1)
             if len(parts) == 2:
                 key = parts[0].strip()
                 value = parts[1].strip()
-                
+
                 # 根据关键词分类存储
-                if any(k in key for k in ['姓名', '省份']):
-                    info['basic_info'][key] = value
-                elif any(k in key for k in ['总分', '位次', '选科', '模式']):
-                    info['exam_info'][key] = value
-                elif any(k in key for k in ['兴趣', '喜欢', '不喜欢']):
-                    info['interest_profile'][key] = value
-                elif any(k in key for k in ['学科', '能力', '擅长', '薄弱']):
-                    info['ability_assessment'][key] = value
-                elif any(k in key for k in ['职业', '规划', '毕业']):
-                    info['career_goals'][key] = value
-                elif any(k in key for k in ['家庭', '经济', '城市']):
-                    info['family_background'][key] = value
-                elif any(k in key for k in ['偏好', '院校', '调剂']):
-                    info['preferences'][key] = value
-    
+                if any(k in key for k in ["姓名", "省份"]):
+                    info["basic_info"][key] = value
+                elif any(k in key for k in ["总分", "位次", "选科", "模式"]):
+                    info["exam_info"][key] = value
+                elif any(k in key for k in ["兴趣", "喜欢", "不喜欢"]):
+                    info["interest_profile"][key] = value
+                elif any(k in key for k in ["学科", "能力", "擅长", "薄弱"]):
+                    info["ability_assessment"][key] = value
+                elif any(k in key for k in ["职业", "规划", "毕业"]):
+                    info["career_goals"][key] = value
+                elif any(k in key for k in ["家庭", "经济", "城市"]):
+                    info["family_background"][key] = value
+                elif any(k in key for k in ["偏好", "院校", "调剂"]):
+                    info["preferences"][key] = value
+
     return info
 
 
@@ -145,20 +145,20 @@ def validate_info(info: dict) -> list:
     返回缺失的必填项
     """
     missing = []
-    
+
     # 必填项检查
     required_fields = {
-        '姓名': 'basic_info',
-        '省份': 'basic_info',
-        '总分': 'exam_info',
-        '位次': 'exam_info',
+        "姓名": "basic_info",
+        "省份": "basic_info",
+        "总分": "exam_info",
+        "位次": "exam_info",
     }
-    
+
     for field, section in required_fields.items():
         section_data = info.get(section, {})
         if not any(field in k for k in section_data.keys()):
             missing.append(field)
-    
+
     return missing
 
 
@@ -166,55 +166,55 @@ def generate_summary(info: dict) -> str:
     """
     生成信息汇总摘要
     """
-    summary = ["\n" + "="*50]
+    summary = ["\n" + "=" * 50]
     summary.append("📋 考生信息汇总")
-    summary.append("="*50)
-    
+    summary.append("=" * 50)
+
     # 基本信息
-    basic = info.get('basic_info', {})
+    basic = info.get("basic_info", {})
     if basic:
-        summary.append(f"\n【基本信息】")
+        summary.append("\n【基本信息】")
         for k, v in basic.items():
             summary.append(f"  {k}：{v}")
-    
+
     # 高考信息
-    exam = info.get('exam_info', {})
+    exam = info.get("exam_info", {})
     if exam:
-        summary.append(f"\n【高考信息】")
+        summary.append("\n【高考信息】")
         for k, v in exam.items():
             summary.append(f"  {k}：{v}")
-    
+
     # 兴趣测评
-    interest = info.get('interest_profile', {})
+    interest = info.get("interest_profile", {})
     if interest:
-        summary.append(f"\n【兴趣类型】")
+        summary.append("\n【兴趣类型】")
         for k, v in interest.items():
             summary.append(f"  {k}：{v}")
-    
+
     # 能力评估
-    ability = info.get('ability_assessment', {})
+    ability = info.get("ability_assessment", {})
     if ability:
-        summary.append(f"\n【能力评估】")
+        summary.append("\n【能力评估】")
         for k, v in ability.items():
             summary.append(f"  {k}：{v}")
-    
+
     # 职业目标
-    career = info.get('career_goals', {})
+    career = info.get("career_goals", {})
     if career:
-        summary.append(f"\n【职业目标】")
+        summary.append("\n【职业目标】")
         for k, v in career.items():
             summary.append(f"  {k}：{v}")
-    
-    summary.append("\n" + "="*50)
-    
+
+    summary.append("\n" + "=" * 50)
+
     # 验证结果
     missing = validate_info(info)
     if missing:
         summary.append(f"\n⚠️  缺少必填项：{', '.join(missing)}")
     else:
         summary.append("\n✅ 必填信息完整！")
-    
-    return '\n'.join(summary)
+
+    return "\n".join(summary)
 
 
 # 快捷使用函数
@@ -238,7 +238,7 @@ def process_response(user_input: str) -> str:
 if __name__ == "__main__":
     # 输出收集模板
     print(COLLECTION_TEMPLATE)
-    
+
     # 示例：模拟用户填写
     sample_input = """
 1. 考生姓名：李明
@@ -253,9 +253,9 @@ if __name__ == "__main__":
 13. 毕业规划：①本科就业
 14. 家庭经济情况：③中等
 """
-    
-    print("\n" + "="*50)
+
+    print("\n" + "=" * 50)
     print("解析示例输入：")
-    print("="*50)
+    print("=" * 50)
     result = process_response(sample_input)
     print(result)

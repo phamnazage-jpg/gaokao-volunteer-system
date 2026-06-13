@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>管理后台仪表盘</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f5f7fb;
+        --card: #ffffff;
+        --border: #dbe3f0;
+        --text: #0f172a;
+        --muted: #64748b;
+        --primary: #2563eb;
+        --success: #059669;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+      }
+      .page {
+        max-width: 1160px;
+        margin: 0 auto;
+        padding: 24px;
+      }
+      .header, .login-panel, .chart-card, .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
+      }
+      .charts-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+        margin-top: 16px;
+      }
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        padding: 20px 24px;
+        margin-bottom: 16px;
+      }
+      .title h1 {
+        margin: 0 0 6px;
+        font-size: 28px;
+      }
+      .title p, .meta, .hint, .error {
+        margin: 0;
+        color: var(--muted);
+      }
+      .login-panel {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr)) auto;
+        gap: 12px;
+        padding: 16px;
+        margin-bottom: 16px;
+      }
+      .field {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .field label {
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .field input {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        font-size: 14px;
+      }
+      button {
+        border: 0;
+        border-radius: 10px;
+        padding: 10px 16px;
+        background: var(--primary);
+        color: #fff;
+        font-size: 14px;
+        cursor: pointer;
+      }
+      button.secondary {
+        background: #e2e8f0;
+        color: var(--text);
+      }
+      button.active-range {
+        background: var(--primary);
+        color: #fff;
+      }
+      .actions {
+        display: flex;
+        align-items: end;
+        gap: 8px;
+      }
+      .cards {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+        margin-bottom: 16px;
+      }
+      .card {
+        padding: 20px;
+      }
+      .card-title {
+        font-size: 14px;
+        color: var(--muted);
+        margin-bottom: 10px;
+      }
+      .card-value {
+        font-size: 32px;
+        font-weight: 700;
+        margin-bottom: 8px;
+      }
+      .card-subtitle {
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .chart-card {
+        padding: 20px;
+      }
+      .chart-head {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: center;
+        margin-bottom: 8px;
+      }
+      #trend-chart {
+        width: 100%;
+        height: 380px;
+      }
+      .mini-chart {
+        width: 100%;
+        height: 280px;
+      }
+      .error {
+        color: #b91c1c;
+        min-height: 20px;
+        margin-top: 8px;
+      }
+      .success {
+        color: var(--success);
+      }
+      @media (max-width: 900px) {
+        .login-panel, .cards, .charts-grid { grid-template-columns: 1fr; }
+        .actions { align-items: stretch; flex-direction: column; }
+        .header, .chart-head { flex-direction: column; align-items: flex-start; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <section class="header">
+        <div class="title">
+          <h1>最小仪表盘</h1>
+          <p>3 个指标卡 + 1 个趋势图 + 3 个分布图，仅保留 7d/30d 切换。</p>
+        </div>
+        <div class="meta">
+          <div>接口: <code>/api/stats/dashboard</code></div>
+          <div id="generated-at">尚未加载</div>
+        </div>
+      </section>
+
+      <section class="login-panel">
+        <div class="field">
+          <label for="username">用户名</label>
+          <input id="username" autocomplete="username" placeholder="admin" />
+        </div>
+        <div class="field">
+          <label for="password">密码</label>
+          <input id="password" type="password" autocomplete="current-password" placeholder="请输入密码" />
+        </div>
+        <div class="field">
+          <label for="token">Bearer Token（可选）</label>
+          <input id="token" placeholder="已有 JWT 时可直接粘贴" />
+        </div>
+        <div class="field">
+          <label for="api-base">API Base</label>
+          <input id="api-base" value="" placeholder="默认当前站点" />
+        </div>
+        <div class="actions">
+          <button id="login-btn" type="button">登录并加载</button>
+          <button id="refresh-btn" class="secondary" type="button">仅刷新数据</button>
+        </div>
+      </section>
+
+      <div id="message" class="hint">提示：请通过服务端 `/dashboard` 页面访问；先登录或粘贴 JWT 后拉取数据。</div>
+      <div id="error" class="error"></div>
+
+      <section class="cards">
+        <article class="card">
+          <div class="card-title">订单数</div>
+          <div id="total-orders" class="card-value">--</div>
+          <div id="orders-subtitle" class="card-subtitle">今日 -- / 7d -- / 30d --</div>
+        </article>
+        <article class="card">
+          <div class="card-title">用户数</div>
+          <div id="total-users" class="card-value">--</div>
+          <div class="card-subtitle">admin_users 总数</div>
+        </article>
+        <article class="card">
+          <div class="card-title">收入</div>
+          <div id="total-revenue" class="card-value">--</div>
+          <div id="revenue-subtitle" class="card-subtitle">今日 -- / 7d -- / 30d --</div>
+        </article>
+      </section>
+
+      <section class="chart-card">
+        <div class="chart-head">
+          <div>
+            <h2 id="trend-title" style="margin: 0 0 4px; font-size: 20px;">7 天趋势</h2>
+            <p class="hint">订单数与收入共用同一时间轴。</p>
+          </div>
+          <div class="actions">
+            <button id="range-7d" type="button">7d</button>
+            <button id="range-30d" class="secondary" type="button">30d</button>
+          </div>
+        </div>
+        <div id="trend-chart"></div>
+      </section>
+
+      <section class="charts-grid">
+        <section class="chart-card">
+          <div class="chart-head">
+            <div>
+              <h2 style="margin: 0 0 4px; font-size: 18px;">状态分布</h2>
+              <p class="hint">观察订单漏斗积压。</p>
+            </div>
+          </div>
+          <div id="status-chart" class="mini-chart"></div>
+        </section>
+
+        <section class="chart-card">
+          <div class="chart-head">
+            <div>
+              <h2 style="margin: 0 0 4px; font-size: 18px;">来源分布</h2>
+              <p class="hint">查看渠道结构。</p>
+            </div>
+          </div>
+          <div id="source-chart" class="mini-chart"></div>
+        </section>
+
+        <section class="chart-card">
+          <div class="chart-head">
+            <div>
+              <h2 style="margin: 0 0 4px; font-size: 18px;">服务版本分布</h2>
+              <p class="hint">查看产品结构。</p>
+            </div>
+          </div>
+          <div id="service-chart" class="mini-chart"></div>
+        </section>
+      </section>
+    </div>
+
+    <script src="/static/vendor/echarts.min.js"></script>
+    <script>
+      if (!window.echarts) {
+        window.echarts = {
+          init(el) {
+            const escapeHtml = (value) =>
+              String(value ?? "").replace(/[&<>"']/g, (ch) => ({
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#39;",
+              }[ch]));
+            const maxOf = (values) =>
+              values.reduce((acc, item) => Math.max(acc, Number(item) || 0), 0) || 1;
+
+            const renderLine = (option) => {
+              const categories = option?.xAxis?.data || [];
+              const first = option?.series?.[0]?.data || [];
+              const second = option?.series?.[1]?.data || [];
+              const maxValue = maxOf(first.concat(second));
+              const toPoints = (values) =>
+                values
+                  .map((value, index) => {
+                    const x = categories.length > 1 ? (index * 100) / (categories.length - 1) : 0;
+                    const y = 90 - ((Number(value) || 0) / maxValue) * 80;
+                    return `${x},${y}`;
+                  })
+                  .join(" ");
+              el.innerHTML = `
+                <div style="font:12px sans-serif;color:#0f172a">
+                  <svg viewBox="0 0 100 100" preserveAspectRatio="none" style="width:100%;height:260px;background:#fff">
+                    <polyline fill="none" stroke="#2563eb" stroke-width="2" points="${toPoints(first)}"></polyline>
+                    <polyline fill="none" stroke="#059669" stroke-width="2" points="${toPoints(second)}"></polyline>
+                  </svg>
+                  <div style="display:grid;grid-template-columns:repeat(${Math.max(categories.length, 1)}, minmax(0, 1fr));gap:4px;color:#64748b">
+                    ${categories.map((item) => `<span>${escapeHtml(item)}</span>`).join("")}
+                  </div>
+                </div>`;
+              };
+
+            const renderBar = (option) => {
+              const categories = option?.xAxis?.data || [];
+              const values = option?.series?.[0]?.data || [];
+              const color = option?.series?.[0]?.itemStyle?.color || "#2563eb";
+              const maxValue = maxOf(values);
+              el.innerHTML = `
+                <div style="padding:8px 4px">
+                  ${categories
+                    .map((category, index) => {
+                      const value = Number(values[index] || 0);
+                      const width = Math.max(6, Math.round((value / maxValue) * 100));
+                      return `<div style="margin:10px 0">
+                        <div style="display:flex;justify-content:space-between;font:12px sans-serif;color:#475569">
+                          <span>${escapeHtml(category)}</span>
+                          <span>${value}</span>
+                        </div>
+                        <div style="height:10px;background:#e2e8f0;border-radius:999px;overflow:hidden">
+                          <div style="width:${width}%;height:100%;background:${escapeHtml(color)}"></div>
+                        </div>
+                      </div>`;
+                    })
+                    .join("")}
+                </div>`;
+            };
+
+            return {
+              setOption(option) {
+                if ((option?.series || [])[0]?.type === "bar") {
+                  renderBar(option);
+                  return;
+                }
+                renderLine(option);
+              },
+              resize() {},
+            };
+          },
+        };
+      }
+    </script>
+    <script src="/static/dashboard.js"></script>
+  </body>
+</html>

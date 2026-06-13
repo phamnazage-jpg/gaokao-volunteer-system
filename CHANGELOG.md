@@ -4,9 +4,31 @@
 
 ---
 
-## v2.1 (开发中)
+## v2.1 (2026-06-13)
 
 ### 🚧 进行中
+
+#### 新增（T5.3 已完成）
+
+- 📝 **T5 集成测试与文档收口**
+  - **T5.1 端到端主链已固化到 `tests/test_t5_e2e_workflows.py`**：覆盖“咨询→方案生成 / 审核→报告 / 订单→交付 / 升级流程 / 数据溯源展示”5 条主链
+  - **T5.2 性能与并发门禁已固化到 `tests/test_t5_performance.py`**：
+    - `gaokao-quick-3min.py` 的真实 `parse_quick_response + generate_quick_summary + generate_quick_recommendation` 链路 100 次执行断言 `< 5s`
+    - `locustfile.py` 对 `admin.app` 做 10 并发、15 秒 headless 压测，断言聚合成功率 `>95%`
+  - **T5.3 文档同步**：重写 `docs/API.md`、`docs/ARCHITECTURE.md` 以匹配当前已落地真相，并补充 T5 验证入口与当前系统边界说明
+  - **定向验证**：`python3 -m pytest tests/test_t5_e2e_workflows.py tests/test_t5_performance.py -q` 通过；其中性能基准覆盖 100 次方案生成与 10 并发后台访问两条验收路径
+  - **当前定位修正**：项目应描述为“管理后台 + 订单/分享/渠道同步 + AI 审核链路”的可运行系统；用户端 Web 自助闭环仍未落地
+
+#### 新增（T6.4 已完成）
+
+- ✨ **管理后台订单管理 `admin/routes/orders.py`**
+  - **端点落地**：`GET /api/orders`（真实列表）/ `GET /api/orders/{id}`（详情 + 状态历史）/ `GET /api/orders/export`（CSV 导出）/ `POST /api/orders`（手工录单）/ `PATCH /api/orders/{id}`（业务字段更新 + 状态流转 + 退款）
+  - **状态机守护**：写路径复用 `OrdersDAO.update()` 与 `transition_status()`，非法流转统一映射到 `E02301`，不允许绕过 6 态状态机直接写库
+  - **默认脱敏**：列表、详情和 CSV 导出均走 `Order.to_dict(decrypt_sensitive="mask")`，避免管理后台直接导出完整手机号/身份证号
+  - **手工兜底**：支持 `external_id` 留空的人工补录路径，与 `docs/CHANNEL_INTEGRATION.md` 约定一致；退款仅更新本地订单状态，不主动触发第三方退款 API
+  - **测试 6 个全部通过**（`admin/tests/test_routes_orders.py`）：创建、列表/详情、PATCH 更新+付款、退款、非法状态冲突、CSV 导出
+  - **定向验证**：`python3 -m pytest admin/tests/test_routes_orders.py admin/tests/test_routes.py -q` → 20 passed；`ruff check admin/routes/orders.py admin/tests/test_routes_orders.py admin/tests/test_routes.py` 通过
+  - **文档同步**：`README.md` 新增 T6.4 章节；`docs/plans/T6-admin-mvp.md` 标记 T6.4 已落地并更新路由清单
 
 #### 新增（T6.2 已完成）
 
@@ -45,6 +67,23 @@
   - 新增 `admin/tests/test_logging.py` 8 个测试，覆盖 formatter、上下文绑定、异常 traceback、FastAPI 端到端 JSON 日志
   - 定向验证通过：`pytest -q admin/tests/test_logging.py admin/tests/test_errors.py` = 34/34 passed；`ruff check admin/app.py admin/errors/exceptions.py admin/logging_utils.py admin/tests/test_logging.py admin/tests/test_errors.py` 通过
   - 已知缺口（T6.2 已闭环）：`pytest -q admin/tests` 之前有 1 个非 T9.3 失败（`test_stats_orders_real_shape` 报 `sqlite3.OperationalError: no such table: orders`）— 根因是 stats 端点读 orders 表，但 T6.1 阶段 conftest 没建 orders DB；T6.2 在 conftest 加 `orders_db` autouse fixture 闭环，当前 `pytest -q admin/tests` 87/87 通过
+
+#### 新增（T4.3 已完成）
+
+- ✨ **订单管理 CLI `scripts/gaokao-order-manager` + `data/orders/cli.py`**
+  - 子命令落地：`create / list / show / update / pay / deliver / stats`
+  - 默认 JSON 输出，订单详情默认走 `Order.to_dict()` 遮罩模式，避免 CLI 直接泄露完整手机号/身份证
+  - `create` 直接复用 `OrdersDAO.create()`；`show` 返回订单详情 + `order_status_history`
+  - `update` 只允许业务字段，空更新返回 exit code 2，继续强制 `status` 变更走 DAO 状态机
+  - `pay` 推进 `pending -> paid`；`deliver` 在 `paid` 时自动串联 `serving -> delivered`，兼容已在 `serving` 的最后一步交付
+  - `stats` 输出 `total_orders / by_status / by_source / by_service_version`
+  - 新增 `data/orders/tests/test_cli.py` 5 个 pytest 用例：
+    - 脚本级端到端主链路（create/list/show/update/pay/deliver/stats）
+    - 缺失订单错误码
+    - 空更新防御
+    - 模块内 direct-main 覆盖，`data.orders.cli` 覆盖率 **90%**
+  - 定向验证：`pytest -q data/orders/tests/test_cli.py` 5/5 passed；`pytest -q data/orders/tests` 166/166 passed；`ruff check data/orders/cli.py data/orders/tests/test_cli.py scripts/gaokao-order-manager` 通过；`py_compile` 通过
+- 📝 **`data/orders/README.md`** 新增 T4.3 CLI 使用示例与子命令语义
 
 #### 新增（T4.2 已完成）
 
@@ -153,17 +192,18 @@
   - 安全兜底：未知 permission 一律回退到最严格的 `read` 策略，防止越权
 - ✨ **姓名脱敏策略复用**
   - 复用 `data/orders/masking.py::mask_name`，避免在分享链路重复实现脱敏算法
-  - `read/comment` 默认不暴露姓名；若后续 UI 白名单显式放开姓名字段，则自动按 `mask_name` 规则脱敏
-  - `edit`（以及历史兼容 `admin`）下姓名原样展示
+  - `read/comment` 默认回传脱敏姓名；公开分享场景额外收紧为：3 字及以上中文名统一 `姓+**`，非中文名统一 `**`
+  - `edit`（以及历史兼容 `admin`）下姓名原样展示，但 `password_hash / internal_note / note / debug_info / raw_payload` 等内部字段仍强制隐藏
 - ✨ **权限感知路由辅助**（`data.share.short_link.route_short_link_with_report`）
   - 在 `route_short_link()` 之上叠加报告 payload 渲染，支持 `report=` 直接注入或 `report_loader(report_id)` 懒加载
   - resolve 失败（not_found / revoked / expired / password_required / password_wrong）时不下发 `rendered` payload，避免泄露报告元数据
   - `render_report_payload(permission, report, share_url=...)` 输出统一结构：`policy + visible_fields + payload + masked_fields`
 - ✅ **测试验证**
-  - 新增 `data/share/tests/test_permission.py`，33 个 pytest 用例覆盖：三档权限、admin alias、未知 permission fallback、字段裁剪、姓名脱敏、route + report_loader 端到端
-  - `python3 -m pytest data/share/tests/ -q` → **58 passed**
-  - `python3 -m pytest data/share/ data/orders/ -q` → **221 passed**
-  - `python3 -m ruff check data/share/permission.py data/share/tests/test_permission.py` → **All checks passed**
+  - 新增 `data/share/tests/test_permission.py`，34 个 pytest 用例覆盖：三档权限、admin alias、未知 permission fallback、字段裁剪、姓名脱敏、公开分享收敛规则、route + report_loader 端到端
+  - `python3 -m pytest data/share/tests/test_permission.py -q` → **34 passed**
+  - `python3 -m pytest data/share/tests/ -q` → **61 passed**
+  - `python3 -m pytest data/share/ data/orders/ -q` → **231 passed**
+  - `python3 -m ruff check data/share/permission.py data/share/tests/test_permission.py data/share/short_link.py` → **All checks passed**
 
 #### 新增（T10.1 已完成）
 
@@ -278,7 +318,6 @@
 
 ### 📅 计划中
 
-- T10.3 多仓库同步脚本
 - T5.5 覆盖率硬门槛（核心 ≥80% / 整体 ≥60%）
 
 ---

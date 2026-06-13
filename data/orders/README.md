@@ -189,6 +189,48 @@ order.to_dict(decrypt_sensitive=False)
 `masking` 模块是纯字符串工具，与 `crypto` 正交，可在任意层（API 序列化、Jinja2
 模板过滤器、日志格式化、CSV 导出器）独立复用。
 
+## T4.3 订单管理 CLI
+
+入口：`scripts/gaokao-order-manager`
+
+```bash
+# 创建订单
+python3 scripts/gaokao-order-manager create \
+  --source web --service-version standard --amount-cents 9900 \
+  --customer-name 张三 --customer-phone 13800001234 \
+  --candidate-name 李同学 --candidate-province 湖南 --candidate-score 578
+
+# 订单列表 / 详情
+python3 scripts/gaokao-order-manager list --status pending
+python3 scripts/gaokao-order-manager show GKO-20260612-ABCD
+
+# 更新业务字段（禁止直接改 status）
+python3 scripts/gaokao-order-manager update GKO-20260612-ABCD \
+  --assigned-consultant consultant-a --note 已分配顾问 --tag VIP
+
+# 支付 / 交付 / 升级
+python3 scripts/gaokao-order-manager pay GKO-20260612-ABCD --reason wechat_pay
+python3 scripts/gaokao-order-manager deliver GKO-20260612-ABCD --reason report_ready
+python3 scripts/gaokao-order-manager upgrade GKO-20260612-ABCD \
+  --service-version standard --target-amount-cents 9900 --reason upgrade_to_standard
+
+# 统计 / 最小导出
+python3 scripts/gaokao-order-manager stats
+python3 scripts/gaokao-order-manager export \
+  --output /tmp/orders-report.csv --status pending --source school
+```
+
+子命令：
+
+- `create`：新建订单，默认输出 JSON，敏感字段默认遮罩
+- `list` / `show`：查询订单；`show` 同时返回 `history`
+- `update`：只允许改业务字段，拒绝空更新与直接改 `status`
+- `pay`：推进 `pending -> paid`
+- `deliver`：从 `paid` 自动推进 `serving -> delivered`；若已在 `serving` 则只做最后一步
+- `upgrade`：按目标总价创建补差价升级单，关联 `upgrade_from`，并给原单补 `upgraded` 标记
+- `stats`：返回 `total_orders`、`by_status`、`by_source`、`by_service_version`
+- `export`：导出最小 CSV 报表，字段固定为 `订单号/渠道/金额/状态/创建时间`
+
 ## 下游衔接
 
 - **T4.3 CLI**: `gaokao-order-manager` 直接 import `OrdersDAO` + `Order`
@@ -198,6 +240,8 @@ order.to_dict(decrypt_sensitive=False)
 
 ## 版本
 
+v1.4 — 2026-06-12 — T4.5 最小导出（CLI export 子命令 + CSV 报表字段 `订单号/渠道/金额/状态/创建时间`）
+v1.3 — 2026-06-12 — T4.4 升级订单流程（upgrade 子命令 + upgrade_order + 补差价校验）
 v1.2 — 2026-06-12 — T4.2 DAO 层落地（51 用例，ruff 0 warning，data/ 386 用例全绿）
 v1.1 — 2026-06-12 — T11.2 展示脱敏（mask 策略 + masking.py）
 v1.0 — 2026-06-12 — T4.1 实施

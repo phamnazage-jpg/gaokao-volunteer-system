@@ -326,6 +326,94 @@ class TestCRUD:
         assert after.notes == "新备注"
 
 
+class TestUpgradeOrder:
+    def test_upgrade_order_creates_delta_order_and_marks_source(
+        self, dao, sample_order
+    ):
+        original = dao.create(
+            Order(**{
+                **sample_order.to_dict(True),
+                "id": generate_order_id(),
+                "service_version": "basic",
+                "amount_cents": 4900,
+                "status": "pending",
+                "notes": "49 元首单",
+                "tags": ["首单"],
+            })
+        )
+
+        upgraded = dao.upgrade_order(
+            original.id,
+            target_service_version="standard",
+            target_amount_cents=9900,
+            actor="qa",
+            reason="upgrade_to_standard",
+        )
+
+        assert upgraded.id != original.id
+        assert upgraded.upgrade_from == original.id
+        assert upgraded.service_version == "standard"
+        assert upgraded.amount_cents == 5000
+        assert upgraded.status == "pending"
+        assert upgraded.customer_name == original.customer_name
+        assert upgraded.customer_phone == original.customer_phone
+        assert upgraded.candidate_name == original.candidate_name
+        assert upgraded.paid_at is None
+        assert upgraded.started_at is None
+        assert upgraded.delivered_at is None
+
+        source_after = dao.get(original.id)
+        assert source_after.status == "pending"
+        assert "upgraded" in source_after.tags
+        assert upgraded.id in (source_after.notes or "")
+        assert dao.count() == 2
+
+    def test_upgrade_order_rejects_non_increasing_target_amount(
+        self, dao, sample_order
+    ):
+        original = dao.create(
+            Order(**{
+                **sample_order.to_dict(True),
+                "id": generate_order_id(),
+                "service_version": "basic",
+                "amount_cents": 4900,
+                "status": "pending",
+            })
+        )
+
+        with pytest.raises(ValueError, match="高于原订单金额"):
+            dao.upgrade_order(
+                original.id,
+                target_service_version="standard",
+                target_amount_cents=4900,
+            )
+
+    def test_upgrade_order_rejects_second_upgrade_from_same_source(
+        self, dao, sample_order
+    ):
+        original = dao.create(
+            Order(**{
+                **sample_order.to_dict(True),
+                "id": generate_order_id(),
+                "service_version": "basic",
+                "amount_cents": 4900,
+                "status": "pending",
+            })
+        )
+        dao.upgrade_order(
+            original.id,
+            target_service_version="standard",
+            target_amount_cents=9900,
+        )
+
+        with pytest.raises(ValueError, match="已存在升级订单"):
+            dao.upgrade_order(
+                original.id,
+                target_service_version="premium",
+                target_amount_cents=19900,
+            )
+
+
 # ---------------------------------------------------------------------------
 # 4. 状态机守护
 # ---------------------------------------------------------------------------
@@ -474,7 +562,7 @@ class TestTransaction:
 
 class TestUpsert:
     def _make_order(self, **overrides) -> Order:
-        defaults = dict(
+        defaults: dict[str, Any] = dict(
             id=generate_order_id(),
             source="xianyu",
             external_id="EXT-1001",

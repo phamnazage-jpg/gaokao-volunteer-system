@@ -112,6 +112,22 @@ def mask_name(value: Optional[str]) -> Optional[str]:
     return s[0] + "**"
 
 
+def mask_wechat(value: Optional[str]) -> Optional[str]:
+    """微信号脱敏：保留前 2 后 2，中段用 * 填充。"""
+    if value is None:
+        return None
+    if not isinstance(value, str):
+        return None
+    s = value.strip()
+    if not s:
+        return ""
+    if len(s) <= 2:
+        return "*" * len(s)
+    if len(s) <= 4:
+        return s[0] + "*" * (len(s) - 2) + s[-1]
+    return s[:2] + "*" * (len(s) - 4) + s[-2:]
+
+
 def mask_sensitive_dict(data: dict[str, Any]) -> dict[str, Any]:
     """对订单字典中已知的敏感字段统一脱敏。
 
@@ -128,6 +144,8 @@ def mask_sensitive_dict(data: dict[str, Any]) -> dict[str, Any]:
         masked["candidate_id_card"] = mask_id_card(masked["candidate_id_card"])
     if "customer_name" in masked and masked["customer_name"] is not None:
         masked["customer_name"] = mask_name(masked["customer_name"])
+    if "customer_wechat" in masked and masked["customer_wechat"] is not None:
+        masked["customer_wechat"] = mask_wechat(masked["customer_wechat"])
     if "candidate_name" in masked and masked["candidate_name"] is not None:
         masked["candidate_name"] = mask_name(masked["candidate_name"])
     return masked
@@ -137,5 +155,6 @@ __all__ = [
     "mask_phone",
     "mask_id_card",
     "mask_name",
+    "mask_wechat",
     "mask_sensitive_dict",
 ]

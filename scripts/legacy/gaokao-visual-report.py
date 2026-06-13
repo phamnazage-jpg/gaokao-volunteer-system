@@ -3,8 +3,6 @@
 支持：雷达图、热力图、对比表、风险检测
 """
 
-import json
-import sys
 from datetime import datetime
 
 

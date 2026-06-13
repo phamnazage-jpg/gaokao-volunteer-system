@@ -39,6 +39,26 @@
       .risk-high { color: #d63031; font-weight: bold; }
       .risk-medium { color: #e17055; font-weight: bold; }
       .risk-low { color: #00b894; }
+      .source-badge {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 600;
+        margin-bottom: 6px;
+      }
+      .source-official { background: #e8f5e9; color: #1b5e20; }
+      .source-report { background: #fff3e0; color: #e65100; }
+      .source-estimated { background: #e3f2fd; color: #0d47a1; }
+      .provenance-meta {
+        font-size: 12px;
+        line-height: 1.5;
+        color: #546e7a;
+      }
+      .provenance-meta a {
+        color: #1976d2;
+        word-break: break-all;
+      }
       table {
         width: 100%;
         border-collapse: collapse;
@@ -186,6 +206,7 @@
           <th>推荐频次</th>
           <th>预测上涨</th>
           <th>风险等级</th>
+          <th>数据溯源</th>
           <th>替代方案</th>
         </tr>
         {% for risk in crowd_risks %}
@@ -194,7 +215,18 @@
           <td>{{ risk.major }}</td>
           <td>{{ risk.frequency }}/4</td>
           <td>+{{ risk.predicted_increase }} 分</td>
-          <td class="risk-{{ risk.risk_level }}">{{ risk.risk_level_label }}</td>
+          <td class="risk-{{ risk.risk_level }}">{{ risk.risk_emoji }} {{ risk.risk_level_label }}</td>
+          <td>
+            <div class="source-badge source-{{ risk.source_type_display }}">{{ risk.source_type_icon }} {{ risk.source_type_label }}</div>
+            <div class="provenance-meta">
+              置信度：{{ '%.2f'|format(risk.confidence) if risk.confidence is not none else '未标注' }}<br />
+              数据日期：{{ risk.last_updated or '未标注' }}{% if risk.data_year %}（{{ risk.data_year }}）{% endif %}<br />
+              来源：{{ risk.source or '未标注' }}
+              {% if risk.source_url %}
+                <br />链接：<a href="{{ risk.source_url }}" target="_blank" rel="noopener noreferrer">{{ risk.source_url }}</a>
+              {% endif %}
+            </div>
+          </td>
           <td>
             {% for alt in risk.alternatives %}
               • {{ alt.school }}（{{ alt.score }} 分）<br />

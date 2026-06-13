@@ -35,12 +35,27 @@ from __future__ import annotations
 from typing import Any, Dict, Iterable, List, Optional, Protocol
 
 
+SOURCE_TYPE_DISPLAY_META: Dict[str, Dict[str, str]] = {
+    "official_release": {"icon": "✓", "label": "来源", "category": "official"},
+    "manual_summary": {"icon": "⚠️", "label": "报告", "category": "report"},
+    "platform_scrape": {"icon": "⚠️", "label": "报告", "category": "report"},
+    "derived": {"icon": "📊", "label": "估算", "category": "estimated"},
+}
+PUBLIC_SOURCE_TYPE_DISPLAY_META: Dict[str, Dict[str, str]] = {
+    "official": {"icon": "✓", "label": "来源", "category": "official"},
+    "report": {"icon": "⚠️", "label": "报告", "category": "report"},
+    "estimated": {"icon": "📊", "label": "估算", "category": "estimated"},
+}
+
+
 class _LoaderProtocol(Protocol):
     """loader 必须提供的方法（duck-typing，避免对 CrowdDBLoader 强依赖）。"""
 
     def find_recommendations(
         self, province: str, score: int
     ) -> List[Dict[str, Any]]: ...
+
+    def load_metadata(self, province: str) -> Optional[Dict[str, Any]]: ...
 
 
 LoaderLike = _LoaderProtocol
@@ -76,14 +91,67 @@ def _alternative_to_template(alt: Dict[str, Any]) -> Dict[str, Any]:
     return {"school": school, "score": score, "major": alt.get("major", "")}
 
 
-def finding_to_risk_dict(finding: RiskFinding) -> Dict[str, Any]:
+def _normalize_provenance(metadata: Optional[Dict[str, Any]]) -> Dict[str, Any]:
+    metadata = metadata or {}
+    public_source_type = metadata.get("source_type") or "estimated"
+    raw_source_type = (
+        metadata.get("raw_source_type") or metadata.get("source_type") or "derived"
+    )
+    display = SOURCE_TYPE_DISPLAY_META.get(raw_source_type)
+    if display is None:
+        display = PUBLIC_SOURCE_TYPE_DISPLAY_META.get(
+            public_source_type,
+            PUBLIC_SOURCE_TYPE_DISPLAY_META["estimated"],
+        )
+    confidence = metadata.get("confidence")
+    try:
+        confidence = float(confidence) if confidence is not None else None
+    except (TypeError, ValueError):
+        confidence = None
+    data_year = metadata.get("data_year")
+    try:
+        data_year = int(data_year) if data_year is not None else None
+    except (TypeError, ValueError):
+        data_year = None
+    return {
+        "source_type": display["category"],
+        "raw_source_type": raw_source_type,
+        "source_type_display": display["category"],
+        "source_type_label": display["label"],
+        "source_type_icon": display["icon"],
+        "source": metadata.get("source", ""),
+        "source_url": metadata.get("source_url", ""),
+        "confidence": confidence,
+        "last_updated": metadata.get("last_updated", ""),
+        "data_year": data_year,
+    }
+
+
+def _load_provenance_metadata(
+    loader: Optional[LoaderLike], province: str
+) -> Dict[str, Any]:
+    if loader is None:
+        from data.crowd_db.loader import CrowdDBLoader
+
+        loader = CrowdDBLoader()  # type: ignore[assignment]
+    load_metadata = getattr(loader, "load_metadata", None)
+    if callable(load_metadata):
+        metadata = load_metadata(province)
+        if isinstance(metadata, dict) or metadata is None:
+            return _normalize_provenance(metadata)
+    return _normalize_provenance(None)
+
+
+def finding_to_risk_dict(
+    finding: RiskFinding, provenance: Optional[Dict[str, Any]] = None
+) -> Dict[str, Any]:
     """RiskFinding → 模板所需的 crowd_risks 单条字典。
 
     若 risk_level 不在 RISK_LEVEL_META 中（crowd_detector 不会返回 none，
     因为 frequency=0 已被跳过），fallback 到 low + 🟢。
     """
     meta = RISK_LEVEL_META.get(finding.risk_level, RISK_LEVEL_META["low"])
-    return {
+    risk = {
         "school": finding.school,
         "major": finding.major or "",
         "frequency": int(finding.frequency),
@@ -94,6 +162,8 @@ def finding_to_risk_dict(finding: RiskFinding) -> Dict[str, Any]:
         "platforms": list(finding.platforms),
         "alternatives": [_alternative_to_template(a) for a in finding.alternatives],
     }
+    risk.update(_normalize_provenance(provenance))
+    return risk
 
 
 def build_crowd_risks(
@@ -115,7 +185,8 @@ def build_crowd_risks(
         frequency=0 / 省份无数据 / 方案为空 → 返回空列表。
     """
     findings = detect_crowd_risk(plan, user_score, province, loader=loader)  # type: ignore[arg-type]
-    return [finding_to_risk_dict(f) for f in findings]
+    provenance = _load_provenance_metadata(loader, province)
+    return [finding_to_risk_dict(f, provenance=provenance) for f in findings]
 
 
 def group_by_risk(

@@ -7,18 +7,20 @@
     python3 data/share/tests/test_short_link.py
 """
 
+import hashlib
+import os
 import sys
+import tempfile
 import time
+import uuid
 from pathlib import Path
+from typing import Callable
 
 # 让 data.share 可被 import
 PROJ = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(PROJ))
 
-import tempfile
-import os
-import uuid
-
+import data.share.short_link as short_link_module  # noqa: E402
 from data.share.short_link import (  # noqa: E402
     BASE62_ALPHABET,
     DEFAULT_CODE_LEN,
@@ -228,6 +230,63 @@ def test_resolve_password_required():
     _eq(res.status, STATUS_OK, "correct pwd ok")
 
 
+def test_create_password_uses_pbkdf2_storage_format():
+    svc = make_svc()
+    link = svc.create(report_id="R-1", password="s3cr3t")
+    _truthy(link.password_hash is not None, "password hash stored")
+    assert link.password_hash is not None
+    _truthy("$" in link.password_hash, "pbkdf2 format contains separator")
+    salt_hex, digest_hex = link.password_hash.split("$", 1)
+    _eq(len(salt_hex), 32, "salt is 16 bytes hex")
+    _eq(len(digest_hex), 64, "digest is 32 bytes hex")
+
+
+def test_resolve_legacy_sha256_hash_migrates_to_pbkdf2():
+    svc = make_svc()
+    link = svc.create(report_id="R-1", password="s3cr3t")
+    legacy_hash = hashlib.sha256("s3cr3t".encode("utf-8")).hexdigest()
+    with svc._connect() as conn:
+        conn.execute(
+            "UPDATE share_links SET password_hash = ? WHERE code = ?",
+            (legacy_hash, link.code),
+        )
+
+    res = svc.resolve(link.code, password="s3cr3t")
+    _eq(res.status, STATUS_OK, "legacy sha256 password still resolves")
+    migrated = svc.get(link.code)
+    _truthy(migrated is not None, "link still exists after migration")
+    assert migrated is not None
+    _truthy(migrated.password_hash is not None, "migrated hash stored")
+    assert migrated.password_hash is not None
+    _truthy("$" in migrated.password_hash, "legacy hash upgraded to pbkdf2")
+    _truthy(
+        migrated.password_hash != legacy_hash,
+        "migrated hash no longer equals raw sha256 hex",
+    )
+
+
+def test_wrong_password_does_not_migrate_legacy_hash():
+    svc = make_svc()
+    link = svc.create(report_id="R-1", password="s3cr3t")
+    legacy_hash = hashlib.sha256("s3cr3t".encode("utf-8")).hexdigest()
+    with svc._connect() as conn:
+        conn.execute(
+            "UPDATE share_links SET password_hash = ? WHERE code = ?",
+            (legacy_hash, link.code),
+        )
+
+    res = svc.resolve(link.code, password="wrong")
+    _eq(res.status, STATUS_PASSWORD_WRONG, "wrong legacy password rejected")
+    unchanged = svc.get(link.code)
+    _truthy(unchanged is not None, "link still exists after wrong password")
+    assert unchanged is not None
+    _eq(
+        unchanged.password_hash,
+        legacy_hash,
+        "wrong password keeps legacy hash unchanged",
+    )
+
+
 def test_resolve_expired():
     svc = make_svc()
     link = svc.create(report_id="R-1", ttl_seconds=1)
@@ -308,7 +367,7 @@ def test_list_by_report():
     links = svc.list_by_report("R-1")
     _eq(len(links), 2, "list_by_report filters correctly")
     _truthy(
-        all(l.report_id == "R-1" for l in links),
+        all(link.report_id == "R-1" for link in links),
         "all links belong to R-1",
     )
 
@@ -334,6 +393,65 @@ def test_stats():
     _eq(stats["access_count"], 2, "access_count=2")
     _eq(stats["code"], link.code, "stats code matches")
     _eq(svc.get_stats("NOTHERE"), None, "missing stats -> None")
+
+
+def test_revoke_by_report():
+    svc = make_svc()
+    a = svc.create(report_id="R-1", owner_id="alice")
+    b = svc.create(report_id="R-1", owner_id="alice")
+    c = svc.create(report_id="R-1", owner_id="bob")
+    d = svc.create(report_id="R-2", owner_id="alice")
+
+    _eq(svc.revoke_by_report("R-1", owner_id="alice"), 2, "revoke 2 alice links")
+    _eq(svc.resolve(a.code).status, STATUS_REVOKED, "alice link A revoked")
+    _eq(svc.resolve(b.code).status, STATUS_REVOKED, "alice link B revoked")
+    _eq(svc.resolve(c.code).status, STATUS_OK, "bob link untouched")
+    _eq(svc.resolve(d.code).status, STATUS_OK, "other report untouched")
+    _eq(svc.revoke_by_report("R-1", owner_id="alice"), 0, "idempotent second revoke")
+
+
+def test_stats_include_daily_accesses_and_unique_visitors():
+    svc = make_svc()
+    link = svc.create(report_id="R-1")
+    original_now = short_link_module._now
+    try:
+        timestamps = [
+            1718064000.0,  # 2024-06-11 UTC
+            1718067600.0,  # 2024-06-11 UTC
+            1718150400.0,  # 2024-06-12 UTC
+        ]
+        visitors = ["wechat-openid-1", "wechat-openid-1", "wechat-openid-2"]
+
+        def _fixed_now(ts: float) -> Callable[[], float]:
+            return lambda: ts
+
+        for ts, visitor in zip(timestamps, visitors):
+            short_link_module._now = _fixed_now(ts)
+            svc._bump_access(link.code, visitor_token=visitor)
+    finally:
+        short_link_module._now = original_now
+
+    stats = svc.get_stats(link.code, days=2)
+    _eq(stats["access_count"], 3, "access_count aggregates event log")
+    _eq(stats["unique_visitors"], 2, "unique visitors dedup by visitor_token")
+    _eq(
+        stats["daily_accesses"],
+        [
+            {"date": "2024-06-11", "access_count": 2, "unique_visitors": 1},
+            {"date": "2024-06-12", "access_count": 1, "unique_visitors": 1},
+        ],
+        "daily stats grouped by UTC day",
+    )
+
+    report_stats = svc.get_report_stats("R-1", days=2)
+    _eq(report_stats["total_links"], 1, "report tracks link count")
+    _eq(report_stats["total_access_count"], 3, "report total accesses sums links")
+    _eq(report_stats["unique_visitors"], 2, "report unique visitors deduped")
+    _eq(
+        report_stats["daily_accesses"],
+        stats["daily_accesses"],
+        "report reuses daily aggregation",
+    )
 
 
 def test_purge_expired():
@@ -435,8 +553,8 @@ def main():
     print(f"FAIL: {_FAIL}")
     if _ERRORS:
         print()
-        for e in _ERRORS:
-            print(f"  {e}")
+        for err in _ERRORS:
+            print(f"  {err}")
         sys.exit(1)
     print("ALL TESTS PASSED")
     cleanup_tmp_dbs()

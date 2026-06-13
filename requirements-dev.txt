@@ -6,6 +6,11 @@
 
 # 测试框架
 pytest>=7.0
+pytest-benchmark>=4.0
 pytest-cov>=4.0
 pytest-timeout>=2.1
 pytest-xdist>=3.0
+httpx>=0.28,<1.0
+
+# 性能测试（T11.1 / T5.2）
+locust>=2.42,<3.0

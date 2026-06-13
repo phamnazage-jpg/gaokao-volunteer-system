@@ -1,0 +1,37 @@
+services:
+  gaokao-admin:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: localhost/gaokao-volunteer-system-admin:latest
+    container_name: gaokao-admin
+    restart: unless-stopped
+    environment:
+      GAOKAO_ENV: ${GAOKAO_ENV:-dev}
+      GAOKAO_JWT_SECRET: ${GAOKAO_JWT_SECRET:-dev-only-local-jwt-secret-please-override-before-production-1234567890abcdef}
+      GAOKAO_ADMIN_USER: ${GAOKAO_ADMIN_USER:-admin}
+      GAOKAO_ADMIN_PASS: ${GAOKAO_ADMIN_PASS:-dev-only-local-admin-pass-please-change}
+      GAOKAO_ORDERS_FERNET_KEY: ${GAOKAO_ORDERS_FERNET_KEY:-dev-only-local-orders-fernet-key-please-change}
+      GAOKAO_DB_PATH: /var/lib/gaokao/orders/admin.db
+      GAOKAO_ORDERS_DB_PATH: /var/lib/gaokao/orders.db
+      GAOKAO_SHARE_DB_PATH: /var/lib/gaokao/share/short_links.db
+      GAOKAO_SHARE_REPORT_DIR: /var/lib/gaokao/share/reports
+    ports:
+      - "${GAOKAO_ADMIN_BIND:-127.0.0.1}:${GAOKAO_ADMIN_PORT:-8000}:8000"
+    volumes:
+      - gaokao_admin_data:/var/lib/gaokao
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import json,sys,urllib.request; data=json.load(urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=5)); sys.exit(0 if data.get('status') == 'ok' else 1)",
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+volumes:
+  gaokao_admin_data:

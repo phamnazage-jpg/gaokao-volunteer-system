@@ -73,12 +73,12 @@ color: orange
 
 | 工具              | 路径                                                 | 状态        | 说明                         |
 | ----------------- | ---------------------------------------------------- | ----------- | ---------------------------- |
-| `plan_parser`     | `scripts/plan_parser.py`                             | T1.3 待实现 | 解析大厂AI方案为结构化数据   |
-| `crowd_detector`  | `data/crowd_db/loader.py`                            | T1.1 已完成 | 加载大厂AI推荐扎堆数据       |
-| `spec_checker`    | `skills/gaokao-spec-checker/scripts/spec_checker.py` | 已存在      | 政策合规检查                 |
-| `report_renderer` | `templates/audit_report.html`                        | 本任务创建  | HTML 报告模板（Jinja2 语法） |
+| `plan_parser`     | `scripts/plan_parser.py`                             | 已实现      | 解析大厂AI方案为结构化数据   |
+| `crowd_detector`  | `scripts/crowd_detector.py`                          | 已实现      | 复用 `data/crowd_db` 做扎堆检测 |
+| `spec_checker`    | `skills/gaokao-spec-checker/scripts/spec_checker.py` | 已集成      | 政策合规检查                 |
+| `report_renderer` | `templates/audit_report.html`                        | 已实现      | HTML 报告模板（Jinja2 语法） |
 
-> T1.2 阶段只创建 skill 骨架与模板；`plan_parser` 由 T1.3 实现并补单测。
+> 当前 `gaokao-audit` 已具备 parser / checker integration / crowd detector / report generator / audit CLI 主链路，后续增量应围绕真实业务闭环与交付场景扩展，而不是再按 T1.2 骨架状态理解。
 
 ## 📁 目录约定
 

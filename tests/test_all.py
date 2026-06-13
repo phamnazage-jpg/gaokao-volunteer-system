@@ -5,6 +5,7 @@
 
 import sys
 import os
+from types import ModuleType
 
 # 添加scripts到路径
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'scripts'))
@@ -15,8 +16,10 @@ spec = importlib.util.spec_from_file_location(
     "spec_checker_v2",
     os.path.join(os.path.dirname(__file__), '..', 'skills', 'gaokao-spec-checker', 'scripts', 'spec_checker_v2.py')
 )
+assert spec is not None and spec.loader is not None
 module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(module)
+assert isinstance(module, ModuleType)
 
 GaokaoSpecCheckerV2 = module.GaokaoSpecCheckerV2
 

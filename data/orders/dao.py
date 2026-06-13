@@ -43,7 +43,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Iterator, List, Optional, Union
 
-from .models import Order, utc_now_iso
+from .models import Order, generate_order_id, utc_now_iso
 from .schema import apply_schema
 from .state_machine import (
     InvalidStateTransition,
@@ -409,6 +409,89 @@ class OrdersDAO:
                     (order_id,),
                 ).fetchone()
         return self._row_to_order(row)
+
+    def upgrade_order(
+        self,
+        order_id: str,
+        *,
+        target_service_version: str,
+        target_amount_cents: int,
+        actor: Optional[str] = None,
+        reason: Optional[str] = None,
+    ) -> Order:
+        """基于已有订单创建补差价升级单，并回写原单升级标记。"""
+        original = self.get(order_id)
+        if target_amount_cents <= original.amount_cents:
+            raise ValueError(
+                "target_amount_cents 必须高于原订单金额，才能生成补差价升级单"
+            )
+
+        with self._row_factory_ctx():
+            existing = self._conn.execute(
+                f"SELECT {self._select_columns()} FROM orders WHERE upgrade_from=? LIMIT 1",
+                (order_id,),
+            ).fetchone()
+        if existing is not None:
+            existing_order = self._row_to_order(existing)
+            raise ValueError(f"原订单已存在升级订单: {existing_order.id}")
+
+        delta_amount = target_amount_cents - original.amount_cents
+        upgrade_id = generate_order_id()
+        source_tags = list(original.tags or [])
+        if "upgraded" not in source_tags:
+            source_tags.append("upgraded")
+        marker = f"升级至 {target_service_version}，升级单 {upgrade_id}"
+        source_note_prefix = (original.notes + "\n") if original.notes else ""
+        source_note = f"{source_note_prefix}{marker}"
+
+        upgraded = Order(
+            id=upgrade_id,
+            source=original.source,
+            external_id=None,
+            service_version=target_service_version,
+            amount_cents=delta_amount,
+            status="pending",
+            customer_name=original.customer_name,
+            customer_phone=original.customer_phone,
+            customer_wechat=original.customer_wechat,
+            candidate_name=original.candidate_name,
+            candidate_id_card=original.candidate_id_card,
+            candidate_province=original.candidate_province,
+            candidate_score=original.candidate_score,
+            candidate_rank=original.candidate_rank,
+            candidate_subjects=list(original.candidate_subjects),
+            candidate_interests=original.candidate_interests,
+            candidate_strong_subjects=original.candidate_strong_subjects,
+            candidate_weak_subjects=original.candidate_weak_subjects,
+            candidate_family=original.candidate_family,
+            assigned_consultant=original.assigned_consultant,
+            plan_file=None,
+            audit_report=None,
+            pdf_path=None,
+            created_at=None,
+            paid_at=None,
+            started_at=None,
+            delivered_at=None,
+            completed_at=None,
+            notes=f"升级自 {original.id}"
+            if not original.notes
+            else f"{original.notes}\n升级自 {original.id}",
+            tags=list(original.tags or []),
+            upgrade_from=original.id,
+        )
+
+        with self.transaction():
+            self.update(
+                order_id,
+                {"notes": source_note, "tags": source_tags},
+                actor=actor,
+                reason=reason or f"upgrade_source:{target_service_version}",
+            )
+            return self.create(
+                upgraded,
+                actor=actor or "dao_upgrade",
+                reason=reason or f"upgrade_from:{order_id}",
+            )
 
     # ------------------------------------------------------------------
     # 状态转换

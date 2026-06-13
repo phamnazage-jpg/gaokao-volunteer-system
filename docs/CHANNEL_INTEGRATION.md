@@ -212,6 +212,7 @@ CREATE INDEX IF NOT EXISTS idx_webhook_audit_event
 
 - 单 IP 60 req/min(标准库实现,避免引入 redis)
 - 超出返回 429 + Retry-After
+- 来源 IP 默认取 socket `client_address`；仅在显式设置 `GAOKAO_TRUST_X_FORWARDED_FOR=true` 时才读取 `X-Forwarded-For`
 
 ### 5.4 数据脱敏
 
@@ -237,28 +238,39 @@ GAOKAO_ORDERS_FERNET_KEY=<...> \
 python -m data.channel_sync.webhook_server --port 8080
 ```
 
-### 6.2 启动兜底轮询(独立进程)
+### 6.2 定期巡检 + 人工兜底
 
 ```bash
-# 每 5 分钟拉一次
-python -m data.channel_sync.poller --interval 300
+# 值班巡检（建议每 5~15 分钟一次，非 0 exit code 接告警）
+python3 scripts/gaokao-channel-fallback --db data/orders.db check --source xianyu --human
+
+# 打印人工兜底模板
+python3 scripts/gaokao-channel-fallback --db data/orders.db manual-template --source xianyu --human
+
+# 渠道不可用时先人工补录，后续再 pay / deliver
+python3 scripts/gaokao-order-manager --db data/orders.db create \
+  --source xianyu --service-version basic --amount-cents 0 \
+  --customer-name 张三 --customer-phone 13800001234
 ```
+
+详见 `docs/T8-4-fallback-sop.md`。注意：当前巡检健康度判定仅对已落 `webhook_audit` / `poller_*` 事实源的 `xianyu` 链路成立；其他 source 暂时只复用人工补录模板。
 
 ### 6.3 关闭 Webhook 时的兜底
 
 - Webhook 不可用(闲鱼平台维护)时,poller 仍运行
 - 平台恢复后,poller 与 Webhook 数据自动按 external_id 幂等合并
+- 若 poller 也不可用,按 `docs/T8-4-fallback-sop.md` 走人工补录 CLI
 
 ---
 
 ## 7. T8 任务依赖与拆分
 
-| ID   | 任务            | 依赖 | 落地文件                                                      | 状态        |
-| ---- | --------------- | ---- | ------------------------------------------------------------- | ----------- |
-| T8.1 | 闲鱼Webhook集成 | T4.1 | 本设计 + channel_sync/\* + tests/test_xianyu_channel.py       | 已实现并本地验证 |
-| T8.2 | 微信SDK集成     | T8.1 | channel_sync/wechat_adapter.py + tests/test_wechat_adapter.py | 已实现并本地验证 |
-| T8.3 | 企业微信集成    | T8.2 | channel_sync/wecom_adapter.py + tests/test_wecom_adapter.py   | 已实现并本地验证 |
-| T8.4 | 失败兜底(手动)  | T6   | T6 管理后台"新建订单"表单 + poller 自动补偿                   | T6 实施时补 |
+| ID   | 任务            | 依赖 | 落地文件                                                                     | 状态             |
+| ---- | --------------- | ---- | ---------------------------------------------------------------------------- | ---------------- |
+| T8.1 | 闲鱼Webhook集成 | T4.1 | 本设计 + channel_sync/\* + tests/test_xianyu_channel.py                      | 已实现并本地验证 |
+| T8.2 | 微信SDK集成     | T8.1 | channel_sync/wechat_adapter.py + tests/test_wechat_adapter.py                | 已实现并本地验证 |
+| T8.3 | 企业微信集成    | T8.2 | channel_sync/wecom_adapter.py + tests/test_wecom_adapter.py                  | 已实现并本地验证 |
+| T8.4 | 失败兜底(手动)  | T6   | `scripts/gaokao-channel-fallback` 巡检 + `gaokao-order-manager` 人工补录 SOP | 已落地           |
 
 T8.1 不阻塞 T6/T7;但 T6 必须有"手动新建"入口作为兜底。
 

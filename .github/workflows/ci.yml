@@ -45,12 +45,15 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          # 离线兜底：若 requirements-dev.txt 缺失，CI 仍可运行（无第三方包）
+          # clean env 必须同时安装测试依赖 + admin 运行依赖，避免本地环境污染掩盖导入问题
           if [ -f requirements-dev.txt ]; then
             pip install -r requirements-dev.txt
           else
             echo "::warning::requirements-dev.txt not found, installing test deps directly"
             pip install pytest pytest-cov
+          fi
+          if [ -f requirements-admin.txt ]; then
+            pip install -r requirements-admin.txt
           fi
 
       - name: Verify Python and pytest versions
@@ -63,6 +66,7 @@ jobs:
         # 本任务（T10.1）只生成 coverage.xml 供 T10.2 codecov 集成使用
         run: |
           pytest \
+            --cov=admin \
             --cov=data \
             --cov=skills \
             --cov=scripts \
@@ -71,7 +75,7 @@ jobs:
             -v
 
       - name: Upload coverage artifact
-        if: matrix.python-version == '3.11'
+        if: always() && matrix.python-version == '3.11' && hashFiles('coverage.xml') != ''
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
@@ -85,7 +89,7 @@ jobs:
       #   仓库场景匹配；tksea/gitea 不被 codecov 官方支持，无 token 时仍能上传但不写 status）
       # - 不设 token: public repo 可匿名上传；徽章正常渲染
       - name: Upload coverage to Codecov
-        if: matrix.python-version == '3.11' && hashFiles('coverage.xml') != ''
+        if: always() && matrix.python-version == '3.11' && hashFiles('coverage.xml') != ''
         uses: codecov/codecov-action@v4
         with:
           file: coverage.xml
