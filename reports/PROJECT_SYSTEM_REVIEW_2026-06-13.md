@@ -1,4 +1,6 @@
-# gaokao-volunteer-system 系统性评审报告
+# gaokao-volunteer-system 系统性评审报告（历史快照）
+
+> 该文档保留 2026-06-13 当时的评审分析，但不应直接作为当前执行门禁。当前真相源请优先阅读：`docs/CURRENT_STATE.md` → `docs/ACTIVE_EXECUTION_BOARD_2026-06-13.md` → `docs/ACTIVE_REMEDIATION_2026-06-13.md`。
 
 **评审日期**: 2026-06-13  
 **评审对象**: `/home/long/project/gaokao-volunteer-system`  

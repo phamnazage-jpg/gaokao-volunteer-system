@@ -1,6 +1,6 @@
 # 产品规划技术设计审核报告（历史快照）
 
-> 该文档是 2026-06-11 的历史快照，不再代表当前真实状态。当前真相源请以 `reports/PROJECT_SYSTEM_REVIEW_2026-06-13.md` 与 `docs/REMEDIATION_TASK_BOARD_2026-06-13.md` 为准。
+> 该文档是 2026-06-11 的历史快照，不再代表当前真实状态。当前真相源请优先阅读：`docs/CURRENT_STATE.md` → `docs/ACTIVE_EXECUTION_BOARD_2026-06-13.md` → `docs/ACTIVE_REMEDIATION_2026-06-13.md`。
 
 **审核对象**: 高考志愿填报系统 v2.1 产品规划/技术设计/实施计划
 **审核日期**: 2026-06-11

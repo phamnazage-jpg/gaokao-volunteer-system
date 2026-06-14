@@ -1,6 +1,6 @@
 # 实施缺陷修复任务板（历史快照）
 
-> 该文档是 2026-06-11 的历史快照，不再代表当前执行优先级。当前整改板请以 `docs/REMEDIATION_TASK_BOARD_2026-06-13.md` 为准。
+> 该文档是 2026-06-11 的历史快照，不再代表当前执行优先级。当前整改板请优先阅读：`docs/CURRENT_STATE.md` → `docs/ACTIVE_EXECUTION_BOARD_2026-06-13.md` → `docs/ACTIVE_REMEDIATION_2026-06-13.md`。
 
 ## v2.1 实施计划与产品规划对齐修复
 

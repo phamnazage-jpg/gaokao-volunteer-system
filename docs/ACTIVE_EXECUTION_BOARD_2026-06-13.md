@@ -237,7 +237,7 @@ Owner: engineer / ops
 
 Owner: docs / PM
 优先级: P2
-状态: pending
+状态: completed
 
 目标:
 
@@ -270,7 +270,7 @@ Owner: docs / PM
 
 Owner: data / engineer
 优先级: P1
-状态: pending
+状态: in_progress
 
 目标:
 
