@@ -149,17 +149,8 @@ def mock_payment_page(
     token: str,
     settings: Settings = Depends(get_settings_dep),
 ) -> HTMLResponse:
-    service = PaymentService.for_db(
-        settings.orders_db_path,
-        base_url=settings.payment_base_url,
-        webhook_secret=settings.payment_webhook_secret,
-        provider_name=settings.payment_provider,
-    )
-    payment = service.get_payment(payment_id)
-    if payment is None:
-        raise HTTPException(status_code=404, detail="payment not found")
-    return HTMLResponse(
-        _render_mock_payment_page(payment_id, payment.amount_cents, token)
+    return _render_simulated_payment_page(
+        payment_id, token, settings, provider_slug="mock"
     )
 
 
@@ -169,31 +160,31 @@ def complete_mock_payment(
     token: str,
     settings: Settings = Depends(get_settings_dep),
 ) -> RedirectResponse:
-    service = PaymentService.for_db(
-        settings.orders_db_path,
-        base_url=settings.payment_base_url,
-        webhook_secret=settings.payment_webhook_secret,
-        provider_name=settings.payment_provider,
+    return _complete_simulated_payment(
+        payment_id, token, settings, provider_slug="mock"
     )
-    payment = service.get_payment(payment_id)
-    if payment is None:
-        raise HTTPException(status_code=404, detail="payment not found")
-    try:
-        portal_payload = verify_portal_token(token, settings.jwt_secret)
-    except PortalTokenError as exc:
-        raise HTTPException(status_code=401, detail=str(exc)) from exc
-    if (
-        str(portal_payload["order_id"]) != payment.order_id
-        or payment.checkout_token != token
-    ):
-        raise HTTPException(status_code=403, detail="payment token mismatch")
-    payload, headers = service.provider.build_webhook_request(
-        payment_id=payment.id,
-        amount_cents=payment.amount_cents,
-        provider_trade_no=f"MOCK-{payment.id}",
+
+
+@router.get("/pay/alipay-sim/{payment_id}", include_in_schema=False)
+def alipay_sim_payment_page(
+    payment_id: str,
+    token: str,
+    settings: Settings = Depends(get_settings_dep),
+) -> HTMLResponse:
+    return _render_simulated_payment_page(
+        payment_id, token, settings, provider_slug="alipay-sim"
     )
-    service.handle_webhook(payload, headers["X-Mock-Signature"])
-    return RedirectResponse(url=f"/portal/{token}/status", status_code=303)
+
+
+@router.post("/pay/alipay-sim/{payment_id}/complete", include_in_schema=False)
+def complete_alipay_sim_payment(
+    payment_id: str,
+    token: str,
+    settings: Settings = Depends(get_settings_dep),
+) -> RedirectResponse:
+    return _complete_simulated_payment(
+        payment_id, token, settings, provider_slug="alipay-sim"
+    )
 
 
 @router.get("/portal/{token}/info", include_in_schema=False)
@@ -533,21 +524,122 @@ def _render_checkout_page(service_version: str) -> str:
 
 
 def _render_mock_payment_page(payment_id: str, amount_cents: int, token: str) -> str:
+    return _render_simulated_payment_html(
+        title="Mock 支付沙箱",
+        provider_slug="mock",
+        payment_id=payment_id,
+        amount_cents=amount_cents,
+        token=token,
+        submit_label="模拟支付成功并返回订单页",
+    )
+
+
+def _render_alipay_sim_payment_page(
+    payment_id: str, amount_cents: int, token: str
+) -> str:
+    return _render_simulated_payment_html(
+        title="支付宝模拟收银台",
+        provider_slug="alipay-sim",
+        payment_id=payment_id,
+        amount_cents=amount_cents,
+        token=token,
+        submit_label="模拟支付宝支付成功并返回订单页",
+    )
+
+
+def _render_simulated_payment_html(
+    *,
+    title: str,
+    provider_slug: str,
+    payment_id: str,
+    amount_cents: int,
+    token: str,
+    submit_label: str,
+) -> str:
     return f"""<!doctype html>
 <html lang=\"zh-CN\">
-  <head><meta charset=\"utf-8\" /><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" /><title>Mock 支付</title></head>
+  <head><meta charset=\"utf-8\" /><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" /><title>{escape(title)}</title></head>
   <body style=\"font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f7fb;padding:24px;\">
     <main style=\"max-width:640px;margin:0 auto;background:#fff;border:1px solid #dbe3f0;border-radius:18px;padding:24px;\">
-      <h1>Mock 支付沙箱</h1>
+      <h1>{escape(title)}</h1>
       <p>订单支付单号：{escape(payment_id)}</p>
       <p>支付金额：¥{amount_cents / 100:.2f}</p>
-      <form method=\"post\" action=\"/pay/mock/{escape(payment_id)}/complete?token={escape(token)}\">
-        <button type=\"submit\" style=\"border:none;border-radius:12px;background:#1f6feb;color:#fff;font-weight:700;padding:12px 18px;cursor:pointer;\">模拟支付成功并返回订单页</button>
+      <form method=\"post\" action=\"/pay/{escape(provider_slug)}/{escape(payment_id)}/complete?token={escape(token)}\">
+        <button type=\"submit\" style=\"border:none;border-radius:12px;background:#1f6feb;color:#fff;font-weight:700;padding:12px 18px;cursor:pointer;\">{escape(submit_label)}</button>
       </form>
     </main>
   </body>
 </html>
 """
+
+
+def _render_simulated_payment_page(
+    payment_id: str,
+    token: str,
+    settings: Settings,
+    *,
+    provider_slug: str,
+) -> HTMLResponse:
+    service = PaymentService.for_db(
+        settings.orders_db_path,
+        base_url=settings.payment_base_url,
+        webhook_secret=settings.payment_webhook_secret,
+        provider_name=settings.payment_provider,
+    )
+    payment = service.get_payment(payment_id)
+    if payment is None:
+        raise HTTPException(status_code=404, detail="payment not found")
+    if provider_slug == "mock":
+        body = _render_mock_payment_page(payment_id, payment.amount_cents, token)
+    elif provider_slug == "alipay-sim":
+        body = _render_alipay_sim_payment_page(payment_id, payment.amount_cents, token)
+    else:
+        raise HTTPException(
+            status_code=404, detail="unsupported simulated payment page"
+        )
+    return HTMLResponse(body)
+
+
+def _complete_simulated_payment(
+    payment_id: str,
+    token: str,
+    settings: Settings,
+    *,
+    provider_slug: str,
+) -> RedirectResponse:
+    service = PaymentService.for_db(
+        settings.orders_db_path,
+        base_url=settings.payment_base_url,
+        webhook_secret=settings.payment_webhook_secret,
+        provider_name=settings.payment_provider,
+    )
+    payment = service.get_payment(payment_id)
+    if payment is None:
+        raise HTTPException(status_code=404, detail="payment not found")
+    try:
+        portal_payload = verify_portal_token(token, settings.jwt_secret)
+    except PortalTokenError as exc:
+        raise HTTPException(status_code=401, detail=str(exc)) from exc
+    if (
+        str(portal_payload["order_id"]) != payment.order_id
+        or payment.checkout_token != token
+    ):
+        raise HTTPException(status_code=403, detail="payment token mismatch")
+    payload, headers = service.provider.build_webhook_request(
+        payment_id=payment.id,
+        amount_cents=payment.amount_cents,
+        provider_trade_no=f"SIM-{payment.id}",
+    )
+    if provider_slug == "mock":
+        signature = headers["X-Mock-Signature"]
+    elif provider_slug == "alipay-sim":
+        signature = headers["X-Alipay-Sim-Signature"]
+    else:
+        raise HTTPException(
+            status_code=404, detail="unsupported simulated payment completion"
+        )
+    service.handle_webhook(payload, signature)
+    return RedirectResponse(url=f"/portal/{token}/status", status_code=303)
 
 
 def _render_info_page(
