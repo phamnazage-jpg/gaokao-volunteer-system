@@ -29,6 +29,7 @@ from admin.errors import (
 )
 from admin.errors.exceptions import BusinessError
 from data.orders.dao import DuplicateOrder, OrderNotFound, OrdersDAO
+from data.orders.deletion_service import OrderDeletionService
 from data.orders.intake_store import IntakeStore
 from data.orders.models import Order, generate_order_id
 from data.orders.state_machine import InvalidStateTransition, next_states
@@ -141,6 +142,12 @@ class OrderDetailPayload(BaseModel):
 
 class OrderMutationResponse(OrderDetailPayload):
     action: str
+
+
+class OrderDeletionResponse(BaseModel):
+    action: str
+    order_id: str
+    files_deleted: int = 0
 
 
 class CreateOrderRequest(BaseModel):
@@ -450,3 +457,37 @@ def patch_order(
         finally:
             intake_store.close()
         return {"action": action, **_detail_payload(dao, order, intake=intake)}
+
+
+@router.delete(
+    "/{order_id}",
+    response_model=OrderDeletionResponse,
+    summary="订单删除 / 匿名化（T12/A-4）",
+)
+def delete_or_anonymize_order(
+    order_id: str = Path(..., min_length=1),
+    mode: Literal["delete", "anonymize"] = Query("delete"),
+    reason: str = Query(..., min_length=1),
+    settings: Settings = Depends(get_settings_dep),
+    current_user: AdminUser = Depends(get_current_user),
+) -> dict[str, Any]:
+    service = OrderDeletionService.for_db(settings.orders_db_path)
+    try:
+        try:
+            if mode == "delete":
+                result = service.delete_order(
+                    order_id,
+                    actor=current_user.username,
+                    reason=reason,
+                )
+            else:
+                result = service.anonymize_order(
+                    order_id,
+                    actor=current_user.username,
+                    reason=reason,
+                )
+        except OrderNotFound as exc:
+            raise _business_error_for_lookup(order_id) from exc
+    finally:
+        service.close()
+    return result.__dict__

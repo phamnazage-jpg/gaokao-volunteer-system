@@ -98,11 +98,13 @@
 - `report_ready` 事件自动落库
 - `status / attempt_count / last_attempt_at / failure_reason` 追踪字段
 - 站内查看 + PDF 下载最小交付闭环
+- `DeliveryDispatcher` + `scripts/gaokao-delivery-dispatch.py`
+- `ready -> sent` / 缺文件 `-> failed` 的最小执行链
 
 仍缺：
 
 - 真实邮件/站内通知发送执行器
-- 自动重试 worker / 告警链
+- 自动重试调度 / 告警链
 - 面向用户的独立通知审计页
 - 对账/退款与交付失败补偿联动
 
@@ -128,16 +130,19 @@
 - `docs/DATA_RETENTION_AND_DELETION.md`
 - 服务条款草案、删除执行 SOP
 - 前台资料提交同意字段落库
+- 后台 `DELETE /api/orders/{id}?mode=delete|anonymize&reason=...` 最小执行入口
+- 删除时自动清理报告 HTML/PDF，并写入 `order_deletion_audits`
 
 仍缺：
 
 - 正式法务审定版本
-- 删除/匿名化后台执行入口
+- 前台/客服删除工单流程
+- 数据保留期自动清理任务
 - 合规文本上线前最终校对
 
 说明：
 
-- 当前不再是“完全没有合规基线”，而是“文档基线已建，执行与审定仍待完成”。
+- 当前不再是“完全没有合规基线”，而是“文档基线 + 后台最小执行入口已建，前台流程与自动清理仍待完成”。
 
 #### A-5 业务数据备份/恢复/密钥托管已形成基线，但生产化仍未完结
 
@@ -168,22 +173,24 @@
 #### B-1 crowd_db 27 省“结构覆盖”不等于“高质量覆盖”
 
 严重度: P1
-当前状态: 未解决
+当前状态: 部分解决
 
 事实：
 
 - 27 省 JSON 文件已存在
-- 但高置信、高密度推荐数据目前重点仍在湖南
+- `risk_report` 已输出 `quality_level / quality_label`
+- `gaokao-data-trace` human 输出已展示质量等级
+- 低置信省份仍主要是“结构覆盖已完成，但推荐质量待增强”
 
 风险：
 
-- 如果对外统一宣传“27省高质量反扎堆推荐”，有误导风险
+- 若对外统一宣传“27省高质量反扎堆推荐”，仍有误导风险
 
 建议动作：
 
-- 在报告输出里继续强化 confidence 文案
-- 新增“数据完整度等级”字段
-- 对低置信省份降级展示，不输出强结论
+- 在 README / 产品文案中继续避免“27省高质量推荐全覆盖”表述
+- 后续补 province-level completeness/quality summary
+- 继续提升非湖南省份高置信数据密度
 
 #### B-2 本地验证环境仍未完全固化为单命令体验
 

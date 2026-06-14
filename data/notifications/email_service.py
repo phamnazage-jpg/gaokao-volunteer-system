@@ -123,9 +123,43 @@ class DeliveryNotificationService:
         )
         self._conn.commit()
 
-    def list_events(self, order_id: str) -> list[DeliveryNotificationEvent]:
-        rows = self._conn.execute(
-            "SELECT order_id, event_type, channel, payload_json, status, attempt_count, last_attempt_at, failure_reason, created_at FROM delivery_notifications WHERE order_id=? ORDER BY id ASC",
-            (order_id,),
-        ).fetchall()
+    def list_events(
+        self,
+        order_id: str,
+        *,
+        status: str | None = None,
+        channel: str | None = None,
+    ) -> list[DeliveryNotificationEvent]:
+        sql = "SELECT order_id, event_type, channel, payload_json, status, attempt_count, last_attempt_at, failure_reason, created_at FROM delivery_notifications WHERE order_id=?"
+        params: list[object] = [order_id]
+        if status is not None:
+            sql += " AND status=?"
+            params.append(status)
+        if channel is not None:
+            sql += " AND channel=?"
+            params.append(channel)
+        sql += " ORDER BY id ASC"
+        rows = self._conn.execute(sql, tuple(params)).fetchall()
+        return [DeliveryNotificationEvent(**dict(row)) for row in rows]
+
+    def list_pending_events(
+        self,
+        *,
+        channel: str | None = None,
+        statuses: tuple[str, ...] = ("ready",),
+        limit: int = 100,
+    ) -> list[DeliveryNotificationEvent]:
+        placeholders = ",".join("?" for _ in statuses)
+        sql = (
+            "SELECT order_id, event_type, channel, payload_json, status, attempt_count, last_attempt_at, failure_reason, created_at FROM delivery_notifications WHERE status IN ("
+            + placeholders
+            + ")"
+        )
+        params: list[object] = list(statuses)
+        if channel is not None:
+            sql += " AND channel=?"
+            params.append(channel)
+        sql += " ORDER BY id ASC LIMIT ?"
+        params.append(limit)
+        rows = self._conn.execute(sql, tuple(params)).fetchall()
         return [DeliveryNotificationEvent(**dict(row)) for row in rows]

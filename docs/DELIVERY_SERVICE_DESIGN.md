@@ -52,13 +52,16 @@
 - `delivery_notifications` 事件表
 - portal 状态页 / 报告页 / PDF 下载页
 - `delivered` 但无交付物时不再误报 `report_ready`
+- `data.notifications.dispatcher.DeliveryDispatcher`
+- `scripts/gaokao-delivery-dispatch.py`
+- `ready -> sent` / `缺文件 -> failed` / `attempt_count` 递增
 
 未完成：
 
-- 通知触发点下沉到稳定主链
 - 独立 `delivery_job` / `delivery_attempt` 模型
-- 重试与失败原因追踪
-- 多通道统一投递状态
+- 邮件/渠道真实发送执行器
+- 自动重试调度与告警链
+- 多通道统一投递状态页
 
 ## 6. 当前最短闭环
 
@@ -67,10 +70,12 @@
 3. portal 显示 `report_ready`
 4. 状态页提供查看/下载入口
 5. `report_ready` 事件落库且幂等
+6. `gaokao-delivery-dispatch.py --channel station` 可把 ready 事件推进到 sent
+7. 缺失交付物时事件转 failed，并记录 `failure_reason`
 
 ## 7. 下一步实施建议
 
-1. 统一 `report_ready` 触发点
-2. 增加 `delivery_status` 最小字段
-3. 增加失败重试/失败原因
-4. 再决定是否扩到邮件通道
+1. 把 dispatcher 接入定时任务或 systemd timer
+2. 增加邮件或站内通知真实发送器（二选一先闭环）
+3. 增加失败重试阈值与告警
+4. 再决定是否扩到多通道

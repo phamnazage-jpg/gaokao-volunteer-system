@@ -154,6 +154,19 @@ bash scripts/dev-verify.sh
 GAOKAO_SKIP_INSTALL=1 bash scripts/dev-verify.sh
 ```
 
+### T12 交付事件最小执行链
+
+当前 `report_ready` 不再只停留在事件表：
+
+- 事件表：`delivery_notifications`
+- 执行器：`data.notifications.dispatcher.DeliveryDispatcher`
+- CLI：`python3 scripts/gaokao-delivery-dispatch.py --channel station`
+
+最小语义：
+
+- 交付物齐全（HTML/PDF 存在）→ `ready -> sent`
+- 交付物缺失 → `failed`，并写入 `failure_reason`
+
 ### T6.7 Docker Compose 一键启动
 
 仓库根目录已提供 `Dockerfile`、`docker-compose.yml` 与 `.env.docker.example`。默认镜像会把运行数据写入容器外部卷 `/var/lib/gaokao`，避免覆盖仓库里的 Python 包 `data/`。默认 compose 只绑定 `127.0.0.1` 且以 `dev` 模式启动，适合本机自测；正式部署前请复制 `.env.docker.example` 到 `.env` 并替换密钥/密码。

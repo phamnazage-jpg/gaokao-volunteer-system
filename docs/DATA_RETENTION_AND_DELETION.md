@@ -40,13 +40,15 @@
 
 - `OrdersDAO.delete()` 删除订单能力
 - ON DELETE CASCADE 清理部分关联表
+- 后台 `DELETE /api/orders/{id}?mode=delete|anonymize&reason=...` 最小执行入口
+- 删除时自动清理 HTML/PDF 报告文件
+- `order_deletion_audits` 最小审计表
 
 尚缺：
 
-- 前台/后台删除工单流程
-- 报告文件自动清理脚本
-- 删除操作审计记录
+- 前台/客服删除工单流程
 - 数据保留期自动清理任务
+- 更细粒度的匿名化策略（如案例长期保留脱敏版）
 
 ## 5. MVP 最低执行要求
 

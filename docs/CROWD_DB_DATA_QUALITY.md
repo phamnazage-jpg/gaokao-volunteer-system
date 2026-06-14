@@ -80,4 +80,6 @@
 当前状态：
 
 - **文档基线已补齐**
-- **代码主链分级展示仍待继续实现**
+- **`risk_report` 已输出 `quality_level / quality_label`**
+- **`gaokao-data-trace --human` 已输出质量等级**
+- **低置信省份已通过 confidence 分级与 warning 机制降级**
