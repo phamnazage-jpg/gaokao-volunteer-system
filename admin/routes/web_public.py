@@ -322,6 +322,9 @@ def _build_portal_context(order: Order, settings: Settings) -> dict[str, Any]:
         intake_store.close()
 
     stage = "pending_payment"
+    report_html_ready = bool(order.audit_report and Path(order.audit_report).is_file())
+    report_pdf_ready = bool(order.pdf_path and Path(order.pdf_path).is_file())
+    report_artifacts_ready = report_html_ready and report_pdf_ready
     if payment is not None and payment.status == "refund_pending":
         stage = "refund_pending"
     elif order.status == "refunded" or (
@@ -334,9 +337,9 @@ def _build_portal_context(order: Order, settings: Settings) -> dict[str, Any]:
         stage = "pending_payment"
     elif order.status == "completed":
         stage = "completed"
-    elif order.status == "delivered":
+    elif order.status == "delivered" and report_artifacts_ready:
         stage = "report_ready"
-    elif order.status == "serving":
+    elif order.status in {"serving", "delivered"}:
         stage = "processing"
     elif intake is None or intake.status == "draft":
         stage = "info_required"
@@ -350,10 +353,8 @@ def _build_portal_context(order: Order, settings: Settings) -> dict[str, Any]:
         "stage_subtitle": subtitle,
         "payment": payment,
         "intake": intake,
-        "report_html_ready": bool(
-            order.audit_report and Path(order.audit_report).is_file()
-        ),
-        "report_pdf_ready": bool(order.pdf_path and Path(order.pdf_path).is_file()),
+        "report_html_ready": report_html_ready,
+        "report_pdf_ready": report_pdf_ready,
         "order": order,
     }
 
@@ -693,24 +694,33 @@ def _render_info_page(
 
 def _render_status_page(token: str, context: dict[str, Any]) -> str:
     order = context["order"]
+    report_links = ""
+    if context["report_html_ready"]:
+        report_links += (
+            f'<li><a href="/portal/{escape(token)}/report">查看在线报告</a></li>'
+        )
+    if context["report_pdf_ready"]:
+        report_links += (
+            f'<li><a href="/portal/{escape(token)}/report.pdf">下载 PDF</a></li>'
+        )
+    if not report_links:
+        report_links = "<li>报告生成中，交付物就绪后这里会显示查看/下载入口。</li>"
     return f"""<!doctype html>
-<html lang=\"zh-CN\">
-  <head><meta charset=\"utf-8\" /><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" /><title>订单状态</title></head>
-  <body style=\"font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f7fb;padding:24px;\">
+<html lang=\"zh-CN\"><head><meta charset=\"utf-8\" /><title>订单状态</title></head>
+  <body style=\"font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f4f7fb;margin:0;padding:32px 20px;color:#172033;\">
     <main style=\"max-width:760px;margin:0 auto;display:grid;gap:16px;\">
       <section style=\"background:#fff;border:1px solid #dbe3f0;border-radius:18px;padding:24px;\">
         <h1>{escape(context["stage_title"])}</h1>
         <p>{escape(context["stage_subtitle"])}</p>
         <p>订单号：{escape(order.id)}</p>
         <p>服务版本：{escape(order.service_version)}</p>
-        <p>支付状态：{escape(context["payment"].status if context["payment"] else "pending")}</p>
+        <p>当前订单状态：{escape(order.status)}</p>
       </section>
       <section style=\"background:#fff;border:1px solid #dbe3f0;border-radius:18px;padding:24px;\">
-        <h2>下一步</h2>
+        <h2>下一步操作</h2>
         <ul>
           <li><a href=\"/portal/{escape(token)}/info\">填写/更新资料</a></li>
-          <li><a href=\"/portal/{escape(token)}/report\">查看在线报告</a></li>
-          <li><a href=\"/portal/{escape(token)}/report.pdf\">下载 PDF</a></li>
+          {report_links}
         </ul>
       </section>
     </main>

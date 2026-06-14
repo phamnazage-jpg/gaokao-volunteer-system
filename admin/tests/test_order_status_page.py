@@ -84,3 +84,29 @@ def test_order_status_page_and_report_download(client, settings, tmp_path: Path)
     assert pdf_resp.status_code == 200, pdf_resp.text
     assert pdf_resp.headers["content-type"].startswith("application/pdf")
     assert pdf_resp.content.startswith(b"%PDF-1.4")
+
+
+def test_delivered_without_artifacts_stays_processing(client, settings):
+    order = _seed_order(settings.orders_db_path, order_id="GKO-20260614-STATUS-NOART")
+    _mark_paid(settings, order)
+    IntakeStore.for_db(settings.orders_db_path).save(
+        order_id=order.id,
+        payload={"candidate_score": 578},
+        submit=True,
+    )
+
+    with OrdersDAO.connect(settings.orders_db_path) as dao:
+        dao.transition_status(order.id, "serving", actor="test", reason="processing")
+        dao.transition_status(
+            order.id, "delivered", actor="test", reason="report_ready_without_files"
+        )
+
+    token = issue_portal_token(order.id, settings.jwt_secret)
+    status_page = client.get(f"/portal/{token}/status")
+    assert status_page.status_code == 200, status_page.text
+    assert "处理中" in status_page.text
+    assert "报告已就绪" not in status_page.text
+    assert "报告生成中" in status_page.text
+
+    report_page = client.get(f"/portal/{token}/report")
+    assert report_page.status_code == 409
