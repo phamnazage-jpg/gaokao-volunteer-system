@@ -77,6 +77,9 @@ def test_report_ready_transition_creates_notification_event(
         notification_service.close()
     assert len(events) == 1
     assert events[0].event_type == "report_ready"
+    assert events[0].status == "ready"
+    assert events[0].attempt_count == 1
+    assert events[0].failure_reason is None
 
 
 def test_dao_delivered_transition_also_creates_notification_event(settings, tmp_path):
@@ -110,3 +113,49 @@ def test_dao_delivered_transition_also_creates_notification_event(settings, tmp_
         notification_service.close()
     assert len(events) == 1
     assert events[0].event_type == "report_ready"
+    assert events[0].status == "ready"
+    assert events[0].attempt_count == 1
+    assert events[0].failure_reason is None
+
+
+def test_delivery_notification_tracks_failure_and_sent_status(settings, tmp_path):
+    order = _seed_order(settings.orders_db_path, order_id="GKO-20260614-NOTIFY-STATUS")
+    _mark_paid(settings, order)
+    IntakeStore.for_db(settings.orders_db_path).save(
+        order_id=order.id, payload={"candidate_score": 578}, submit=True
+    )
+
+    report_path = tmp_path / "status-report.html"
+    pdf_path = tmp_path / "status-report.pdf"
+    report_path.write_text("<h1>status</h1>", encoding="utf-8")
+    pdf_path.write_bytes(b"%PDF-1.4\nstatus\n")
+
+    with OrdersDAO.connect(settings.orders_db_path) as dao:
+        dao.update(
+            order.id,
+            {"audit_report": str(report_path), "pdf_path": str(pdf_path)},
+            actor="test",
+            reason="attach_report",
+        )
+        dao.transition_status(order.id, "serving", actor="test", reason="processing")
+        dao.transition_status(
+            order.id, "delivered", actor="test", reason="report_ready"
+        )
+
+    notification_service = DeliveryNotificationService.for_db(settings.orders_db_path)
+    try:
+        notification_service.mark_failed(order.id, "smtp timeout")
+        failed = notification_service.list_events(order.id)[0]
+        assert failed.status == "failed"
+        assert failed.attempt_count == 2
+        assert failed.failure_reason == "smtp timeout"
+        assert failed.last_attempt_at is not None
+
+        notification_service.mark_sent(order.id)
+        sent = notification_service.list_events(order.id)[0]
+        assert sent.status == "sent"
+        assert sent.attempt_count == 2
+        assert sent.failure_reason is None
+        assert sent.last_attempt_at is not None
+    finally:
+        notification_service.close()

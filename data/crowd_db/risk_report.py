@@ -108,6 +108,18 @@ def _normalize_provenance(metadata: Optional[Dict[str, Any]]) -> Dict[str, Any]:
         confidence = float(confidence) if confidence is not None else None
     except (TypeError, ValueError):
         confidence = None
+    if confidence is None:
+        quality_level = "unknown"
+        quality_label = "未知"
+    elif confidence >= 0.8:
+        quality_level = "high"
+        quality_label = "A级（高置信）"
+    elif confidence >= 0.5:
+        quality_level = "usable"
+        quality_label = "B级（可用）"
+    else:
+        quality_level = "skeleton"
+        quality_label = "C级（骨架）"
     data_year = metadata.get("data_year")
     try:
         data_year = int(data_year) if data_year is not None else None
@@ -122,6 +134,8 @@ def _normalize_provenance(metadata: Optional[Dict[str, Any]]) -> Dict[str, Any]:
         "source": metadata.get("source", ""),
         "source_url": metadata.get("source_url", ""),
         "confidence": confidence,
+        "quality_level": quality_level,
+        "quality_label": quality_label,
         "last_updated": metadata.get("last_updated", ""),
         "data_year": data_year,
     }

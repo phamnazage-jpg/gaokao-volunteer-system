@@ -54,6 +54,7 @@ def test_trace_cli_human_output_contains_required_lines(
     assert "湖南 / 2025年数据 / 长沙理工大学 / 会计学" in captured.out
     assert "source_url: https://" in captured.out
     assert "confidence: 0.85" in captured.out
+    assert "quality_level: high (A级（高置信）)" in captured.out
 
 
 def test_trace_cli_missing_school_returns_nonzero(

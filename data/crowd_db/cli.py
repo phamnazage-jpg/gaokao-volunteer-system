@@ -31,6 +31,18 @@ def _normalize_source_type(raw_source_type: str) -> dict[str, str]:
     }
 
 
+def _normalize_quality(confidence: Any) -> tuple[str, str]:
+    try:
+        numeric = float(confidence)
+    except (TypeError, ValueError):
+        return ("unknown", "未知")
+    if numeric >= 0.8:
+        return ("high", "A级（高置信）")
+    if numeric >= 0.5:
+        return ("usable", "B级（可用）")
+    return ("skeleton", "C级（骨架）")
+
+
 def _build_match(
     *,
     province: str,
@@ -40,6 +52,7 @@ def _build_match(
 ) -> dict[str, Any]:
     score_bounds = score_range.get("range") or [None, None]
     normalized = _normalize_source_type(str(provenance.get("source_type") or "derived"))
+    quality_level, quality_label = _normalize_quality(provenance.get("confidence"))
     return {
         "province": province,
         "school": recommendation.get("name", ""),
@@ -58,6 +71,8 @@ def _build_match(
         "source_type_label": normalized["source_type_label"],
         "source_type_icon": normalized["source_type_icon"],
         "confidence": provenance.get("confidence"),
+        "quality_level": quality_level,
+        "quality_label": quality_label,
         "last_updated": provenance.get("last_updated", ""),
     }
 
@@ -138,6 +153,7 @@ def _emit_human(payload: dict[str, Any]) -> None:
         print(f"source: {match['source']}")
         print(f"source_url: {match['source_url']}")
         print(f"confidence: {match['confidence']}")
+        print(f"quality_level: {match['quality_level']} ({match['quality_label']})")
         print(f"last_updated: {match['last_updated']}")
 
 

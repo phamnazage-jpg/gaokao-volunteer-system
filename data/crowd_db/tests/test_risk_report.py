@@ -156,6 +156,8 @@ def test_risk_dict_includes_provenance_fields():
         "source",
         "source_url",
         "confidence",
+        "quality_level",
+        "quality_label",
         "last_updated",
         "data_year",
     ):
@@ -168,6 +170,8 @@ def test_risk_dict_includes_provenance_fields():
     assert r["last_updated"] == "2026-06-12"
     assert r["data_year"] == 2025
     assert 0 <= r["confidence"] <= 1
+    assert r["quality_level"] == "high"
+    assert r["quality_label"] == "A级（高置信）"
 
 
 def test_alternatives_remapped_to_school_field():

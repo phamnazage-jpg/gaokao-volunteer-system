@@ -15,6 +15,10 @@ CREATE TABLE IF NOT EXISTS delivery_notifications (
     event_type TEXT NOT NULL,
     channel TEXT NOT NULL,
     payload_json TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'ready',
+    attempt_count INTEGER NOT NULL DEFAULT 1,
+    last_attempt_at TEXT,
+    failure_reason TEXT,
     created_at TEXT NOT NULL,
     UNIQUE(order_id, event_type),
     FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE
@@ -28,6 +32,10 @@ class DeliveryNotificationEvent:
     event_type: str
     channel: str
     payload_json: str
+    status: str
+    attempt_count: int
+    last_attempt_at: str | None
+    failure_reason: str | None
     created_at: str
 
 
@@ -43,6 +51,7 @@ class DeliveryNotificationService:
         conn = apply_schema(db_path)
         conn.row_factory = sqlite3.Row
         conn.executescript(SCHEMA_SQL)
+        cls._ensure_columns(conn)
         conn.commit()
         return cls(conn)
 
@@ -50,7 +59,33 @@ class DeliveryNotificationService:
     def from_connection(cls, conn: sqlite3.Connection) -> "DeliveryNotificationService":
         conn.row_factory = sqlite3.Row
         conn.executescript(SCHEMA_SQL)
+        cls._ensure_columns(conn)
         return cls(conn, owns_connection=False)
+
+    @staticmethod
+    def _ensure_columns(conn: sqlite3.Connection) -> None:
+        columns = {
+            row[1]
+            for row in conn.execute(
+                "PRAGMA table_info(delivery_notifications)"
+            ).fetchall()
+        }
+        if "status" not in columns:
+            conn.execute(
+                "ALTER TABLE delivery_notifications ADD COLUMN status TEXT NOT NULL DEFAULT 'ready'"
+            )
+        if "attempt_count" not in columns:
+            conn.execute(
+                "ALTER TABLE delivery_notifications ADD COLUMN attempt_count INTEGER NOT NULL DEFAULT 1"
+            )
+        if "last_attempt_at" not in columns:
+            conn.execute(
+                "ALTER TABLE delivery_notifications ADD COLUMN last_attempt_at TEXT"
+            )
+        if "failure_reason" not in columns:
+            conn.execute(
+                "ALTER TABLE delivery_notifications ADD COLUMN failure_reason TEXT"
+            )
 
     def close(self) -> None:
         if self._owns_connection:
@@ -61,16 +96,36 @@ class DeliveryNotificationService:
     ) -> None:
         try:
             self._conn.execute(
-                "INSERT INTO delivery_notifications(order_id, event_type, channel, payload_json, created_at) VALUES (?, 'report_ready', ?, ?, ?)",
-                (order_id, channel, payload_json, utc_now_iso()),
+                "INSERT INTO delivery_notifications(order_id, event_type, channel, payload_json, status, attempt_count, last_attempt_at, failure_reason, created_at) VALUES (?, 'report_ready', ?, ?, 'ready', 1, ?, NULL, ?)",
+                (order_id, channel, payload_json, utc_now_iso(), utc_now_iso()),
             )
             self._conn.commit()
         except sqlite3.IntegrityError:
             self._conn.rollback()
 
+    def mark_sent(self, order_id: str, event_type: str = "report_ready") -> None:
+        self._conn.execute(
+            "UPDATE delivery_notifications SET status='sent', last_attempt_at=?, failure_reason=NULL WHERE order_id=? AND event_type=?",
+            (utc_now_iso(), order_id, event_type),
+        )
+        self._conn.commit()
+
+    def mark_failed(
+        self,
+        order_id: str,
+        failure_reason: str,
+        *,
+        event_type: str = "report_ready",
+    ) -> None:
+        self._conn.execute(
+            "UPDATE delivery_notifications SET status='failed', attempt_count=attempt_count+1, last_attempt_at=?, failure_reason=? WHERE order_id=? AND event_type=?",
+            (utc_now_iso(), failure_reason, order_id, event_type),
+        )
+        self._conn.commit()
+
     def list_events(self, order_id: str) -> list[DeliveryNotificationEvent]:
         rows = self._conn.execute(
-            "SELECT order_id, event_type, channel, payload_json, created_at FROM delivery_notifications WHERE order_id=? ORDER BY id ASC",
+            "SELECT order_id, event_type, channel, payload_json, status, attempt_count, last_attempt_at, failure_reason, created_at FROM delivery_notifications WHERE order_id=? ORDER BY id ASC",
             (order_id,),
         ).fetchall()
         return [DeliveryNotificationEvent(**dict(row)) for row in rows]
