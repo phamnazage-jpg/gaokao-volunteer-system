@@ -46,6 +46,7 @@ def test_order_info_form_accepts_draft_and_submit(client, settings):
     page = client.get(f"/portal/{token}/info")
     assert page.status_code == 200, page.text
     assert "考生资料填写" in page.text
+    assert "监护人已知情并同意" in page.text
 
     draft = client.post(
         f"/portal/{token}/info",
@@ -56,6 +57,11 @@ def test_order_info_form_accepts_draft_and_submit(client, settings):
             "candidate_subjects": ["物理", "化学", "生物"],
             "candidate_interests": "计算机",
             "guardian_notes": "更看重省内城市",
+            "consent_version": "t12-web-mvp-v1",
+            "consent_scope": "web-self-service-order-intake",
+            "privacy_accepted": False,
+            "service_terms_accepted": False,
+            "guardian_confirmed": False,
         },
     )
     assert draft.status_code == 200, draft.text
@@ -71,6 +77,11 @@ def test_order_info_form_accepts_draft_and_submit(client, settings):
             "candidate_subjects": ["物理", "化学", "生物"],
             "candidate_interests": "计算机",
             "guardian_notes": "更看重省内城市",
+            "consent_version": "t12-web-mvp-v1",
+            "consent_scope": "web-self-service-order-intake",
+            "privacy_accepted": True,
+            "service_terms_accepted": True,
+            "guardian_confirmed": True,
         },
     )
     assert submit.status_code == 200, submit.text
@@ -110,6 +121,34 @@ def test_order_info_form_becomes_read_only_after_report_ready(
             "candidate_score": 600,
             "candidate_rank": 999,
             "candidate_subjects": ["物理"],
+            "consent_version": "t12-web-mvp-v1",
+            "consent_scope": "web-self-service-order-intake",
+            "privacy_accepted": True,
+            "service_terms_accepted": True,
+            "guardian_confirmed": True,
         },
     )
     assert resp.status_code == 409
+
+
+def test_submit_requires_consent_fields(client, settings):
+    order = _seed_order(settings.orders_db_path, order_id="GKO-20260614-INFO-CONSENT")
+    _mark_paid(settings, order)
+    token = issue_portal_token(order.id, settings.jwt_secret)
+
+    resp = client.post(
+        f"/portal/{token}/info",
+        json={
+            "mode": "submit",
+            "candidate_score": 578,
+            "candidate_rank": 12034,
+            "candidate_subjects": ["物理", "化学", "生物"],
+            "consent_version": "t12-web-mvp-v1",
+            "consent_scope": "web-self-service-order-intake",
+            "privacy_accepted": False,
+            "service_terms_accepted": True,
+            "guardian_confirmed": True,
+        },
+    )
+    assert resp.status_code == 422
+    assert "privacy_accepted" in resp.text

@@ -15,6 +15,11 @@ class IntakePayload(BaseModel):
     candidate_subjects: list[str] = Field(default_factory=list)
     candidate_interests: Optional[str] = None
     guardian_notes: Optional[str] = None
+    consent_version: Optional[str] = None
+    consent_scope: Optional[str] = None
+    privacy_accepted: bool = False
+    service_terms_accepted: bool = False
+    guardian_confirmed: bool = False
 
     @model_validator(mode="after")
     def _validate_submit_payload(self) -> "IntakePayload":
@@ -25,6 +30,16 @@ class IntakePayload(BaseModel):
                 raise ValueError("candidate_rank 为提交必填项")
             if not self.candidate_subjects:
                 raise ValueError("candidate_subjects 为提交必填项")
+            if not self.consent_version:
+                raise ValueError("consent_version 为提交必填项")
+            if not self.consent_scope:
+                raise ValueError("consent_scope 为提交必填项")
+            if not self.privacy_accepted:
+                raise ValueError("privacy_accepted 为提交必填项")
+            if not self.service_terms_accepted:
+                raise ValueError("service_terms_accepted 为提交必填项")
+            if not self.guardian_confirmed:
+                raise ValueError("guardian_confirmed 为提交必填项")
         return self
 
 

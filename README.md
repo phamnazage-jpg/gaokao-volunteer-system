@@ -137,6 +137,23 @@ xdg-open http://127.0.0.1:8000/docs
 
 默认会在空库 bootstrap 一个管理员账号；生产环境必须显式设置强密码 `GAOKAO_ADMIN_PASS`（禁止 `admin123`，至少 10 位且覆盖 3 类字符）与高熵 `GAOKAO_JWT_SECRET`。首次启动后应立即轮换默认管理员密码。
 
+### 本地一键验证（X-06）
+
+仓库已提供 `scripts/dev-verify.sh`，用于统一执行：
+
+- 创建/复用 `.venv`
+- 安装 `requirements-admin.txt` + `requirements-dev.txt`
+- 运行 `pytest` + coverage gate
+- 运行 `ruff` / `mypy`
+
+```bash
+# 完整执行（默认会安装/更新依赖）
+bash scripts/dev-verify.sh
+
+# 已有依赖时可跳过安装
+GAOKAO_SKIP_INSTALL=1 bash scripts/dev-verify.sh
+```
+
 ### T6.7 Docker Compose 一键启动
 
 仓库根目录已提供 `Dockerfile`、`docker-compose.yml` 与 `.env.docker.example`。默认镜像会把运行数据写入容器外部卷 `/var/lib/gaokao`，避免覆盖仓库里的 Python 包 `data/`。默认 compose 只绑定 `127.0.0.1` 且以 `dev` 模式启动，适合本机自测；正式部署前请复制 `.env.docker.example` 到 `.env` 并替换密钥/密码。

@@ -646,6 +646,11 @@ def _complete_simulated_payment(
 def _render_info_page(
     order: Order, token: str, payload: dict[str, Any], stage: str
 ) -> str:
+    consent_version = str(payload.get("consent_version") or "t12-web-mvp-v1")
+    consent_scope = str(payload.get("consent_scope") or "web-self-service-order-intake")
+    privacy_checked = "checked" if payload.get("privacy_accepted") else ""
+    service_terms_checked = "checked" if payload.get("service_terms_accepted") else ""
+    guardian_checked = "checked" if payload.get("guardian_confirmed") else ""
     return f"""<!doctype html>
 <html lang=\"zh-CN\">
   <head><meta charset=\"utf-8\" /><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" /><title>考生资料填写</title></head>
@@ -653,12 +658,18 @@ def _render_info_page(
     <main style=\"max-width:760px;margin:0 auto;background:#fff;border:1px solid #dbe3f0;border-radius:18px;padding:24px;\">
       <h1>考生资料填写</h1>
       <p>当前阶段：{escape(_STAGE_META[stage][0])}</p>
+      <p style=\"background:#fff7e6;border:1px solid #f4d39b;border-radius:12px;padding:12px 14px;color:#8a5a00;\">提交资料即表示：监护人已知情并同意将考生资料用于志愿填报服务；当前版本号：{escape(consent_version)}</p>
       <form id=\"intake-form\">
         <label>高考分数<input name=\"candidate_score\" value=\"{escape(str(payload.get("candidate_score") or ""))}\" /></label><br/>
         <label>位次<input name=\"candidate_rank\" value=\"{escape(str(payload.get("candidate_rank") or ""))}\" /></label><br/>
         <label>选科（逗号分隔）<input name=\"candidate_subjects\" value=\"{escape(",".join(payload.get("candidate_subjects") or []))}\" /></label><br/>
         <label>兴趣方向<input name=\"candidate_interests\" value=\"{escape(str(payload.get("candidate_interests") or ""))}\" /></label><br/>
         <label>家长备注<textarea name=\"guardian_notes\">{escape(str(payload.get("guardian_notes") or ""))}</textarea></label><br/>
+        <input type=\"hidden\" name=\"consent_version\" value=\"{escape(consent_version)}\" />
+        <input type=\"hidden\" name=\"consent_scope\" value=\"{escape(consent_scope)}\" />
+        <label><input type=\"checkbox\" name=\"privacy_accepted\" {privacy_checked} /> 我已阅读并同意隐私政策草案</label><br/>
+        <label><input type=\"checkbox\" name=\"service_terms_accepted\" {service_terms_checked} /> 我已阅读并同意服务说明与免责声明</label><br/>
+        <label><input type=\"checkbox\" name=\"guardian_confirmed\" {guardian_checked} /> 我确认监护人已知情并同意提交资料</label><br/>
         <button type=\"button\" onclick=\"submitIntake('draft')\">保存草稿</button>
         <button type=\"button\" onclick=\"submitIntake('submit')\">提交资料</button>
       </form>
@@ -676,6 +687,11 @@ def _render_info_page(
           candidate_subjects: subjects,
           candidate_interests: form.get('candidate_interests') || null,
           guardian_notes: form.get('guardian_notes') || null,
+          consent_version: form.get('consent_version') || null,
+          consent_scope: form.get('consent_scope') || null,
+          privacy_accepted: form.get('privacy_accepted') === 'on',
+          service_terms_accepted: form.get('service_terms_accepted') === 'on',
+          guardian_confirmed: form.get('guardian_confirmed') === 'on',
         }};
         const resp = await fetch('/portal/{escape(token)}/info', {{
           method: 'POST',

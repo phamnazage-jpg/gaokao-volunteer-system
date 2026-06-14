@@ -47,7 +47,7 @@
 
 Owner: planner / PM
 优先级: P0
-状态: pending
+状态: completed
 
 目标:
 
@@ -78,7 +78,7 @@ Owner: planner / PM
 
 Owner: tech-lead / engineer
 优先级: P0
-状态: pending
+状态: completed
 
 目标:
 
@@ -111,7 +111,7 @@ Owner: tech-lead / engineer
 
 Owner: tech-lead / engineer
 优先级: P0
-状态: pending
+状态: completed
 
 目标:
 
@@ -142,7 +142,7 @@ Owner: tech-lead / engineer
 
 Owner: PM / legal / ops
 优先级: P1
-状态: pending
+状态: completed
 
 目标:
 
@@ -174,7 +174,7 @@ Owner: PM / legal / ops
 
 Owner: ops
 优先级: P1
-状态: pending
+状态: completed
 
 目标:
 
@@ -207,7 +207,7 @@ Owner: ops
 
 Owner: engineer / ops
 优先级: P1
-状态: pending
+状态: completed
 
 目标:
 

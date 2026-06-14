@@ -16,7 +16,7 @@ except ImportError:
     print("警告: jinja2 未安装，HTML模板功能将受限")
 
 try:
-    from weasyprint import HTML  # type: ignore[import-not-found]
+    from weasyprint import HTML  # type: ignore[import-untyped]
 
     HAS_WEASYPRINT = True
 except ImportError:

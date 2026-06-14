@@ -85,6 +85,11 @@ def test_alipay_sim_public_user_e2e_flow(tmp_path, monkeypatch):
                 "candidate_subjects": ["物理", "化学", "生物"],
                 "candidate_interests": "计算机",
                 "guardian_notes": "更看重省内城市",
+                "consent_version": "t12-web-mvp-v1",
+                "consent_scope": "web-self-service-order-intake",
+                "privacy_accepted": True,
+                "service_terms_accepted": True,
+                "guardian_confirmed": True,
             },
         )
         assert submit_info.status_code == 200, submit_info.text
