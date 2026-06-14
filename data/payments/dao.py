@@ -34,8 +34,9 @@ CREATE INDEX IF NOT EXISTS idx_payments_status ON payments(status);
 
 
 class PaymentDAO:
-    def __init__(self, conn: sqlite3.Connection) -> None:
+    def __init__(self, conn: sqlite3.Connection, *, autocommit: bool = True) -> None:
         self._conn = conn
+        self._autocommit = autocommit
 
     @classmethod
     def for_db(cls, db_path: str | Path) -> "PaymentDAO":
@@ -44,7 +45,14 @@ class PaymentDAO:
         conn.execute("PRAGMA foreign_keys = ON")
         conn.executescript(SCHEMA_SQL)
         conn.commit()
-        return cls(conn)
+        return cls(conn, autocommit=True)
+
+    @classmethod
+    def from_connection(cls, conn: sqlite3.Connection) -> "PaymentDAO":
+        conn.row_factory = sqlite3.Row
+        conn.execute("PRAGMA foreign_keys = ON")
+        conn.executescript(SCHEMA_SQL)
+        return cls(conn, autocommit=False)
 
     def close(self) -> None:
         self._conn.close()
@@ -73,7 +81,8 @@ class PaymentDAO:
                 payment.refunded_at,
             ),
         )
-        self._conn.commit()
+        if self._autocommit:
+            self._conn.commit()
         created = self.get(payment.id)
         assert created is not None
         return created
@@ -131,7 +140,8 @@ class PaymentDAO:
                 payment_id,
             ),
         )
-        self._conn.commit()
+        if self._autocommit:
+            self._conn.commit()
         updated = self.get(payment_id)
         assert updated is not None
         return updated

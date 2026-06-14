@@ -193,47 +193,44 @@ class PaymentService:
         payment_id = str(normalized_payload.get("payment_id") or "")
         if not payment_id:
             raise PaymentError("missing payment_id")
-        payments = PaymentDAO.for_db(self.db_path)
-        try:
-            payment = payments.get(payment_id)
-            if payment is None:
-                raise PaymentError("payment not found")
-            if (
-                int(normalized_payload.get("amount_cents") or -1)
-                != payment.amount_cents
-            ):
-                raise PaymentError("payment amount mismatch")
-            if payment.status == "paid":
-                with OrdersDAO.connect(self.db_path) as orders_dao:
-                    order = orders_dao.get(payment.order_id)
-                return WebhookHandleResult(
-                    payment_id=payment.id,
-                    processed=True,
-                    idempotent=True,
-                    order_status=order.status,
-                )
-            updated = payments.update_status(
-                payment.id,
-                status="paid",
-                provider_trade_no=str(
-                    normalized_payload.get("provider_trade_no")
-                    or payment.provider_trade_no
-                    or ""
-                ),
-                callback_payload=payload,
-            )
-        finally:
-            payments.close()
 
         with OrdersDAO.connect(self.db_path) as orders_dao:
-            order = orders_dao.get(updated.order_id)
-            if order.status == "pending":
-                order = orders_dao.transition_status(
-                    updated.order_id,
-                    "paid",
-                    actor="payment_webhook",
-                    reason="payment_paid",
+            payments = PaymentDAO.from_connection(orders_dao.conn)
+            with orders_dao.transaction():
+                payment = payments.get(payment_id)
+                if payment is None:
+                    raise PaymentError("payment not found")
+                if (
+                    int(normalized_payload.get("amount_cents") or -1)
+                    != payment.amount_cents
+                ):
+                    raise PaymentError("payment amount mismatch")
+                if payment.status == "paid":
+                    order = orders_dao.get(payment.order_id)
+                    return WebhookHandleResult(
+                        payment_id=payment.id,
+                        processed=True,
+                        idempotent=True,
+                        order_status=order.status,
+                    )
+                updated = payments.update_status(
+                    payment.id,
+                    status="paid",
+                    provider_trade_no=str(
+                        normalized_payload.get("provider_trade_no")
+                        or payment.provider_trade_no
+                        or ""
+                    ),
+                    callback_payload=payload,
                 )
+                order = orders_dao.get(updated.order_id)
+                if order.status == "pending":
+                    order = orders_dao.transition_status(
+                        updated.order_id,
+                        "paid",
+                        actor="payment_webhook",
+                        reason="payment_paid",
+                    )
         return WebhookHandleResult(
             payment_id=updated.id,
             processed=True,
