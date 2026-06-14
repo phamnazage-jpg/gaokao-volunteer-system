@@ -58,6 +58,7 @@
 | [TECH_ARCHITECTURE.md](TECH_ARCHITECTURE.md)                                 | 技术架构设计 🆕               |
 | [CURRENT_STATE.md](CURRENT_STATE.md)                                         | 当前真相源 🆕                 |
 | [ACTIVE_REMEDIATION_2026-06-13.md](ACTIVE_REMEDIATION_2026-06-13.md)         | 当前仍有效问题清单 🆕         |
+| [ACTIVE_EXECUTION_BOARD_2026-06-13.md](ACTIVE_EXECUTION_BOARD_2026-06-13.md) | 当前执行板 🆕                 |
 | [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md)                             | v2.1实施计划 v1.0             |
 | [IMPLEMENTATION_PLAN_v2.md](IMPLEMENTATION_PLAN_v2.md)                       | v2.1实施计划 v2.0（修订版）🆕 |
 | [AUDIT_REPORT_2026-06-11.md](AUDIT_REPORT_2026-06-11.md)                     | 审核报告 🆕                   |
