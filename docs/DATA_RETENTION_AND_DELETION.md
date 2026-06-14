@@ -43,11 +43,12 @@
 - 后台 `DELETE /api/orders/{id}?mode=delete|anonymize&reason=...` 最小执行入口
 - 删除时自动清理 HTML/PDF 报告文件
 - `order_deletion_audits` 最小审计表
+- `scripts/gaokao_retention_cleanup.py` / `scripts/gaokao-retention-cleanup.py` 保留期清理入口
 
 尚缺：
 
 - 前台/客服删除工单流程
-- 数据保留期自动清理任务
+- 数据保留期自动清理定时任务
 - 更细粒度的匿名化策略（如案例长期保留脱敏版）
 
 ## 5. MVP 最低执行要求

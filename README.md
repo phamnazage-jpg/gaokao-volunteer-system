@@ -169,6 +169,12 @@ GAOKAO_SKIP_INSTALL=1 bash scripts/dev-verify.sh
 - 交付物缺失 → `failed`，并写入 `failure_reason`
 - watchdog 遇到失败事件返回 exit code `2`
 
+### 数据保留期清理
+
+- dry-run：`python3 scripts/gaokao-retention-cleanup.py --cutoff <ISO8601> --dry-run`
+- apply：`python3 scripts/gaokao-retention-cleanup.py --cutoff <ISO8601>`
+- 当前语义：对超过保留期的 `completed/refunded` 订单执行匿名化清理
+
 ### crowd_db 质量汇总
 
 - `python3 -m data.crowd_db.quality_summary --human`
