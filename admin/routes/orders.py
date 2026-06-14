@@ -32,6 +32,7 @@ from admin.errors import (
 from admin.errors.exceptions import BusinessError
 from data.notifications.email_service import DeliveryNotificationService
 from data.orders.dao import DuplicateOrder, OrderNotFound, OrdersDAO
+from data.orders.intake_store import IntakeStore
 from data.orders.models import Order, generate_order_id
 from data.orders.state_machine import InvalidStateTransition, next_states
 
@@ -119,6 +120,8 @@ class OrderSummaryResponse(BaseModel):
     candidate_name: Optional[str] = None
     candidate_province: Optional[str] = None
     assigned_consultant: Optional[str] = None
+    intake_status: Optional[str] = None
+    intake_submitted_at: Optional[str] = None
     created_at: Optional[str] = None
     status_updated_at: Optional[str] = None
     tags: list[str] = Field(default_factory=list)
@@ -184,6 +187,13 @@ def _summary(order: Order) -> dict[str, Any]:
     return {field: masked.get(field) for field in _SUMMARY_FIELDS}
 
 
+def _attach_intake_fields(order_payload: dict[str, Any], intake: Any) -> dict[str, Any]:
+    enriched = dict(order_payload)
+    enriched["intake_status"] = getattr(intake, "status", None)
+    enriched["intake_submitted_at"] = getattr(intake, "submitted_at", None)
+    return enriched
+
+
 def _csv_safe_value(value: Any) -> Any:
     if isinstance(value, str) and value.startswith(_CSV_FORMULA_PREFIXES):
         return f"'{value}"
@@ -199,9 +209,11 @@ def _history_payload(dao: OrdersDAO, order_id: str) -> list[dict[str, Any]]:
     return [asdict(item) for item in dao.get_status_history(order_id)]
 
 
-def _detail_payload(dao: OrdersDAO, order: Order) -> dict[str, Any]:
+def _detail_payload(
+    dao: OrdersDAO, order: Order, *, intake: Any = None
+) -> dict[str, Any]:
     return {
-        "order": _mask_order(order),
+        "order": _attach_intake_fields(_mask_order(order), intake),
         "history": _history_payload(dao, order.id),
         "available_next_statuses": sorted(next_states(order.status)),
     }
@@ -247,7 +259,14 @@ def list_orders(
         orders = dao.list(
             status=status_filter, source=source, limit=limit, offset=offset
         )
-    return [_summary(order) for order in orders]
+    intake_store = IntakeStore.for_db(settings.orders_db_path)
+    try:
+        return [
+            _attach_intake_fields(_summary(order), intake_store.get(order.id))
+            for order in orders
+        ]
+    finally:
+        intake_store.close()
 
 
 @router.get(
@@ -293,7 +312,12 @@ def get_order(
             order = dao.get(order_id)
         except OrderNotFound as exc:
             raise _business_error_for_lookup(order_id) from exc
-        return _detail_payload(dao, order)
+        intake_store = IntakeStore.for_db(settings.orders_db_path)
+        try:
+            intake = intake_store.get(order_id)
+        finally:
+            intake_store.close()
+        return _detail_payload(dao, order, intake=intake)
 
 
 @router.post(
@@ -394,6 +418,20 @@ def patch_order(
 
         if payload.to_status is not None:
             try:
+                if payload.to_status == "serving":
+                    intake_store = IntakeStore.for_db(settings.orders_db_path)
+                    try:
+                        intake = intake_store.get(order_id)
+                    finally:
+                        intake_store.close()
+                    if intake is None or intake.status != "submitted":
+                        raise BusinessError(
+                            DATA_VALIDATION_FAILED,
+                            detail={
+                                "reason": "资料未提交，不能开始接单处理",
+                                "required_intake_status": "submitted",
+                            },
+                        )
                 order = dao.transition_status(
                     order_id,
                     payload.to_status,
@@ -434,4 +472,9 @@ def patch_order(
             action = f"transitioned:{payload.to_status}"
         elif payload.to_status is not None:
             action = f"updated:{payload.to_status}"
-        return {"action": action, **_detail_payload(dao, order)}
+        intake_store = IntakeStore.for_db(settings.orders_db_path)
+        try:
+            intake = intake_store.get(order_id)
+        finally:
+            intake_store.close()
+        return {"action": action, **_detail_payload(dao, order, intake=intake)}

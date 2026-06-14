@@ -16,6 +16,7 @@ from io import StringIO
 import pytest
 
 from data.orders.dao import OrdersDAO
+from data.orders.intake_store import IntakeStore
 from data.orders.models import Order
 
 
@@ -97,14 +98,47 @@ def test_list_and_detail_return_real_orders_with_masking(
     assert len(payload) == 1
     assert payload[0]["id"] == created.id
     assert payload[0]["customer_phone"] == "138****1234"
+    assert payload[0]["intake_status"] is None
+    assert payload[0]["intake_submitted_at"] is None
 
     detail_resp = client.get(f"/api/orders/{created.id}", headers=auth_headers)
     assert detail_resp.status_code == 200, detail_resp.text
     detail = detail_resp.json()
     assert detail["order"]["id"] == created.id
     assert detail["order"]["customer_wechat"] == "zh******wx"
+    assert detail["order"]["intake_status"] is None
+    assert detail["order"]["intake_submitted_at"] is None
     assert detail["history"][0]["to_status"] == "pending"
     assert set(detail["available_next_statuses"]) == {"paid", "refunded"}
+
+
+def test_detail_exposes_submitted_intake_state(client, auth_headers, settings):
+    created = _seed_order(settings, id="GKO-20260612-INTAKE-DETAIL")
+    intake_store = IntakeStore.for_db(settings.orders_db_path)
+    try:
+        record = intake_store.save(
+            order_id=created.id,
+            payload={"candidate_score": 578, "guardian_notes": "尽快处理"},
+            submit=True,
+        )
+    finally:
+        intake_store.close()
+
+    list_resp = client.get(
+        "/api/orders",
+        headers=auth_headers,
+        params={"status": "pending", "limit": 10, "offset": 0},
+    )
+    assert list_resp.status_code == 200, list_resp.text
+    payload = list_resp.json()
+    assert payload[0]["intake_status"] == "submitted"
+    assert payload[0]["intake_submitted_at"] == record.submitted_at
+
+    detail_resp = client.get(f"/api/orders/{created.id}", headers=auth_headers)
+    assert detail_resp.status_code == 200, detail_resp.text
+    detail = detail_resp.json()
+    assert detail["order"]["intake_status"] == "submitted"
+    assert detail["order"]["intake_submitted_at"] == record.submitted_at
 
 
 def test_patch_updates_business_fields_and_status_transition(
@@ -170,6 +204,44 @@ def test_patch_invalid_transition_returns_conflict(client, auth_headers, setting
     assert resp.status_code == 409
     body = resp.json()
     assert body["code"] == "E02301"
+
+
+def test_patch_paid_to_serving_requires_submitted_intake(
+    client, auth_headers, settings
+):
+    created = _seed_order(settings, id="GKO-20260612-NEED-INTAKE")
+    with OrdersDAO.connect(settings.orders_db_path) as dao:
+        dao.transition_status(created.id, "paid", actor="test", reason="seed_pay")
+
+    blocked = client.patch(
+        f"/api/orders/{created.id}",
+        headers=auth_headers,
+        json={"to_status": "serving", "reason": "begin_processing"},
+    )
+    assert blocked.status_code == 422
+    blocked_body = blocked.json()
+    assert blocked_body["code"] == "E03001"
+    assert blocked_body["detail"]["required_intake_status"] == "submitted"
+
+    intake_store = IntakeStore.for_db(settings.orders_db_path)
+    try:
+        intake_store.save(
+            order_id=created.id,
+            payload={"candidate_score": 588, "guardian_notes": "资料已确认"},
+            submit=True,
+        )
+    finally:
+        intake_store.close()
+
+    allowed = client.patch(
+        f"/api/orders/{created.id}",
+        headers=auth_headers,
+        json={"to_status": "serving", "reason": "begin_processing"},
+    )
+    assert allowed.status_code == 200, allowed.text
+    allowed_body = allowed.json()
+    assert allowed_body["order"]["status"] == "serving"
+    assert allowed_body["order"]["intake_status"] == "submitted"
 
 
 def test_export_orders_csv_returns_masked_rows(client, auth_headers, settings):
