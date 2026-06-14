@@ -187,6 +187,14 @@ def complete_alipay_sim_payment(
     )
 
 
+@router.get("/portal/payment-return", include_in_schema=False)
+def payment_return_page(
+    token: str, settings: Settings = Depends(get_settings_dep)
+) -> RedirectResponse:
+    _resolve_order_from_token(token, settings)
+    return RedirectResponse(url=f"/portal/{token}/status", status_code=303)
+
+
 @router.get("/portal/{token}/info", include_in_schema=False)
 def order_info_page(
     token: str, settings: Settings = Depends(get_settings_dep)

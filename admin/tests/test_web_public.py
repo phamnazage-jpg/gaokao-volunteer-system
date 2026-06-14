@@ -109,3 +109,23 @@ def test_mock_payment_complete_rejects_wrong_portal_token(client):
 
     resp = client.post(f"/pay/mock/{payment_id}/complete?token=wrong-token")
     assert resp.status_code == 401 or resp.status_code == 403
+
+
+def test_payment_return_redirects_to_portal_status(client):
+    create_resp = client.post(
+        "/api/public/orders",
+        json={
+            "service_version": "standard",
+            "amount_cents": 9900,
+            "customer_name": "张家长",
+            "customer_phone": "13800138000",
+            "candidate_province": "湖南",
+        },
+    )
+    assert create_resp.status_code == 201, create_resp.text
+    body = create_resp.json()
+    token = body["portal_status_url"].split("/portal/")[1].split("/status")[0]
+
+    resp = client.get(f"/portal/payment-return?token={token}", follow_redirects=False)
+    assert resp.status_code == 303, resp.text
+    assert resp.headers["location"] == f"/portal/{token}/status"
