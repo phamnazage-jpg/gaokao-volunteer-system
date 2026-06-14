@@ -65,7 +65,8 @@
 1. 在报告/CLI 中显式输出质量等级（A/B/C）
 2. 在低置信省份自动降级文案
 3. 在 README / 产品文案中避免“27 省高质量推荐全覆盖”表述
-4. 后续补 province-level completeness/quality summary
+4. 增加 province-level completeness/quality summary（已补 `data.crowd_db.quality_summary`）
+5. 继续提升非湖南省份高置信数据密度
 
 ---
 
@@ -82,4 +83,5 @@
 - **文档基线已补齐**
 - **`risk_report` 已输出 `quality_level / quality_label`**
 - **`gaokao-data-trace --human` 已输出质量等级**
+- **`data.crowd_db.quality_summary` 已提供 province-level 汇总**
 - **低置信省份已通过 confidence 分级与 warning 机制降级**

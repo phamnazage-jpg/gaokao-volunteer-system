@@ -189,7 +189,7 @@
 建议动作：
 
 - 在 README / 产品文案中继续避免“27省高质量推荐全覆盖”表述
-- 后续补 province-level completeness/quality summary
+- `data.crowd_db.quality_summary` 已补 province-level summary，后续可接产品文案/页面
 - 继续提升非湖南省份高置信数据密度
 
 #### B-2 本地验证环境仍未完全固化为单命令体验

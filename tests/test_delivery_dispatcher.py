@@ -150,3 +150,58 @@ def test_delivery_dispatch_script_prints_summary(settings, tmp_path):
     assert proc.returncode == 0, proc.stderr
     assert '"processed": 1' in proc.stdout
     assert '"sent": 1' in proc.stdout
+
+
+def test_delivery_watchdog_exits_zero_when_no_failures(settings, tmp_path):
+    order = _seed_order(settings.orders_db_path, order_id="GKO-20260614-WATCHDOG-OK")
+    _mark_paid(settings, order)
+    IntakeStore.for_db(settings.orders_db_path).save(
+        order_id=order.id, payload={"candidate_score": 578}, submit=True
+    )
+    _attach_ready_delivery(settings, tmp_path, order.id)
+
+    env = {
+        **__import__("os").environ,
+        "GAOKAO_ORDERS_DB_PATH": settings.orders_db_path,
+    }
+    proc = subprocess.run(
+        ["python3", "scripts/gaokao-delivery-watchdog.py", "--channel", "station"],
+        cwd=PROJECT_ROOT,
+        text=True,
+        capture_output=True,
+        env=env,
+        check=False,
+    )
+
+    assert proc.returncode == 0, proc.stderr
+    assert '"failed": 0' in proc.stdout
+
+
+def test_delivery_watchdog_exits_nonzero_when_failures_detected(settings, tmp_path):
+    order = _seed_order(settings.orders_db_path, order_id="GKO-20260614-WATCHDOG-FAIL")
+    _mark_paid(settings, order)
+    IntakeStore.for_db(settings.orders_db_path).save(
+        order_id=order.id, payload={"candidate_score": 578}, submit=True
+    )
+    _attach_ready_delivery(settings, tmp_path, order.id)
+
+    with OrdersDAO.connect(settings.orders_db_path) as dao:
+        current = dao.get(order.id)
+    assert current.pdf_path is not None
+    Path(current.pdf_path).unlink()
+
+    env = {
+        **__import__("os").environ,
+        "GAOKAO_ORDERS_DB_PATH": settings.orders_db_path,
+    }
+    proc = subprocess.run(
+        ["python3", "scripts/gaokao-delivery-watchdog.py", "--channel", "station"],
+        cwd=PROJECT_ROOT,
+        text=True,
+        capture_output=True,
+        env=env,
+        check=False,
+    )
+
+    assert proc.returncode == 2, proc.stdout + proc.stderr
+    assert '"failed": 1' in proc.stdout

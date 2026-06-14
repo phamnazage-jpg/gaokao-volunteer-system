@@ -161,11 +161,18 @@ GAOKAO_SKIP_INSTALL=1 bash scripts/dev-verify.sh
 - 事件表：`delivery_notifications`
 - 执行器：`data.notifications.dispatcher.DeliveryDispatcher`
 - CLI：`python3 scripts/gaokao-delivery-dispatch.py --channel station`
+- watchdog：`python3 scripts/gaokao-delivery-watchdog.py --channel station`
 
 最小语义：
 
 - 交付物齐全（HTML/PDF 存在）→ `ready -> sent`
 - 交付物缺失 → `failed`，并写入 `failure_reason`
+- watchdog 遇到失败事件返回 exit code `2`
+
+### crowd_db 质量汇总
+
+- `python3 -m data.crowd_db.quality_summary --human`
+- 输出 27 省 province-level `quality_level / quality_label / confidence` 汇总
 
 ### T6.7 Docker Compose 一键启动
 
