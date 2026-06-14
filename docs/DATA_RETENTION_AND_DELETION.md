@@ -44,12 +44,16 @@
 - 删除时自动清理 HTML/PDF 报告文件
 - `order_deletion_audits` 最小审计表
 - `scripts/gaokao_retention_cleanup.py` / `scripts/gaokao-retention-cleanup.py` 保留期清理入口
+- `scripts/gaokao-retention-cleanup.py --retention-days 180` 最小定时调度入口
+- `docs/DELIVERY_RETENTION_OPS_RUNBOOK.md`
+- `deploy/systemd/gaokao-retention-cleanup.{service,timer}`
+- `deploy/cron/gaokao-jobs.crontab`
 
 尚缺：
 
 - 前台/客服删除工单流程
-- 数据保留期自动清理定时任务
 - 更细粒度的匿名化策略（如案例长期保留脱敏版）
+- 目标生产主机上的实际安装/值班留痕（仓库内只有调度样例，不代表已部署）
 
 ## 5. MVP 最低执行要求
 
@@ -59,3 +63,14 @@
 2. 内部 runbook 明确谁来删、删哪些表和文件
 3. 删除后要复核文件路径已不存在
 4. 不能把“仅删数据库”误报成“数据已全部删除”
+
+## 6. 最小调度与 runbook
+
+仓库当前给出的最小执行口径：
+
+- 人工指定 cutoff：`python3 scripts/gaokao-retention-cleanup.py --cutoff <ISO8601> --dry-run`
+- 定时调度：`python3 scripts/gaokao-retention-cleanup.py --retention-days 180`
+- runbook：`docs/DELIVERY_RETENTION_OPS_RUNBOOK.md`
+- systemd/cron 样例：`deploy/systemd/gaokao-retention-cleanup.{service,timer}` / `deploy/cron/gaokao-jobs.crontab`
+
+真相边界：当前保留期作业执行的是后台匿名化，不应误报成“用户删除请求流程已经完整上线”。

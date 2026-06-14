@@ -162,18 +162,32 @@ GAOKAO_SKIP_INSTALL=1 bash scripts/dev-verify.sh
 - 执行器：`data.notifications.dispatcher.DeliveryDispatcher`
 - CLI：`python3 scripts/gaokao-delivery-dispatch.py --channel station`
 - watchdog：`python3 scripts/gaokao-delivery-watchdog.py --channel station`
+- runbook：`docs/DELIVERY_RETENTION_OPS_RUNBOOK.md`
+- systemd/cron 样例：`deploy/systemd/gaokao-delivery-*.{service,timer}` / `deploy/cron/gaokao-jobs.crontab`
 
 最小语义：
 
 - 交付物齐全（HTML/PDF 存在）→ `ready -> sent`
 - 交付物缺失 → `failed`，并写入 `failure_reason`
 - watchdog 遇到失败事件返回 exit code `2`
+- 当前 `sent` 仍表示“站内交付物校验通过”，不是外部渠道真实发送成功
 
 ### 数据保留期清理
 
 - dry-run：`python3 scripts/gaokao-retention-cleanup.py --cutoff <ISO8601> --dry-run`
 - apply：`python3 scripts/gaokao-retention-cleanup.py --cutoff <ISO8601>`
+- 定时模式：`python3 scripts/gaokao-retention-cleanup.py --retention-days 180`
+- 兼容别名：`python3 scripts/gaokao_retention_cleanup.py --retention-days 180 --dry-run`
+- runbook：`docs/DELIVERY_RETENTION_OPS_RUNBOOK.md`
 - 当前语义：对超过保留期的 `completed/refunded` 订单执行匿名化清理
+
+### 备份 / 恢复最小入口
+
+- 生成快照：`bash scripts/backup_snapshot.sh /tmp/gaokao-backups`
+- 校验快照：`bash scripts/backup_verify.sh --from-backup /tmp/gaokao-backups/backup-<UTC_TIMESTAMP>`
+- 直接对当前 live 数据做一次恢复演练：`bash scripts/backup_verify.sh`
+- runbook：`docs/BACKUP_AND_RECOVERY_PLAN.md`
+- 定时接入口径：`ops/cron/gaokao-backup.crontab.example`、`ops/systemd/gaokao-backup*.service|timer`
 
 ### crowd_db 质量汇总
 

@@ -1,0 +1,11 @@
+[Unit]
+Description=Run gaokao delivery dispatcher every 5 minutes
+
+[Timer]
+OnCalendar=*:0/5
+Persistent=true
+RandomizedDelaySec=30
+Unit=gaokao-delivery-dispatch.service
+
+[Install]
+WantedBy=timers.target

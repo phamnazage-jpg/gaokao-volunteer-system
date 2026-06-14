@@ -54,13 +54,17 @@
 - `delivered` 但无交付物时不再误报 `report_ready`
 - `data.notifications.dispatcher.DeliveryDispatcher`
 - `scripts/gaokao-delivery-dispatch.py`
+- `scripts/gaokao-delivery-watchdog.py`（失败返回 exit code `2`）
 - `ready -> sent` / `缺文件 -> failed` / `attempt_count` 递增
+- `docs/DELIVERY_RETENTION_OPS_RUNBOOK.md`
+- `deploy/systemd/gaokao-delivery-{dispatch,watchdog}.{service,timer}`
+- `deploy/cron/gaokao-jobs.crontab`
 
 未完成：
 
 - 独立 `delivery_job` / `delivery_attempt` 模型
 - 邮件/渠道真实发送执行器
-- 自动重试调度与告警链
+- 告警推送集成（当前只有 watchdog 非 0 退出码）
 - 多通道统一投递状态页
 
 ## 6. 当前最短闭环
@@ -72,10 +76,21 @@
 5. `report_ready` 事件落库且幂等
 6. `gaokao-delivery-dispatch.py --channel station` 可把 ready 事件推进到 sent
 7. 缺失交付物时事件转 failed，并记录 `failure_reason`
+8. 可通过 systemd timer / cron 周期执行 dispatcher，并用 watchdog 暴露失败退出码
 
 ## 7. 下一步实施建议
 
-1. 把 dispatcher 接入定时任务或 systemd timer
-2. 增加邮件或站内通知真实发送器（二选一先闭环）
-3. 增加失败重试阈值与告警
+1. 增加邮件或站内通知真实发送器（二选一先闭环）
+2. 增加失败重试阈值与告警推送
+3. 把 `sent` 语义拆成“可投递校验通过”与“真实渠道已发送”
 4. 再决定是否扩到多通道
+
+## 8. 生产化接入口径
+
+仓库内已提供最小 runbook 与调度样例：
+
+- runbook：`docs/DELIVERY_RETENTION_OPS_RUNBOOK.md`
+- systemd：`deploy/systemd/gaokao-delivery-dispatch.{service,timer}` / `deploy/systemd/gaokao-delivery-watchdog.{service,timer}`
+- cron：`deploy/cron/gaokao-jobs.crontab`
+
+注意：当前 watchdog 仍是“带失败退出码的 dispatch 巡检”，并不等于独立通知告警系统。

@@ -89,4 +89,54 @@ def test_retention_cleanup_script_prints_summary(settings):
         check=False,
     )
     assert proc.returncode == 0, proc.stderr
+    assert '"cutoff_iso": "2025-06-30T00:00:00+00:00"' in proc.stdout
+    assert '"dry_run": true' in proc.stdout
+    assert '"candidates": 1' in proc.stdout
+
+
+def test_retention_cleanup_script_supports_retention_days(settings):
+    _seed_old_completed_order(
+        settings.orders_db_path, order_id="GKO-20250101-RETENTION-DAYS"
+    )
+    env = {**os.environ, "GAOKAO_ORDERS_DB_PATH": settings.orders_db_path}
+    proc = subprocess.run(
+        [
+            "python3",
+            "scripts/gaokao-retention-cleanup.py",
+            "--retention-days",
+            "180",
+            "--dry-run",
+        ],
+        cwd=PROJECT_ROOT,
+        text=True,
+        capture_output=True,
+        env=env,
+        check=False,
+    )
+    assert proc.returncode == 0, proc.stderr
+    assert '"cutoff_iso":' in proc.stdout
+    assert '"dry_run": true' in proc.stdout
+    assert '"candidates": 1' in proc.stdout
+
+
+def test_retention_cleanup_underscore_script_alias_works(settings):
+    _seed_old_completed_order(
+        settings.orders_db_path, order_id="GKO-20250101-RETENTION-ALIAS"
+    )
+    env = {**os.environ, "GAOKAO_ORDERS_DB_PATH": settings.orders_db_path}
+    proc = subprocess.run(
+        [
+            "python3",
+            "scripts/gaokao_retention_cleanup.py",
+            "--cutoff",
+            "2025-06-30T00:00:00+00:00",
+            "--dry-run",
+        ],
+        cwd=PROJECT_ROOT,
+        text=True,
+        capture_output=True,
+        env=env,
+        check=False,
+    )
+    assert proc.returncode == 0, proc.stderr
     assert '"candidates": 1' in proc.stdout

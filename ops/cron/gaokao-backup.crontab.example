@@ -1,0 +1,19 @@
+# 安装前请替换仓库路径、日志路径和备份根目录。
+SHELL=/bin/bash
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+GAOKAO_BACKUP_ROOT=/var/backups/gaokao
+GAOKAO_BACKUP_KEEP=7
+GAOKAO_DB_PATH=/var/lib/gaokao/admin.db
+GAOKAO_ORDERS_DB_PATH=/var/lib/gaokao/orders.db
+GAOKAO_SHARE_DB_PATH=/var/lib/gaokao/share/short_links.db
+GAOKAO_SHARE_REPORT_DIR=/var/lib/gaokao/share/reports
+GAOKAO_BACKUP_ENV_FILE=/etc/gaokao/.env
+GAOKAO_BACKUP_CONFIG_DIR=/etc/gaokao
+GAOKAO_BACKUP_SECRETS_DIR=/var/lib/gaokao/secrets
+
+# 每天 02:30 生成一份目录快照
+30 2 * * * cd /srv/gaokao-volunteer-system && bash scripts/backup_snapshot.sh >> /var/log/gaokao-backup.log 2>&1
+
+# 每周一 03:00 对最近一份快照执行 restore smoke（在临时目录，不改原快照）
+0 3 * * 1 cd /srv/gaokao-volunteer-system && latest=$(find "$GAOKAO_BACKUP_ROOT" -mindepth 1 -maxdepth 1 -type d -name 'backup-*' | sort | tail -n 1) && test -n "$latest" && bash scripts/backup_verify.sh --from-backup "$latest" >> /var/log/gaokao-backup-verify.log 2>&1

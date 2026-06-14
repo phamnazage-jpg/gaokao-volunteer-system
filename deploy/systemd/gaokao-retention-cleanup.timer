@@ -1,0 +1,11 @@
+[Unit]
+Description=Run gaokao retention cleanup every Sunday at 03:30 UTC
+
+[Timer]
+OnCalendar=Sun 03:30
+Persistent=true
+RandomizedDelaySec=300
+Unit=gaokao-retention-cleanup.service
+
+[Install]
+WantedBy=timers.target

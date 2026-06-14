@@ -110,3 +110,40 @@ def test_delivered_without_artifacts_stays_processing(client, settings):
 
     report_page = client.get(f"/portal/{token}/report")
     assert report_page.status_code == 409
+
+
+def test_partial_artifacts_do_not_expose_delivery_links_before_report_ready(
+    client, settings, tmp_path: Path
+):
+    order = _seed_order(settings.orders_db_path, order_id="GKO-20260614-STATUS-PARTIAL")
+    _mark_paid(settings, order)
+    IntakeStore.for_db(settings.orders_db_path).save(
+        order_id=order.id,
+        payload={"candidate_score": 578, "candidate_subjects": ["物理"]},
+        submit=True,
+    )
+
+    report_path = tmp_path / "partial-report.html"
+    report_path.write_text("<h1>partial</h1>", encoding="utf-8")
+    with OrdersDAO.connect(settings.orders_db_path) as dao:
+        dao.update(
+            order.id,
+            {"audit_report": str(report_path)},
+            actor="test",
+            reason="attach_partial_report",
+        )
+        dao.transition_status(order.id, "serving", actor="test", reason="processing")
+        dao.transition_status(
+            order.id, "delivered", actor="test", reason="report_ready_without_pdf"
+        )
+
+    token = issue_portal_token(order.id, settings.jwt_secret)
+    status_page = client.get(f"/portal/{token}/status")
+    assert status_page.status_code == 200, status_page.text
+    assert "处理中" in status_page.text
+    assert "查看在线报告" not in status_page.text
+    assert "下载 PDF" not in status_page.text
+    assert "报告生成中" in status_page.text
+
+    report_page = client.get(f"/portal/{token}/report")
+    assert report_page.status_code == 409

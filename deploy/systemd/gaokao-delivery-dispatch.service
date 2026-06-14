@@ -1,0 +1,12 @@
+[Unit]
+Description=Gaokao delivery dispatcher (report_ready -> sent/failed)
+After=network.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/home/long/project/gaokao-volunteer-system
+Environment=GAOKAO_PYTHON_BIN=/usr/bin/python3
+Environment=GAOKAO_DELIVERY_CHANNEL=station
+Environment=GAOKAO_DELIVERY_LIMIT=100
+EnvironmentFile=-/home/long/project/gaokao-volunteer-system/deploy/systemd/gaokao-jobs.env
+ExecStart=/bin/sh -lc 'exec "$GAOKAO_PYTHON_BIN" scripts/gaokao-delivery-dispatch.py --channel "$GAOKAO_DELIVERY_CHANNEL" --limit "$GAOKAO_DELIVERY_LIMIT"'

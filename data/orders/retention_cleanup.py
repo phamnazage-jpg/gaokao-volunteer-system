@@ -3,7 +3,7 @@ from __future__ import annotations
 import argparse
 import json
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 
 from data.orders.dao import OrdersDAO
 from data.orders.deletion_service import OrderDeletionService
@@ -11,6 +11,8 @@ from data.orders.deletion_service import OrderDeletionService
 
 @dataclass
 class RetentionCleanupResult:
+    cutoff_iso: str
+    dry_run: bool
     scanned: int = 0
     candidates: int = 0
     anonymized: int = 0
@@ -53,11 +55,28 @@ def _iter_candidates(db_path: str, cutoff_iso: str) -> tuple[int, list[str]]:
     return scanned, candidates
 
 
+def resolve_cutoff_iso(
+    *, cutoff_iso: str | None = None, retention_days: int | None = None
+) -> str:
+    if cutoff_iso is not None:
+        datetime.fromisoformat(cutoff_iso)
+        return cutoff_iso
+    if retention_days is None or retention_days <= 0:
+        raise ValueError("retention_days must be > 0 when cutoff is not provided")
+    cutoff = datetime.now(timezone.utc) - timedelta(days=retention_days)
+    return cutoff.replace(microsecond=0).isoformat()
+
+
 def run_cleanup(
     db_path: str, *, cutoff_iso: str, apply: bool
 ) -> RetentionCleanupResult:
     scanned, candidate_ids = _iter_candidates(db_path, cutoff_iso)
-    result = RetentionCleanupResult(scanned=scanned, candidates=len(candidate_ids))
+    result = RetentionCleanupResult(
+        cutoff_iso=cutoff_iso,
+        dry_run=not apply,
+        scanned=scanned,
+        candidates=len(candidate_ids),
+    )
     if not apply:
         return result
     service = OrderDeletionService.for_db(db_path)
@@ -76,10 +95,15 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description="Run retention cleanup for old completed/refunded orders"
     )
-    parser.add_argument(
+    cutoff_group = parser.add_mutually_exclusive_group(required=True)
+    cutoff_group.add_argument(
         "--cutoff",
-        required=True,
         help="ISO8601 cutoff; orders on or before this anchor are candidates",
+    )
+    cutoff_group.add_argument(
+        "--retention-days",
+        type=int,
+        help="Retention window in days; cutoff is computed as now - retention_days",
     )
     parser.add_argument("--dry-run", action="store_true")
     return parser
@@ -92,7 +116,14 @@ def main(argv: list[str] | None = None, *, db_path: str | None = None) -> int:
         db_path = load_settings().orders_db_path
     parser = build_parser()
     args = parser.parse_args(argv)
-    result = run_cleanup(db_path, cutoff_iso=args.cutoff, apply=not args.dry_run)
+    try:
+        cutoff_iso = resolve_cutoff_iso(
+            cutoff_iso=args.cutoff,
+            retention_days=args.retention_days,
+        )
+    except ValueError as exc:
+        parser.error(str(exc))
+    result = run_cleanup(db_path, cutoff_iso=cutoff_iso, apply=not args.dry_run)
     print(json.dumps(result.__dict__, ensure_ascii=False, indent=2))
     return 0
 

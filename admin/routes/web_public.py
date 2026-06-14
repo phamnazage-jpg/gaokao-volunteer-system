@@ -104,11 +104,26 @@ def create_public_order_endpoint(
     payload: PublicOrderCreate,
     settings: Settings = Depends(get_settings_dep),
 ) -> PublicOrderCreated:
+    try:
+        payment_service = _payment_service(settings)
+    except PaymentError as exc:
+        raise HTTPException(
+            status_code=503,
+            detail=f"payment provider unavailable: {exc}",
+        ) from exc
+
     with OrdersDAO.connect(settings.orders_db_path) as dao:
         order = create_public_order(dao, payload)
     portal_token = issue_portal_token(order.id, settings.jwt_secret)
-    payment_service = _payment_service(settings)
-    checkout = payment_service.create_checkout(order.id, portal_token=portal_token)
+    try:
+        checkout = payment_service.create_checkout(order.id, portal_token=portal_token)
+    except PaymentError as exc:
+        with OrdersDAO.connect(settings.orders_db_path) as dao:
+            dao.delete(order.id)
+        raise HTTPException(
+            status_code=503,
+            detail=f"payment checkout unavailable: {exc}",
+        ) from exc
     return PublicOrderCreated(
         order_id=order.id,
         source=order.source,
@@ -743,11 +758,12 @@ def _render_info_page(
 def _render_status_page(token: str, context: dict[str, Any]) -> str:
     order = context["order"]
     report_links = ""
-    if context["report_html_ready"]:
+    can_access_delivery = context["stage"] in {"report_ready", "completed"}
+    if can_access_delivery and context["report_html_ready"]:
         report_links += (
             f'<li><a href="/portal/{escape(token)}/report">查看在线报告</a></li>'
         )
-    if context["report_pdf_ready"]:
+    if can_access_delivery and context["report_pdf_ready"]:
         report_links += (
             f'<li><a href="/portal/{escape(token)}/report.pdf">下载 PDF</a></li>'
         )

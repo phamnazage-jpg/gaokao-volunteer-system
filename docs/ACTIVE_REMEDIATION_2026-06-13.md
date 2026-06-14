@@ -34,26 +34,34 @@
 #### A-1 用户端 Web 自助闭环未完成
 
 严重度: P0（面向 Web 自助产品时）
-当前状态: 未解决
+当前状态: 部分解决，仍未整体收口
 范围归属: T12（后续阶段）
+
+已完成：
+
+- 前台公开入口 `/` / `/pricing` / `/checkout/{service_version}`
+- 公开下单与 portal token 链路
+- 支付后资料填写草稿/提交
+- 站内状态页 / 报告查看 / PDF 下载最小闭环
+- 后台订单列表/详情可见资料提交状态
 
 仍缺：
 
-- 前台套餐页完整交互
-- 真实支付接入与回调验签
-- 前台资料填写闭环
-- 站内交付 / 订单状态页
-- 自助购买后自动处理主链路
+- 前台套餐页更完整交互与产品化打磨
+- 真实支付接入与回调验签的线上 acceptance
+- `info_submitted -> serving` 自动处理主链
+- 完整站内通知/交付产品化
+- 自助购买后自动处理主链路的生产化闭环
 
 说明：
 
-- 这是“当前仍然有效的问题”，但**不应再作为对 v2.1 已完成范围的否定证据**。
-- 正确表述应为：`v2.1 完成了人工服务运营闭环，T12 承接 Web 自助闭环`。
+- 当前不是“完全没做 T12”，而是“本地 MVP 主链大部分已落地，但整体仍未到线上可验收完成”。
+- 正确表述应为：`v2.1 完成了人工服务运营闭环，T12 已形成本地 MVP 主链，但线上商业闭环仍未完成`。
 
 建议动作：
 
 - 以 T12 为唯一主线推进，不在旧报告中分散描述
-- 为 T12 单独维护实施计划、验收标准和完成报告
+- 后续优先收 `自动处理主链` 与 `真实支付 acceptance`
 
 #### A-2 支付、退款、对账闭环未完成
 
@@ -100,11 +108,12 @@
 - 站内查看 + PDF 下载最小交付闭环
 - `DeliveryDispatcher` + `scripts/gaokao-delivery-dispatch.py`
 - `ready -> sent` / 缺文件 `-> failed` 的最小执行链
+- dispatcher/watchdog runbook + systemd/cron 样例（`docs/DELIVERY_RETENTION_OPS_RUNBOOK.md` / `deploy/systemd` / `deploy/cron`）
 
 仍缺：
 
 - 真实邮件/站内通知发送执行器
-- 自动重试调度 / 告警链
+- 自动重试调度 / 告警链（watchdog/systemd/cron 样例已补，生产安装未完成）
 - 面向用户的独立通知审计页
 - 对账/退款与交付失败补偿联动
 
@@ -137,12 +146,12 @@
 
 - 正式法务审定版本
 - 前台/客服删除工单流程
-- 数据保留期自动清理定时任务（脚本已具备，调度未接入）
+- 目标生产主机上的自动清理实际安装/留痕（仓库已提供 runbook + systemd/cron 样例）
 - 合规文本上线前最终校对
 
 说明：
 
-- 当前不再是“完全没有合规基线”，而是“文档基线 + 后台最小执行入口 + retention cleanup 脚本已建，前台流程与自动调度仍待完成”。
+- 当前不再是“完全没有合规基线”，而是“文档基线 + 后台最小执行入口 + retention cleanup 脚本与调度样例已建，前台流程与生产安装留痕仍待完成”。
 
 #### A-5 业务数据备份/恢复/密钥托管已形成基线，但生产化仍未完结
 
@@ -154,17 +163,22 @@
 
 - `docs/BACKUP_AND_RECOVERY_PLAN.md`
 - `docs/KEY_MANAGEMENT_BASELINE.md`
-- `scripts/backup_verify.sh` 本地恢复验证入口
+- `docs/plans/P1-8-backup-restore-drill.md`
+- `scripts/backup_snapshot.sh` 最小目录快照入口
+- `scripts/backup_verify.sh` 本地恢复校验入口
+- `scripts/backup_restore_smoke.py` 恢复副本最小服务 smoke
+- `ops/cron/gaokao-backup.crontab.example`
+- `ops/systemd/gaokao-backup*.service|timer` 定时接入口径示例
 
 仍缺：
 
 - 异机/异地备份落地
-- 定时备份与恢复演练自动化
+- 目标主机上的 cron/systemd 实际安装、日志与告警验收
 - 密钥轮换的真实执行记录
 
 说明：
 
-- 当前不再是“没有备份恢复方案”，而是“已有本地方案与验证脚本，但生产化运维链未闭环”。
+- 当前不再是“只有文档没有验证”，而是“已有本地快照、完整性校验、restore smoke 和定时接入口径样例，但生产化运维链未闭环”。
 
 ---
 

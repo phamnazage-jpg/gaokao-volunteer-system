@@ -1,7 +1,7 @@
 # BACKUP_AND_RECOVERY_PLAN
 
 最后更新: 2026-06-14
-状态: 最小恢复基线（非生产级高可用）
+状态: 最小恢复基线（已具备本地快照 + 完整性校验 + restore smoke）
 
 ## 1. 目标
 
@@ -11,77 +11,150 @@
 - 报告 HTML/PDF 文件
 - 上传/分享产物
 - 运行所需关键配置与密钥映射关系
+- 本地可执行的备份、校验、恢复演练入口
 
 ## 2. RPO / RTO 建议
 
 - RPO: 24 小时内
 - RTO: 4 小时内
 
-说明：当前是轻量单机 MVP，不承诺秒级恢复。
+说明：当前是轻量单机 MVP，不承诺秒级恢复，也不等同于生产级多机容灾。
 
 ## 3. 需要备份的对象
 
 1. 数据库
-   - 管理库
-   - 订单库
-   - 分享库
+   - 管理库 `data/orders/admin.db`
+   - 订单库 `data/orders.db`
+   - 分享库 `data/share/short_links.db`
 2. 文件目录
-   - 报告输出目录
-   - 分享报告目录
-   - 未来上传文件目录
+   - 分享/公开报告目录
+   - 报告 HTML/PDF 产物
+   - `data/examples` 中的样例交付物（用于恢复 smoke）
 3. 配置与运维资料
    - `.env` 实际部署值（不入 Git）
-   - systemd/docker-compose 部署配置
+   - systemd / docker-compose 部署配置
 4. 密钥资料
    - JWT secret
    - Fernet key
    - 支付相关密钥/证书
 
-## 4. 最小备份策略
+## 4. 当前已落地产物
+
+- `scripts/backup_snapshot.sh`
+  - 生成时间戳快照目录
+  - 复制 DB / 文件 / 可选 config / 可选 secrets
+  - 生成 `manifest.json`
+  - 按 `GAOKAO_BACKUP_KEEP` 保留最近 N 份
+- `scripts/backup_verify.sh`
+  - 可校验 live staging 或已有快照
+  - 校验 SQLite 可读性
+  - 校验 `manifest.json` 哈希完整性
+  - 调用 restore smoke
+- `scripts/backup_restore_smoke.py`
+  - 在恢复副本上启动 FastAPI `TestClient`
+  - 走 `/health`、portal 状态页、报告 HTML、PDF 下载最小链路
+  - 只改临时恢复副本，不改原始快照
+- 定时接入口径示例
+  - `ops/cron/gaokao-backup.crontab.example`
+  - `ops/systemd/gaokao-backup.service`
+  - `ops/systemd/gaokao-backup.timer`
+  - `ops/systemd/gaokao-backup-verify.service`
+  - `ops/systemd/gaokao-backup-verify.timer`
+
+## 5. 最小备份策略
 
 ### 数据库
 
-- 每日一次离线或冷备
-- 备份文件命名包含时间戳
-- 保留最近 7 份日备
+- 每日一次目录快照
+- 文件名包含 UTC 时间戳
+- 保留最近 7 份日备（可由 `GAOKAO_BACKUP_KEEP` 调整）
 
 ### 文件目录
 
-- 每日一次目录归档
-- 保留最近 7 份日备
+- 与数据库同批次快照
+- 报告/分享目录和样例报告分开保存，避免后续排障时混淆
 
-### 密钥与配置
+### 配置与密钥
 
-- 单独存放，不与业务数据库混包
+- `.env`、部署配置、密钥目录不与业务数据库混写到同一路径
+- 通过环境变量显式声明：
+  - `GAOKAO_BACKUP_ENV_FILE`
+  - `GAOKAO_BACKUP_CONFIG_DIR`
+  - `GAOKAO_BACKUP_SECRETS_DIR`
 - 只允许受控人员访问
 
-## 5. 恢复步骤（最小版）
+## 6. 最小 runbook（本地可执行）
 
-1. 准备干净工作目录
-2. 恢复 SQLite 数据库文件
-3. 恢复报告/分享文件目录
-4. 恢复环境变量与密钥
-5. 启动服务
-6. 验证：
-   - 后台能读订单
-   - portal 状态页可打开
-   - 已交付报告可下载
+### 6.1 生成快照
 
-## 6. 当前缺口
+```bash
+bash scripts/backup_snapshot.sh /tmp/gaokao-backups
+```
 
-- 尚无自动化备份脚本
-- 尚无定时任务
-- 尚无备份完整性校验
+可选环境变量：
 
-## 7. MVP 上线前最低要求
+```bash
+export GAOKAO_BACKUP_KEEP=7
+export GAOKAO_BACKUP_ENV_FILE=/etc/gaokao/.env
+export GAOKAO_BACKUP_CONFIG_DIR=/etc/gaokao
+export GAOKAO_BACKUP_SECRETS_DIR=/var/lib/gaokao/secrets
+```
 
-1. 至少完成一次手工备份演练
-2. 至少在临时目录恢复一次可读数据库
+### 6.2 校验最近一份快照
+
+```bash
+bash scripts/backup_verify.sh --from-backup /tmp/gaokao-backups/backup-<UTC_TIMESTAMP>
+```
+
+校验内容：
+
+1. `manifest.json` 哈希一致
+2. SQLite 文件可打开、表可枚举
+3. 恢复副本可跑最小服务 smoke：
+   - `/health`
+   - `/portal/{token}/status`
+   - `/portal/{token}/report`
+   - `/portal/{token}/report.pdf`
+
+### 6.3 从 live 数据直接做一次恢复演练
+
+```bash
+bash scripts/backup_verify.sh
+```
+
+该命令会把当前 live DB / 文件复制到临时目录后执行同样的校验链。
+
+## 7. 定时接入口径
+
+### cron 示例
+
+见：`ops/cron/gaokao-backup.crontab.example`
+
+- 每天 02:30 生成快照
+- 每周一 03:00 对最近一份快照执行 restore smoke
+
+### systemd timer 示例
+
+见：
+
+- `ops/systemd/gaokao-backup.service`
+- `ops/systemd/gaokao-backup.timer`
+- `ops/systemd/gaokao-backup-verify.service`
+- `ops/systemd/gaokao-backup-verify.timer`
+
+说明：这些文件只是仓库内口径样例，不代表目标主机已经安装启用。
+
+## 8. MVP 上线前最低要求
+
+1. 至少完成一次真实快照生成
+2. 至少完成一次 `backup_verify.sh --from-backup ...` 演练
 3. 明确密钥存放位置和负责人
 4. 不得再使用“Git 备份即可恢复系统”作为对外或内部结论
 
-## 8. 当前已落地产物
+## 9. 当前仍未闭环的外部/后续缺口
 
-- `scripts/backup_verify.sh`
-  - 可复制当前 SQLite 数据库与示例报告到临时目录
-  - 可验证复制后的数据库可读、表可枚举、报告文件可见
+- 异机 / 异地备份尚未落地
+- 目标主机上的 cron / systemd timer 尚未实际安装验收
+- 备份失败告警链（邮件 / IM / 监控）未接入
+- 密钥轮换与应急恢复仍缺真实执行记录
+- 当前 restore smoke 证明的是“最小服务链可用”，不是完整生产级全链恢复

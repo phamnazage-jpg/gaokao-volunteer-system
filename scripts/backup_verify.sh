@@ -2,12 +2,27 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-VERIFY_DIR="${1:-$(mktemp -d /tmp/gaokao-backup-verify-XXXXXX)}"
+SOURCE_BACKUP_DIR=""
+VERIFY_DIR=""
+SKIP_SMOKE="0"
 ADMIN_DB="${GAOKAO_DB_PATH:-${ROOT_DIR}/data/orders/admin.db}"
 ORDERS_DB="${GAOKAO_ORDERS_DB_PATH:-${ROOT_DIR}/data/orders.db}"
 SHARE_DB="${GAOKAO_SHARE_DB_PATH:-${ROOT_DIR}/data/share/short_links.db}"
 SHARE_REPORT_DIR="${GAOKAO_SHARE_REPORT_DIR:-${ROOT_DIR}/data/share/reports}"
 EXAMPLE_REPORT_DIR="${ROOT_DIR}/data/examples"
+
+usage() {
+  cat <<'EOF'
+Usage:
+  bash scripts/backup_verify.sh [verify_dir]
+  bash scripts/backup_verify.sh --from-backup /path/to/backup-dir [--skip-smoke]
+
+Default mode copies live SQLite/files into a temporary verify dir, then validates:
+- SQLite files are readable
+- manifest checksums (if manifest.json exists)
+- restore smoke via FastAPI TestClient (unless --skip-smoke)
+EOF
+}
 
 log() {
   printf '[backup-verify] %s\n' "$1"
@@ -30,11 +45,67 @@ copy_dir_if_exists() {
   local dest_dir="$2"
   if [[ -d "$src" ]]; then
     mkdir -p "$dest_dir"
-    cp -R "$src" "$dest_dir/"
+    cp -R "$src/." "$dest_dir/"
     log "copied directory: $src"
   else
     log "skip missing directory: $src"
   fi
+}
+
+stage_live_sources() {
+  log "verify dir: $VERIFY_DIR"
+  copy_if_exists "$ADMIN_DB" "$VERIFY_DIR/db"
+  copy_if_exists "$ORDERS_DB" "$VERIFY_DIR/db"
+  copy_if_exists "$SHARE_DB" "$VERIFY_DIR/db"
+  copy_dir_if_exists "$SHARE_REPORT_DIR" "$VERIFY_DIR/files/reports"
+  copy_dir_if_exists "$EXAMPLE_REPORT_DIR" "$VERIFY_DIR/files/examples"
+}
+
+stage_existing_backup() {
+  if [[ ! -d "$SOURCE_BACKUP_DIR" ]]; then
+    printf 'backup dir not found: %s\n' "$SOURCE_BACKUP_DIR" >&2
+    exit 1
+  fi
+  log "staging backup dir: $SOURCE_BACKUP_DIR -> $VERIFY_DIR"
+  mkdir -p "$VERIFY_DIR"
+  cp -R "$SOURCE_BACKUP_DIR/." "$VERIFY_DIR/"
+}
+
+verify_manifest_if_present() {
+  local manifest_path="$1"
+  if [[ ! -f "$manifest_path" ]]; then
+    log "skip missing manifest: $manifest_path"
+    return
+  fi
+
+  log "verifying manifest checksums"
+  python3 - "$manifest_path" <<'PY'
+from __future__ import annotations
+
+import hashlib
+import json
+import sys
+from pathlib import Path
+
+manifest_path = Path(sys.argv[1]).resolve()
+root = manifest_path.parent
+manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+errors: list[str] = []
+for item in manifest.get("files", []):
+    rel = item["path"]
+    target = root / rel
+    if not target.is_file():
+        errors.append(f"missing file: {rel}")
+        continue
+    digest = hashlib.sha256(target.read_bytes()).hexdigest()
+    if digest != item["sha256"]:
+        errors.append(f"sha256 mismatch: {rel}")
+if errors:
+    for err in errors:
+        print(err)
+    raise SystemExit(1)
+print(f"manifest_ok files={len(manifest.get('files', []))}")
+PY
 }
 
 verify_sqlite_file() {
@@ -46,6 +117,7 @@ verify_sqlite_file() {
 import sqlite3
 import sys
 from pathlib import Path
+
 p = Path(sys.argv[1])
 conn = sqlite3.connect(p)
 try:
@@ -57,16 +129,7 @@ finally:
 PY
 }
 
-main() {
-  mkdir -p "$VERIFY_DIR"
-  log "verify dir: $VERIFY_DIR"
-
-  copy_if_exists "$ADMIN_DB" "$VERIFY_DIR/db"
-  copy_if_exists "$ORDERS_DB" "$VERIFY_DIR/db"
-  copy_if_exists "$SHARE_DB" "$VERIFY_DIR/db"
-  copy_dir_if_exists "$SHARE_REPORT_DIR" "$VERIFY_DIR/files"
-  copy_dir_if_exists "$EXAMPLE_REPORT_DIR" "$VERIFY_DIR/files"
-
+verify_artifacts() {
   log "verifying copied sqlite files"
   if [[ -d "$VERIFY_DIR/db" ]]; then
     while IFS= read -r -d '' db_file; do
@@ -76,9 +139,61 @@ main() {
 
   log "verifying copied report artifacts"
   if [[ -d "$VERIFY_DIR/files" ]]; then
-    find "$VERIFY_DIR/files" -type f | sort | sed 's#^#[backup-verify] artifact: #' 
+    find "$VERIFY_DIR/files" -type f | sort | sed 's#^#[backup-verify] artifact: #'
+  fi
+}
+
+run_restore_smoke() {
+  if [[ "$SKIP_SMOKE" == "1" ]]; then
+    log "skip restore smoke"
+    return
   fi
 
+  log "running restore smoke"
+  python3 "$ROOT_DIR/scripts/backup_restore_smoke.py" --backup-dir "$VERIFY_DIR"
+}
+
+parse_args() {
+  while (( $# > 0 )); do
+    case "$1" in
+      --from-backup)
+        SOURCE_BACKUP_DIR="$2"
+        shift 2
+        ;;
+      --skip-smoke)
+        SKIP_SMOKE="1"
+        shift
+        ;;
+      -h|--help)
+        usage
+        exit 0
+        ;;
+      *)
+        if [[ -n "$VERIFY_DIR" ]]; then
+          printf 'unexpected argument: %s\n' "$1" >&2
+          exit 1
+        fi
+        VERIFY_DIR="$1"
+        shift
+        ;;
+    esac
+  done
+}
+
+main() {
+  parse_args "$@"
+  VERIFY_DIR="${VERIFY_DIR:-$(mktemp -d /tmp/gaokao-backup-verify-XXXXXX)}"
+
+  if [[ -n "$SOURCE_BACKUP_DIR" ]]; then
+    stage_existing_backup
+  else
+    mkdir -p "$VERIFY_DIR"
+    stage_live_sources
+  fi
+
+  verify_manifest_if_present "$VERIFY_DIR/manifest.json"
+  verify_artifacts
+  run_restore_smoke
   log "backup verification finished"
 }
 

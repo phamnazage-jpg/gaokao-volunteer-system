@@ -1,0 +1,18 @@
+[Unit]
+Description=Gaokao volunteer system backup snapshot
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/srv/gaokao-volunteer-system
+Environment=GAOKAO_BACKUP_ROOT=/var/backups/gaokao
+Environment=GAOKAO_BACKUP_KEEP=7
+Environment=GAOKAO_DB_PATH=/var/lib/gaokao/admin.db
+Environment=GAOKAO_ORDERS_DB_PATH=/var/lib/gaokao/orders.db
+Environment=GAOKAO_SHARE_DB_PATH=/var/lib/gaokao/share/short_links.db
+Environment=GAOKAO_SHARE_REPORT_DIR=/var/lib/gaokao/share/reports
+Environment=GAOKAO_BACKUP_ENV_FILE=/etc/gaokao/.env
+Environment=GAOKAO_BACKUP_CONFIG_DIR=/etc/gaokao
+Environment=GAOKAO_BACKUP_SECRETS_DIR=/var/lib/gaokao/secrets
+ExecStart=/bin/bash scripts/backup_snapshot.sh

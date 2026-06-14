@@ -2,6 +2,10 @@
 
 from __future__ import annotations
 
+from fastapi.testclient import TestClient
+
+from data.orders.dao import OrdersDAO
+
 
 def test_public_landing_page_served(client):
     resp = client.get("/")
@@ -129,3 +133,106 @@ def test_payment_return_redirects_to_portal_status(client):
     resp = client.get(f"/portal/payment-return?token={token}", follow_redirects=False)
     assert resp.status_code == 303, resp.text
     assert resp.headers["location"] == f"/portal/{token}/status"
+
+
+def test_public_create_order_returns_503_without_creating_orphan_order_when_provider_unavailable(
+    tmp_path, monkeypatch
+):
+    admin_db = tmp_path / "admin.db"
+    orders_db = tmp_path / "orders.db"
+    share_db = tmp_path / "share.db"
+    share_reports = tmp_path / "share_reports"
+    share_reports.mkdir()
+
+    monkeypatch.setenv("GAOKAO_ENV", "dev")
+    monkeypatch.setenv("GAOKAO_DB_PATH", str(admin_db))
+    monkeypatch.setenv("GAOKAO_ORDERS_DB_PATH", str(orders_db))
+    monkeypatch.setenv("GAOKAO_SHARE_DB_PATH", str(share_db))
+    monkeypatch.setenv("GAOKAO_SHARE_REPORT_DIR", str(share_reports))
+    monkeypatch.setenv("GAOKAO_ORDERS_FERNET_KEY", "test-secret-for-web-self-service")
+    monkeypatch.setenv("GAOKAO_JWT_SECRET", "x" * 64)
+    monkeypatch.setenv("GAOKAO_JWT_EXP_MIN", "5")
+    monkeypatch.setenv("GAOKAO_ADMIN_USER", "admin")
+    monkeypatch.setenv("GAOKAO_ADMIN_PASS", "test-pass-123")
+    monkeypatch.setenv("GAOKAO_PAYMENT_PROVIDER", "alipay")
+    monkeypatch.setenv("GAOKAO_PAYMENT_BASE_URL", "http://testserver")
+    monkeypatch.setenv("GAOKAO_PAYMENT_WEBHOOK_SECRET", "missing-real-provider-env")
+
+    from admin.app import create_app
+    from admin.config import load_settings
+
+    settings = load_settings()
+    app = create_app(settings)
+
+    with TestClient(app) as client:
+        resp = client.post(
+            "/api/public/orders",
+            json={
+                "service_version": "standard",
+                "amount_cents": 9900,
+                "customer_name": "张家长",
+                "customer_phone": "13800138000",
+                "candidate_province": "湖南",
+            },
+        )
+
+    assert resp.status_code == 503, resp.text
+    assert "payment provider unavailable" in resp.text
+    with OrdersDAO.connect(settings.orders_db_path) as dao:
+        assert dao.count() == 0
+
+
+def test_public_create_order_returns_503_without_creating_orphan_order_when_checkout_fails(
+    tmp_path, monkeypatch
+):
+    admin_db = tmp_path / "admin.db"
+    orders_db = tmp_path / "orders.db"
+    share_db = tmp_path / "share.db"
+    share_reports = tmp_path / "share_reports"
+    share_reports.mkdir()
+
+    monkeypatch.setenv("GAOKAO_ENV", "dev")
+    monkeypatch.setenv("GAOKAO_DB_PATH", str(admin_db))
+    monkeypatch.setenv("GAOKAO_ORDERS_DB_PATH", str(orders_db))
+    monkeypatch.setenv("GAOKAO_SHARE_DB_PATH", str(share_db))
+    monkeypatch.setenv("GAOKAO_SHARE_REPORT_DIR", str(share_reports))
+    monkeypatch.setenv("GAOKAO_ORDERS_FERNET_KEY", "test-secret-for-web-self-service")
+    monkeypatch.setenv("GAOKAO_JWT_SECRET", "x" * 64)
+    monkeypatch.setenv("GAOKAO_JWT_EXP_MIN", "5")
+    monkeypatch.setenv("GAOKAO_ADMIN_USER", "admin")
+    monkeypatch.setenv("GAOKAO_ADMIN_PASS", "test-pass-123")
+    monkeypatch.setenv("GAOKAO_PAYMENT_PROVIDER", "mock")
+    monkeypatch.setenv("GAOKAO_PAYMENT_BASE_URL", "http://testserver")
+    monkeypatch.setenv("GAOKAO_PAYMENT_WEBHOOK_SECRET", "test-payment-secret")
+
+    from admin.app import create_app
+    from admin.config import load_settings
+    from data.payments.service import PaymentError, PaymentService
+
+    original = PaymentService.create_checkout
+
+    def _boom(self, order_id: str, *, portal_token: str):
+        raise PaymentError("checkout transport failed")
+
+    monkeypatch.setattr(PaymentService, "create_checkout", _boom)
+
+    settings = load_settings()
+    app = create_app(settings)
+
+    with TestClient(app) as client:
+        resp = client.post(
+            "/api/public/orders",
+            json={
+                "service_version": "standard",
+                "amount_cents": 9900,
+                "customer_name": "张家长",
+                "customer_phone": "13800138000",
+                "candidate_province": "湖南",
+            },
+        )
+
+    monkeypatch.setattr(PaymentService, "create_checkout", original)
+    assert resp.status_code == 503, resp.text
+    assert "payment checkout unavailable" in resp.text
+    with OrdersDAO.connect(settings.orders_db_path) as dao:
+        assert dao.count() == 0

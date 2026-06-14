@@ -1,0 +1,10 @@
+[Unit]
+Description=Run gaokao backup snapshot daily
+
+[Timer]
+OnCalendar=*-*-* 02:30:00
+Persistent=true
+Unit=gaokao-backup.service
+
+[Install]
+WantedBy=timers.target

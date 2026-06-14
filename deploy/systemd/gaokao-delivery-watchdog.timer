@@ -1,0 +1,11 @@
+[Unit]
+Description=Run gaokao delivery watchdog every 10 minutes
+
+[Timer]
+OnCalendar=*:0/10
+Persistent=true
+RandomizedDelaySec=60
+Unit=gaokao-delivery-watchdog.service
+
+[Install]
+WantedBy=timers.target

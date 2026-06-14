@@ -1,0 +1,13 @@
+SHELL=/bin/bash
+PATH=/usr/local/bin:/usr/bin:/bin
+
+GAOKAO_ENV=prod
+GAOKAO_ORDERS_DB_PATH=/home/long/project/gaokao-volunteer-system/data/orders.db
+GAOKAO_PYTHON_BIN=/home/long/project/gaokao-volunteer-system/.venv/bin/python
+GAOKAO_DELIVERY_CHANNEL=station
+GAOKAO_DELIVERY_LIMIT=100
+GAOKAO_RETENTION_DAYS=180
+
+*/5 * * * * cd /home/long/project/gaokao-volunteer-system && "$GAOKAO_PYTHON_BIN" scripts/gaokao-delivery-dispatch.py --channel "$GAOKAO_DELIVERY_CHANNEL" --limit "$GAOKAO_DELIVERY_LIMIT" >> /var/log/gaokao-volunteer-system/delivery-dispatch.log 2>&1
+*/10 * * * * cd /home/long/project/gaokao-volunteer-system && "$GAOKAO_PYTHON_BIN" scripts/gaokao-delivery-watchdog.py --channel "$GAOKAO_DELIVERY_CHANNEL" --limit "$GAOKAO_DELIVERY_LIMIT" >> /var/log/gaokao-volunteer-system/delivery-watchdog.log 2>&1
+30 3 * * 0 cd /home/long/project/gaokao-volunteer-system && "$GAOKAO_PYTHON_BIN" scripts/gaokao-retention-cleanup.py --retention-days "$GAOKAO_RETENTION_DAYS" >> /var/log/gaokao-volunteer-system/retention-cleanup.log 2>&1

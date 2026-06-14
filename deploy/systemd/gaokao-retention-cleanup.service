@@ -1,0 +1,11 @@
+[Unit]
+Description=Gaokao retention cleanup (anonymize expired completed/refunded orders)
+After=network.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/home/long/project/gaokao-volunteer-system
+Environment=GAOKAO_PYTHON_BIN=/usr/bin/python3
+Environment=GAOKAO_RETENTION_DAYS=180
+EnvironmentFile=-/home/long/project/gaokao-volunteer-system/deploy/systemd/gaokao-jobs.env
+ExecStart=/bin/sh -lc 'exec "$GAOKAO_PYTHON_BIN" scripts/gaokao-retention-cleanup.py --retention-days "$GAOKAO_RETENTION_DAYS"'

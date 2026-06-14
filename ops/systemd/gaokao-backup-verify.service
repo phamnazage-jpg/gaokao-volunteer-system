@@ -1,0 +1,10 @@
+[Unit]
+Description=Gaokao volunteer system backup restore smoke
+Wants=network-online.target
+After=network-online.target gaokao-backup.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/srv/gaokao-volunteer-system
+Environment=GAOKAO_BACKUP_ROOT=/var/backups/gaokao
+ExecStart=/bin/bash -lc 'latest=$(find "$GAOKAO_BACKUP_ROOT" -mindepth 1 -maxdepth 1 -type d -name "backup-*" | sort | tail -n 1); test -n "$latest"; bash scripts/backup_verify.sh --from-backup "$latest"'
