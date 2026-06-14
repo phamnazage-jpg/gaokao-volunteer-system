@@ -32,8 +32,11 @@ class DeliveryNotificationEvent:
 
 
 class DeliveryNotificationService:
-    def __init__(self, conn: sqlite3.Connection) -> None:
+    def __init__(
+        self, conn: sqlite3.Connection, *, owns_connection: bool = True
+    ) -> None:
         self._conn = conn
+        self._owns_connection = owns_connection
 
     @classmethod
     def for_db(cls, db_path: str | Path) -> "DeliveryNotificationService":
@@ -43,8 +46,15 @@ class DeliveryNotificationService:
         conn.commit()
         return cls(conn)
 
+    @classmethod
+    def from_connection(cls, conn: sqlite3.Connection) -> "DeliveryNotificationService":
+        conn.row_factory = sqlite3.Row
+        conn.executescript(SCHEMA_SQL)
+        return cls(conn, owns_connection=False)
+
     def close(self) -> None:
-        self._conn.close()
+        if self._owns_connection:
+            self._conn.close()
 
     def notify_report_ready(
         self, order_id: str, payload_json: str, channel: str = "station"

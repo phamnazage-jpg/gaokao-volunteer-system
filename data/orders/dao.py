@@ -43,6 +43,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Iterator, List, Optional, Union
 
+from data.notifications.email_service import DeliveryNotificationService
+
 from .models import Order, generate_order_id, utc_now_iso
 from .schema import apply_schema
 from .state_machine import (
@@ -572,7 +574,26 @@ class OrdersDAO:
                     f"SELECT {self._select_columns()} FROM orders WHERE id=?",
                     (order_id,),
                 ).fetchone()
-        return self._row_to_order(row)
+            order = self._row_to_order(row)
+            if (
+                to_status == "delivered"
+                and (order.audit_report or order.plan_file)
+                and order.pdf_path
+            ):
+                notifier = DeliveryNotificationService.from_connection(self._conn)
+                notifier.notify_report_ready(
+                    order_id,
+                    json.dumps(
+                        {
+                            "order_id": order_id,
+                            "audit_report": order.audit_report,
+                            "plan_file": order.plan_file,
+                            "pdf_path": order.pdf_path,
+                        },
+                        ensure_ascii=False,
+                    ),
+                )
+        return order
 
     def _insert_status_history(
         self,

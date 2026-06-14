@@ -11,8 +11,6 @@
 from __future__ import annotations
 
 import csv
-import json
-import logging
 from dataclasses import asdict
 from io import StringIO
 from typing import Any, Literal, Optional, cast
@@ -30,7 +28,6 @@ from admin.errors import (
     DATA_VALIDATION_FAILED,
 )
 from admin.errors.exceptions import BusinessError
-from data.notifications.email_service import DeliveryNotificationService
 from data.orders.dao import DuplicateOrder, OrderNotFound, OrdersDAO
 from data.orders.intake_store import IntakeStore
 from data.orders.models import Order, generate_order_id
@@ -38,7 +35,6 @@ from data.orders.state_machine import InvalidStateTransition, next_states
 
 
 router = APIRouter(prefix="/api/orders", tags=["orders"])
-logger = logging.getLogger(__name__)
 
 OrderSource = Literal["xianyu", "wechat", "web", "school"]
 ServiceVersion = Literal["audit", "basic", "standard", "premium"]
@@ -438,30 +434,6 @@ def patch_order(
                     actor=current_user.username,
                     reason=payload.reason or f"admin_transition:{payload.to_status}",
                 )
-                if payload.to_status == "delivered":
-                    notifier = DeliveryNotificationService.for_db(
-                        settings.orders_db_path
-                    )
-                    try:
-                        notifier.notify_report_ready(
-                            order_id,
-                            json.dumps(
-                                {
-                                    "order_id": order_id,
-                                    "audit_report": order.audit_report,
-                                    "pdf_path": order.pdf_path,
-                                },
-                                ensure_ascii=False,
-                            ),
-                        )
-                    except Exception as exc:  # pragma: no cover - best-effort 通知侧写
-                        logger.warning(
-                            "report_ready notification failed for %s: %s",
-                            order_id,
-                            exc,
-                        )
-                    finally:
-                        notifier.close()
             except OrderNotFound as exc:
                 raise _business_error_for_lookup(order_id) from exc
             except InvalidStateTransition as exc:

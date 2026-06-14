@@ -77,3 +77,36 @@ def test_report_ready_transition_creates_notification_event(
         notification_service.close()
     assert len(events) == 1
     assert events[0].event_type == "report_ready"
+
+
+def test_dao_delivered_transition_also_creates_notification_event(settings, tmp_path):
+    order = _seed_order(settings.orders_db_path, order_id="GKO-20260614-NOTIFY-DAO")
+    _mark_paid(settings, order)
+    IntakeStore.for_db(settings.orders_db_path).save(
+        order_id=order.id, payload={"candidate_score": 578}, submit=True
+    )
+
+    report_path = tmp_path / "dao-report.html"
+    pdf_path = tmp_path / "dao-report.pdf"
+    report_path.write_text("<h1>dao</h1>", encoding="utf-8")
+    pdf_path.write_bytes(b"%PDF-1.4\ndao\n")
+
+    with OrdersDAO.connect(settings.orders_db_path) as dao:
+        dao.update(
+            order.id,
+            {"audit_report": str(report_path), "pdf_path": str(pdf_path)},
+            actor="test",
+            reason="attach_report",
+        )
+        dao.transition_status(order.id, "serving", actor="test", reason="processing")
+        dao.transition_status(
+            order.id, "delivered", actor="test", reason="report_ready"
+        )
+
+    notification_service = DeliveryNotificationService.for_db(settings.orders_db_path)
+    try:
+        events = notification_service.list_events(order.id)
+    finally:
+        notification_service.close()
+    assert len(events) == 1
+    assert events[0].event_type == "report_ready"
