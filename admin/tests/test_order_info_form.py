@@ -86,11 +86,11 @@ def test_order_info_form_accepts_draft_and_submit(client, settings):
     )
     assert submit.status_code == 200, submit.text
     assert submit.json()["intake_status"] == "submitted"
-    assert submit.json()["stage"] == "info_submitted"
+    assert submit.json()["stage"] == "processing"
 
     status_page = client.get(f"/portal/{token}/status")
     assert status_page.status_code == 200, status_page.text
-    assert "资料已提交" in status_page.text
+    assert "处理中" in status_page.text
 
 
 def test_order_info_form_becomes_read_only_after_report_ready(

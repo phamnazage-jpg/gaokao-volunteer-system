@@ -69,7 +69,7 @@
 未完成主链路包括：
 
 - 真实支付接入与回调验签的线上 acceptance
-- `info_submitted -> serving` 自动处理主链
+- `info_submitted -> serving` 自动处理主链 +本地自动桥接 `info_submitted -> serving` 已落地；仍缺真实 worker/生成服务/线上调度收口
 - 完整交付通知/发送器与调度
 - 前台删除工单流程与更完整的产品化交互
 

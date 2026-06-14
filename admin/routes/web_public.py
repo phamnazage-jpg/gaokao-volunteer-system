@@ -284,11 +284,19 @@ def submit_order_info(
         updates["candidate_interests"] = payload.candidate_interests
     if payload.guardian_notes is not None:
         updates["notes"] = payload.guardian_notes
-    if updates:
+    if updates or (payload.mode == "submit" and order.status == "paid"):
         with OrdersDAO.connect(settings.orders_db_path) as dao:
-            dao.update(
-                order.id, updates, actor="portal", reason=f"portal_{record.status}"
-            )
+            if updates:
+                dao.update(
+                    order.id, updates, actor="portal", reason=f"portal_{record.status}"
+                )
+            if payload.mode == "submit" and order.status == "paid":
+                dao.transition_status(
+                    order.id,
+                    "serving",
+                    actor="portal",
+                    reason="portal_submit_auto_queue",
+                )
     refreshed_order = _resolve_order_from_token(token, settings)
     refreshed_context = _build_portal_context(refreshed_order, settings)
     return PortalIntakeResponse(

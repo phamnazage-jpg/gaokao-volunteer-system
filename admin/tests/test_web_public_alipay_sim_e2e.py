@@ -93,13 +93,10 @@ def test_alipay_sim_public_user_e2e_flow(tmp_path, monkeypatch):
             },
         )
         assert submit_info.status_code == 200, submit_info.text
-        assert submit_info.json()["stage"] == "info_submitted"
+        assert submit_info.json()["stage"] == "processing"
 
         with OrdersDAO.connect(settings.orders_db_path) as dao:
             order = dao.get(created["order_id"])
-            dao.transition_status(
-                order.id, "serving", actor="test", reason="processing"
-            )
             report_path = tmp_path / "report.html"
             pdf_path = tmp_path / "report.pdf"
             report_path.write_text(
