@@ -13,7 +13,14 @@ class MockPaymentProvider:
         self.base_url = base_url.rstrip("/")
         self.secret = secret
 
-    def build_checkout_url(self, payment_id: str, portal_token: str) -> str:
+    def build_checkout_url(
+        self,
+        payment_id: str,
+        portal_token: str,
+        *,
+        amount_cents: int | None = None,
+        subject: str | None = None,
+    ) -> str:
         return f"/pay/mock/{payment_id}?token={portal_token}"
 
     def build_webhook_request(

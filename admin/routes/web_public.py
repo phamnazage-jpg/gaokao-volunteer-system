@@ -7,9 +7,15 @@ import logging
 from html import escape
 from pathlib import Path
 from typing import Any, Literal
+from urllib.parse import parse_qsl
 
 from fastapi import APIRouter, Depends, HTTPException, Request
-from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse
+from fastapi.responses import (
+    FileResponse,
+    HTMLResponse,
+    PlainTextResponse,
+    RedirectResponse,
+)
 from pydantic import BaseModel
 
 from admin.config import Settings, get_settings_dep
@@ -101,12 +107,7 @@ def create_public_order_endpoint(
     with OrdersDAO.connect(settings.orders_db_path) as dao:
         order = create_public_order(dao, payload)
     portal_token = issue_portal_token(order.id, settings.jwt_secret)
-    payment_service = PaymentService.for_db(
-        settings.orders_db_path,
-        base_url=settings.payment_base_url,
-        webhook_secret=settings.payment_webhook_secret,
-        provider_name=settings.payment_provider,
-    )
+    payment_service = _payment_service(settings)
     checkout = payment_service.create_checkout(order.id, portal_token=portal_token)
     return PublicOrderCreated(
         order_id=order.id,
@@ -128,12 +129,7 @@ def mock_payment_webhook(
     settings: Settings = Depends(get_settings_dep),
 ) -> WebhookAck:
     signature = request.headers.get("X-Mock-Signature", "")
-    service = PaymentService.for_db(
-        settings.orders_db_path,
-        base_url=settings.payment_base_url,
-        webhook_secret=settings.payment_webhook_secret,
-        provider_name=settings.payment_provider,
-    )
+    service = _payment_service(settings)
     try:
         result = service.handle_webhook(payload, signature)
     except PaymentError as exc:
@@ -141,6 +137,25 @@ def mock_payment_webhook(
         status_code = 409 if "amount mismatch" in message else 400
         raise HTTPException(status_code=status_code, detail=message) from exc
     return WebhookAck(**result.__dict__)
+
+
+@router.post("/api/public/payments/alipay/notify", include_in_schema=False)
+async def alipay_notify_webhook(
+    request: Request,
+    settings: Settings = Depends(get_settings_dep),
+) -> PlainTextResponse:
+    body = (await request.body()).decode("utf-8")
+    payload = {key: value for key, value in parse_qsl(body, keep_blank_values=True)}
+    signature = payload.pop("sign", "")
+    payload.pop("sign_type", None)
+    service = _payment_service(settings)
+    try:
+        service.handle_webhook(payload, signature)
+    except PaymentError as exc:
+        message = str(exc)
+        status_code = 409 if "amount mismatch" in message else 400
+        raise HTTPException(status_code=status_code, detail=message) from exc
+    return PlainTextResponse("success")
 
 
 @router.get("/pay/mock/{payment_id}", include_in_schema=False)
@@ -303,6 +318,20 @@ def report_pdf_download(
     )
 
 
+def _payment_service(settings: Settings) -> PaymentService:
+    return PaymentService.for_db(
+        settings.orders_db_path,
+        base_url=settings.payment_base_url,
+        webhook_secret=settings.payment_webhook_secret,
+        provider_name=settings.payment_provider,
+        notify_url=settings.payment_notify_url,
+        return_url=settings.payment_return_url,
+        app_id=settings.payment_app_id,
+        private_key_path=settings.payment_private_key_path,
+        alipay_public_key_path=settings.payment_alipay_public_key_path,
+    )
+
+
 def _resolve_order_from_token(token: str, settings: Settings) -> Order:
     try:
         payload = verify_portal_token(token, settings.jwt_secret)
@@ -316,12 +345,7 @@ def _resolve_order_from_token(token: str, settings: Settings) -> Order:
 
 
 def _build_portal_context(order: Order, settings: Settings) -> dict[str, Any]:
-    payment_service = PaymentService.for_db(
-        settings.orders_db_path,
-        base_url=settings.payment_base_url,
-        webhook_secret=settings.payment_webhook_secret,
-        provider_name=settings.payment_provider,
-    )
+    payment_service = _payment_service(settings)
     payment = payment_service.get_payment_by_order(order.id)
     intake_store = IntakeStore.for_db(settings.orders_db_path)
     try:

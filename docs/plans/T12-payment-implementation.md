@@ -15,18 +15,21 @@
 - provider requirements 基线
 - `mock` / `alipay_sim` provider
 - 模拟支付宝用户 E2E
+- 真实 `alipay` provider 本地代码链
+  - `data/payments/providers/alipay.py`
+  - `POST /api/public/payments/alipay/notify`
+  - `GET /portal/payment-return`
+  - RSA2 签名校验
+  - 金额校验 / 幂等防重
+  - refund 占位模型与接口约束
 
-## 阶段 2：当前应继续推进
+## 阶段 2：当前仍需继续推进（外部前置阻塞）
 
-1. 真实 provider 文件骨架
-   - `data/payments/providers/alipay.py`
-2. notify 回调入口
-   - `POST /api/public/payments/alipay/notify`
-3. return 回跳入口
-   - `GET /portal/payment-return`
-4. provider 签名校验
-5. 金额校验 / 幂等防重
-6. refund 占位模型与接口约束
+1. 商户 app_id / 产品签约 / 私钥公钥
+2. 备案域名与公网 `notify_url`
+3. 沙箱或真实商户联调
+4. 生产域名一次真实支付 acceptance
+5. 对账任务 / 退款回写 / 异常补偿产品化
 
 ## 阶段 3：外部前置到位后执行
 

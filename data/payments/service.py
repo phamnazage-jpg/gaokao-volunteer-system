@@ -12,6 +12,8 @@ from data.payments.models import (
     RefundRequestResult,
     WebhookHandleResult,
 )
+from data.payments.provider_requirements import build_provider_readiness_report
+from data.payments.providers.alipay import AlipayProvider
 from data.payments.providers.alipay_sim import AlipaySimProvider
 from data.payments.providers.mock_gateway import MockPaymentProvider
 
@@ -20,15 +22,49 @@ class PaymentError(ValueError):
     pass
 
 
-def _build_provider(*, provider_name: str, base_url: str, webhook_secret: str):
+def _build_provider(
+    *,
+    provider_name: str,
+    base_url: str,
+    webhook_secret: str,
+    notify_url: str = "",
+    return_url: str = "",
+    app_id: str = "",
+    private_key_path: str = "",
+    alipay_public_key_path: str = "",
+):
     normalized = (provider_name or "mock").strip().lower()
     if normalized == "mock":
         return MockPaymentProvider(base_url=base_url, secret=webhook_secret)
     if normalized == "alipay_sim":
         return AlipaySimProvider(base_url=base_url, secret=webhook_secret)
     if normalized == "alipay":
-        raise PaymentError(
-            "alipay provider 尚未实装；请先完成 docs/PAYMENT_PROVIDER_ONBOARDING.md 中的真实接入项"
+        report = build_provider_readiness_report(
+            "alipay",
+            env={
+                "GAOKAO_PAYMENT_APP_ID": app_id,
+                "GAOKAO_PAYMENT_PRIVATE_KEY_PATH": private_key_path,
+                "GAOKAO_PAYMENT_ALIPAY_PUBLIC_KEY_PATH": alipay_public_key_path,
+                "GAOKAO_PAYMENT_NOTIFY_URL": notify_url,
+                "GAOKAO_PAYMENT_RETURN_URL": return_url,
+                "GAOKAO_PAYMENT_WEBHOOK_SECRET": webhook_secret,
+            },
+        )
+        if not report.ready:
+            details: list[str] = []
+            if report.missing_env_vars:
+                details.append(
+                    "missing env vars: " + ", ".join(report.missing_env_vars)
+                )
+            if report.missing_files:
+                details.append("missing files: " + ", ".join(report.missing_files))
+            raise PaymentError("alipay provider not ready: " + "; ".join(details))
+        return AlipayProvider(
+            app_id=app_id,
+            private_key_path=private_key_path,
+            alipay_public_key_path=alipay_public_key_path,
+            notify_url=notify_url,
+            return_url=return_url,
         )
     raise PaymentError(f"unsupported payment provider: {normalized}")
 
@@ -46,6 +82,11 @@ class PaymentService:
         base_url: str,
         webhook_secret: str,
         provider_name: str = "mock",
+        notify_url: str = "",
+        return_url: str = "",
+        app_id: str = "",
+        private_key_path: str = "",
+        alipay_public_key_path: str = "",
     ) -> None:
         self.db_path = db_path
         self.base_url = base_url
@@ -53,6 +94,11 @@ class PaymentService:
             provider_name=provider_name,
             base_url=base_url,
             webhook_secret=webhook_secret,
+            notify_url=notify_url,
+            return_url=return_url,
+            app_id=app_id,
+            private_key_path=private_key_path,
+            alipay_public_key_path=alipay_public_key_path,
         )
 
     @classmethod
@@ -63,12 +109,22 @@ class PaymentService:
         base_url: str,
         webhook_secret: str = "dev-mock-payment-secret",
         provider_name: str = "mock",
+        notify_url: str = "",
+        return_url: str = "",
+        app_id: str = "",
+        private_key_path: str = "",
+        alipay_public_key_path: str = "",
     ) -> "PaymentService":
         return cls(
             db_path=db_path,
             base_url=base_url,
             webhook_secret=webhook_secret,
             provider_name=provider_name,
+            notify_url=notify_url,
+            return_url=return_url,
+            app_id=app_id,
+            private_key_path=private_key_path,
+            alipay_public_key_path=alipay_public_key_path,
         )
 
     def create_checkout(self, order_id: str, *, portal_token: str) -> PaymentCheckout:
@@ -86,7 +142,10 @@ class PaymentService:
                     payment_id=existing.id,
                     provider=existing.provider,
                     checkout_url=self.provider.build_checkout_url(
-                        existing.id, portal_token
+                        existing.id,
+                        portal_token,
+                        amount_cents=existing.amount_cents,
+                        subject=f"高考志愿服务-{order.service_version}",
                     ),
                     status=existing.status,
                 )
@@ -102,7 +161,12 @@ class PaymentService:
             return PaymentCheckout(
                 payment_id=payment.id,
                 provider=payment.provider,
-                checkout_url=self.provider.build_checkout_url(payment.id, portal_token),
+                checkout_url=self.provider.build_checkout_url(
+                    payment.id,
+                    portal_token,
+                    amount_cents=payment.amount_cents,
+                    subject=f"高考志愿服务-{order.service_version}",
+                ),
                 status=payment.status,
             )
         finally:
@@ -168,7 +232,7 @@ class PaymentService:
                     updated.order_id,
                     "paid",
                     actor="payment_webhook",
-                    reason="mock_payment_paid",
+                    reason="payment_paid",
                 )
         return WebhookHandleResult(
             payment_id=updated.id,

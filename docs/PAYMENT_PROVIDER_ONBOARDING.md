@@ -73,16 +73,17 @@ export GAOKAO_PAYMENT_ALIPAY_PUBLIC_KEY_PATH=/secure/path/alipay_public.pem
 
 ## 真正完成 T12 的下一跳
 
-当上面四类外部条件具备前，建议先做：
+当上面四类外部条件具备前，当前仓库已可先完成这些本地验证：
 
 1. `GAOKAO_PAYMENT_PROVIDER=alipay_sim python3 scripts/payment_provider_doctor.py`
 2. `pytest -q data/payments/tests/test_provider_alipay_sim.py`
-3. 以 `alipay_sim` 跑本地 checkout / webhook 模拟验收
+3. `pytest -q data/payments/tests/test_provider_alipay.py admin/tests/test_payment_alipay_notify.py`
+4. `GAOKAO_SKIP_INSTALL=1 bash scripts/dev-verify.sh`
 
 当上面四类外部条件具备后，继续执行：
 
-1. 实装支付宝 provider
-2. 增加 `notify` / `return` 真实路由
-3. 沙箱联调
-4. 生产域名回调联调
-5. 真实下单→支付→回调→portal 状态页→报告交付验收
+1. 配置真实 `GAOKAO_PAYMENT_*` 环境变量并跑 doctor ready=true
+2. 沙箱联调
+3. 生产域名回调联调
+4. 真实下单→支付→回调→portal 状态页→报告交付验收
+5. 再补对账任务 / 退款补偿 / 真实告警链

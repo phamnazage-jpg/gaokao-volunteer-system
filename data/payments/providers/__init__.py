@@ -1,4 +1,5 @@
+from .alipay import AlipayProvider
 from .alipay_sim import AlipaySimProvider
 from .mock_gateway import MockPaymentProvider
 
-__all__ = ["MockPaymentProvider", "AlipaySimProvider"]
+__all__ = ["MockPaymentProvider", "AlipaySimProvider", "AlipayProvider"]
