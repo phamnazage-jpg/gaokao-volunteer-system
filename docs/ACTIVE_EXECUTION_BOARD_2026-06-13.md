@@ -317,10 +317,11 @@ Owner: data / engineer
 ## 5. 当前推荐读取顺序
 
 1. `docs/CURRENT_STATE.md`
-2. `docs/ACTIVE_REMEDIATION_2026-06-13.md`
-3. 本文件 `docs/ACTIVE_EXECUTION_BOARD_2026-06-13.md`
-4. `product/PRD.md`
-5. `product/ROADMAP.md`
+2. docs/ACTIVE_REMEDIATION_2026-06-13.md
+3. docs/P0_P1_P2_REMEDIATION_PLAN_2026-06-14.md
+4. 本文件 `docs/ACTIVE_EXECUTION_BOARD_2026-06-13.md`
+5. `product/PRD.md`
+6. `product/ROADMAP.md`
 
 ---
 
