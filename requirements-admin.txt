@@ -1,5 +1,4 @@
-# T6.1 管理后台运行依赖
-# 与 requirements-dev.txt 分离，避免把 FastAPI 运行栈混入纯标准库主链路。
+# 管理后台 / 报告生成运行依赖
 # 安装示例：pip install -r requirements-admin.txt -r requirements-dev.txt
 
 fastapi==0.133.1
@@ -7,3 +6,6 @@ uvicorn==0.41.0
 PyJWT==2.10.1
 pydantic==2.13.4
 cryptography>=43,<46
+Jinja2>=3.1,<4.0
+weasyprint>=66,<67
+cairocffi>=1.7,<2.0

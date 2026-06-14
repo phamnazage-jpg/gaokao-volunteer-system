@@ -5,6 +5,9 @@
 [![Python](https://img.shields.io/badge/Python-3.10%20%7C%203.11%20%7C%203.12-blue)](https://www.python.org/)
 
 > 一套面向人工服务运营的高考志愿填报系统：管理后台、订单/分享/渠道同步、AI 审核链路已成形；用户端 Web 自助闭环仍在推进中。
+>
+> 当前真相源：`docs/CURRENT_STATE.md`
+> 最终完成报告：`docs/FINAL_COMPLETION_REPORT_2026-06-13.md`
 
 ## 📋 项目简介
 
