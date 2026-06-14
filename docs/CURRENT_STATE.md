@@ -6,8 +6,9 @@
 
 1. 本文件
 2. docs/FINAL_COMPLETION_REPORT_2026-06-13.md
-3. product/PRD.md / product/ROADMAP.md / docs/IMPLEMENTATION_PLAN_v2.md
-4. reports/PRODUCT_PLANNING_TECH_ALIGNMENT_REVIEW_2026-06-13.md（历史评审快照）
+3. docs/ACTIVE_REMEDIATION_2026-06-13.md
+4. product/PRD.md / product/ROADMAP.md / docs/IMPLEMENTATION_PLAN_v2.md
+5. reports/PRODUCT_PLANNING_TECH_ALIGNMENT_REVIEW_2026-06-13.md（历史评审快照）
 
 ---
 
