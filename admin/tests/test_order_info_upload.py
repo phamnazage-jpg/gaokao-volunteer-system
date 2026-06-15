@@ -47,21 +47,28 @@ def test_portal_attachment_upload_persists_metadata_and_file(client, settings):
 
     upload = client.post(
         f"/portal/{token}/attachments",
-        files={"file": ("qianwen-plan.txt", "高校A\n专业B\n建议".encode("utf-8"), "text/plain")},
+        files=[
+            ("files", ("qianwen-plan.txt", "高校A\n专业B\n建议".encode("utf-8"), "text/plain")),
+            ("files", ("doubao-plan.json", b'{"plan": true}', "application/json")),
+        ],
     )
     assert upload.status_code == 200, upload.text
     body = upload.json()
     assert body["order_id"] == order.id
     assert body["stage"] == "info_required"
-    meta = body["attachment"]
-    assert meta["original_name"] == "qianwen-plan.txt"
-    assert meta["size_bytes"] > 0
-    assert Path(meta["storage_path"]).is_file()
+    metas = body["attachments"]
+    assert len(metas) == 2
+    assert metas[0]["original_name"] == "qianwen-plan.txt"
+    assert metas[1]["original_name"] == "doubao-plan.json"
+    for meta in metas:
+        assert meta["size_bytes"] > 0
+        assert Path(meta["storage_path"]).is_file()
 
     page = client.get(f"/portal/{token}/info")
     assert page.status_code == 200, page.text
     assert "已上传附件" in page.text
     assert "qianwen-plan.txt" in page.text
+    assert "doubao-plan.json" in page.text
 
 
 def test_portal_attachment_upload_rejects_before_payment(client, settings):
@@ -70,7 +77,7 @@ def test_portal_attachment_upload_rejects_before_payment(client, settings):
 
     upload = client.post(
         f"/portal/{token}/attachments",
-        files={"file": ("plan.txt", b"draft", "text/plain")},
+        files={"files": ("plan.txt", b"draft", "text/plain")},
     )
     assert upload.status_code == 409
     assert "payment required" in upload.text
@@ -83,7 +90,32 @@ def test_portal_attachment_upload_rejects_unsupported_type(client, settings):
 
     upload = client.post(
         f"/portal/{token}/attachments",
-        files={"file": ("plan.exe", b"MZ...", "application/octet-stream")},
+        files={"files": ("plan.exe", b"MZ...", "application/octet-stream")},
     )
     assert upload.status_code == 415
     assert "unsupported attachment type" in upload.text
+
+
+def test_portal_attachment_upload_rejects_when_exceeding_max_files(client, settings):
+    order = _seed_order(settings.orders_db_path, order_id="GKO-20260615-UPLOAD-MAX")
+    _mark_paid(settings, order)
+    token = issue_portal_token(order.id, settings.portal_token_secret)
+
+    first = client.post(
+        f"/portal/{token}/attachments",
+        files=[
+            ("files", ("a.txt", b"a", "text/plain")),
+            ("files", ("b.txt", b"b", "text/plain")),
+            ("files", ("c.txt", b"c", "text/plain")),
+            ("files", ("d.txt", b"d", "text/plain")),
+            ("files", ("e.txt", b"e", "text/plain")),
+        ],
+    )
+    assert first.status_code == 200, first.text
+
+    second = client.post(
+        f"/portal/{token}/attachments",
+        files={"files": ("overflow.txt", b"z", "text/plain")},
+    )
+    assert second.status_code == 413
+    assert "too many attachments" in second.text

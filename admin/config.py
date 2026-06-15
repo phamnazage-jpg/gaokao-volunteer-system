@@ -38,6 +38,9 @@ class Settings:
     orders_db_path: str  # T6.2 — 订单数据 (data.orders.* 写入位置)
     share_db_path: str  # T7.5 — 短链接 SQLite
     share_report_dir: str  # T7.5 — report_id -> JSON 报告目录
+    portal_upload_dir: str  # T12 — 用户前台资料/附件上传目录
+    portal_upload_max_bytes: int  # T12 — 单文件上传大小上限
+    portal_upload_max_files: int  # T12 — 单订单最大附件数
     payment_provider: str  # mock|alipay
     payment_base_url: str
     payment_webhook_secret: str
@@ -53,6 +56,8 @@ class Settings:
     smtp_password: str
     smtp_use_tls: bool
     smtp_use_ssl: bool
+    alert_recipients: list[str]
+    ops_alert_log_path: str
     jwt_secret: str
     portal_token_secret: str  # P2-4: 与后台 jwt_secret 分离
     jwt_algorithm: str
@@ -185,6 +190,9 @@ def load_settings() -> Settings:
         orders_db_path=os.getenv("GAOKAO_ORDERS_DB_PATH", "data/orders.db"),
         share_db_path=os.getenv("GAOKAO_SHARE_DB_PATH", "data/share/short_links.db"),
         share_report_dir=os.getenv("GAOKAO_SHARE_REPORT_DIR", "data/share/reports"),
+        portal_upload_dir=os.getenv("GAOKAO_PORTAL_UPLOAD_DIR", "data/portal_uploads"),
+        portal_upload_max_bytes=int(os.getenv("GAOKAO_PORTAL_UPLOAD_MAX_BYTES", "5242880")),
+        portal_upload_max_files=int(os.getenv("GAOKAO_PORTAL_UPLOAD_MAX_FILES", "5")),
         payment_provider=os.getenv("GAOKAO_PAYMENT_PROVIDER", "mock"),
         payment_base_url=os.getenv("GAOKAO_PAYMENT_BASE_URL", "http://testserver"),
         payment_webhook_secret=_resolve_payment_webhook_secret(
@@ -204,6 +212,8 @@ def load_settings() -> Settings:
         smtp_password=os.getenv("GAOKAO_SMTP_PASS", ""),
         smtp_use_tls=os.getenv("GAOKAO_SMTP_USE_TLS", "false").lower() == "true",
         smtp_use_ssl=os.getenv("GAOKAO_SMTP_USE_SSL", "false").lower() == "true",
+        alert_recipients=[s.strip() for s in os.getenv("GAOKAO_ALERT_RECIPIENTS", "").split(",") if s.strip()],
+        ops_alert_log_path=os.getenv("GAOKAO_OPS_ALERT_LOG", "data/alerts/ops-alerts.jsonl"),
         jwt_secret=os.getenv("GAOKAO_JWT_SECRET", _DEV_JWT_SECRET),
         portal_token_secret=_resolve_portal_token_secret(
             os.getenv("GAOKAO_ENV", "dev")

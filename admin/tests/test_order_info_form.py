@@ -142,6 +142,7 @@ def test_order_info_form_becomes_read_only_after_report_ready(
             "candidate_score": 600,
             "candidate_rank": 999,
             "candidate_subjects": ["物理"],
+            "candidate_interests": "数学",
             "consent_version": "t12-web-mvp-v1",
             "consent_scope": "web-self-service-order-intake",
             "privacy_accepted": True,
@@ -173,3 +174,30 @@ def test_submit_requires_consent_fields(client, settings):
     )
     assert resp.status_code == 422
     assert "privacy_accepted" in resp.text
+
+
+def test_submit_requires_at_least_one_target_preference(client, settings):
+    order = _seed_order(settings.orders_db_path, order_id="GKO-20260615-INFO-TARGET")
+    _mark_paid(settings, order)
+    token = issue_portal_token(order.id, settings.portal_token_secret)
+
+    resp = client.post(
+        f"/portal/{token}/info",
+        json={
+            "mode": "submit",
+            "candidate_score": 578,
+            "candidate_rank": 12034,
+            "candidate_subjects": ["物理", "化学", "生物"],
+            "candidate_interests": None,
+            "target_cities": [],
+            "target_majors": [],
+            "university_preferences": None,
+            "consent_version": "t12-web-mvp-v1",
+            "consent_scope": "web-self-service-order-intake",
+            "privacy_accepted": True,
+            "service_terms_accepted": True,
+            "guardian_confirmed": True,
+        },
+    )
+    assert resp.status_code == 422
+    assert "至少填写一个偏好与目标字段" in resp.text

@@ -90,7 +90,7 @@ class PortalAttachmentUploaded(BaseModel):
     order_id: str
     intake_status: str
     stage: str
-    attachment: dict[str, Any]
+    attachments: list[dict[str, Any]]
 
 
 @router.get("/", include_in_schema=False)
@@ -306,27 +306,35 @@ def _store_portal_attachment(
 @router.post("/portal/{token}/attachments", response_model=PortalAttachmentUploaded)
 def upload_order_attachment(
     token: str,
-    file: UploadFile = File(...),
+    files: list[UploadFile] = File(...),
     settings: Settings = Depends(get_settings_dep),
 ) -> PortalAttachmentUploaded:
     order = _resolve_order_from_token(token, settings)
     context = _build_portal_context(order, settings)
     _assert_portal_info_mutable(context["stage"])
 
-    raw = file.file.read()
-    attachment = _store_portal_attachment(
-        order_id=order.id,
-        upload_name=file.filename or "upload.bin",
-        content_type=file.content_type,
-        payload=raw,
-        settings=settings,
-    )
     intake_store = IntakeStore.for_db(settings.orders_db_path)
+    uploaded: list[dict[str, Any]] = []
     try:
         current = intake_store.get(order.id)
         payload = dict(current.payload) if current is not None else {}
         attachments = list(payload.get("attachments") or [])
-        attachments.append(attachment)
+        if len(attachments) + len(files) > settings.portal_upload_max_files:
+            raise HTTPException(
+                status_code=413,
+                detail=f"too many attachments: max {settings.portal_upload_max_files}",
+            )
+        for file in files:
+            raw = file.file.read()
+            attachment = _store_portal_attachment(
+                order_id=order.id,
+                upload_name=file.filename or "upload.bin",
+                content_type=file.content_type,
+                payload=raw,
+                settings=settings,
+            )
+            attachments.append(attachment)
+            uploaded.append(attachment)
         payload["attachments"] = attachments
         record = intake_store.save(
             order_id=order.id,
@@ -342,7 +350,7 @@ def upload_order_attachment(
         order_id=order.id,
         intake_status=record.status,
         stage=refreshed_context["stage"],
-        attachment=attachment,
+        attachments=uploaded,
     )
 
 
@@ -911,7 +919,7 @@ def _render_info_page(
             <h3>已上传附件</h3>
             <ul>{attachments_html}</ul>
             <form id=\"attachment-form\">
-              <input type=\"file\" name=\"file\" />
+              <input type=\"file\" name=\"files\" multiple />
               <button type=\"button\" onclick=\"uploadAttachment()\">上传 AI 方案 / 资料附件</button>
             </form>
           </section>
@@ -1009,13 +1017,13 @@ def _render_info_page(
       }}
 
       async function uploadAttachment() {{
-        const form = document.getElementById('attachment-form');
-        const data = new FormData(form);
-        const file = data.get('file');
-        if (!file || !(file instanceof File) || !file.name) {{
-          document.getElementById('result').textContent = '请先选择一个附件';
+        const input = document.querySelector('#attachment-form input[name="files"]');
+        if (!input || !input.files || input.files.length === 0) {{
+          document.getElementById('result').textContent = '请先选择至少一个附件';
           return;
         }}
+        const data = new FormData();
+        Array.from(input.files).forEach((file) => data.append('files', file));
         const resp = await fetch('/portal/{escape(token)}/attachments', {{
           method: 'POST',
           body: data,
