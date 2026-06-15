@@ -74,6 +74,9 @@
 - ✅ P1-4 webhook server DB 连接污染：已为 per-key 连接缓存新增显式回归测试（test_webhook_server_db_scoping.py 4 passed），锁定“每 db_path 独立 + 释放不影响其他路径 + 线程安全 + release_all 真正关闭所有连接”四项不变量
 - ✅ P1-6 分享 allowlist：edit / admin 模式已强制走显式 frozenset(\_EDIT_VISIBLE_FIELDS)，不再是 None 透传；新增敏感字段不会自动外泄（data/share/permission.py + data/share/tests/test_permission.py 已验证）
 - ✅ P1-8 备份恢复服务级演练：backup_verify.sh 改为优先调用 venv python；新增 tests/test_backup_restore_service_level.py 1 passed 锁定“健康/portal 200 + 真实落单 + 实际闭环”
+- ✅ P2-2 channel_sync 单一 DAO 真相：已新增 data/channel_sync/tests/test_single_dao_truth.py 4 passed 锁定 4 项不变量
+- ✅ P2-6 历史快照头注补齐：已新增 tests/test_historical_snapshot_headers.py 4 passed 锁定历史快照+真相源跳转
+- ✅ X-06 本地一键验证脚本：scripts/dev-verify.sh 新增 --skip-install / --skip-pre-existing flag，tests/test_dev_verify_entrypoint.py 3 passed 锁定入口可调
 
 顺序:
 
