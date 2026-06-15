@@ -398,6 +398,19 @@ def submit_order_info(
     )
 
 
+@router.get("/portal/{token}/notifications", include_in_schema=False)
+def notification_audit_page(
+    token: str, settings: Settings = Depends(get_settings_dep)
+) -> HTMLResponse:
+    order = _resolve_order_from_token(token, settings)
+    notification_service = DeliveryNotificationService.for_db(settings.orders_db_path)
+    try:
+        events = notification_service.list_events(order.id)
+    finally:
+        notification_service.close()
+    return HTMLResponse(_render_notification_audit_page(token, order, events))
+
+
 @router.get("/portal/{token}/status", include_in_schema=False)
 def order_status_page(
     token: str, settings: Settings = Depends(get_settings_dep)
@@ -1046,8 +1059,57 @@ def _render_status_page(token: str, context: dict[str, Any]) -> str:
         <h2>下一步操作</h2>
         <ul>
           <li><a href=\"/portal/{escape(token)}/info\">填写/更新资料</a></li>
+          <li><a href=\"/portal/{escape(token)}/notifications\">查看通知审计</a></li>
           {report_links}
         </ul>
+      </section>
+    </main>
+  </body>
+</html>
+"""
+
+
+def _render_notification_audit_page(token: str, order: Order, events: list[Any]) -> str:
+    rows = []
+    for event in events:
+        payload_preview = ""
+        try:
+            parsed = json.loads(event.payload_json)
+            payload_preview = escape(json.dumps(parsed, ensure_ascii=False, indent=2))
+        except Exception:
+            payload_preview = escape(event.payload_json or "")
+        failure_reason = escape(str(event.failure_reason or "-"))
+        rows.append(
+            "<tr>"
+            f"<td>{escape(str(event.channel))}</td>"
+            f"<td>{escape(str(event.event_type))}</td>"
+            f"<td>{escape(str(event.status))}</td>"
+            f"<td>{escape(str(event.attempt_count))}</td>"
+            f"<td>{escape(str(event.last_attempt_at or '-'))}</td>"
+            f"<td>{failure_reason}</td>"
+            f"<td><pre style='white-space:pre-wrap;max-width:520px'>{payload_preview}</pre></td>"
+            "</tr>"
+        )
+    rows_html = "".join(rows) or "<tr><td colspan='7'>暂无通知事件</td></tr>"
+    return f"""<!doctype html>
+<html lang=\"zh-CN\"><head><meta charset=\"utf-8\" /><title>通知审计</title></head>
+  <body style=\"font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f4f7fb;margin:0;padding:32px 20px;color:#172033;\">
+    <main style=\"max-width:1100px;margin:0 auto;display:grid;gap:16px;\">
+      <section style=\"background:#fff;border:1px solid #dbe3f0;border-radius:18px;padding:24px;\">
+        <h1>通知审计</h1>
+        <p>订单号：{escape(order.id)}</p>
+        <p>服务版本：{escape(order.service_version)}</p>
+        <p><a href=\"/portal/{escape(token)}/status\">返回订单状态页</a></p>
+      </section>
+      <section style=\"background:#fff;border:1px solid #dbe3f0;border-radius:18px;padding:24px;overflow:auto;\">
+        <table style=\"width:100%;border-collapse:collapse;\">
+          <thead>
+            <tr>
+              <th>渠道</th><th>事件</th><th>状态</th><th>尝试次数</th><th>最后尝试时间</th><th>失败原因</th><th>payload</th>
+            </tr>
+          </thead>
+          <tbody>{rows_html}</tbody>
+        </table>
       </section>
     </main>
   </body>
