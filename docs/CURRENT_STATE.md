@@ -1,14 +1,15 @@
 # CURRENT_STATE
 
 最后更新: 2026-06-15
-状态词: 本地验证完成（v2.1 已交付增强 + T12 本地修复闭环已收口，待 commit/push）
+状态词: 本地验证完成（v2.1 已交付增强 + T12 本地修复闭环已收口）
 真相源优先级:
 
 1. 本文件
 2. docs/FINAL_COMPLETION_REPORT_2026-06-13.md
-3. docs/ACTIVE_REMEDIATION_2026-06-13.md
-4. product/PRD.md / product/ROADMAP.md / docs/IMPLEMENTATION_PLAN_v2.md
-5. reports/PRODUCT_PLANNING_TECH_ALIGNMENT_REVIEW_2026-06-13.md（历史评审快照）
+3. docs/P0_P1_P2_REMEDIATION_PLAN_2026-06-14.md（当前整改板）
+4. docs/ACTIVE_REMEDIATION_2026-06-13.md
+5. product/PRD.md / product/ROADMAP.md / docs/IMPLEMENTATION_PLAN_v2.md
+6. reports/PRODUCT_PLANNING_TECH_ALIGNMENT_REVIEW_2026-06-13.md（历史评审快照）
 
 ---
 
@@ -43,10 +44,16 @@
 - T11 性能与安全
 
 覆盖率门槛证据：
+覆盖率门槛证据：
 
-- overall = 60.53%
-- core = 82.54%
-- 满足：整体≥60%、核心≥80%
+- overall = 92.46%
+- core = 100.00%
+- 满足：整体≥80%、核心≥100%
+
+最新覆盖率口径已统一：
+
+- 单一真相源：`scripts/check_coverage_gate.py`
+- CI / dev-verify / codecov 全部指向同一阈值
 
 三仓同步状态：
 
@@ -110,11 +117,41 @@
 - 业务数据备份 / 恢复 / 密钥托管已有本地基线与验证，但异机备份和生产接入仍不足
 - 隐私政策 / 服务协议 / 监护人同意 / 数据保留与删除流程仍缺前台/客服自助工单与正式法务版本
 
+> 重要更新（2026-06-15）：
+> 上述 5 项是 v2.1 当前阶段以外的真实缺口。
+> 上一轮 2026-06-14 严格复审里的 P1 整改项已全部完成：
+>
+> - P1-1 支付回调双写裂缝已修复
+> - P1-5 退款域模型闭环已修复
+> - P1-2 删除/匿名化已覆盖 orders 主表 + payments.callback_payload + order_intakes.payload_json
+> - P1-7 验证链口径统一（CI / dev-verify / codecov / gate script 同一阈值）
+
 ### P2 工程改进
 
 - crowd_db 高置信数据应区分湖南与其他省份
 - 架构图仍需进一步拆分 Current / Target 视觉表达
 - legacy 邮件脚本应继续弱化为非主链能力
+
+### 仍然有效的 P1 / P2 整改项
+
+完整清单见 `docs/P0_P1_P2_REMEDIATION_PLAN_2026-06-14.md`：
+
+- P2-1 公共下单孤儿订单
+- P2-3 delivery `sent` 语义修正
+- P1-3 真实支付回调校验
+- P1-4 webhook DB 连接污染
+- P1-6 分享 allowlist
+- P1-8 备份恢复演练
+- P2-2 channel_sync 单一 DAO 真相
+- P2-4 portal token / JWT secret 分离（已通过 P2-4 单元测试 + prod fail-closed）
+- P2-5 payment webhook secret fail-closed（已通过 P2-5 单元测试 + prod fail-closed）
+- P2-6 历史快照头注补齐
+- X-02 支付域设计
+- X-03 Delivery 交付服务设计
+- X-04 合规基线文档
+- X-05 备份恢复与密钥托管方案
+- X-06 本地一键验证脚本
+- X-08 crowd_db 数据完整度等级化
 
 ---
 
