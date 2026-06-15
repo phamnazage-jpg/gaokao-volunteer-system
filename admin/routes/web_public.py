@@ -510,6 +510,21 @@ def _build_portal_context(order: Order, settings: Settings) -> dict[str, Any]:
 
     title, subtitle = _STAGE_META[stage]
     latest_station_notice: dict[str, Any] | None = None
+    intake_summary = None
+    attachment_count = 0
+    if intake is not None:
+        attachment_count = len(list((intake.payload or {}).get("attachments") or []))
+        intake_summary = {
+            "candidate_score": intake.payload.get("candidate_score"),
+            "candidate_rank": intake.payload.get("candidate_rank"),
+            "candidate_subjects": intake.payload.get("candidate_subjects") or [],
+            "candidate_interests": intake.payload.get("candidate_interests"),
+            "target_cities": intake.payload.get("target_cities") or [],
+            "target_majors": intake.payload.get("target_majors") or [],
+            "university_preferences": intake.payload.get("university_preferences"),
+            "existing_plan_summary": intake.payload.get("existing_plan_summary"),
+            "guardian_notes": intake.payload.get("guardian_notes"),
+        }
     if sent_station_events:
         try:
             latest_payload = json.loads(sent_station_events[-1].payload_json)
@@ -524,6 +539,8 @@ def _build_portal_context(order: Order, settings: Settings) -> dict[str, Any]:
         "stage_subtitle": subtitle,
         "payment": payment,
         "intake": intake,
+        "intake_summary": intake_summary,
+        "attachment_count": attachment_count,
         "report_html_ready": report_html_ready,
         "report_pdf_ready": report_pdf_ready,
         "order": order,
@@ -848,6 +865,10 @@ def _render_info_page(
         <label>位次<input name=\"candidate_rank\" value=\"{escape(str(payload.get("candidate_rank") or ""))}\" /></label><br/>
         <label>选科（逗号分隔）<input name=\"candidate_subjects\" value=\"{escape(",".join(payload.get("candidate_subjects") or []))}\" /></label><br/>
         <label>兴趣方向<input name=\"candidate_interests\" value=\"{escape(str(payload.get("candidate_interests") or ""))}\" /></label><br/>
+        <label>目标城市（逗号分隔）<input name=\"target_cities\" value=\"{escape(",".join(payload.get("target_cities") or []))}\" /></label><br/>
+        <label>目标专业（逗号分隔）<input name=\"target_majors\" value=\"{escape(",".join(payload.get("target_majors") or []))}\" /></label><br/>
+        <label>院校偏好说明<textarea name=\"university_preferences\">{escape(str(payload.get("university_preferences") or ""))}</textarea></label><br/>
+        <label>已有方案说明<textarea name=\"existing_plan_summary\">{escape(str(payload.get("existing_plan_summary") or ""))}</textarea></label><br/>
         <label>家长备注<textarea name=\"guardian_notes\">{escape(str(payload.get("guardian_notes") or ""))}</textarea></label><br/>
         <input type=\"hidden\" name=\"consent_version\" value=\"{escape(consent_version)}\" />
         <input type=\"hidden\" name=\"consent_scope\" value=\"{escape(consent_scope)}\" />
@@ -872,12 +893,18 @@ def _render_info_page(
       async function submitIntake(mode) {{
         const form = new FormData(document.getElementById('intake-form'));
         const subjects = String(form.get('candidate_subjects') || '').split(',').map(s => s.trim()).filter(Boolean);
+        const targetCities = String(form.get('target_cities') || '').split(',').map(s => s.trim()).filter(Boolean);
+        const targetMajors = String(form.get('target_majors') || '').split(',').map(s => s.trim()).filter(Boolean);
         const payload = {{
           mode,
           candidate_score: form.get('candidate_score') ? Number(form.get('candidate_score')) : null,
           candidate_rank: form.get('candidate_rank') ? Number(form.get('candidate_rank')) : null,
           candidate_subjects: subjects,
           candidate_interests: form.get('candidate_interests') || null,
+          target_cities: targetCities,
+          target_majors: targetMajors,
+          university_preferences: form.get('university_preferences') || null,
+          existing_plan_summary: form.get('existing_plan_summary') || null,
           guardian_notes: form.get('guardian_notes') || null,
           consent_version: form.get('consent_version') || null,
           consent_scope: form.get('consent_scope') || null,
@@ -936,13 +963,39 @@ def _render_status_page(token: str, context: dict[str, Any]) -> str:
     if isinstance(station_notice, dict):
         title = escape(str(station_notice.get("title") or "站内通知"))
         body = escape(str(station_notice.get("body") or ""))
-        sent_at = escape(str(station_notice.get("sent_at") or ""))
+        sent_at = escape(
+            str(
+                station_notice.get("sent_at")
+                or station_notice.get("delivered_at")
+                or ""
+            )
+        )
         station_notice_html = f"""
       <section style=\"background:#eef6ff;border:1px solid #b9d7ff;border-radius:18px;padding:24px;\">
         <h2>通知已发送</h2>
         <p><strong>{title}</strong></p>
         <p>{body}</p>
         <p style=\"color:#4f6480;font-size:14px;\">发送时间：{sent_at}</p>
+      </section>"""
+    summary_html = ""
+    intake_summary = context.get("intake_summary") or {}
+    attachment_count = int(context.get("attachment_count") or 0)
+    if intake_summary:
+        summary_items = [
+            f"<li>分数：{escape(str(intake_summary.get('candidate_score') or '-'))}</li>",
+            f"<li>位次：{escape(str(intake_summary.get('candidate_rank') or '-'))}</li>",
+            f"<li>选科：{escape(','.join(intake_summary.get('candidate_subjects') or [])) or '-'}</li>",
+            f"<li>兴趣方向：{escape(str(intake_summary.get('candidate_interests') or '-'))}</li>",
+            f"<li>目标城市：{escape(','.join(intake_summary.get('target_cities') or [])) or '-'}</li>",
+            f"<li>目标专业：{escape(','.join(intake_summary.get('target_majors') or [])) or '-'}</li>",
+            f"<li>院校偏好：{escape(str(intake_summary.get('university_preferences') or '-'))}</li>",
+            f"<li>已有方案说明：{escape(str(intake_summary.get('existing_plan_summary') or '-'))}</li>",
+            f"<li>附件数量：{attachment_count}</li>",
+        ]
+        summary_html = f"""
+      <section style=\"background:#fff;border:1px solid #dbe3f0;border-radius:18px;padding:24px;\">
+        <h2>当前资料摘要</h2>
+        <ul>{''.join(summary_items)}</ul>
       </section>"""
     return f"""<!doctype html>
 <html lang=\"zh-CN\"><head><meta charset=\"utf-8\" /><title>订单状态</title></head>
@@ -955,6 +1008,7 @@ def _render_status_page(token: str, context: dict[str, Any]) -> str:
         <p>服务版本：{escape(order.service_version)}</p>
         <p>当前订单状态：{escape(order.status)}</p>
       </section>
+      {summary_html}
       {station_notice_html}
       <section style=\"background:#fff;border:1px solid #dbe3f0;border-radius:18px;padding:24px;\">
         <h2>下一步操作</h2>

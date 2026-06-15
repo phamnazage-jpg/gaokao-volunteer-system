@@ -47,6 +47,9 @@ def test_order_info_form_accepts_draft_and_submit(client, settings):
     assert page.status_code == 200, page.text
     assert "考生资料填写" in page.text
     assert "监护人已知情并同意" in page.text
+    assert "目标城市" in page.text
+    assert "目标专业" in page.text
+    assert "已有方案说明" in page.text
 
     draft = client.post(
         f"/portal/{token}/info",
@@ -56,6 +59,10 @@ def test_order_info_form_accepts_draft_and_submit(client, settings):
             "candidate_rank": 12034,
             "candidate_subjects": ["物理", "化学", "生物"],
             "candidate_interests": "计算机",
+            "target_cities": ["长沙", "上海"],
+            "target_majors": ["计算机科学与技术", "自动化"],
+            "university_preferences": "更偏向 985 / 211，接受省内优先",
+            "existing_plan_summary": "已有一份千问方案，需要人工校验是否扎堆",
             "guardian_notes": "更看重省内城市",
             "consent_version": "t12-web-mvp-v1",
             "consent_scope": "web-self-service-order-intake",
@@ -76,6 +83,10 @@ def test_order_info_form_accepts_draft_and_submit(client, settings):
             "candidate_rank": 12034,
             "candidate_subjects": ["物理", "化学", "生物"],
             "candidate_interests": "计算机",
+            "target_cities": ["长沙", "上海"],
+            "target_majors": ["计算机科学与技术", "自动化"],
+            "university_preferences": "更偏向 985 / 211，接受省内优先",
+            "existing_plan_summary": "已有一份千问方案，需要人工校验是否扎堆",
             "guardian_notes": "更看重省内城市",
             "consent_version": "t12-web-mvp-v1",
             "consent_scope": "web-self-service-order-intake",
@@ -91,6 +102,10 @@ def test_order_info_form_accepts_draft_and_submit(client, settings):
     status_page = client.get(f"/portal/{token}/status")
     assert status_page.status_code == 200, status_page.text
     assert "处理中" in status_page.text
+    assert "当前资料摘要" in status_page.text
+    assert "长沙,上海" in status_page.text
+    assert "计算机科学与技术,自动化" in status_page.text
+    assert "已有一份千问方案" in status_page.text
 
 
 def test_order_info_form_becomes_read_only_after_report_ready(
