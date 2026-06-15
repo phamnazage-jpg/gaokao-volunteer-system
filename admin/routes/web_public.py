@@ -4,12 +4,13 @@ from __future__ import annotations
 
 import json
 import logging
+import secrets
 from html import escape
 from pathlib import Path
 from typing import Any, Literal
 from urllib.parse import parse_qsl
 
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends, File, HTTPException, Request, UploadFile
 from fastapi.responses import (
     FileResponse,
     HTMLResponse,
@@ -83,6 +84,13 @@ class PortalIntakeResponse(BaseModel):
     intake_status: str
     stage: str
     order_id: str
+
+
+class PortalAttachmentUploaded(BaseModel):
+    order_id: str
+    intake_status: str
+    stage: str
+    attachment: dict[str, Any]
 
 
 @router.get("/", include_in_schema=False)
@@ -244,17 +252,10 @@ def order_info_page(
     )
 
 
-@router.post("/portal/{token}/info", response_model=PortalIntakeResponse)
-def submit_order_info(
-    token: str,
-    payload: IntakePayload,
-    settings: Settings = Depends(get_settings_dep),
-) -> PortalIntakeResponse:
-    order = _resolve_order_from_token(token, settings)
-    context = _build_portal_context(order, settings)
-    if context["stage"] == "pending_payment":
+def _assert_portal_info_mutable(stage: str) -> None:
+    if stage == "pending_payment":
         raise HTTPException(status_code=409, detail="payment required before intake")
-    if context["stage"] in {
+    if stage in {
         "processing",
         "report_ready",
         "completed",
@@ -264,6 +265,96 @@ def submit_order_info(
         raise HTTPException(
             status_code=409, detail="intake is read-only at current stage"
         )
+
+
+def _sanitize_upload_filename(name: str) -> str:
+    raw = Path(name or "upload.bin").name
+    return raw.replace("/", "_").replace("\\", "_")
+
+
+def _validate_upload(file_name: str, content_type: str | None, payload: bytes, settings: Settings) -> None:
+    suffix = Path(file_name).suffix.lower()
+    allowed_suffixes = {".pdf", ".txt", ".md", ".json", ".png", ".jpg", ".jpeg", ".webp"}
+    if suffix not in allowed_suffixes:
+        raise HTTPException(status_code=415, detail=f"unsupported attachment type: {suffix or 'unknown'}")
+    if len(payload) > settings.portal_upload_max_bytes:
+        raise HTTPException(status_code=413, detail="attachment too large")
+    if not payload:
+        raise HTTPException(status_code=400, detail="empty attachment")
+
+
+def _store_portal_attachment(
+    *, order_id: str, upload_name: str, content_type: str | None, payload: bytes, settings: Settings
+) -> dict[str, Any]:
+    safe_name = _sanitize_upload_filename(upload_name)
+    _validate_upload(safe_name, content_type, payload, settings)
+    upload_dir = Path(settings.portal_upload_dir) / order_id
+    upload_dir.mkdir(parents=True, exist_ok=True)
+    stored_name = f"{secrets.token_hex(8)}-{safe_name}"
+    target = upload_dir / stored_name
+    target.write_bytes(payload)
+    return {
+        "original_name": safe_name,
+        "stored_name": stored_name,
+        "content_type": content_type or "application/octet-stream",
+        "size_bytes": len(payload),
+        "storage_path": str(target),
+        "kind": "portal_attachment",
+    }
+
+
+@router.post("/portal/{token}/attachments", response_model=PortalAttachmentUploaded)
+def upload_order_attachment(
+    token: str,
+    file: UploadFile = File(...),
+    settings: Settings = Depends(get_settings_dep),
+) -> PortalAttachmentUploaded:
+    order = _resolve_order_from_token(token, settings)
+    context = _build_portal_context(order, settings)
+    _assert_portal_info_mutable(context["stage"])
+
+    raw = file.file.read()
+    attachment = _store_portal_attachment(
+        order_id=order.id,
+        upload_name=file.filename or "upload.bin",
+        content_type=file.content_type,
+        payload=raw,
+        settings=settings,
+    )
+    intake_store = IntakeStore.for_db(settings.orders_db_path)
+    try:
+        current = intake_store.get(order.id)
+        payload = dict(current.payload) if current is not None else {}
+        attachments = list(payload.get("attachments") or [])
+        attachments.append(attachment)
+        payload["attachments"] = attachments
+        record = intake_store.save(
+            order_id=order.id,
+            payload=payload,
+            submit=(current.status == "submitted") if current is not None else False,
+        )
+    finally:
+        intake_store.close()
+
+    refreshed_order = _resolve_order_from_token(token, settings)
+    refreshed_context = _build_portal_context(refreshed_order, settings)
+    return PortalAttachmentUploaded(
+        order_id=order.id,
+        intake_status=record.status,
+        stage=refreshed_context["stage"],
+        attachment=attachment,
+    )
+
+
+@router.post("/portal/{token}/info", response_model=PortalIntakeResponse)
+def submit_order_info(
+    token: str,
+    payload: IntakePayload,
+    settings: Settings = Depends(get_settings_dep),
+) -> PortalIntakeResponse:
+    order = _resolve_order_from_token(token, settings)
+    context = _build_portal_context(order, settings)
+    _assert_portal_info_mutable(context["stage"])
     intake_store = IntakeStore.for_db(settings.orders_db_path)
     try:
         record = intake_store.save(
@@ -734,6 +825,16 @@ def _render_info_page(
     privacy_checked = "checked" if payload.get("privacy_accepted") else ""
     service_terms_checked = "checked" if payload.get("service_terms_accepted") else ""
     guardian_checked = "checked" if payload.get("guardian_confirmed") else ""
+    attachments = payload.get("attachments") or []
+    attachment_items = []
+    for item in attachments:
+        if not isinstance(item, dict):
+            continue
+        attachment_items.append(
+            f"<li>{escape(str(item.get('original_name') or item.get('stored_name') or '未命名附件'))}"
+            f" ({escape(str(item.get('size_bytes') or '0'))} bytes)</li>"
+        )
+    attachments_html = "".join(attachment_items) or "<li>暂无附件</li>"
     return f"""<!doctype html>
 <html lang=\"zh-CN\">
   <head><meta charset=\"utf-8\" /><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" /><title>考生资料填写</title></head>
@@ -756,6 +857,14 @@ def _render_info_page(
         <button type=\"button\" onclick=\"submitIntake('draft')\">保存草稿</button>
         <button type=\"button\" onclick=\"submitIntake('submit')\">提交资料</button>
       </form>
+      <section style=\"margin-top:16px;padding:12px;border:1px solid #dbe3f0;border-radius:12px;\">
+        <h2>已上传附件</h2>
+        <ul>{attachments_html}</ul>
+        <form id=\"attachment-form\">
+          <input type=\"file\" name=\"file\" />
+          <button type=\"button\" onclick=\"uploadAttachment()\">上传 AI 方案 / 资料附件</button>
+        </form>
+      </section>
       <p><a href=\"/portal/{escape(token)}/status\">返回订单状态页</a></p>
       <pre id=\"result\"></pre>
     </main>
@@ -784,6 +893,23 @@ def _render_info_page(
         const body = await resp.json();
         document.getElementById('result').textContent = JSON.stringify(body, null, 2);
         if (resp.ok && mode === 'submit') window.location.href = '/portal/{escape(token)}/status';
+      }}
+
+      async function uploadAttachment() {{
+        const form = document.getElementById('attachment-form');
+        const data = new FormData(form);
+        const file = data.get('file');
+        if (!file || !(file instanceof File) || !file.name) {{
+          document.getElementById('result').textContent = '请先选择一个附件';
+          return;
+        }}
+        const resp = await fetch('/portal/{escape(token)}/attachments', {{
+          method: 'POST',
+          body: data,
+        }});
+        const body = await resp.json();
+        document.getElementById('result').textContent = JSON.stringify(body, null, 2);
+        if (resp.ok) window.location.reload();
       }}
     </script>
   </body>
