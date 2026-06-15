@@ -142,9 +142,12 @@
 - P1-4 webhook DB 连接污染
 - P1-6 分享 allowlist
 - P1-8 备份恢复演练
-- P2-2 channel_sync 单一 DAO 真相
 - P2-4 portal token / JWT secret 分离（已通过 P2-4 单元测试 + prod fail-closed）
 - P2-5 payment webhook secret fail-closed（已通过 P2-5 单元测试 + prod fail-closed）
+
+已完成并不再列为整改项：
+
+- P2-2 channel_sync 单一 DAO 真相
 - P2-6 历史快照头注补齐
 - X-02 支付域设计
 - X-03 Delivery 交付服务设计

@@ -271,7 +271,8 @@ def test_delivery_dispatch_script_prints_summary(settings, tmp_path):
 
     assert proc.returncode == 0, proc.stderr
     assert '"processed": 1' in proc.stdout
-    assert '"sent": 1' in proc.stdout
+    assert '"validated": 1' in proc.stdout
+    assert '"delivered": 0' in proc.stdout
 
 
 def test_delivery_watchdog_exits_zero_when_no_failures(settings, tmp_path):
