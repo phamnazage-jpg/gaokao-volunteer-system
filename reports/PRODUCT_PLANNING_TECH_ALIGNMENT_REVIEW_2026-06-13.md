@@ -3,12 +3,12 @@
 > 历史快照说明（2026-06-13 复核后更新）:
 >
 > - 本报告是 2026-06-13 的评审快照，不等于当前唯一真相源。
-> - 当前真相请优先阅读 `docs/CURRENT_STATE.md`。
-> - 以下问题中，已进入后续实现阶段并已修正的项，不应再按“当前阻塞”理解：
+> - 当前真相请优先阅读 `docs/CURRENT_STATE.md` → `docs/ACTIVE_EXECUTION_BOARD_2026-06-13.md` → `docs/ACTIVE_REMEDIATION_2026-06-13.md`。
+> - 以下问题中，已进入后续实现阶段并已修正的项，不应再按"当前阻塞"理解：
 >   1. PRD P3 功能编号重复
 >   2. ROADMAP 中已落地功能仍未勾选
->   3. TECH_ARCHITECTURE 标记为“设计中”
->   4. FINAL_COMPLETION_REPORT 仍为“条件完成”
+>   3. TECH_ARCHITECTURE 标记为"设计中"
+>   4. FINAL_COMPLETION_REPORT 仍为"条件完成"
 >   5. 依赖清单未声明 Jinja2 / WeasyPrint / cairocffi / ruff / mypy
 
 **项目路径**: `/home/long/project/gaokao-volunteer-system`  

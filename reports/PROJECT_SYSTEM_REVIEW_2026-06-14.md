@@ -1,8 +1,10 @@
 # gaokao-volunteer-system 系统性 Review 报告（2026-06-14）
 
-**评审对象**: `/home/long/project/gaokao-volunteer-system`  
-**评审方式**: 当前文档真相核对 + 关键源码结构审查 + 安全/测试/运维专项审查 + 本地门禁复核  
-**评审标准**: 严格标准；以“真实业务闭环、数据安全、验证可信度、可运维性”为主轴  
+> 历史快照（2026-06-14）。当前真相源请优先阅读：`docs/CURRENT_STATE.md` → `docs/ACTIVE_EXECUTION_BOARD_2026-06-13.md` → `docs/ACTIVE_REMEDIATION_2026-06-13.md` → `docs/P0_P1_P2_REMEDIATION_PLAN_2026-06-14.md`。
+
+**评审对象**: `/home/long/project/gaokao-volunteer-system`
+**评审方式**: 当前文档真相核对 + 关键源码结构审查 + 安全/测试/运维专项审查 + 本地门禁复核
+**评审标准**: 严格标准；以"真实业务闭环、数据安全、验证可信度、可运维性"为主轴
 **当前真相源**: `docs/CURRENT_STATE.md`
 
 ---
@@ -428,7 +430,7 @@ python3 scripts/check_coverage_gate.py coverage.xml
 
 ### 5.2 观察到的结果
 
-1. **系统 Python 环境**缺少 `pytest / ruff / mypy`，全局命令不可直接复现。  
+1. **系统 Python 环境**缺少 `pytest / ruff / mypy`，全局命令不可直接复现。
 2. **`.venv` 环境下**：
    - `pytest`: **639 passed, 5 failed**
    - 失败主要来自：
@@ -438,8 +440,8 @@ python3 scripts/check_coverage_gate.py coverage.xml
 3. 失败原因并非随机：
    - 若测试通过 `subprocess.run(["python3", ...])` 启动脚本，脚本会落到系统 Python，随后因 `admin.__init__ -> admin.app -> import uvicorn` 报 `ModuleNotFoundError: uvicorn`
    - `locust` 可执行文件缺失，导致性能测试无法启动
-4. `ruff check`：**通过**  
-5. `mypy`：未见硬错误输出，但存在 **8 条 `annotation-unchecked` 提示**，集中在测试文件  
+4. `ruff check`：**通过**
+5. `mypy`：未见硬错误输出，但存在 **8 条 `annotation-unchecked` 提示**，集中在测试文件
 6. `scripts/check_coverage_gate.py coverage.xml`：**失败**，报 `missing core coverage entries`，说明当前 coverage artifact 与 gate 脚本的核心文件映射未对齐。
 
 ### 5.3 这组结果说明什么

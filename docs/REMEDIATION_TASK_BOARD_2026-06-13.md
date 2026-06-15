@@ -1,8 +1,10 @@
 # 系统性评审整改任务板
 
-**日期**: 2026-06-13  
-**对应报告**: `reports/PROJECT_SYSTEM_REVIEW_2026-06-13.md`  
-**当前 Gate**: 🟢 **PASS**  
+> 历史快照（2026-06-13）。当前真相源请优先阅读：`docs/CURRENT_STATE.md` → `docs/ACTIVE_EXECUTION_BOARD_2026-06-13.md` → `docs/ACTIVE_REMEDIATION_2026-06-13.md`。
+
+**日期**: 2026-06-13
+**对应报告**: `reports/PROJECT_SYSTEM_REVIEW_2026-06-13.md`
+**当前 Gate**: 🟢 **PASS**
 **适用范围**: `gaokao-volunteer-system` 当前 working tree 与后续交付基线
 
 ---
