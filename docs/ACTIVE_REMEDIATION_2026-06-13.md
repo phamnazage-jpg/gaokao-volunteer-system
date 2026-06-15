@@ -1,6 +1,6 @@
 # ACTIVE_REMEDIATION
 
-最后更新: 2026-06-13
+最后更新: 2026-06-15
 状态词: 当前仍然有效的问题清单（仅保留未解决项）
 真相源: `docs/CURRENT_STATE.md`
 来源基线:
@@ -108,12 +108,13 @@
 - 站内查看 + PDF 下载最小交付闭环
 - `DeliveryDispatcher` + `scripts/gaokao-delivery-dispatch.py`
 - `ready -> sent` / 缺文件 `-> failed` 的最小执行链
+- 站内通知发送器：dispatch 时真实生成 `station_notice` 内容，并在 portal 状态页向用户展示“通知已发送”
+- 真实邮件通知发送器：`SMTPDeliverySender` + `customer_email` 采集链 + `email` 通道 dispatch（本地 stub SMTP 已验证）
 - dispatcher/watchdog runbook + systemd/cron 样例（`docs/DELIVERY_RETENTION_OPS_RUNBOOK.md` / `deploy/systemd` / `deploy/cron`）
 
 仍缺：
 
-- 真实邮件/站内通知发送执行器
-- 自动重试调度 / 告警链（watchdog/systemd/cron 样例已补，生产安装未完成）
+- 自动重试调度 / 生产告警链（watchdog/systemd/cron 样例已补，生产安装未完成）
 - 面向用户的独立通知审计页
 - 对账/退款与交付失败补偿联动
 
@@ -206,25 +207,25 @@
 - `data.crowd_db.quality_summary` 已补 province-level summary，后续可接产品文案/页面
 - 继续提升非湖南省份高置信数据密度
 
-#### B-2 本地验证环境仍未完全固化为单命令体验
+#### B-2 本地验证环境已基本统一，仍待生产 runner 长期观察
 
 严重度: P1
-当前状态: 部分解决，仍待完善
+当前状态: 已解决（本地/CI 统一脚本门禁已落地）
 
 已解决：
 
 - requirements-admin / requirements-dev 已修正
-- CI 覆盖率门禁已对齐真实阈值
+- `scripts/dev-verify.sh` 已成为本地统一入口
+- `.github/workflows/ci.yml` 已统一走 `scripts/dev-verify.sh`
+- `scripts/check_coverage_gate.py` 已纳入 dev-verify，core coverage gate 与本地/CI 对齐
 
 仍缺：
 
-- `make verify` / `scripts/dev-verify.sh` 统一入口
-- 本地一键创建 venv + 安装依赖 + 运行门禁
+- 生产 runner / Python 3.12 长期观察（当前已通过 skip 兼容 SMTP stdlib 移除）
 
 建议动作：
 
-- 新建 `scripts/dev-verify.sh`
-- README 增加标准开发环境初始化命令
+- 后续若迁移 Python 3.12+，将 SMTP stub 从 stdlib `smtpd/asyncore` 迁移到 `aiosmtpd`
 
 #### B-3 历史评审文档仍可能被误读为当前阻塞
 
@@ -236,16 +237,15 @@
 - 对齐评审报告已加历史快照说明
 - `CURRENT_STATE.md` 已建立
 
+已解决：
+
+- `docs/AUDIT_REPORT_2026-06-11.md` 已标注历史快照
+- `docs/REMEDIATION_TASK_BOARD_2026-06-11.md` 已标注历史快照
+- `reports/PROJECT_SYSTEM_REVIEW_2026-06-13.md` 已标注历史快照与真相源跳转
+
 仍缺：
 
-- 其他历史文档（尤其旧 audit / remediation / review 报告）未全部统一加“历史快照”页眉
-
-建议动作：
-
-- 对 `docs/AUDIT_REPORT_2026-06-11.md`
-- 对 `docs/REMEDIATION_TASK_BOARD_2026-06-11.md`
-- 对 `reports/PROJECT_SYSTEM_REVIEW_2026-06-13.md`
-  补统一快照声明与真相源跳转
+- 无
 
 ---
 

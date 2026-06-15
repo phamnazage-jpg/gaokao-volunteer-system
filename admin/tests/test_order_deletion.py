@@ -20,6 +20,7 @@ def _seed_order(db_path: str, order_id: str = "GKO-20260614-DELETE") -> Order:
         customer_name="张家长",
         customer_phone="13800138000",
         customer_wechat="wx-parent-01",
+        customer_email="parent@example.com",
         candidate_name="张三",
         candidate_province="湖南",
         notes="需要删除的测试订单",
@@ -78,7 +79,8 @@ def test_admin_delete_order_removes_artifacts_and_related_records(
 
     notification_service = DeliveryNotificationService.for_db(settings.orders_db_path)
     try:
-        assert len(notification_service.list_events(order.id)) == 1
+        events = notification_service.list_events(order.id)
+        assert {event.channel for event in events} == {"station", "email"}
     finally:
         notification_service.close()
 
@@ -120,6 +122,12 @@ def test_admin_anonymize_order_masks_pii_but_keeps_order(
     client, auth_headers, settings
 ):
     order = _seed_order(settings.orders_db_path, order_id="GKO-20260614-ANON")
+    _mark_paid(settings, order)
+    IntakeStore.for_db(settings.orders_db_path).save(
+        order_id=order.id,
+        payload={"candidate_score": 578, "guardian_notes": "contains pii"},
+        submit=True,
+    )
 
     resp = client.delete(
         f"/api/orders/{order.id}?mode=anonymize&reason=retention_expired",
@@ -135,8 +143,27 @@ def test_admin_anonymize_order_masks_pii_but_keeps_order(
     assert anonymized.customer_name == "已匿名化"
     assert anonymized.customer_phone is None
     assert anonymized.customer_wechat is None
+    assert anonymized.customer_email is None
     assert anonymized.candidate_name == "匿名考生"
     assert anonymized.notes == "[ANONYMIZED] retention_expired"
+
+    intake_store = IntakeStore.for_db(settings.orders_db_path)
+    try:
+        intake = intake_store.get(order.id)
+    finally:
+        intake_store.close()
+    assert intake is not None
+    assert intake.payload == {}
+
+    payment_service = PaymentService.for_db(
+        settings.orders_db_path,
+        base_url=settings.payment_base_url,
+        webhook_secret=settings.payment_webhook_secret,
+    )
+    payment = payment_service.get_payment_by_order(order.id)
+    assert payment is not None
+    assert payment.callback_payload is None
+    assert payment.checkout_token is None
 
     deletion_service = OrderDeletionService.for_db(settings.orders_db_path)
     try:

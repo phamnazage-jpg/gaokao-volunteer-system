@@ -32,6 +32,7 @@ def test_order_auto_derives_phone_hash():
         service_version="basic",
         amount_cents=1000,
         customer_phone="13800001234",
+        customer_email="parent@example.com",
     )
     assert order.customer_phone_hash == hash_for_index("13800001234")
 
@@ -43,6 +44,7 @@ def test_order_to_db_row_encrypts_phone():
         service_version="basic",
         amount_cents=1000,
         customer_phone="13800001234",
+        customer_email="parent@example.com",
     )
     row = order.to_db_row()
     # 明文不出现在 DB 行
@@ -52,6 +54,7 @@ def test_order_to_db_row_encrypts_phone():
     assert row["customer_phone_enc"] != "13800001234"
     # hash 字段保留
     assert row["customer_phone_hash"] == hash_for_index("13800001234")
+    assert row["customer_email"] == "parent@example.com"
     # 密文可解
     assert decrypt(row["customer_phone_enc"]) == "13800001234"
 

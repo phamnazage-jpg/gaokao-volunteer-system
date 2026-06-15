@@ -59,6 +59,7 @@ class Order:
     customer_phone: Optional[str] = None  # 明文（API 入口接收）
     customer_phone_hash: Optional[str] = None  # 自动派生
     customer_wechat: Optional[str] = None
+    customer_email: Optional[str] = None
 
     # 考生
     candidate_name: Optional[str] = None

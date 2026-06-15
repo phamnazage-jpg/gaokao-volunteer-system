@@ -28,6 +28,7 @@ CREATE TABLE IF NOT EXISTS orders (
     customer_phone_enc  TEXT,
     customer_phone_hash TEXT,
     customer_wechat     TEXT,
+    customer_email      TEXT,
 
     -- 考生信息
     candidate_name          TEXT,
@@ -100,6 +101,11 @@ def apply_schema(db_path: str | Path) -> sqlite3.Connection:
     try:
         conn.execute("PRAGMA foreign_keys = ON")
         conn.executescript(SCHEMA_SQL)
+        columns = {
+            row[1] for row in conn.execute("PRAGMA table_info(orders)").fetchall()
+        }
+        if "customer_email" not in columns:
+            conn.execute("ALTER TABLE orders ADD COLUMN customer_email TEXT")
         conn.commit()
     except Exception:
         conn.close()

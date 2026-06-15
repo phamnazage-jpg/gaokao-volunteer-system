@@ -41,6 +41,7 @@ def test_public_create_order_endpoint(client):
             "amount_cents": 9900,
             "customer_name": "张家长",
             "customer_phone": "13800138000",
+            "customer_email": "parent@example.com",
             "candidate_name": "张三",
             "candidate_province": "湖南",
         },
@@ -55,6 +56,9 @@ def test_public_create_order_endpoint(client):
     assert body["next_step"] == "payment"
     assert body["checkout_url"].startswith("/pay/mock/")
     assert "/portal/" in body["portal_status_url"]
+    with OrdersDAO.connect(client.app.state.settings.orders_db_path) as dao:
+        created = dao.get(body["order_id"])
+    assert created.customer_email == "parent@example.com"
 
 
 def test_public_create_order_rejects_missing_contact(client):
@@ -84,6 +88,7 @@ def test_public_create_order_rejects_price_tampering(client):
             "amount_cents": 1,
             "customer_name": "张家长",
             "customer_phone": "13800138000",
+            "customer_email": "parent@example.com",
             "candidate_province": "湖南",
         },
     )
@@ -104,6 +109,7 @@ def test_mock_payment_complete_rejects_wrong_portal_token(client):
             "amount_cents": 9900,
             "customer_name": "张家长",
             "customer_phone": "13800138000",
+            "customer_email": "parent@example.com",
             "candidate_province": "湖南",
         },
     )
@@ -123,6 +129,7 @@ def test_payment_return_redirects_to_portal_status(client):
             "amount_cents": 9900,
             "customer_name": "张家长",
             "customer_phone": "13800138000",
+            "customer_email": "parent@example.com",
             "candidate_province": "湖南",
         },
     )

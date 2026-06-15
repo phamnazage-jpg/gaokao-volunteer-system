@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import subprocess
 from pathlib import Path
 
@@ -13,7 +14,12 @@ from data.payments.service import PaymentService
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
 
-def _seed_order(db_path: str, order_id: str = "GKO-20260614-DISPATCH") -> Order:
+def _seed_order(
+    db_path: str,
+    order_id: str = "GKO-20260614-DISPATCH",
+    *,
+    customer_email: str | None = None,
+) -> Order:
     order = Order(
         id=order_id,
         source="web",
@@ -22,6 +28,7 @@ def _seed_order(db_path: str, order_id: str = "GKO-20260614-DISPATCH") -> Order:
         status="pending",
         customer_name="张家长",
         customer_phone="13800138000",
+        customer_email=customer_email,
         candidate_name="张三",
         candidate_province="湖南",
     )
@@ -89,6 +96,72 @@ def test_dispatch_ready_station_event_marks_sent(settings, tmp_path):
         notification_service.close()
     assert event.status == "sent"
     assert event.attempt_count == 1
+    payload = json.loads(event.payload_json)
+    station_notice = payload.get("station_notice")
+    assert station_notice is not None
+    assert station_notice["title"] == "报告已就绪"
+    assert order.id in station_notice["body"]
+    assert station_notice["sent_at"] == event.last_attempt_at
+
+
+class _FakeEmailSender:
+    def __init__(self) -> None:
+        self.sent: list[dict[str, str]] = []
+
+    def send_report_ready(
+        self, *, recipient: str, order_id: str, subject: str, body: str
+    ) -> dict[str, str]:
+        payload = {
+            "recipient": recipient,
+            "order_id": order_id,
+            "subject": subject,
+            "body": body,
+        }
+        self.sent.append(payload)
+        return payload
+
+
+def test_dispatch_ready_email_event_marks_sent(settings, tmp_path):
+    order = _seed_order(
+        settings.orders_db_path,
+        order_id="GKO-20260614-DISPATCH-EMAIL",
+        customer_email="parent@example.com",
+    )
+    _mark_paid(settings, order)
+    IntakeStore.for_db(settings.orders_db_path).save(
+        order_id=order.id, payload={"candidate_score": 578}, submit=True
+    )
+    _attach_ready_delivery(settings, tmp_path, order.id)
+
+    from data.notifications.dispatcher import DeliveryDispatcher
+
+    email_sender = _FakeEmailSender()
+    dispatcher = DeliveryDispatcher.for_db(
+        settings.orders_db_path,
+        email_sender=email_sender,
+    )
+    try:
+        result = dispatcher.dispatch_ready_events(channel="email")
+    finally:
+        dispatcher.close()
+
+    assert result.processed == 1
+    assert result.sent == 1
+    assert result.failed == 0
+    assert len(email_sender.sent) == 1
+    assert email_sender.sent[0]["recipient"] == "parent@example.com"
+
+    notification_service = DeliveryNotificationService.for_db(settings.orders_db_path)
+    try:
+        event = notification_service.list_events(order.id, channel="email")[0]
+    finally:
+        notification_service.close()
+    assert event.status == "sent"
+    payload = json.loads(event.payload_json)
+    email_notice = payload.get("email_notice")
+    assert email_notice is not None
+    assert email_notice["recipient"] == "parent@example.com"
+    assert email_notice["subject"]
 
 
 def test_dispatch_ready_station_event_marks_failed_when_pdf_missing(settings, tmp_path):

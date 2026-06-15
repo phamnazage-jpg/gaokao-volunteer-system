@@ -7,7 +7,12 @@ from data.orders.models import Order
 from data.payments.service import PaymentService
 
 
-def _seed_order(db_path: str, order_id: str = "GKO-20260614-NOTIFY") -> Order:
+def _seed_order(
+    db_path: str,
+    order_id: str = "GKO-20260614-NOTIFY",
+    *,
+    customer_email: str | None = None,
+) -> Order:
     order = Order(
         id=order_id,
         source="web",
@@ -16,6 +21,7 @@ def _seed_order(db_path: str, order_id: str = "GKO-20260614-NOTIFY") -> Order:
         status="pending",
         customer_name="张家长",
         customer_phone="13800138000",
+        customer_email=customer_email,
         candidate_name="张三",
         candidate_province="湖南",
     )
@@ -83,7 +89,11 @@ def test_report_ready_transition_creates_notification_event(
 
 
 def test_dao_delivered_transition_also_creates_notification_event(settings, tmp_path):
-    order = _seed_order(settings.orders_db_path, order_id="GKO-20260614-NOTIFY-DAO")
+    order = _seed_order(
+        settings.orders_db_path,
+        order_id="GKO-20260614-NOTIFY-DAO",
+        customer_email="parent@example.com",
+    )
     _mark_paid(settings, order)
     IntakeStore.for_db(settings.orders_db_path).save(
         order_id=order.id, payload={"candidate_score": 578}, submit=True
@@ -111,11 +121,12 @@ def test_dao_delivered_transition_also_creates_notification_event(settings, tmp_
         events = notification_service.list_events(order.id)
     finally:
         notification_service.close()
-    assert len(events) == 1
-    assert events[0].event_type == "report_ready"
-    assert events[0].status == "ready"
-    assert events[0].attempt_count == 1
-    assert events[0].failure_reason is None
+    assert len(events) == 2
+    event_types = {(event.channel, event.event_type) for event in events}
+    assert ("station", "report_ready") in event_types
+    assert ("email", "report_ready_email") in event_types
+    email_event = next(event for event in events if event.channel == "email")
+    assert "parent@example.com" in email_event.payload_json
 
 
 def test_delivery_notification_tracks_failure_and_sent_status(settings, tmp_path):

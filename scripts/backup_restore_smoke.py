@@ -167,7 +167,7 @@ def run_restore_smoke(backup_dir: str | Path) -> dict[str, object]:
                     reason="report_ready",
                 )
 
-            token = issue_portal_token(order.id, settings.jwt_secret)
+            token = issue_portal_token(order.id, settings.portal_token_secret)
             status_page = client.get(f"/portal/{token}/status")
             if status_page.status_code != 200 or "报告已就绪" not in status_page.text:
                 raise RuntimeError(

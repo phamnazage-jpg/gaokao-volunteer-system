@@ -24,6 +24,7 @@ from data.customer_portal.token import (
     issue_portal_token,
     verify_portal_token,
 )
+from data.notifications.email_service import DeliveryNotificationService
 from data.orders.dao import OrderNotFound, OrdersDAO
 from data.orders.intake_schema import IntakePayload
 from data.orders.intake_store import IntakeStore
@@ -114,7 +115,7 @@ def create_public_order_endpoint(
 
     with OrdersDAO.connect(settings.orders_db_path) as dao:
         order = create_public_order(dao, payload)
-    portal_token = issue_portal_token(order.id, settings.jwt_secret)
+    portal_token = issue_portal_token(order.id, settings.portal_token_secret)
     try:
         checkout = payment_service.create_checkout(order.id, portal_token=portal_token)
     except PaymentError as exc:
@@ -357,7 +358,7 @@ def _payment_service(settings: Settings) -> PaymentService:
 
 def _resolve_order_from_token(token: str, settings: Settings) -> Order:
     try:
-        payload = verify_portal_token(token, settings.jwt_secret)
+        payload = verify_portal_token(token, settings.portal_token_secret)
     except PortalTokenError as exc:
         raise HTTPException(status_code=401, detail=str(exc)) from exc
     with OrdersDAO.connect(settings.orders_db_path) as dao:
@@ -375,6 +376,15 @@ def _build_portal_context(order: Order, settings: Settings) -> dict[str, Any]:
         intake = intake_store.get(order.id)
     finally:
         intake_store.close()
+    notification_service = DeliveryNotificationService.for_db(settings.orders_db_path)
+    try:
+        sent_station_events = notification_service.list_events(
+            order.id,
+            status="sent",
+            channel="station",
+        )
+    finally:
+        notification_service.close()
 
     stage = "pending_payment"
     report_html_ready = bool(order.audit_report and Path(order.audit_report).is_file())
@@ -402,6 +412,15 @@ def _build_portal_context(order: Order, settings: Settings) -> dict[str, Any]:
         stage = "info_submitted"
 
     title, subtitle = _STAGE_META[stage]
+    latest_station_notice: dict[str, Any] | None = None
+    if sent_station_events:
+        try:
+            latest_payload = json.loads(sent_station_events[-1].payload_json)
+        except json.JSONDecodeError:
+            latest_payload = {}
+        station_notice = latest_payload.get("station_notice")
+        if isinstance(station_notice, dict):
+            latest_station_notice = station_notice
     return {
         "stage": stage,
         "stage_title": title,
@@ -411,6 +430,7 @@ def _build_portal_context(order: Order, settings: Settings) -> dict[str, Any]:
         "report_html_ready": report_html_ready,
         "report_pdf_ready": report_pdf_ready,
         "order": order,
+        "station_notice": latest_station_notice,
     }
 
 
@@ -540,6 +560,7 @@ def _render_checkout_page(service_version: str) -> str:
         <form id=\"checkout-form\">
           <label>家长称呼<input name=\"customer_name\" required /></label>
           <label>手机号<input name=\"customer_phone\" required /></label>
+          <label>邮箱（用于接收邮件通知）<input name=\"customer_email\" type=\"email\" /></label>
           <label>考生姓名<input name=\"candidate_name\" /></label>
           <label>省份<input name=\"candidate_province\" value=\"湖南\" required /></label>
           <label>备注<textarea name=\"notes\"></textarea></label>
@@ -557,6 +578,7 @@ def _render_checkout_page(service_version: str) -> str:
           amount_cents: {amount},
           customer_name: form.get('customer_name'),
           customer_phone: form.get('customer_phone'),
+          customer_email: form.get('customer_email') || null,
           candidate_name: form.get('candidate_name'),
           candidate_province: form.get('candidate_province'),
           notes: form.get('notes'),
@@ -673,7 +695,7 @@ def _complete_simulated_payment(
     if payment is None:
         raise HTTPException(status_code=404, detail="payment not found")
     try:
-        portal_payload = verify_portal_token(token, settings.jwt_secret)
+        portal_payload = verify_portal_token(token, settings.portal_token_secret)
     except PortalTokenError as exc:
         raise HTTPException(status_code=401, detail=str(exc)) from exc
     if (
@@ -777,6 +799,19 @@ def _render_status_page(token: str, context: dict[str, Any]) -> str:
         )
     if not report_links:
         report_links = "<li>报告生成中，交付物就绪后这里会显示查看/下载入口。</li>"
+    station_notice_html = ""
+    station_notice = context.get("station_notice")
+    if isinstance(station_notice, dict):
+        title = escape(str(station_notice.get("title") or "站内通知"))
+        body = escape(str(station_notice.get("body") or ""))
+        sent_at = escape(str(station_notice.get("sent_at") or ""))
+        station_notice_html = f"""
+      <section style=\"background:#eef6ff;border:1px solid #b9d7ff;border-radius:18px;padding:24px;\">
+        <h2>通知已发送</h2>
+        <p><strong>{title}</strong></p>
+        <p>{body}</p>
+        <p style=\"color:#4f6480;font-size:14px;\">发送时间：{sent_at}</p>
+      </section>"""
     return f"""<!doctype html>
 <html lang=\"zh-CN\"><head><meta charset=\"utf-8\" /><title>订单状态</title></head>
   <body style=\"font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f4f7fb;margin:0;padding:32px 20px;color:#172033;\">
@@ -788,6 +823,7 @@ def _render_status_page(token: str, context: dict[str, Any]) -> str:
         <p>服务版本：{escape(order.service_version)}</p>
         <p>当前订单状态：{escape(order.status)}</p>
       </section>
+      {station_notice_html}
       <section style=\"background:#fff;border:1px solid #dbe3f0;border-radius:18px;padding:24px;\">
         <h2>下一步操作</h2>
         <ul>

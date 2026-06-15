@@ -135,7 +135,7 @@ def test_policy_edit_caps():
     _eq(p.can_comment, True, "edit can comment")
     _eq(p.can_edit, True, "edit can edit")
     _eq(p.mask_name, False, "edit does NOT mask name")
-    _eq(p.visible_fields, None, "edit visible_fields=None (default pass)")
+    _truthy(p.visible_fields is not None, "edit uses explicit visible_fields allowlist")
 
 
 def test_policy_admin_alias_to_edit():
@@ -189,8 +189,8 @@ def test_allows_field_for_edit():
     _eq(p.allows_field("candidate_phone"), True, "edit allows phone")
     _eq(
         p.allows_field("password_hash"),
-        True,
-        "edit: visible_fields=None -> pass (上层负责拦截 hash)",
+        False,
+        "edit: password_hash 不在 allowlist 且仍受内部字段规则保护",
     )
 
 
@@ -316,7 +316,7 @@ def test_render_edit_name_unmasked_in_payload():
 
 
 def test_render_admin_aliases_to_edit():
-    """admin 视为 edit, 姓名不脱敏, 字段全通过。"""
+    """admin 视为 edit, 姓名不脱敏, 但字段仍受显式 allowlist 约束。"""
     out = render_report_payload("admin", _SAMPLE_REPORT)
     _eq(out["permission"], "edit", "admin perm normalized to edit in payload")
     _eq(out["payload"]["candidate_name"], "李明", "admin: name intact")
@@ -390,8 +390,155 @@ def test_render_visible_fields_echo():
 
 
 def test_render_edit_visible_fields_none():
+    """P1-6 修复后: edit 必须使用显式 allowlist, 不再返回 None pass-through.
+
+    旧契约 (visible_fields=None) 会让未来新增的敏感字段自动外泄,
+    这里改为 RED 断言 visible_fields 为非 None 且为显式集合.
+    """
     out = render_report_payload("edit", _SAMPLE_REPORT)
-    _eq(out["visible_fields"], None, "edit: visible_fields=None means pass-through")
+    _truthy(
+        out["visible_fields"] is not None,
+        "edit: visible_fields must be explicit allowlist, not None",
+    )
+
+
+def test_render_admin_visible_fields_none():
+    """P1-6: admin (alias->edit) 也必须使用显式 allowlist."""
+    out = render_report_payload("admin", _SAMPLE_REPORT)
+    _truthy(
+        out["visible_fields"] is not None,
+        "admin: visible_fields must be explicit allowlist, not None",
+    )
+
+
+# ---------------------------------------------------------------------------
+# P1-6 回归测试: 新增敏感字段不应自动外泄
+# ---------------------------------------------------------------------------
+
+
+def test_policy_edit_uses_explicit_allowlist():
+    """P1-6: edit.permission 策略必须返回非 None 的显式 allowlist."""
+    p = PermissionPolicy.for_permission("edit")
+    _truthy(
+        p.visible_fields is not None,
+        "edit: visible_fields must be explicit frozenset, not None pass-through",
+    )
+
+
+def test_policy_admin_uses_explicit_allowlist():
+    """P1-6: admin (alias->edit) 同样必须返回非 None allowlist."""
+    p = PermissionPolicy.for_permission("admin")
+    _truthy(
+        p.visible_fields is not None,
+        "admin: visible_fields must be explicit frozenset, not None pass-through",
+    )
+
+
+def test_edit_does_not_leak_new_sensitive_field():
+    """P1-6 核心回归: edit 模式下, payload 里塞入一个全新的敏感字段 (不在任何
+    allowlist 中) 不应自动出现在对外 payload 中.
+
+    这条用例模拟"未来某个 commit 在 report 里新增了 candidate_bank_card /
+    api_token / home_address 等敏感字段, edit/admin 是否会无声地把它外暴".
+    """
+    report = {
+        "report_id": "R-NEW",
+        "candidate_name": "李明",
+        "candidate_bank_card": "6222020200001234567",  # 新增敏感字段
+        "candidate_home_address": "长沙市岳麓区某街道 88 号",  # 新增敏感字段
+        "api_token": "sk_live_secret_abcdef",  # 新增敏感字段
+    }
+    for perm in ("edit", "admin"):
+        out = render_report_payload(perm, report)
+        payload = out["payload"]
+        _eq(
+            "candidate_bank_card" in payload,
+            False,
+            f"{perm}: 新增敏感字段 candidate_bank_card 不应自动外泄",
+        )
+        _eq(
+            "candidate_home_address" in payload,
+            False,
+            f"{perm}: 新增敏感字段 candidate_home_address 不应自动外泄",
+        )
+        _eq(
+            "api_token" in payload,
+            False,
+            f"{perm}: 新增敏感字段 api_token 不应自动外泄",
+        )
+
+
+def test_edit_allows_field_rejects_unknown_field():
+    """P1-6: edit 的 allows_field 必须对未知字段返回 False (allowlist 语义)."""
+    p = PermissionPolicy.for_permission("edit")
+    # 已知业务字段仍然允许
+    _eq(p.allows_field("report_id"), True, "edit: report_id allowed")
+    _eq(p.allows_field("recommendations"), True, "edit: recommendations allowed")
+    # 未来新增的、显式 allowlist 中不存在的字段必须被拒绝
+    _eq(
+        p.allows_field("candidate_bank_card"),
+        False,
+        "edit: 新增敏感字段 candidate_bank_card 被显式 allowlist 拒绝",
+    )
+    _eq(
+        p.allows_field("api_token"),
+        False,
+        "edit: 新增敏感字段 api_token 被显式 allowlist 拒绝",
+    )
+
+
+def test_admin_allows_field_rejects_unknown_field():
+    """P1-6: admin (alias->edit) 的 allows_field 同样拒绝未知字段."""
+    p = PermissionPolicy.for_permission("admin")
+    _eq(
+        p.allows_field("candidate_bank_card"),
+        False,
+        "admin: 新增敏感字段 candidate_bank_card 被显式 allowlist 拒绝",
+    )
+
+
+def test_edit_still_hides_internal_fields():
+    """P1-6 修复后, edit/admin 的隐式内部敏感字段 (password_hash 等) 仍必须被拦截.
+
+    切换为 allowlist 后, 这条由 _ALWAYS_HIDDEN_FIELDS + 显式 allowlist 共同保证:
+    即便未来有人在 allowlist 里不小心漏掉 password_hash, 也仍被黑名单兜底.
+    """
+    report = {
+        "report_id": "R-INT",
+        "candidate_name": "李明",
+        "password_hash": "hashed-secret",
+        "internal_note": "ops only",
+        "raw_payload": {"deep": "data"},
+    }
+    for perm in ("edit", "admin"):
+        out = render_report_payload(perm, report)
+        payload = out["payload"]
+        _eq(
+            "password_hash" in payload,
+            False,
+            f"{perm}: password_hash 仍必须被拦截",
+        )
+        _eq(
+            "internal_note" in payload,
+            False,
+            f"{perm}: internal_note 仍必须被拦截",
+        )
+        _eq(
+            "raw_payload" in payload,
+            False,
+            f"{perm}: raw_payload 仍必须被拦截",
+        )
+
+
+def test_edit_allowlist_superset_of_comment():
+    """P1-6: edit 的 allowlist 必须是 comment allowlist 的超集, 保证业务字段透传."""
+    edit_p = PermissionPolicy.for_permission("edit")
+    comment_p = PermissionPolicy.for_permission("comment")
+    _eq(
+        comment_p.visible_fields.issubset(edit_p.visible_fields),
+        True,
+        "edit allowlist 必须是 comment allowlist 的超集",
+    )
 
 
 # ---------------------------------------------------------------------------

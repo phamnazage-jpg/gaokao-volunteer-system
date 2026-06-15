@@ -56,6 +56,8 @@
 - `scripts/gaokao-delivery-dispatch.py`
 - `scripts/gaokao-delivery-watchdog.py`（失败返回 exit code `2`）
 - `ready -> sent` / `缺文件 -> failed` / `attempt_count` 递增
+- `station` 通道 dispatch 时会真实生成 `station_notice`，portal 状态页展示“通知已发送”消息卡片
+- `email` 通道使用 `SMTPDeliverySender` 发送真实邮件通知，支持 `GAOKAO_SMTP_*` 配置，并已通过本地 stub SMTP 验证
 - `docs/DELIVERY_RETENTION_OPS_RUNBOOK.md`
 - `deploy/systemd/gaokao-delivery-{dispatch,watchdog}.{service,timer}`
 - `deploy/cron/gaokao-jobs.crontab`
@@ -80,10 +82,10 @@
 
 ## 7. 下一步实施建议
 
-1. 增加邮件或站内通知真实发送器（二选一先闭环）
-2. 增加失败重试阈值与告警推送
+1. 增加失败重试阈值与告警推送
+2. 增加面向用户的独立通知审计页
 3. 把 `sent` 语义拆成“可投递校验通过”与“真实渠道已发送”
-4. 再决定是否扩到多通道
+4. 再决定是否扩到更多通道
 
 ## 8. 生产化接入口径
 

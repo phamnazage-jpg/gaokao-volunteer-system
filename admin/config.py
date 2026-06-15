@@ -16,8 +16,17 @@ from fastapi import Request
 
 # 安全占位密钥（仅 dev 环境）。生产必须显式设置 GAOKAO_JWT_SECRET。
 _DEV_JWT_SECRET = "dev-only-do-not-use-in-prod-please-override-via-env"
+# Portal token 独立 dev 占位密钥。**与后台 JWT 密钥不同**,P2-4 验收要求。
+# 生产环境必须显式设置 GAOKAO_PORTAL_TOKEN_SECRET。
+_DEV_PORTAL_TOKEN_SECRET = "dev-only-portal-token-secret-do-not-use-in-prod"
+# Payment webhook dev 默认密钥。生产环境必须显式设置,否则 fail-closed (P2-5)。
+_DEV_PAYMENT_WEBHOOK_SECRET = "dev-mock-payment-secret"
 _DEFAULT_ADMIN_PASSWORD = "admin123"
 _MIN_ADMIN_PASSWORD_LENGTH = 10
+# Webhook secret 最低长度门槛 (生产环境)
+_MIN_PROD_WEBHOOK_SECRET_LEN = 16
+# Portal token secret 最低长度门槛 (生产环境)
+_MIN_PORTAL_TOKEN_SECRET_LEN = 32
 
 
 @dataclass(frozen=True)
@@ -37,11 +46,100 @@ class Settings:
     payment_app_id: str
     payment_private_key_path: str
     payment_alipay_public_key_path: str
+    smtp_host: str
+    smtp_port: int
+    smtp_sender: str
+    smtp_username: str
+    smtp_password: str
+    smtp_use_tls: bool
+    smtp_use_ssl: bool
     jwt_secret: str
+    portal_token_secret: str  # P2-4: 与后台 jwt_secret 分离
     jwt_algorithm: str
     jwt_expire_minutes: int
     default_admin_username: str
     default_admin_password: str
+
+
+def _resolve_payment_webhook_secret(env: str) -> str:
+    """解析支付 webhook secret,根据环境返回实际值。
+
+    dev/test 保留 dev 默认值 ``_DEV_PAYMENT_WEBHOOK_SECRET``,便于本地开发/测试;
+    生产环境不读取默认值,强制要求显式设置环境变量。
+    """
+    raw = os.getenv("GAOKAO_PAYMENT_WEBHOOK_SECRET")
+    if raw is None or raw == "":
+        if env == "prod":
+            # 生产环境未设置环境变量 → 抛错,防止 Settings 实例化成功后再次绕过校验
+            raise RuntimeError(
+                "GAOKAO_PAYMENT_WEBHOOK_SECRET 必须在生产环境显式设置 "
+                "(当前缺失或为空),已拒绝启动 (P2-5 fail-closed)"
+            )
+        return _DEV_PAYMENT_WEBHOOK_SECRET
+    return raw
+
+
+def _enforce_payment_webhook_secret_policy(settings: Settings) -> None:
+    """生产环境 webhook secret fail-closed 校验 (P2-5)。
+
+    不接受:
+    - 缺失/空字符串 (由 ``_resolve_payment_webhook_secret`` 处理,但为防御性双重检查)
+    - dev 占位 secret (``_DEV_PAYMENT_WEBHOOK_SECRET``)
+    - 长度 < ``_MIN_PROD_WEBHOOK_SECRET_LEN`` 字符
+    """
+    if settings.env != "prod":
+        return
+    secret = settings.payment_webhook_secret
+    if not secret:
+        raise RuntimeError(
+            "GAOKAO_PAYMENT_WEBHOOK_SECRET 缺失,生产环境必须显式设置 (P2-5 fail-closed)"
+        )
+    if secret == _DEV_PAYMENT_WEBHOOK_SECRET:
+        raise RuntimeError(
+            "GAOKAO_PAYMENT_WEBHOOK_SECRET 仍使用 dev 默认值,生产环境禁止 "
+            "(P2-5 fail-closed)"
+        )
+    if len(secret) < _MIN_PROD_WEBHOOK_SECRET_LEN:
+        raise RuntimeError(
+            "GAOKAO_PAYMENT_WEBHOOK_SECRET 长度 {} 小于生产环境最低要求 {} "
+            "(P2-5 fail-closed)".format(len(secret), _MIN_PROD_WEBHOOK_SECRET_LEN)
+        )
+
+
+def _resolve_portal_token_secret(env: str) -> str:
+    raw = os.getenv("GAOKAO_PORTAL_TOKEN_SECRET")
+    if raw is None or raw == "":
+        if env == "prod":
+            raise RuntimeError(
+                "GAOKAO_PORTAL_TOKEN_SECRET 必须在生产环境显式设置 "
+                "(当前缺失或为空),已拒绝启动 (P2-4 fail-closed)"
+            )
+        return _DEV_PORTAL_TOKEN_SECRET
+    return raw
+
+
+def is_portal_token_secret_secure(settings: Settings) -> tuple[bool, str]:
+    secret = settings.portal_token_secret
+    if settings.env == "prod":
+        if secret == _DEV_PORTAL_TOKEN_SECRET:
+            return False, "生产环境禁止使用默认 portal token secret"
+        if len(secret) < _MIN_PORTAL_TOKEN_SECRET_LEN:
+            return False, "portal token secret 长度必须 >= 32"
+        if secret == settings.jwt_secret:
+            return False, "portal token secret 必须与 JWT secret 分离"
+    if settings.env == "dev" and secret == _DEV_PORTAL_TOKEN_SECRET:
+        return False, "dev 环境使用占位 portal token secret（仅本地开发可接受）"
+    if len(secret) < _MIN_PORTAL_TOKEN_SECRET_LEN:
+        return False, "portal token secret 长度必须 >= 32"
+    if secret == settings.jwt_secret:
+        return False, "portal token secret 必须与 JWT secret 分离"
+    return True, "ok"
+
+
+def _enforce_portal_token_secret_policy(settings: Settings) -> None:
+    secure, reason = is_portal_token_secret_secure(settings)
+    if not secure and settings.env == "prod":
+        raise RuntimeError(f"GAOKAO_PORTAL_TOKEN_SECRET invalid in prod: {reason}")
 
 
 def load_settings() -> Settings:
@@ -54,21 +152,34 @@ def load_settings() -> Settings:
     - GAOKAO_SHARE_REPORT_DIR : 分享报告 JSON 目录，默认 data/share/reports
     - GAOKAO_PAYMENT_PROVIDER : 支付 provider，默认 mock
     - GAOKAO_PAYMENT_BASE_URL : 支付相关回跳基础 URL，默认 http://testserver
-    - GAOKAO_PAYMENT_WEBHOOK_SECRET : 支付 webhook 独立签名密钥，默认 dev mock secret
+    - GAOKAO_PAYMENT_WEBHOOK_SECRET : 支付 webhook 独立签名密钥。生产环境 (GAOKAO_ENV=prod)
+                                       必须显式设置强密钥,否则启动 fail-closed (P2-5)。
+                                       dev 保留 ``dev-mock-payment-secret`` 默认值。
     - GAOKAO_PAYMENT_NOTIFY_URL : 真实 provider 异步通知地址，默认空
     - GAOKAO_PAYMENT_RETURN_URL : 真实 provider 浏览器返回地址，默认空
     - GAOKAO_PAYMENT_APP_ID : 真实 provider 应用 ID，默认空
     - GAOKAO_PAYMENT_PRIVATE_KEY_PATH : 真实 provider 私钥路径，默认空
     - GAOKAO_PAYMENT_ALIPAY_PUBLIC_KEY_PATH : 支付宝公钥路径，默认空
+    - GAOKAO_SMTP_HOST : SMTP 主机，默认空
+    - GAOKAO_SMTP_PORT : SMTP 端口，默认 25
+    - GAOKAO_SMTP_SENDER : 发件邮箱，默认空
+    - GAOKAO_SMTP_USER : SMTP 用户名，默认空
+    - GAOKAO_SMTP_PASS : SMTP 密码，默认空
+    - GAOKAO_SMTP_USE_TLS : 是否启用 STARTTLS，默认 false
+    - GAOKAO_SMTP_USE_SSL : 是否启用 SMTPS，默认 false
     - GAOKAO_JWT_SECRET       : HS256 密钥，默认 dev 占位（启动日志 WARN）
+    - GAOKAO_PORTAL_TOKEN_SECRET : Portal token 独立签名密钥 (P2-4)。
+                                    与 ``GAOKAO_JWT_SECRET`` **分离**:默认 dev 占位,
+                                    生产环境必须显式设置且与 JWT secret 不同。
     - GAOKAO_JWT_EXP_MIN      : JWT 过期时间（分钟），默认 60
     - GAOKAO_ADMIN_USER       : 默认管理员用户名，默认 admin
     - GAOKAO_ADMIN_PASS       : 默认管理员密码，默认 admin123（仅本地开发占位）
 
-    Returns:
-        Settings: 不可变配置实例
+    Raises:
+        RuntimeError: 生产环境下 GAOKAO_PAYMENT_WEBHOOK_SECRET 缺失/默认值/长度不足
+                     时 fail-closed。
     """
-    return Settings(
+    settings = Settings(
         env=os.getenv("GAOKAO_ENV", "dev"),
         db_path=os.getenv("GAOKAO_DB_PATH", "data/orders/admin.db"),
         orders_db_path=os.getenv("GAOKAO_ORDERS_DB_PATH", "data/orders.db"),
@@ -76,8 +187,8 @@ def load_settings() -> Settings:
         share_report_dir=os.getenv("GAOKAO_SHARE_REPORT_DIR", "data/share/reports"),
         payment_provider=os.getenv("GAOKAO_PAYMENT_PROVIDER", "mock"),
         payment_base_url=os.getenv("GAOKAO_PAYMENT_BASE_URL", "http://testserver"),
-        payment_webhook_secret=os.getenv(
-            "GAOKAO_PAYMENT_WEBHOOK_SECRET", "dev-mock-payment-secret"
+        payment_webhook_secret=_resolve_payment_webhook_secret(
+            os.getenv("GAOKAO_ENV", "dev")
         ),
         payment_notify_url=os.getenv("GAOKAO_PAYMENT_NOTIFY_URL", ""),
         payment_return_url=os.getenv("GAOKAO_PAYMENT_RETURN_URL", ""),
@@ -86,12 +197,26 @@ def load_settings() -> Settings:
         payment_alipay_public_key_path=os.getenv(
             "GAOKAO_PAYMENT_ALIPAY_PUBLIC_KEY_PATH", ""
         ),
+        smtp_host=os.getenv("GAOKAO_SMTP_HOST", ""),
+        smtp_port=int(os.getenv("GAOKAO_SMTP_PORT", "25")),
+        smtp_sender=os.getenv("GAOKAO_SMTP_SENDER", ""),
+        smtp_username=os.getenv("GAOKAO_SMTP_USER", ""),
+        smtp_password=os.getenv("GAOKAO_SMTP_PASS", ""),
+        smtp_use_tls=os.getenv("GAOKAO_SMTP_USE_TLS", "false").lower() == "true",
+        smtp_use_ssl=os.getenv("GAOKAO_SMTP_USE_SSL", "false").lower() == "true",
         jwt_secret=os.getenv("GAOKAO_JWT_SECRET", _DEV_JWT_SECRET),
+        portal_token_secret=_resolve_portal_token_secret(
+            os.getenv("GAOKAO_ENV", "dev")
+        ),
         jwt_algorithm=os.getenv("GAOKAO_JWT_ALGORITHM", "HS256"),
         jwt_expire_minutes=int(os.getenv("GAOKAO_JWT_EXP_MIN", "60")),
         default_admin_username=os.getenv("GAOKAO_ADMIN_USER", "admin"),
         default_admin_password=os.getenv("GAOKAO_ADMIN_PASS", _DEFAULT_ADMIN_PASSWORD),
     )
+    # 生产环境 post-load 校验:webhook / portal token secret 必须满足强度门槛。
+    _enforce_payment_webhook_secret_policy(settings)
+    _enforce_portal_token_secret_policy(settings)
+    return settings
 
 
 def is_jwt_secret_secure(settings: Settings) -> tuple:

@@ -41,6 +41,9 @@ run_checks() {
     --cov-fail-under=80 \
     -q
 
+  log "running core coverage verifier"
+  python scripts/check_coverage_gate.py coverage.xml
+
   log "running ruff"
   python -m ruff check . --exclude .venv,.worktrees
 

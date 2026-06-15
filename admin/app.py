@@ -27,6 +27,7 @@ from admin.config import (
     Settings,
     is_default_admin_password_secure,
     is_jwt_secret_secure,
+    is_portal_token_secret_secure,
     load_settings,
 )
 from admin.db import bootstrap_admin, ensure_schema
@@ -70,6 +71,14 @@ def _validate_and_log_settings(settings: Settings) -> None:
                 f"default admin password insecure in prod: {admin_reason}"
             )
         logger.warning("默认管理员密码提示: %s", admin_reason)
+    portal_secure, portal_reason = is_portal_token_secret_secure(settings)
+    if not portal_secure:
+        if settings.env == "prod":
+            logger.error(
+                "Portal token secret 不安全: %s — 拒绝启动生产环境!", portal_reason
+            )
+            raise RuntimeError(f"portal token secret insecure in prod: {portal_reason}")
+        logger.warning("Portal token secret 提示: %s", portal_reason)
     logger.info(
         "Admin API 启动: env=%s db=%s jwt_exp_min=%d",
         settings.env,

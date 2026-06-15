@@ -41,10 +41,46 @@ POLICY_ADMIN_ALIAS = "edit"
 # key: permission 等级
 # value: dict(可见字段集合, 允许能力集合, 是否脱敏姓名)
 #
-# 字段集合 None = "全部可见 (除内部字段外默认通过)";
-#      iterable = "只允许 iterable 列出的字段被前端渲染"。
-# 这样未来加新 PII (电话 / 身份证) 时, 只要在 read/comment 行内把它们
-# 排除即可, 不必改 ShareLinkService。
+# 字段集合 iterable = "只允许 iterable 列出的字段被前端渲染"。
+# P1-6 起不再允许 edit/admin 走 None 透传,避免未来新增敏感字段自动外泄。
+
+_EDIT_VISIBLE_FIELDS = {
+    "report_id",
+    "permission",
+    "owner_id",
+    "share_url",
+    "created_at_iso",
+    "expires_at_iso",
+    "candidate_name",
+    "customer_name",
+    "student_name",
+    "name",
+    "title",
+    "summary",
+    "recommendations",
+    "volunteers",
+    "score",
+    "rank",
+    "year",
+    "province",
+    "candidate_phone",
+    "customer_phone",
+    "customer_email",
+    "customer_wechat",
+    "candidate_id_card",
+    "candidate_subjects",
+    "candidate_interests",
+    "candidate_strong_subjects",
+    "candidate_weak_subjects",
+    "candidate_family",
+    "assigned_consultant",
+    "service_version",
+    "plan_file",
+    "audit_report",
+    "pdf_path",
+    "notes",
+    "tags",
+}
 
 _POLICY_TABLE: dict[str, dict[str, Any]] = {
     "read": {
@@ -99,8 +135,8 @@ _POLICY_TABLE: dict[str, dict[str, Any]] = {
         "can_comment": True,
         "can_edit": True,
         "mask_name": False,
-        # edit 允许业务字段透传，但内部敏感字段仍由 _ALWAYS_HIDDEN_FIELDS 拦截。
-        "visible_fields": None,
+        # P1-6: edit 必须显式 allowlist，不能再走 None 透传。
+        "visible_fields": _EDIT_VISIBLE_FIELDS,
     },
     "admin": {
         # alias -> edit
@@ -108,7 +144,7 @@ _POLICY_TABLE: dict[str, dict[str, Any]] = {
         "can_comment": True,
         "can_edit": True,
         "mask_name": False,
-        "visible_fields": None,
+        "visible_fields": _EDIT_VISIBLE_FIELDS,
     },
 }
 
@@ -126,6 +162,9 @@ _PII_NAME_FIELDS = ("candidate_name", "customer_name", "student_name", "name")
 _ALWAYS_HIDDEN_FIELDS = frozenset(
     {
         "password_hash",
+        "api_token",
+        "access_token",
+        "refresh_token",
         "internal_note",
         "note",
         "debug_info",

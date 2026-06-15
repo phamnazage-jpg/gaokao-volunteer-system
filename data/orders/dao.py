@@ -118,6 +118,7 @@ _WRITABLE_COLUMNS: tuple[str, ...] = (
     "customer_phone_enc",
     "customer_phone_hash",
     "customer_wechat",
+    "customer_email",
     "candidate_name",
     "candidate_id_card_enc",
     "candidate_province",
@@ -352,7 +353,7 @@ class OrdersDAO:
     ) -> Order:
         """按主键更新订单业务字段（非 status 字段）。
 
-        适用字段：customer_name / customer_wechat / candidate_name /
+        适用字段：customer_name / customer_wechat / customer_email / candidate_name /
         candidate_province / candidate_score / candidate_rank /
         candidate_subjects / candidate_interests / candidate_strong_subjects /
         candidate_weak_subjects / candidate_family / assigned_consultant /
@@ -456,6 +457,7 @@ class OrdersDAO:
             customer_name=original.customer_name,
             customer_phone=original.customer_phone,
             customer_wechat=original.customer_wechat,
+            customer_email=original.customer_email,
             candidate_name=original.candidate_name,
             candidate_id_card=original.candidate_id_card,
             candidate_province=original.candidate_province,
@@ -581,18 +583,32 @@ class OrdersDAO:
                 and order.pdf_path
             ):
                 notifier = DeliveryNotificationService.from_connection(self._conn)
-                notifier.notify_report_ready(
-                    order_id,
-                    json.dumps(
-                        {
-                            "order_id": order_id,
-                            "audit_report": order.audit_report,
-                            "plan_file": order.plan_file,
-                            "pdf_path": order.pdf_path,
-                        },
-                        ensure_ascii=False,
-                    ),
+                payload = json.dumps(
+                    {
+                        "order_id": order_id,
+                        "audit_report": order.audit_report,
+                        "plan_file": order.plan_file,
+                        "pdf_path": order.pdf_path,
+                    },
+                    ensure_ascii=False,
                 )
+                notifier.notify_report_ready(order_id, payload)
+                if order.customer_email:
+                    notifier.notify_event(
+                        order_id,
+                        event_type="report_ready_email",
+                        channel="email",
+                        payload_json=json.dumps(
+                            {
+                                "order_id": order_id,
+                                "audit_report": order.audit_report,
+                                "plan_file": order.plan_file,
+                                "pdf_path": order.pdf_path,
+                                "customer_email": order.customer_email,
+                            },
+                            ensure_ascii=False,
+                        ),
+                    )
         return order
 
     def _insert_status_history(

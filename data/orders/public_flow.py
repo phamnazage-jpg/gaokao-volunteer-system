@@ -29,6 +29,7 @@ class PublicOrderCreate(BaseModel):
     customer_name: str = Field(min_length=1)
     customer_phone: Optional[str] = None
     customer_wechat: Optional[str] = None
+    customer_email: Optional[str] = None
     candidate_name: Optional[str] = None
     candidate_province: str = Field(min_length=1)
     notes: Optional[str] = None
@@ -62,6 +63,7 @@ def create_public_order(dao: OrdersDAO, request: PublicOrderCreate) -> Order:
         customer_name=request.customer_name,
         customer_phone=request.customer_phone,
         customer_wechat=request.customer_wechat,
+        customer_email=request.customer_email,
         candidate_name=request.candidate_name,
         candidate_province=request.candidate_province,
         notes=request.notes,

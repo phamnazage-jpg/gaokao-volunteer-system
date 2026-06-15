@@ -41,7 +41,7 @@ def _mark_paid(settings, order: Order) -> None:
 def test_order_info_form_accepts_draft_and_submit(client, settings):
     order = _seed_order(settings.orders_db_path)
     _mark_paid(settings, order)
-    token = issue_portal_token(order.id, settings.jwt_secret)
+    token = issue_portal_token(order.id, settings.portal_token_secret)
 
     page = client.get(f"/portal/{token}/info")
     assert page.status_code == 200, page.text
@@ -98,7 +98,7 @@ def test_order_info_form_becomes_read_only_after_report_ready(
 ):
     order = _seed_order(settings.orders_db_path, order_id="GKO-20260614-INFO-LOCK")
     _mark_paid(settings, order)
-    token = issue_portal_token(order.id, settings.jwt_secret)
+    token = issue_portal_token(order.id, settings.portal_token_secret)
 
     report_path = tmp_path / "locked-report.html"
     pdf_path = tmp_path / "locked-report.pdf"
@@ -134,7 +134,7 @@ def test_order_info_form_becomes_read_only_after_report_ready(
 def test_submit_requires_consent_fields(client, settings):
     order = _seed_order(settings.orders_db_path, order_id="GKO-20260614-INFO-CONSENT")
     _mark_paid(settings, order)
-    token = issue_portal_token(order.id, settings.jwt_secret)
+    token = issue_portal_token(order.id, settings.portal_token_secret)
 
     resp = client.post(
         f"/portal/{token}/info",

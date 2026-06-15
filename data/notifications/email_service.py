@@ -94,20 +94,57 @@ class DeliveryNotificationService:
     def notify_report_ready(
         self, order_id: str, payload_json: str, channel: str = "station"
     ) -> None:
+        self.notify_event(
+            order_id,
+            event_type="report_ready",
+            channel=channel,
+            payload_json=payload_json,
+        )
+
+    def notify_event(
+        self,
+        order_id: str,
+        *,
+        event_type: str,
+        channel: str,
+        payload_json: str,
+    ) -> None:
         try:
             self._conn.execute(
-                "INSERT INTO delivery_notifications(order_id, event_type, channel, payload_json, status, attempt_count, last_attempt_at, failure_reason, created_at) VALUES (?, 'report_ready', ?, ?, 'ready', 1, ?, NULL, ?)",
-                (order_id, channel, payload_json, utc_now_iso(), utc_now_iso()),
+                "INSERT INTO delivery_notifications(order_id, event_type, channel, payload_json, status, attempt_count, last_attempt_at, failure_reason, created_at) VALUES (?, ?, ?, ?, 'ready', 1, ?, NULL, ?)",
+                (
+                    order_id,
+                    event_type,
+                    channel,
+                    payload_json,
+                    utc_now_iso(),
+                    utc_now_iso(),
+                ),
             )
             self._conn.commit()
         except sqlite3.IntegrityError:
             self._conn.rollback()
 
-    def mark_sent(self, order_id: str, event_type: str = "report_ready") -> None:
-        self._conn.execute(
-            "UPDATE delivery_notifications SET status='sent', last_attempt_at=?, failure_reason=NULL WHERE order_id=? AND event_type=?",
-            (utc_now_iso(), order_id, event_type),
-        )
+    def mark_sent(
+        self,
+        order_id: str,
+        event_type: str = "report_ready",
+        *,
+        payload_json: str | None = None,
+        sent_at: str | None = None,
+    ) -> None:
+        if sent_at is None:
+            sent_at = utc_now_iso()
+        if payload_json is None:
+            self._conn.execute(
+                "UPDATE delivery_notifications SET status='sent', last_attempt_at=?, failure_reason=NULL WHERE order_id=? AND event_type=?",
+                (sent_at, order_id, event_type),
+            )
+        else:
+            self._conn.execute(
+                "UPDATE delivery_notifications SET status='sent', payload_json=?, last_attempt_at=?, failure_reason=NULL WHERE order_id=? AND event_type=?",
+                (payload_json, sent_at, order_id, event_type),
+            )
         self._conn.commit()
 
     def mark_failed(

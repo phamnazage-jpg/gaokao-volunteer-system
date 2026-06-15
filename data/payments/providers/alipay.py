@@ -87,6 +87,8 @@ class AlipayProvider:
         provider_trade_no: str,
     ) -> tuple[dict[str, Any], str]:
         payload = {
+            "app_id": self.app_id,
+            "notify_id": f"notify_{payment_id}",
             "out_trade_no": payment_id,
             "trade_no": provider_trade_no,
             "total_amount": self._format_amount(amount_cents),
@@ -107,6 +109,8 @@ class AlipayProvider:
             "amount_cents": amount_cents,
             "provider_trade_no": str(payload.get("trade_no") or ""),
             "status": str(payload.get("trade_status") or "TRADE_SUCCESS"),
+            "app_id": str(payload.get("app_id") or ""),
+            "notify_id": str(payload.get("notify_id") or ""),
         }
 
     def sign_payload(self, payload: dict[str, Any]) -> str:

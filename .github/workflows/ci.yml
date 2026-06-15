@@ -61,19 +61,10 @@ jobs:
           python --version
           pytest --version
 
-      - name: Run tests with coverage
-        # T5.5: 基线门禁 = 整体覆盖率 >=60%，核心覆盖率 >=80%（由 check_coverage_gate.py 校验）
+      - name: Run unified quality gate
+        # P1-7: CI 与本地统一走 scripts/dev-verify.sh，避免 coverage / lint / mypy 口径漂移
         run: |
-          pytest admin/tests tests data \
-            --cov=admin \
-            --cov=data \
-            --cov=skills \
-            --cov=scripts \
-            --cov-report=term-missing \
-            --cov-report=xml \
-            --cov-fail-under=60 \
-            -v
-          python scripts/check_coverage_gate.py coverage.xml
+          PYTHON_BIN=python bash scripts/dev-verify.sh
 
       - name: Upload coverage artifact
         if: always() && matrix.python-version == '3.11' && hashFiles('coverage.xml') != ''

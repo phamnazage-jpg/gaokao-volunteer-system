@@ -119,26 +119,52 @@ def _open_db(db_path: str) -> sqlite3.Connection:
     return conn
 
 
-# 用工厂函数为每个 server 实例创建一个 DB 连接（简单做法，单进程）
-_DB_CONN: Optional[sqlite3.Connection] = None
+# 按 db_path 隔离的连接缓存（修复 P1-4）
+#
+# 旧实现是模块级单例 ``_DB_CONN``,不区分 db_path:
+# 1) 先 make_server(A.db) 会缓存连接到 A.db
+# 2) 之后 make_server(B.db) 仍然返回 A.db 的连接
+#    → 第二个 server 的所有写入都进了 A.db,跨库污染
+#
+# 修复后: 连接按 db_path 索引,每个路径独立持有一个连接;
+# 单进程下 webhook server 持有的连接数 = 实际 db_path 数量。
+# 该结构仍然保留 ``close_db_for_tests`` 旧 API(关闭全部),新增
+# ``close_db_for_path(path)`` 便于按需 teardown。
+_DB_CONNS: dict[str, sqlite3.Connection] = {}
 _DB_CONN_LOCK = threading.Lock()
 
 
 def _get_db(db_path: str) -> sqlite3.Connection:
-    global _DB_CONN
+    """按 ``db_path`` 取连接;该路径未缓存则新建并应用 schema。"""
     with _DB_CONN_LOCK:
-        if _DB_CONN is None:
-            _DB_CONN = _open_db(db_path)
-        return _DB_CONN
+        existing = _DB_CONNS.get(db_path)
+        if existing is not None:
+            return existing
+        conn = _open_db(db_path)
+        _DB_CONNS[db_path] = conn
+        return conn
 
 
 def close_db_for_tests() -> None:
-    """单测 teardown 关闭全局连接。"""
-    global _DB_CONN
+    """单测 teardown:关闭所有缓存连接(覆盖旧 API,关闭全部)。"""
     with _DB_CONN_LOCK:
-        if _DB_CONN is not None:
-            _DB_CONN.close()
-            _DB_CONN = None
+        for conn in _DB_CONNS.values():
+            try:
+                conn.close()
+            except Exception:
+                pass
+        _DB_CONNS.clear()
+
+
+def close_db_for_path(db_path: str) -> None:
+    """单测按路径 teardown;未注册路径为 no-op。"""
+    with _DB_CONN_LOCK:
+        conn = _DB_CONNS.pop(db_path, None)
+    if conn is not None:
+        try:
+            conn.close()
+        except Exception:
+            pass
 
 
 def _client_ip(headers, client_address=None) -> str:

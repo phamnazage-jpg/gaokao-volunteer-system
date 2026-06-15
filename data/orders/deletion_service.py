@@ -84,6 +84,7 @@ class OrderDeletionService:
                     customer_phone_enc=NULL,
                     customer_phone_hash=NULL,
                     customer_wechat=NULL,
+                    customer_email=NULL,
                     candidate_name=?,
                     candidate_id_card_enc=NULL,
                     candidate_interests=NULL,
@@ -102,6 +103,16 @@ class OrderDeletionService:
                     order_id,
                 ),
             )
+            if self._table_exists("payments"):
+                self._conn.execute(
+                    "UPDATE payments SET checkout_token=NULL, callback_payload=NULL WHERE order_id=?",
+                    (order_id,),
+                )
+            if self._table_exists("order_intakes"):
+                self._conn.execute(
+                    "UPDATE order_intakes SET payload_json='{}', updated_at=? WHERE order_id=?",
+                    (now, order_id),
+                )
             self._insert_audit(
                 order_id=order_id,
                 action="anonymize",
@@ -134,6 +145,13 @@ class OrderDeletionService:
             "INSERT INTO order_deletion_audits(order_id, action, actor, reason, files_deleted, created_at) VALUES (?, ?, ?, ?, ?, ?)",
             (order_id, action, actor, reason, files_deleted, utc_now_iso()),
         )
+
+    def _table_exists(self, table_name: str) -> bool:
+        row = self._conn.execute(
+            "SELECT 1 FROM sqlite_master WHERE type='table' AND name=? LIMIT 1",
+            (table_name,),
+        ).fetchone()
+        return row is not None
 
     @staticmethod
     def _delete_artifacts(*paths: str | None) -> int:

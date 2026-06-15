@@ -90,4 +90,6 @@ def test_alipay_provider_verifies_signed_webhook_payload(tmp_path):
         "amount_cents": 9900,
         "provider_trade_no": "ALI-TRADE-001",
         "status": "TRADE_SUCCESS",
+        "app_id": "20260001",
+        "notify_id": "notify_pay_123",
     }

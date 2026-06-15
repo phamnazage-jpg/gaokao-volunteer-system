@@ -1,8 +1,12 @@
 from __future__ import annotations
 
+from typing import Any, cast
+
+import pytest
+
 from data.orders.dao import OrdersDAO
 from data.orders.models import Order
-from data.payments.service import PaymentService
+from data.payments.service import PaymentError, PaymentService
 
 
 def _seed_order(db_path: str, order_id: str = "GKO-20260614-WEBHOOK") -> Order:
@@ -74,6 +78,87 @@ def test_mock_payment_webhook_rejects_amount_mismatch(client, settings):
         "/api/public/payments/mock/webhook", json=payload, headers=headers
     )
     assert resp.status_code == 409, resp.text
+
+    with OrdersDAO.connect(settings.orders_db_path) as dao:
+        unchanged = dao.get(order.id)
+    assert unchanged.status == "pending"
+
+
+def test_handle_webhook_rejects_non_success_status(settings):
+    order = _seed_order(settings.orders_db_path, order_id="GKO-20260614-WEBHOOK-STATUS")
+    service = PaymentService.for_db(
+        settings.orders_db_path,
+        base_url=settings.payment_base_url,
+        webhook_secret=settings.payment_webhook_secret,
+    )
+    checkout = service.create_checkout(order.id, portal_token="portal-token")
+    payload, headers = service.provider.build_webhook_request(
+        payment_id=checkout.payment_id,
+        amount_cents=order.amount_cents,
+        provider_trade_no="MOCK-WAITING-001",
+    )
+    payload = cast(dict[str, Any], payload)
+    headers = cast(dict[str, str], headers)
+    payload["status"] = "failed"
+    headers["X-Mock-Signature"] = service.provider.sign_payload(payload)
+
+    with pytest.raises(PaymentError, match="payment status not successful"):
+        service.handle_webhook(payload, headers["X-Mock-Signature"])
+
+    with OrdersDAO.connect(settings.orders_db_path) as dao:
+        unchanged = dao.get(order.id)
+    assert unchanged.status == "pending"
+
+
+def test_handle_webhook_rejects_app_id_mismatch(settings):
+    order = _seed_order(settings.orders_db_path, order_id="GKO-20260614-WEBHOOK-APPID")
+    service = PaymentService.for_db(
+        settings.orders_db_path,
+        base_url=settings.payment_base_url,
+        webhook_secret=settings.payment_webhook_secret,
+    )
+    setattr(service.provider, "app_id", "expected-app-id")
+    checkout = service.create_checkout(order.id, portal_token="portal-token")
+    payload, headers = service.provider.build_webhook_request(
+        payment_id=checkout.payment_id,
+        amount_cents=order.amount_cents,
+        provider_trade_no="MOCK-APPID-001",
+    )
+    payload = cast(dict[str, Any], payload)
+    headers = cast(dict[str, str], headers)
+    payload["app_id"] = "wrong-app-id"
+    payload["notify_id"] = "notify-001"
+    headers["X-Mock-Signature"] = service.provider.sign_payload(payload)
+
+    with pytest.raises(PaymentError, match="payment app_id mismatch"):
+        service.handle_webhook(payload, headers["X-Mock-Signature"])
+
+    with OrdersDAO.connect(settings.orders_db_path) as dao:
+        unchanged = dao.get(order.id)
+    assert unchanged.status == "pending"
+
+
+def test_handle_webhook_rejects_missing_notify_id_for_bound_provider(settings):
+    order = _seed_order(settings.orders_db_path, order_id="GKO-20260614-WEBHOOK-NOTIFY")
+    service = PaymentService.for_db(
+        settings.orders_db_path,
+        base_url=settings.payment_base_url,
+        webhook_secret=settings.payment_webhook_secret,
+    )
+    setattr(service.provider, "app_id", "expected-app-id")
+    checkout = service.create_checkout(order.id, portal_token="portal-token")
+    payload, headers = service.provider.build_webhook_request(
+        payment_id=checkout.payment_id,
+        amount_cents=order.amount_cents,
+        provider_trade_no="MOCK-NOTIFY-001",
+    )
+    payload = cast(dict[str, Any], payload)
+    headers = cast(dict[str, str], headers)
+    payload["app_id"] = "expected-app-id"
+    headers["X-Mock-Signature"] = service.provider.sign_payload(payload)
+
+    with pytest.raises(PaymentError, match="payment notify_id missing"):
+        service.handle_webhook(payload, headers["X-Mock-Signature"])
 
     with OrdersDAO.connect(settings.orders_db_path) as dao:
         unchanged = dao.get(order.id)
