@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 from html import escape
+from pathlib import Path
 from typing import Any, Optional
 
 from fastapi import APIRouter, Depends, Query
@@ -14,7 +15,7 @@ from admin.db import AdminUser
 
 
 router = APIRouter(prefix="/api/admin/notifications", tags=["notifications"])
-
+page_router = APIRouter(tags=["notifications-ui"])
 
 class NotificationEventResponse(BaseModel):
     order_id: str
@@ -34,6 +35,78 @@ class NotificationListResponse(BaseModel):
     offset: int
     filters: dict[str, Any]
     items: list[NotificationEventResponse]
+
+
+class OpsAlertEventResponse(BaseModel):
+    created_at: str
+    alert_type: str
+    title: str
+    body: str
+    details: dict[str, Any]
+
+
+class OpsAlertListResponse(BaseModel):
+    total: int
+    items: list[OpsAlertEventResponse]
+
+
+@router.get("/ops-alerts", response_model=OpsAlertListResponse, summary="运维告警列表")
+def list_ops_alerts(
+    limit: int = Query(50, ge=1, le=200),
+    _: AdminUser = Depends(get_current_user),
+    settings: Settings = Depends(get_settings_dep),
+) -> dict[str, Any]:
+    path = Path(settings.ops_alert_log_path)
+    items: list[dict[str, Any]] = []
+    if path.exists():
+        for line in path.read_text(encoding="utf-8").splitlines()[-limit:]:
+            if not line.strip():
+                continue
+            try:
+                item = json.loads(line)
+            except Exception:
+                continue
+            if isinstance(item, dict):
+                items.append(item)
+    return {"total": len(items), "items": items}
+
+
+@page_router.get("/admin/ops-alerts", include_in_schema=False)
+def ops_alert_audit_page(
+    _: AdminUser = Depends(get_current_user),
+    settings: Settings = Depends(get_settings_dep),
+) -> HTMLResponse:
+    payload = list_ops_alerts(limit=200, _=_, settings=settings)
+    rows = []
+    for item in payload["items"]:
+        details = escape(json.dumps(item.get("details") or {}, ensure_ascii=False, indent=2))
+        rows.append(
+            "<tr>"
+            f"<td>{escape(str(item.get('created_at') or '-'))}</td>"
+            f"<td>{escape(str(item.get('alert_type') or '-'))}</td>"
+            f"<td>{escape(str(item.get('title') or '-'))}</td>"
+            f"<td>{escape(str(item.get('body') or '-'))}</td>"
+            f"<td><pre style='white-space:pre-wrap;max-width:520px'>{details}</pre></td>"
+            "</tr>"
+        )
+    rows_html = "".join(rows) or "<tr><td colspan='5'>暂无运维告警</td></tr>"
+    html = f"""<!doctype html>
+<html lang='zh-CN'><head><meta charset='utf-8' /><title>运维告警审计</title></head>
+<body style='font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f4f7fb;margin:0;padding:32px 20px;color:#172033;'>
+<main style='max-width:1280px;margin:0 auto;display:grid;gap:16px;'>
+<section style='background:#fff;border:1px solid #dbe3f0;border-radius:18px;padding:24px;'>
+  <h1>运维告警审计</h1>
+  <p>日志路径：{escape(settings.ops_alert_log_path)}</p>
+</section>
+<section style='background:#fff;border:1px solid #dbe3f0;border-radius:18px;padding:24px;overflow:auto;'>
+  <table style='width:100%;border-collapse:collapse;'>
+    <thead><tr><th>时间</th><th>类型</th><th>标题</th><th>摘要</th><th>details</th></tr></thead>
+    <tbody>{rows_html}</tbody>
+  </table>
+</section>
+</main>
+</body></html>"""
+    return HTMLResponse(html)
 
 
 @router.get("", response_model=NotificationListResponse, summary="通知审计列表")
@@ -101,9 +174,6 @@ def list_notifications(
         "filters": {"order_id": order_id, "status": status, "channel": channel},
         "items": items,
     }
-
-
-page_router = APIRouter(tags=["notifications-ui"])
 
 
 @page_router.get("/admin/notifications", include_in_schema=False)

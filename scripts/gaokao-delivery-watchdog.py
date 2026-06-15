@@ -13,6 +13,7 @@ if str(ROOT) not in sys.path:
 def main() -> int:
     from admin.config import load_settings
     from data.notifications.dispatcher import DeliveryDispatcher
+    from data.notifications.ops_alerts import build_alert_sink_from_settings
 
     parser = argparse.ArgumentParser(description="Watch delivery dispatch health")
     parser.add_argument("--channel", default="station")
@@ -29,7 +30,25 @@ def main() -> int:
         dispatcher.close()
 
     print(json.dumps(result.__dict__, ensure_ascii=False, indent=2))
-    return 2 if result.failed > 0 else 0
+    if result.failed > 0:
+        sink = build_alert_sink_from_settings(settings)
+        sink.emit(
+            alert_type="delivery_watchdog_failed",
+            title="Gaokao delivery watchdog detected failed events",
+            body=(
+                f"channel={args.channel} processed={result.processed} "
+                f"validated={getattr(result, 'validated', 0)} delivered={getattr(result, 'delivered', 0)} failed={result.failed}"
+            ),
+            details={
+                "channel": args.channel,
+                "processed": result.processed,
+                "validated": getattr(result, 'validated', 0),
+                "delivered": getattr(result, 'delivered', 0),
+                "failed": result.failed,
+            },
+        )
+        return 2
+    return 0
 
 
 if __name__ == "__main__":
