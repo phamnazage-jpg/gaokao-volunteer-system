@@ -157,4 +157,43 @@ bash scripts/backup_verify.sh
 - 目标主机上的 cron / systemd timer 尚未实际安装验收
 - 备份失败告警链（邮件 / IM / 监控）未接入
 - 密钥轮换与应急恢复仍缺真实执行记录
+
+## 10. 不可降级的不变量
+
+- 备份必须覆盖 4 节列出的所有对象, 不得漏备份 `share_reports`
+- 快照必须含 manifest (`manifest.json`), 含每个文件的 SHA-256
+- 校验必须走 `scripts/backup_verify.sh`, 不允许用裸 SQLite `sqlite3 <file> ".schema"` 代替
+- 恢复演练必须是服务级 (FastAPI TestClient) 而不仅是文件级
+- `delivered` / `failed` 事件备份必须保留 `failure_reason`, 用于事后根因分析
+- 备份介质必须使用 24h RPO, 不允许依赖“Git 备份可恢复系统”作为对外口径
+
+## 11. 流程 (MVP)
+
+```
+定时任务 (cron / systemd timer)
+    │
+    ▼
+1. 快照阶段: 复制 SQLite + 报告 + manifest.json
+    │
+    ▼
+2. 校验阶段: backup_verify.sh 走 restore smoke
+    │        ├─ 200 healthz
+    │        ├─ 200 portal_status
+    │        ├─ 200 portal_report
+    │        └─ 200 portal_pdf
+    │
+    ▼
+3. 失败处理: watchdog 退出码 != 0
+    │
+    ▼
+4. 告警: 邮件 / IM / 监控 (P1-8 整改后)
+```
+
+## 12. 后续工作
+
+- 接入 P1-8 整改的 service-level smoke (已完成)
+- 增加异机异地备份 (P2-6 之后)
+- 接入告警推送 (P1-8 后续)
+- 接入密钥轮换演练 (P2-6 之后)
+- 真实演练记录归档 (例: `reports/DR_DRILL_2026-07-01.md`)
 - 当前 restore smoke 证明的是“最小服务链可用”，不是完整生产级全链恢复

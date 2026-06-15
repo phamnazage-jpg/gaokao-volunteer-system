@@ -84,10 +84,34 @@
 
 1. 增加失败重试阈值与告警推送
 2. 增加面向用户的独立通知审计页
-3. 把 `sent` 语义拆成“可投递校验通过”与“真实渠道已发送”
-4. 再决定是否扩到更多通道
+3. 把事件生命周期细化为 `ready` / `validated` / `delivered` / `failed`
+4. 区分 `station`（本地渲染）与 `email`（真实下游推送）两类 channel 的 `delivered` 判定
+5. 再决定是否扩到更多通道
 
-## 8. 生产化接入口径
+## 8. 事件生命周期（2026-06-14 修订）
+
+P2-3 整改后, dispatcher 强制走如下状态机:
+
+```
+ready   ── 初始化, 还没校验
+  │
+  ▼
+validated ── payload 解析通过 + 交付物 (html / pdf) 校验通过
+  │           注意: station channel 在这一步会落 payload, 但不再升级为 delivered
+  │
+  ▼
+delivered ── 真实下游推送完成 (仅 email)
+  │
+  ▼
+failed ── 任意环节失败
+```
+
+- `ready -> validated` 必须有 artifact (html / pdf) 真实存在于磁盘
+- `validated -> delivered` 必须由真实 sender 回调成功 (`email.send_report_ready` 返回成功)
+- `station` 通道因为没有真实下游, 永远停在 `validated`
+- `sent` 字段是 legacy alias, 仍然存在但不应再被新代码依赖
+
+## 9. 生产化接入口径
 
 仓库内已提供最小 runbook 与调度样例：
 
@@ -96,3 +120,18 @@
 - cron：`deploy/cron/gaokao-jobs.crontab`
 
 注意：当前 watchdog 仍是“带失败退出码的 dispatch 巡检”，并不等于独立通知告警系统。
+
+## 10. 不可降级的不变量
+
+- 事件状态机 `ready` / `validated` / `delivered` / `failed` 必须被 dispatcher 严格遵守
+- `delivered` 永远只能由真实 sender 成功返回
+- `failed` 事件必须有 `failure_reason` 字段
+- 同一 `(order_id, event_type)` 必须幂等, 重复 dispatcher 不会产生额外副作用
+- `delivered` 之后, payload 写入的 `delivered_at` 必须等于 `last_attempt_at`
+
+## 11. 后续工作
+
+- 把独立 `delivery_job` / `delivery_attempt` 模型实现为 SQLite 表
+- 引入 `attempt_count` 与 `last_attempt_at` 之外的成功重试预算
+- 多通道统一投递状态页 (类似 notification audit 页面)
+- 告警推送 (Sentry / 飞书 / 钉钉) 与 watchdog 整合

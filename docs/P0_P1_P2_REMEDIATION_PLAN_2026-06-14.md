@@ -77,6 +77,11 @@
 - ✅ P2-2 channel_sync 单一 DAO 真相：已新增 data/channel_sync/tests/test_single_dao_truth.py 4 passed 锁定 4 项不变量
 - ✅ P2-6 历史快照头注补齐：已新增 tests/test_historical_snapshot_headers.py 4 passed 锁定历史快照+真相源跳转
 - ✅ X-06 本地一键验证脚本：scripts/dev-verify.sh 新增 --skip-install / --skip-pre-existing flag，tests/test_dev_verify_entrypoint.py 3 passed 锁定入口可调
+- ✅ X-02 支付域设计：docs/PAYMENT_DOMAIN_DESIGN.md 已扩展至含不变量/字段/流程/数据流表
+- ✅ X-03 Delivery 交付服务设计：docs/DELIVERY_SERVICE_DESIGN.md 已反映 P2-3 修复后的 validated / delivered 生命周期
+- ✅ X-04 合规基线文档：docs/LEGAL_PRIVACY_BASELINE.md 已存在并通过实质性校验
+- ✅ X-05 备份恢复与密钥托管方案：docs/BACKUP_AND_RECOVERY_PLAN.md 已扩展至含不变量/流程/恢复演练路径
+- ✅ X-08 crowd_db 数据完整度等级化：docs/CROWD_DB_DATA_QUALITY.md 新建，4 档完整性 + confidence/source 一致性不变量
 
 顺序:
 
