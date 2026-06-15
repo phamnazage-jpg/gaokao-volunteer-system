@@ -1,3 +1,5 @@
+# 开发 / 本地 smoke 模板；不是生产部署闭环定义。
+# 生产上线以 docs/PRODUCTION_DEPLOYMENT_CHECKLIST_2026-06-15.md 和目标主机 systemd/cron/env 注入为准。
 services:
   gaokao-admin:
     build:

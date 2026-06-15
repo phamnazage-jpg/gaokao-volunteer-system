@@ -84,6 +84,37 @@ def test_notification_audit_page_shows_station_and_email_events(client, settings
     assert "report_ready" in page.text
     assert "report_ready_email" in page.text
 
+def test_notification_audit_page_hides_payload_details(client, settings, tmp_path: Path):
+    order = _seed_order(settings.orders_db_path, order_id="GKO-20260615-NOTIFY-HIDE")
+    _mark_paid(settings, order)
+    IntakeStore.for_db(settings.orders_db_path).save(
+        order_id=order.id,
+        payload={"candidate_score": 578},
+        submit=True,
+    )
+
+    report_path = tmp_path / "notify-hide-report.html"
+    pdf_path = tmp_path / "notify-hide-report.pdf"
+    report_path.write_text("<h1>report</h1>", encoding="utf-8")
+    pdf_path.write_bytes(b"%PDF-1.4\nnotify-hide\n")
+    with OrdersDAO.connect(settings.orders_db_path) as dao:
+        dao.update(
+            order.id,
+            {"audit_report": str(report_path), "pdf_path": str(pdf_path)},
+            actor="test",
+            reason="attach_report",
+        )
+        dao.transition_status(order.id, "serving", actor="test", reason="processing")
+        dao.transition_status(order.id, "delivered", actor="test", reason="report_ready")
+
+    token = issue_portal_token(order.id, settings.portal_token_secret)
+    page = client.get(f"/portal/{token}/notifications")
+    assert page.status_code == 200, page.text
+    assert "parent@example.com" not in page.text
+    assert str(report_path) not in page.text
+    assert str(pdf_path) not in page.text
+    assert "report_ready_email" in page.text
+
 
 def test_status_page_links_to_notification_audit(client, settings):
     order = _seed_order(settings.orders_db_path, order_id="GKO-20260615-NOTIFY-LINK")

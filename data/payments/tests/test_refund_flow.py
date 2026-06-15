@@ -38,7 +38,7 @@ def _mark_paid(settings, order: Order) -> PaymentService:
     return service
 
 
-def test_refund_request_marks_portal_as_refund_pending(client, settings):
+def test_refund_request_marks_portal_as_refunded(client, settings):
     order = _seed_order(settings.orders_db_path)
     service = _mark_paid(settings, order)
 
@@ -58,3 +58,10 @@ def test_refund_request_marks_portal_as_refund_pending(client, settings):
     status_page = client.get(f"/portal/{token}/status")
     assert status_page.status_code == 200, status_page.text
     assert "已退款" in status_page.text
+    assert "退款申请中" not in status_page.text
+
+
+def test_refund_pending_legacy_status_is_removed():
+    from data.payments import dao as payment_dao
+
+    assert "refund_pending" not in payment_dao.SCHEMA_SQL

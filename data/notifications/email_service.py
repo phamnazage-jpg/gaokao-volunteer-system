@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS delivery_notifications (
 """
 
 
-DELIVERY_EVENT_STATUSES = ("ready", "validated", "delivered", "failed", "sent")
+DELIVERY_EVENT_STATUSES = ("ready", "validated", "delivered", "failed")
 
 
 @dataclass
@@ -128,27 +128,6 @@ class DeliveryNotificationService:
         except sqlite3.IntegrityError:
             self._conn.rollback()
 
-    def mark_sent(
-        self,
-        order_id: str,
-        event_type: str = "report_ready",
-        *,
-        payload_json: str | None = None,
-        sent_at: str | None = None,
-    ) -> None:
-        if sent_at is None:
-            sent_at = utc_now_iso()
-        if payload_json is None:
-            self._conn.execute(
-                "UPDATE delivery_notifications SET status='sent', last_attempt_at=?, failure_reason=NULL WHERE order_id=? AND event_type=?",
-                (sent_at, order_id, event_type),
-            )
-        else:
-            self._conn.execute(
-                "UPDATE delivery_notifications SET status='sent', payload_json=?, last_attempt_at=?, failure_reason=NULL WHERE order_id=? AND event_type=?",
-                (payload_json, sent_at, order_id, event_type),
-            )
-        self._conn.commit()
 
     def mark_validated(
         self,

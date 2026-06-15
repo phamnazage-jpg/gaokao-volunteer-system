@@ -24,6 +24,7 @@ _PROVIDER_REQUIREMENTS: dict[str, list[str]] = {
     "alipay_sim": [],
     "alipay": [
         "GAOKAO_PAYMENT_APP_ID",
+        "GAOKAO_PAYMENT_MERCHANT_ID",
         "GAOKAO_PAYMENT_PRIVATE_KEY_PATH",
         "GAOKAO_PAYMENT_ALIPAY_PUBLIC_KEY_PATH",
         "GAOKAO_PAYMENT_NOTIFY_URL",

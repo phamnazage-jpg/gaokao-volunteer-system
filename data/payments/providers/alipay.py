@@ -21,12 +21,14 @@ class AlipayProvider:
         self,
         *,
         app_id: str,
+        merchant_id: str,
         private_key_path: str,
         alipay_public_key_path: str,
         notify_url: str,
         return_url: str,
     ) -> None:
         self.app_id = app_id.strip()
+        self.merchant_id = merchant_id.strip()
         self.notify_url = notify_url.strip()
         self.return_url = return_url.strip()
         self.private_key_path = Path(private_key_path)
@@ -88,6 +90,7 @@ class AlipayProvider:
     ) -> tuple[dict[str, Any], str]:
         payload = {
             "app_id": self.app_id,
+            "seller_id": self.merchant_id,
             "notify_id": f"notify_{payment_id}",
             "out_trade_no": payment_id,
             "trade_no": provider_trade_no,
@@ -111,6 +114,7 @@ class AlipayProvider:
             "status": str(payload.get("trade_status") or "TRADE_SUCCESS"),
             "app_id": str(payload.get("app_id") or ""),
             "notify_id": str(payload.get("notify_id") or ""),
+            "merchant_id": str(payload.get("seller_id") or payload.get("merchant_id") or ""),
         }
 
     def sign_payload(self, payload: dict[str, Any]) -> str:

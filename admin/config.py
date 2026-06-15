@@ -47,6 +47,7 @@ class Settings:
     payment_notify_url: str
     payment_return_url: str
     payment_app_id: str
+    payment_merchant_id: str
     payment_private_key_path: str
     payment_alipay_public_key_path: str
     smtp_host: str
@@ -59,6 +60,7 @@ class Settings:
     alert_recipients: list[str]
     alert_webhook_urls: list[str]
     ops_alert_log_path: str
+    deletion_request_log_path: str
     jwt_secret: str
     portal_token_secret: str  # P2-4: 与后台 jwt_secret 分离
     jwt_algorithm: str
@@ -164,6 +166,7 @@ def load_settings() -> Settings:
     - GAOKAO_PAYMENT_NOTIFY_URL : 真实 provider 异步通知地址，默认空
     - GAOKAO_PAYMENT_RETURN_URL : 真实 provider 浏览器返回地址，默认空
     - GAOKAO_PAYMENT_APP_ID : 真实 provider 应用 ID，默认空
+    - GAOKAO_PAYMENT_MERCHANT_ID : 真实 provider 商户/卖家 ID，默认空
     - GAOKAO_PAYMENT_PRIVATE_KEY_PATH : 真实 provider 私钥路径，默认空
     - GAOKAO_PAYMENT_ALIPAY_PUBLIC_KEY_PATH : 支付宝公钥路径，默认空
     - GAOKAO_SMTP_HOST : SMTP 主机，默认空
@@ -202,6 +205,7 @@ def load_settings() -> Settings:
         payment_notify_url=os.getenv("GAOKAO_PAYMENT_NOTIFY_URL", ""),
         payment_return_url=os.getenv("GAOKAO_PAYMENT_RETURN_URL", ""),
         payment_app_id=os.getenv("GAOKAO_PAYMENT_APP_ID", ""),
+        payment_merchant_id=os.getenv("GAOKAO_PAYMENT_MERCHANT_ID", ""),
         payment_private_key_path=os.getenv("GAOKAO_PAYMENT_PRIVATE_KEY_PATH", ""),
         payment_alipay_public_key_path=os.getenv(
             "GAOKAO_PAYMENT_ALIPAY_PUBLIC_KEY_PATH", ""
@@ -216,6 +220,9 @@ def load_settings() -> Settings:
         alert_recipients=[s.strip() for s in os.getenv("GAOKAO_ALERT_RECIPIENTS", "").split(",") if s.strip()],
         alert_webhook_urls=[s.strip() for s in os.getenv("GAOKAO_ALERT_WEBHOOK_URLS", "").split(",") if s.strip()],
         ops_alert_log_path=os.getenv("GAOKAO_OPS_ALERT_LOG", "data/alerts/ops-alerts.jsonl"),
+        deletion_request_log_path=os.getenv(
+            "GAOKAO_DELETION_REQUEST_LOG", "data/alerts/deletion-requests.jsonl"
+        ),
         jwt_secret=os.getenv("GAOKAO_JWT_SECRET", _DEV_JWT_SECRET),
         portal_token_secret=_resolve_portal_token_secret(
             os.getenv("GAOKAO_ENV", "dev")

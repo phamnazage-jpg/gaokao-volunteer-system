@@ -129,7 +129,7 @@ def test_dao_delivered_transition_also_creates_notification_event(settings, tmp_
     assert "parent@example.com" in email_event.payload_json
 
 
-def test_delivery_notification_tracks_failure_and_sent_status(settings, tmp_path):
+def test_delivery_notification_tracks_failure_and_validated_status(settings, tmp_path):
     order = _seed_order(settings.orders_db_path, order_id="GKO-20260614-NOTIFY-STATUS")
     _mark_paid(settings, order)
     IntakeStore.for_db(settings.orders_db_path).save(
@@ -162,11 +162,18 @@ def test_delivery_notification_tracks_failure_and_sent_status(settings, tmp_path
         assert failed.failure_reason == "smtp timeout"
         assert failed.last_attempt_at is not None
 
-        notification_service.mark_sent(order.id)
-        sent = notification_service.list_events(order.id)[0]
-        assert sent.status == "sent"
-        assert sent.attempt_count == 2
-        assert sent.failure_reason is None
-        assert sent.last_attempt_at is not None
+        notification_service.mark_validated(order.id)
+        validated = notification_service.list_events(order.id)[0]
+        assert validated.status == "validated"
+        assert validated.attempt_count == 2
+        assert validated.failure_reason == "smtp timeout"
+        assert validated.last_attempt_at is not None
     finally:
         notification_service.close()
+
+
+def test_delivery_notification_service_excludes_sent_legacy_status():
+    from data.notifications import email_service
+
+    assert "sent" not in email_service.DELIVERY_EVENT_STATUSES
+    assert not hasattr(email_service.DeliveryNotificationService, "mark_sent")

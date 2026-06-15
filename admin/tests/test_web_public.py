@@ -142,6 +142,34 @@ def test_payment_return_redirects_to_portal_status(client):
     assert resp.headers["location"] == f"/portal/{token}/status"
 
 
+def test_public_pages_include_privacy_and_deletion_links(client):
+    landing = client.get("/")
+    assert landing.status_code == 200, landing.text
+    assert 'href="/privacy"' in landing.text
+    assert 'href="/service-terms"' in landing.text
+    assert 'href="/deletion-policy"' in landing.text
+
+    pricing = client.get("/pricing")
+    assert pricing.status_code == 200, pricing.text
+    assert 'href="/privacy"' in pricing.text
+    assert 'href="/service-terms"' in pricing.text
+    assert 'href="/deletion-policy"' in pricing.text
+
+
+def test_privacy_and_deletion_pages_are_served(client):
+    privacy = client.get("/privacy")
+    assert privacy.status_code == 200, privacy.text
+    assert "隐私政策" in privacy.text
+
+    terms = client.get("/service-terms")
+    assert terms.status_code == 200, terms.text
+    assert "服务说明与免责声明" in terms.text
+
+    deletion = client.get("/deletion-policy")
+    assert deletion.status_code == 200, deletion.text
+    assert "删除申请" in deletion.text
+
+
 def test_public_create_order_returns_503_without_creating_orphan_order_when_provider_unavailable(
     tmp_path, monkeypatch
 ):

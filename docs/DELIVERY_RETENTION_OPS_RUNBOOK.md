@@ -15,9 +15,9 @@
 
 注意边界：
 
-- 当前 `sent` 仍表示“站内交付物校验通过并推进事件状态”，**不是** 邮件/微信等外部渠道真实发送成功。
+- 当前 `station` 事件的最终状态是 `validated`，表示站内交付物校验通过；只有 `email` 渠道真实发送后才进入 `delivered`。
 - dispatcher 每次会处理 `ready` 与 `failed` 事件；如果缺少 HTML/PDF，会把事件记为 `failed`，并递增 `attempt_count`。
-- watchdog 复用同一 dispatch 路径，但只要本轮出现失败事件就返回 exit code `2`，适合接 systemd `OnFailure=` 或外部告警。
+- watchdog 复用同一 dispatch 路径，但只要本轮出现失败事件就返回 exit code `2`，适合接宿主机监控或外部告警。
 
 ### retention cleanup
 
@@ -121,10 +121,7 @@ crontab -l
 
 ## 7. 仍未收口的缺口
 
-这些仍然没有被本次 runbook 伪装成“已完成”：
-
-1. `sent` 语义仍偏向“站内交付校验完成”，不是外部渠道真实投递成功。
-2. 尚无邮件/微信真实发送执行器。
-3. watchdog 只有失败退出码，还没有仓库内置的告警推送集成。
-4. retention cleanup 只是后台匿名化作业，前台/客服删除工单流程仍未上线。
-5. 这些 unit/timer/cron 样例已落仓，但是否真正安装到目标生产主机，需要部署时另行执行并留存记录。
+1. 尚无邮件/微信真实发送执行器。
+2. watchdog 的本地告警 sink 已存在，但目标主机上的真实 SMTP / webhook 联调仍未验收。
+3. retention cleanup 只是后台匿名化作业，前台/客服删除工单流程仍未上线。
+4. 这些 unit/timer/cron 样例已落仓，但是否真正安装到目标生产主机，需要部署时另行执行并留存记录。

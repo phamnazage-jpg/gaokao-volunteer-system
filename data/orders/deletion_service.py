@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import sqlite3
 from dataclasses import dataclass
 from pathlib import Path
@@ -52,7 +53,12 @@ class OrderDeletionService:
                 order = dao.get(order_id)
             except OrderNotFound:
                 raise
-            files_deleted = self._delete_artifacts(order.audit_report, order.pdf_path)
+            intake_payload = self._get_intake_payload(order_id)
+            files_deleted = self._delete_order_files(
+                order_id,
+                intake_payload=intake_payload,
+                artifact_paths=(order.audit_report, order.pdf_path),
+            )
             deleted = dao.delete(order_id)
             if not deleted:
                 raise OrderNotFound(f"订单不存在: {order_id}")
@@ -76,6 +82,12 @@ class OrderDeletionService:
                 dao.get(order_id)
             except OrderNotFound:
                 raise
+            intake_payload = self._get_intake_payload(order_id)
+            files_deleted = self._delete_order_files(
+                order_id,
+                intake_payload=intake_payload,
+                artifact_paths=(),
+            )
             now = utc_now_iso()
             self._conn.execute(
                 """
@@ -118,11 +130,13 @@ class OrderDeletionService:
                 action="anonymize",
                 actor=actor,
                 reason=reason,
-                files_deleted=0,
+                files_deleted=files_deleted,
             )
             self._conn.commit()
             return DeletionResult(
-                order_id=order_id, action="anonymized", files_deleted=0
+                order_id=order_id,
+                action="anonymized",
+                files_deleted=files_deleted,
             )
 
     def audit_count(self, order_id: str) -> int:
@@ -145,6 +159,61 @@ class OrderDeletionService:
             "INSERT INTO order_deletion_audits(order_id, action, actor, reason, files_deleted, created_at) VALUES (?, ?, ?, ?, ?, ?)",
             (order_id, action, actor, reason, files_deleted, utc_now_iso()),
         )
+
+    def _get_intake_payload(self, order_id: str) -> dict[str, object]:
+        if not self._table_exists("order_intakes"):
+            return {}
+        row = self._conn.execute(
+            "SELECT payload_json FROM order_intakes WHERE order_id=?",
+            (order_id,),
+        ).fetchone()
+        if row is None:
+            return {}
+        raw = row[0] or "{}"
+        try:
+            parsed = json.loads(str(raw))
+        except Exception:
+            return {}
+        return parsed if isinstance(parsed, dict) else {}
+
+    def _delete_order_files(
+        self,
+        order_id: str,
+        *,
+        intake_payload: dict[str, object],
+        artifact_paths: tuple[str | None, ...],
+    ) -> int:
+        deleted = self._delete_artifacts(*artifact_paths)
+        deleted += self._delete_portal_attachments(order_id, intake_payload)
+        return deleted
+
+    def _delete_portal_attachments(
+        self, order_id: str, intake_payload: dict[str, object]
+    ) -> int:
+        attachments = intake_payload.get("attachments")
+        if not isinstance(attachments, list):
+            return 0
+        deleted = 0
+        parent_dirs: set[Path] = set()
+        for item in attachments:
+            if not isinstance(item, dict):
+                continue
+            raw_path = item.get("storage_path")
+            if not raw_path:
+                continue
+            path = Path(str(raw_path))
+            if path.is_file():
+                path.unlink()
+                deleted += 1
+            parent_dirs.add(path.parent)
+        order_dir = None
+        if parent_dirs:
+            order_dir = sorted(parent_dirs, key=lambda p: len(p.parts))[0]
+        else:
+            order_dir = Path("data/portal_uploads") / order_id
+        if order_dir.exists() and order_dir.is_dir() and not any(order_dir.iterdir()):
+            order_dir.rmdir()
+        return deleted
 
     def _table_exists(self, table_name: str) -> bool:
         row = self._conn.execute(

@@ -57,6 +57,7 @@ def test_alipay_notify_marks_order_paid_and_is_idempotent(tmp_path, monkeypatch)
         "https://example.com/portal/payment-return",
     )
     monkeypatch.setenv("GAOKAO_PAYMENT_APP_ID", "20260001")
+    monkeypatch.setenv("GAOKAO_PAYMENT_MERCHANT_ID", "2088123412341234")
     monkeypatch.setenv("GAOKAO_PAYMENT_PRIVATE_KEY_PATH", str(private_path))
     monkeypatch.setenv("GAOKAO_PAYMENT_ALIPAY_PUBLIC_KEY_PATH", str(public_path))
 
@@ -95,6 +96,7 @@ def test_alipay_notify_marks_order_paid_and_is_idempotent(tmp_path, monkeypatch)
             notify_url=settings.payment_notify_url,
             return_url=settings.payment_return_url,
             app_id=settings.payment_app_id,
+            merchant_id=settings.payment_merchant_id,
             private_key_path=settings.payment_private_key_path,
             alipay_public_key_path=settings.payment_alipay_public_key_path,
         )
@@ -103,6 +105,7 @@ def test_alipay_notify_marks_order_paid_and_is_idempotent(tmp_path, monkeypatch)
 
         provider = AlipayProvider(
             app_id=settings.payment_app_id,
+            merchant_id=settings.payment_merchant_id,
             private_key_path=settings.payment_private_key_path,
             alipay_public_key_path=settings.payment_alipay_public_key_path,
             notify_url=settings.payment_notify_url,

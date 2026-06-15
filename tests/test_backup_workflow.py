@@ -120,3 +120,19 @@ def test_backup_verify_runs_restore_smoke_on_snapshot(settings, tmp_path):
     assert '"portal_report": 200' in proc.stdout
     assert '"portal_pdf": 200' in proc.stdout
     assert "backup verification finished" in proc.stdout
+
+
+def test_dr_drill_template_exists_and_references_target_machine_acceptance():
+    report = PROJECT_ROOT / "reports" / "DR_DRILL_TEMPLATE.md"
+    assert report.is_file()
+    body = report.read_text(encoding="utf-8")
+    assert "目标主机" in body
+    assert "backup_verify.sh --from-backup" in body
+    assert "portal_status" in body
+
+
+def test_backup_plan_references_dr_drill_template():
+    doc = (PROJECT_ROOT / "docs" / "BACKUP_AND_RECOVERY_PLAN.md").read_text(
+        encoding="utf-8"
+    )
+    assert "reports/DR_DRILL_TEMPLATE.md" in doc

@@ -30,6 +30,7 @@ def _build_provider(
     notify_url: str = "",
     return_url: str = "",
     app_id: str = "",
+    merchant_id: str = "",
     private_key_path: str = "",
     alipay_public_key_path: str = "",
 ):
@@ -43,6 +44,7 @@ def _build_provider(
             "alipay",
             env={
                 "GAOKAO_PAYMENT_APP_ID": app_id,
+                "GAOKAO_PAYMENT_MERCHANT_ID": merchant_id,
                 "GAOKAO_PAYMENT_PRIVATE_KEY_PATH": private_key_path,
                 "GAOKAO_PAYMENT_ALIPAY_PUBLIC_KEY_PATH": alipay_public_key_path,
                 "GAOKAO_PAYMENT_NOTIFY_URL": notify_url,
@@ -61,6 +63,7 @@ def _build_provider(
             raise PaymentError("alipay provider not ready: " + "; ".join(details))
         return AlipayProvider(
             app_id=app_id,
+            merchant_id=merchant_id,
             private_key_path=private_key_path,
             alipay_public_key_path=alipay_public_key_path,
             notify_url=notify_url,
@@ -85,6 +88,7 @@ class PaymentService:
         notify_url: str = "",
         return_url: str = "",
         app_id: str = "",
+        merchant_id: str = "",
         private_key_path: str = "",
         alipay_public_key_path: str = "",
     ) -> None:
@@ -97,6 +101,7 @@ class PaymentService:
             notify_url=notify_url,
             return_url=return_url,
             app_id=app_id,
+            merchant_id=merchant_id,
             private_key_path=private_key_path,
             alipay_public_key_path=alipay_public_key_path,
         )
@@ -112,6 +117,7 @@ class PaymentService:
         notify_url: str = "",
         return_url: str = "",
         app_id: str = "",
+        merchant_id: str = "",
         private_key_path: str = "",
         alipay_public_key_path: str = "",
     ) -> "PaymentService":
@@ -123,6 +129,7 @@ class PaymentService:
             notify_url=notify_url,
             return_url=return_url,
             app_id=app_id,
+            merchant_id=merchant_id,
             private_key_path=private_key_path,
             alipay_public_key_path=alipay_public_key_path,
         )
@@ -136,7 +143,7 @@ class PaymentService:
             if existing is not None and existing.status in {
                 "pending",
                 "paid",
-                "refund_pending",
+                "refunded",
             }:
                 return PaymentCheckout(
                     payment_id=existing.id,
@@ -198,16 +205,33 @@ class PaymentService:
         if normalized_status not in success_statuses:
             raise PaymentError("payment status not successful")
         expected_app_id = str(getattr(self.provider, "app_id", "") or "").strip()
+        expected_merchant_id = str(
+            getattr(self.provider, "merchant_id", "") or ""
+        ).strip()
         received_app_id = str(
             normalized_payload.get("app_id") or payload.get("app_id") or ""
         ).strip()
         received_notify_id = str(
             normalized_payload.get("notify_id") or payload.get("notify_id") or ""
         ).strip()
+        received_merchant_id = str(
+            normalized_payload.get("merchant_id")
+            or payload.get("seller_id")
+            or payload.get("merchant_id")
+            or ""
+        ).strip()
         if expected_app_id and not received_notify_id:
             raise PaymentError("payment notify_id missing")
         if expected_app_id and received_app_id and expected_app_id != received_app_id:
             raise PaymentError("payment app_id mismatch")
+        if expected_merchant_id and not received_merchant_id:
+            raise PaymentError("payment merchant_id missing")
+        if (
+            expected_merchant_id
+            and received_merchant_id
+            and expected_merchant_id != received_merchant_id
+        ):
+            raise PaymentError("payment merchant_id mismatch")
         provider_trade_no = str(
             normalized_payload.get("provider_trade_no") or ""
         ).strip()
@@ -266,19 +290,6 @@ class PaymentService:
                 if payment is None:
                     raise PaymentError("payment not found for order")
                 if payment.status == "refunded":
-                    return RefundRequestResult(
-                        payment_id=payment.id, status=payment.status
-                    )
-                if payment.status == "refund_pending":
-                    # Idempotent refund request: keep order advanced to refunded
-                    # to keep portal / analytics in a single coherent terminal state.
-                    if orders_dao.get(order_id).status != "refunded":
-                        orders_dao.transition_status(
-                            order_id,
-                            "refunded",
-                            actor="refund_request_idempotent",
-                            reason=reason,
-                        )
                     return RefundRequestResult(
                         payment_id=payment.id, status=payment.status
                     )

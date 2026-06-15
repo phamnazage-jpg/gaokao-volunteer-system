@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 import subprocess
+import sys
 from pathlib import Path
 
 from data.orders.dao import OrdersDAO
@@ -76,7 +77,7 @@ def test_retention_cleanup_script_prints_summary(settings):
     env = {**os.environ, "GAOKAO_ORDERS_DB_PATH": settings.orders_db_path}
     proc = subprocess.run(
         [
-            "python3",
+            sys.executable,
             "scripts/gaokao-retention-cleanup.py",
             "--cutoff",
             "2025-06-30T00:00:00+00:00",
@@ -101,7 +102,7 @@ def test_retention_cleanup_script_supports_retention_days(settings):
     env = {**os.environ, "GAOKAO_ORDERS_DB_PATH": settings.orders_db_path}
     proc = subprocess.run(
         [
-            "python3",
+            sys.executable,
             "scripts/gaokao-retention-cleanup.py",
             "--retention-days",
             "180",
@@ -126,7 +127,7 @@ def test_retention_cleanup_underscore_script_alias_works(settings):
     env = {**os.environ, "GAOKAO_ORDERS_DB_PATH": settings.orders_db_path}
     proc = subprocess.run(
         [
-            "python3",
+            sys.executable,
             "scripts/gaokao_retention_cleanup.py",
             "--cutoff",
             "2025-06-30T00:00:00+00:00",

@@ -49,7 +49,6 @@ _STAGE_META: dict[str, tuple[str, str]] = {
     "processing": ("处理中", "后台已接单，正在生成审核/方案结果。"),
     "report_ready": ("报告已就绪", "已可站内查看报告并下载 PDF。"),
     "completed": ("已完成", "订单已完成，后续可继续查看历史交付内容。"),
-    "refund_pending": ("退款申请中", "退款申请已登记，等待处理结果。"),
     "refunded": ("已退款", "该订单已完成退款。"),
     "payment_failed": ("支付失败", "支付未成功，请重新发起支付。"),
 }
@@ -91,6 +90,40 @@ class PortalAttachmentUploaded(BaseModel):
     intake_status: str
     stage: str
     attachments: list[dict[str, Any]]
+
+
+class DeletionRequestCreate(BaseModel):
+    requester_name: str
+    requester_contact: str
+    reason: str
+    scope: str
+    confirm_guardian: bool
+
+
+class DeletionRequestCreated(BaseModel):
+    order_id: str
+    request_logged: bool
+    next_step: str
+
+
+def _log_deletion_request(
+    order_id: str, payload: DeletionRequestCreate, settings: Settings
+) -> None:
+    from datetime import datetime
+
+    path = Path(settings.deletion_request_log_path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    item = {
+        "created_at": datetime.utcnow().isoformat() + "Z",
+        "order_id": order_id,
+        "requester_name": payload.requester_name,
+        "requester_contact": payload.requester_contact,
+        "reason": payload.reason,
+        "scope": payload.scope,
+        "confirm_guardian": payload.confirm_guardian,
+    }
+    with path.open("a", encoding="utf-8") as fh:
+        fh.write(json.dumps(item, ensure_ascii=False) + "\n")
 
 
 @router.get("/", include_in_schema=False)
@@ -259,7 +292,6 @@ def _assert_portal_info_mutable(stage: str) -> None:
         "processing",
         "report_ready",
         "completed",
-        "refund_pending",
         "refunded",
     }:
         raise HTTPException(
@@ -406,6 +438,29 @@ def submit_order_info(
     )
 
 
+@router.get("/portal/{token}/deletion-request", include_in_schema=False)
+def deletion_request_page(
+    token: str, settings: Settings = Depends(get_settings_dep)
+) -> HTMLResponse:
+    order = _resolve_order_from_token(token, settings)
+    return HTMLResponse(_render_deletion_request_page(token, order))
+
+
+@router.post("/portal/{token}/deletion-request", response_model=DeletionRequestCreated)
+def submit_deletion_request(
+    token: str,
+    payload: DeletionRequestCreate,
+    settings: Settings = Depends(get_settings_dep),
+) -> DeletionRequestCreated:
+    order = _resolve_order_from_token(token, settings)
+    _log_deletion_request(order.id, payload, settings)
+    return DeletionRequestCreated(
+        order_id=order.id,
+        request_logged=True,
+        next_step="客服将在核验后处理删除申请",
+    )
+
+
 @router.get("/portal/{token}/notifications", include_in_schema=False)
 def notification_audit_page(
     token: str, settings: Settings = Depends(get_settings_dep)
@@ -463,6 +518,7 @@ def _payment_service(settings: Settings) -> PaymentService:
         notify_url=settings.payment_notify_url,
         return_url=settings.payment_return_url,
         app_id=settings.payment_app_id,
+        merchant_id=settings.payment_merchant_id,
         private_key_path=settings.payment_private_key_path,
         alipay_public_key_path=settings.payment_alipay_public_key_path,
     )
@@ -508,9 +564,7 @@ def _build_portal_context(order: Order, settings: Settings) -> dict[str, Any]:
     report_html_ready = bool(order.audit_report and Path(order.audit_report).is_file())
     report_pdf_ready = bool(order.pdf_path and Path(order.pdf_path).is_file())
     report_artifacts_ready = report_html_ready and report_pdf_ready
-    if payment is not None and payment.status == "refund_pending":
-        stage = "refund_pending"
-    elif order.status == "refunded" or (
+    if order.status == "refunded" or (
         payment is not None and payment.status == "refunded"
     ):
         stage = "refunded"
@@ -575,25 +629,86 @@ def _build_portal_context(order: Order, settings: Settings) -> dict[str, Any]:
     }
 
 
+def _render_footer_links(token: str | None = None) -> str:
+    privacy_href = "/privacy"
+    terms_href = "/service-terms"
+    if token:
+        privacy_href = f"/privacy?token={escape(token)}"
+        terms_href = f"/service-terms?token={escape(token)}"
+        deletion_href = f"/portal/{escape(token)}/deletion-request"
+    else:
+        deletion_href = "/deletion-policy"
+    return (
+        f'<footer style="margin-top:24px;color:#5b6b88;font-size:14px;">'
+        f'<a href="{privacy_href}">隐私政策</a> · '
+        f'<a href="{terms_href}">服务说明与免责声明</a> · '
+        f'<a href="{deletion_href}">删除申请 / 数据删除说明</a>'
+        f"</footer>"
+    )
+
+
+@router.get("/privacy", include_in_schema=False)
+def privacy_page(token: str | None = None) -> HTMLResponse:
+    body = (
+        "<!doctype html><html lang='zh-CN'><head><meta charset='utf-8' /><title>隐私政策</title></head>"
+        "<body style='font-family:-apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif;background:#f4f7fb;padding:32px;color:#172033;'>"
+        "<main style='max-width:860px;margin:0 auto;background:#fff;border:1px solid #dbe3f0;border-radius:18px;padding:24px;'>"
+        "<h1>隐私政策</h1>"
+        "<p>我们收集下单、资料填写、支付与交付所需的最小信息，仅用于高考志愿填报服务，不用于营销出售。</p>"
+        "<p>如需撤回资料或申请删除，可使用“删除申请 / 数据删除说明”入口提交请求。</p>"
+        + _render_footer_links(token)
+        + "</main></body></html>"
+    )
+    return HTMLResponse(body)
+
+
+@router.get("/service-terms", include_in_schema=False)
+def service_terms_page(token: str | None = None) -> HTMLResponse:
+    body = (
+        "<!doctype html><html lang='zh-CN'><head><meta charset='utf-8' /><title>服务说明与免责声明</title></head>"
+        "<body style='font-family:-apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif;background:#f4f7fb;padding:32px;color:#172033;'>"
+        "<main style='max-width:860px;margin:0 auto;background:#fff;border:1px solid #dbe3f0;border-radius:18px;padding:24px;'>"
+        "<h1>服务说明与免责声明</h1>"
+        "<p>本服务提供志愿填报辅助建议与报告，不承诺录取结果；监护人需知情并同意提交资料。</p>"
+        + _render_footer_links(token)
+        + "</main></body></html>"
+    )
+    return HTMLResponse(body)
+
+
+@router.get("/deletion-policy", include_in_schema=False)
+def deletion_policy_page() -> HTMLResponse:
+    body = (
+        "<!doctype html><html lang='zh-CN'><head><meta charset='utf-8' /><title>删除申请 / 数据删除说明</title></head>"
+        "<body style='font-family:-apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif;background:#f4f7fb;padding:32px;color:#172033;'>"
+        "<main style='max-width:860px;margin:0 auto;background:#fff;border:1px solid #dbe3f0;border-radius:18px;padding:24px;'>"
+        "<h1>删除申请 / 数据删除说明</h1>"
+        "<p>如需申请删除订单资料、附件或交付物，请在支付后的 Portal 中提交删除申请，客服会核验订单与监护人信息后处理。</p>"
+        + _render_footer_links()
+        + "</main></body></html>"
+    )
+    return HTMLResponse(body)
+
+
 def _render_landing_page() -> str:
-    return """<!doctype html>
+    return f"""<!doctype html>
 <html lang=\"zh-CN\">
   <head>
     <meta charset=\"utf-8\" />
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />
     <title>高考志愿填报智能系统 - 用户端 Web 自助服务</title>
     <style>
-      body { margin: 0; font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; background: linear-gradient(180deg,#0b1020,#121a31 65%,#f7f9fc 65%); color: #e8edf7; }
-      .wrap { max-width: 1080px; margin: 0 auto; padding: 48px 20px 72px; }
-      .hero { display: grid; gap: 20px; }
-      h1 { margin: 0; font-size: 42px; }
-      .sub { color: #9fb0d0; line-height: 1.7; }
-      .btn { display:inline-flex; padding:12px 18px; border-radius:12px; text-decoration:none; font-weight:700; }
-      .btn-primary { background:#7c9cff; color:#fff; }
-      .btn-secondary { border:1px solid rgba(159,176,208,.18); color:#fff; }
-      .grid { display:grid; gap:16px; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); margin-top:28px; }
-      .card { background:rgba(18,26,49,.84); border:1px solid rgba(159,176,208,.18); border-radius:18px; padding:20px; }
-      .section { background:#f7f9fc; color:#172033; border-radius:28px; padding:28px; margin-top:32px; }
+      body {{ margin: 0; font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; background: linear-gradient(180deg,#0b1020,#121a31 65%,#f7f9fc 65%); color: #e8edf7; }}
+      .wrap {{ max-width: 1080px; margin: 0 auto; padding: 48px 20px 72px; }}
+      .hero {{ display: grid; gap: 20px; }}
+      h1 {{ margin: 0; font-size: 42px; }}
+      .sub {{ color: #9fb0d0; line-height: 1.7; }}
+      .btn {{ display:inline-flex; padding:12px 18px; border-radius:12px; text-decoration:none; font-weight:700; }}
+      .btn-primary {{ background:#7c9cff; color:#fff; }}
+      .btn-secondary {{ border:1px solid rgba(159,176,208,.18); color:#fff; }}
+      .grid {{ display:grid; gap:16px; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); margin-top:28px; }}
+      .card {{ background:rgba(18,26,49,.84); border:1px solid rgba(159,176,208,.18); border-radius:18px; padding:20px; }}
+      .section {{ background:#f7f9fc; color:#172033; border-radius:28px; padding:28px; margin-top:32px; }}
     </style>
   </head>
   <body>
@@ -620,6 +735,7 @@ def _render_landing_page() -> str:
           <li>站内查看报告 + PDF 交付</li>
         </ul>
       </section>
+      {_render_footer_links()}
     </main>
   </body>
 </html>
@@ -627,20 +743,20 @@ def _render_landing_page() -> str:
 
 
 def _render_pricing_page() -> str:
-    return """<!doctype html>
+    return f"""<!doctype html>
 <html lang=\"zh-CN\">
   <head>
     <meta charset=\"utf-8\" />
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />
     <title>服务套餐 - 高考志愿填报智能系统</title>
     <style>
-      body { margin: 0; font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; background:#f4f7fb; color:#172033; }
-      .wrap { max-width:1080px; margin:0 auto; padding:40px 20px 72px; }
-      .grid { display:grid; gap:18px; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); margin-top:28px; }
-      .card { background:#fff; border:1px solid #dbe3f0; border-radius:18px; padding:22px; box-shadow:0 10px 30px rgba(23,32,51,.06); }
-      .price { font-size:30px; font-weight:800; margin:10px 0; }
-      .button { display:inline-flex; margin-top:16px; padding:11px 16px; border-radius:12px; background:#1f6feb; color:#fff; text-decoration:none; font-weight:700; }
-      .notice { margin-top:26px; padding:16px 18px; border-radius:14px; background:#fff7e6; color:#8a5a00; border:1px solid #f4d39b; }
+      body {{ margin: 0; font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; background:#f4f7fb; color:#172033; }}
+      .wrap {{ max-width:1080px; margin:0 auto; padding:40px 20px 72px; }}
+      .grid {{ display:grid; gap:18px; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); margin-top:28px; }}
+      .card {{ background:#fff; border:1px solid #dbe3f0; border-radius:18px; padding:22px; box-shadow:0 10px 30px rgba(23,32,51,.06); }}
+      .price {{ font-size:30px; font-weight:800; margin:10px 0; }}
+      .button {{ display:inline-flex; margin-top:16px; padding:11px 16px; border-radius:12px; background:#1f6feb; color:#fff; text-decoration:none; font-weight:700; }}
+      .notice {{ margin-top:26px; padding:16px 18px; border-radius:14px; background:#fff7e6; color:#8a5a00; border:1px solid #f4d39b; }}
     </style>
   </head>
   <body>
@@ -665,12 +781,11 @@ def _render_pricing_page() -> str:
         </article>
       </section>
       <div class=\"notice\">支付接入建设中：当前使用 Mock 支付沙箱完成本地闭环验证，后续可切换真实 provider。</div>
+      {_render_footer_links()}
     </main>
   </body>
 </html>
 """
-
-
 def _render_checkout_page(service_version: str) -> str:
     amount = _SERVICE_PRICES[service_version]
     service_label = {
@@ -708,6 +823,7 @@ def _render_checkout_page(service_version: str) -> str:
           <button type=\"submit\">创建订单并去支付（¥{amount / 100:.0f}）</button>
         </form>
         <p id=\"result\"></p>
+        {_render_footer_links()}
       </section>
     </main>
     <script>
@@ -943,8 +1059,9 @@ def _render_info_page(
           <button type=\"button\" id=\"submit-step\" style=\"display:none;\" onclick=\"submitIntake('submit')\">提交资料</button>
         </div>
       </form>
-      <p><a href=\"/portal/{escape(token)}/status\">返回订单状态页</a></p>
-      <pre id=\"result\"></pre>
+      <p><a href="/portal/{escape(token)}/status">返回订单状态页</a></p>
+      {_render_footer_links(token)}
+      <pre id="result"></pre>
     </main>
     <script>
       let currentStep = 1;
@@ -1148,12 +1265,6 @@ def _render_status_page(token: str, context: dict[str, Any]) -> str:
 def _render_notification_audit_page(token: str, order: Order, events: list[Any]) -> str:
     rows = []
     for event in events:
-        payload_preview = ""
-        try:
-            parsed = json.loads(event.payload_json)
-            payload_preview = escape(json.dumps(parsed, ensure_ascii=False, indent=2))
-        except Exception:
-            payload_preview = escape(event.payload_json or "")
         failure_reason = escape(str(event.failure_reason or "-"))
         rows.append(
             "<tr>"
@@ -1163,10 +1274,9 @@ def _render_notification_audit_page(token: str, order: Order, events: list[Any])
             f"<td>{escape(str(event.attempt_count))}</td>"
             f"<td>{escape(str(event.last_attempt_at or '-'))}</td>"
             f"<td>{failure_reason}</td>"
-            f"<td><pre style='white-space:pre-wrap;max-width:520px'>{payload_preview}</pre></td>"
             "</tr>"
         )
-    rows_html = "".join(rows) or "<tr><td colspan='7'>暂无通知事件</td></tr>"
+    rows_html = "".join(rows) or "<tr><td colspan='6'>暂无通知事件</td></tr>"
     return f"""<!doctype html>
 <html lang=\"zh-CN\"><head><meta charset=\"utf-8\" /><title>通知审计</title></head>
   <body style=\"font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f4f7fb;margin:0;padding:32px 20px;color:#172033;\">
@@ -1175,13 +1285,14 @@ def _render_notification_audit_page(token: str, order: Order, events: list[Any])
         <h1>通知审计</h1>
         <p>订单号：{escape(order.id)}</p>
         <p>服务版本：{escape(order.service_version)}</p>
+        <p>仅展示通知摘要；原始 payload 与附件路径不会在前台显示。</p>
         <p><a href=\"/portal/{escape(token)}/status\">返回订单状态页</a></p>
       </section>
       <section style=\"background:#fff;border:1px solid #dbe3f0;border-radius:18px;padding:24px;overflow:auto;\">
         <table style=\"width:100%;border-collapse:collapse;\">
           <thead>
             <tr>
-              <th>渠道</th><th>事件</th><th>状态</th><th>尝试次数</th><th>最后尝试时间</th><th>失败原因</th><th>payload</th>
+              <th>渠道</th><th>事件</th><th>状态</th><th>尝试次数</th><th>最后尝试时间</th><th>失败原因</th>
             </tr>
           </thead>
           <tbody>{rows_html}</tbody>
@@ -1207,3 +1318,44 @@ def _render_report_page(order: Order) -> str:
         content = Path(order.plan_file).read_text(encoding="utf-8")
         return f"<html><body><h1>志愿方案报告</h1><pre>{escape(content)}</pre></body></html>"
     raise HTTPException(status_code=404, detail="report not found")
+
+
+def _render_deletion_request_page(token: str, order: Order) -> str:
+    return f"""<!doctype html>
+<html lang='zh-CN'><head><meta charset='utf-8' /><title>删除申请</title></head>
+<body style='font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f4f7fb;padding:32px;color:#172033;'>
+<main style='max-width:860px;margin:0 auto;background:#fff;border:1px solid #dbe3f0;border-radius:18px;padding:24px;'>
+  <h1>删除申请</h1>
+  <p>订单号：{escape(order.id)}</p>
+  <p>可用于申请删除资料、附件、交付物；客服会核验订单与监护人信息后处理。</p>
+  <form id='deletion-request-form'>
+    <label>申请人姓名<input name='requester_name' required /></label><br/>
+    <label>联系方式<input name='requester_contact' required /></label><br/>
+    <label>删除范围<input name='scope' value='order_and_attachments' required /></label><br/>
+    <label>申请原因<textarea name='reason' required></textarea></label><br/>
+    <label><input type='checkbox' name='confirm_guardian' /> 我确认监护人已知情并同意发起删除申请</label><br/>
+    <button type='button' onclick='submitDeletionRequest()'>提交删除申请</button>
+  </form>
+  {_render_footer_links(token)}
+  <pre id='result'></pre>
+</main>
+<script>
+async function submitDeletionRequest() {{
+  const form = new FormData(document.getElementById('deletion-request-form'));
+  const payload = {{
+    requester_name: form.get('requester_name') || '',
+    requester_contact: form.get('requester_contact') || '',
+    scope: form.get('scope') || '',
+    reason: form.get('reason') || '',
+    confirm_guardian: form.get('confirm_guardian') === 'on',
+  }};
+  const resp = await fetch('/portal/{escape(token)}/deletion-request', {{
+    method: 'POST',
+    headers: {{ 'Content-Type': 'application/json' }},
+    body: JSON.stringify(payload),
+  }});
+  const body = await resp.json();
+  document.getElementById('result').textContent = JSON.stringify(body, null, 2);
+}}
+</script>
+</body></html>"""

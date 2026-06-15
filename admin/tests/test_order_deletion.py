@@ -64,17 +64,37 @@ def _prepare_order_with_artifacts(
         )
     return report_path, pdf_path
 
+def _prepare_portal_attachment(settings, order_id: str) -> Path:
+    upload_dir = Path(settings.portal_upload_dir) / order_id
+    upload_dir.mkdir(parents=True, exist_ok=True)
+    attachment = upload_dir / "score-sheet.pdf"
+    attachment.write_bytes(b"%PDF-1.4\nportal-upload\n")
+    IntakeStore.for_db(settings.orders_db_path).save(
+        order_id=order_id,
+        payload={
+            "candidate_score": 578,
+            "attachments": [
+                {
+                    "original_name": "score-sheet.pdf",
+                    "stored_name": "score-sheet.pdf",
+                    "content_type": "application/pdf",
+                    "size_bytes": attachment.stat().st_size,
+                    "storage_path": str(attachment),
+                    "kind": "portal_attachment",
+                }
+            ],
+        },
+        submit=True,
+    )
+    return attachment
+
 
 def test_admin_delete_order_removes_artifacts_and_related_records(
     client, auth_headers, settings, tmp_path
 ):
     order = _seed_order(settings.orders_db_path)
     _mark_paid(settings, order)
-    IntakeStore.for_db(settings.orders_db_path).save(
-        order_id=order.id,
-        payload={"candidate_score": 578, "guardian_notes": "to delete"},
-        submit=True,
-    )
+    attachment = _prepare_portal_attachment(settings, order.id)
     report_path, pdf_path = _prepare_order_with_artifacts(settings, tmp_path, order.id)
 
     notification_service = DeliveryNotificationService.for_db(settings.orders_db_path)
@@ -92,10 +112,12 @@ def test_admin_delete_order_removes_artifacts_and_related_records(
     body = resp.json()
     assert body["action"] == "deleted"
     assert body["order_id"] == order.id
-    assert body["files_deleted"] == 2
+    assert body["files_deleted"] == 3
 
     assert not report_path.exists()
     assert not pdf_path.exists()
+    assert not attachment.exists()
+    assert not attachment.parent.exists()
 
     with OrdersDAO.connect(settings.orders_db_path) as dao:
         try:
@@ -170,3 +192,31 @@ def test_admin_anonymize_order_masks_pii_but_keeps_order(
         assert deletion_service.audit_count(order.id) == 1
     finally:
         deletion_service.close()
+
+
+def test_admin_anonymize_order_removes_portal_attachments(
+    client, auth_headers, settings
+):
+    order = _seed_order(settings.orders_db_path, order_id="GKO-20260614-ANON-FILE")
+    _mark_paid(settings, order)
+    attachment = _prepare_portal_attachment(settings, order.id)
+
+    resp = client.delete(
+        f"/api/orders/{order.id}?mode=anonymize&reason=retention_expired",
+        headers=auth_headers,
+    )
+    assert resp.status_code == 200, resp.text
+    body = resp.json()
+    assert body["action"] == "anonymized"
+    assert body["files_deleted"] == 1
+
+    assert not attachment.exists()
+    assert not attachment.parent.exists()
+
+    intake_store = IntakeStore.for_db(settings.orders_db_path)
+    try:
+        intake = intake_store.get(order.id)
+    finally:
+        intake_store.close()
+    assert intake is not None
+    assert intake.payload == {}

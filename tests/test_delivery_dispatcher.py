@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import subprocess
+import sys
 from pathlib import Path
 
 from data.notifications.email_service import DeliveryNotificationService
@@ -261,7 +262,7 @@ def test_delivery_dispatch_script_prints_summary(settings, tmp_path):
         "GAOKAO_ORDERS_DB_PATH": settings.orders_db_path,
     }
     proc = subprocess.run(
-        ["python3", "scripts/gaokao-delivery-dispatch.py", "--channel", "station"],
+        [sys.executable, "scripts/gaokao-delivery-dispatch.py", "--channel", "station"],
         cwd=PROJECT_ROOT,
         text=True,
         capture_output=True,
@@ -288,7 +289,7 @@ def test_delivery_watchdog_exits_zero_when_no_failures(settings, tmp_path):
         "GAOKAO_ORDERS_DB_PATH": settings.orders_db_path,
     }
     proc = subprocess.run(
-        ["python3", "scripts/gaokao-delivery-watchdog.py", "--channel", "station"],
+        [sys.executable, "scripts/gaokao-delivery-watchdog.py", "--channel", "station"],
         cwd=PROJECT_ROOT,
         text=True,
         capture_output=True,
@@ -318,7 +319,7 @@ def test_delivery_watchdog_exits_nonzero_when_failures_detected(settings, tmp_pa
         "GAOKAO_ORDERS_DB_PATH": settings.orders_db_path,
     }
     proc = subprocess.run(
-        ["python3", "scripts/gaokao-delivery-watchdog.py", "--channel", "station"],
+        [sys.executable, "scripts/gaokao-delivery-watchdog.py", "--channel", "station"],
         cwd=PROJECT_ROOT,
         text=True,
         capture_output=True,

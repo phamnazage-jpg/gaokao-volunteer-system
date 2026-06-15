@@ -50,6 +50,92 @@ class OpsAlertListResponse(BaseModel):
     items: list[OpsAlertEventResponse]
 
 
+class DeletionRequestResponse(BaseModel):
+    order_id: str
+    requester_name: str
+    requester_contact: str
+    reason: str
+    scope: str
+    confirm_guardian: bool
+    created_at: str
+
+
+@router.get(
+    "/deletion-requests",
+    response_model=dict[str, Any],
+    summary="删除申请列表",
+)
+def list_deletion_requests(
+    limit: int = Query(50, ge=1, le=200),
+    order_id: Optional[str] = Query(None),
+    _: AdminUser = Depends(get_current_user),
+    settings: Settings = Depends(get_settings_dep),
+) -> dict[str, Any]:
+    path = Path(settings.deletion_request_log_path)
+    items: list[dict[str, Any]] = []
+    if path.exists():
+        for line in path.read_text(encoding="utf-8").splitlines():
+            if not line.strip():
+                continue
+            try:
+                item = json.loads(line)
+            except Exception:
+                continue
+            if not isinstance(item, dict):
+                continue
+            if order_id and str(item.get("order_id") or "") != order_id:
+                continue
+            items.append(item)
+    items = items[-limit:]
+    return {"total": len(items), "items": items}
+
+
+@page_router.get("/admin/deletion-requests", include_in_schema=False)
+def deletion_request_admin_page(
+    limit: int = Query(50, ge=1, le=200),
+    order_id: Optional[str] = Query(None),
+    _: AdminUser = Depends(get_current_user),
+    settings: Settings = Depends(get_settings_dep),
+) -> HTMLResponse:
+    payload = list_deletion_requests(
+        limit=limit,
+        order_id=order_id,
+        _=_,
+        settings=settings,
+    )
+    rows = []
+    for item in payload["items"]:
+        rows.append(
+            "<tr>"
+            f"<td>{escape(str(item.get('created_at') or '-'))}</td>"
+            f"<td>{escape(str(item.get('order_id') or '-'))}</td>"
+            f"<td>{escape(str(item.get('requester_name') or '-'))}</td>"
+            f"<td>{escape(str(item.get('requester_contact') or '-'))}</td>"
+            f"<td>{escape(str(item.get('scope') or '-'))}</td>"
+            f"<td>{escape(str(item.get('reason') or '-'))}</td>"
+            "</tr>"
+        )
+    rows_html = "".join(rows) or "<tr><td colspan='6'>暂无删除申请</td></tr>"
+    html = f"""<!doctype html>
+<html lang='zh-CN'><head><meta charset='utf-8' /><title>删除申请审计</title></head>
+<body style='font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f4f7fb;margin:0;padding:32px 20px;color:#172033;'>
+<main style='max-width:1280px;margin:0 auto;display:grid;gap:16px;'>
+<section style='background:#fff;border:1px solid #dbe3f0;border-radius:18px;padding:24px;'>
+  <h1>删除申请审计</h1>
+  <p>日志路径：{escape(settings.deletion_request_log_path)}</p>
+  <p>总数：{payload['total']}</p>
+</section>
+<section style='background:#fff;border:1px solid #dbe3f0;border-radius:18px;padding:24px;overflow:auto;'>
+  <table style='width:100%;border-collapse:collapse;'>
+    <thead><tr><th>时间</th><th>订单</th><th>申请人</th><th>联系方式</th><th>范围</th><th>原因</th></tr></thead>
+    <tbody>{rows_html}</tbody>
+  </table>
+</section>
+</main>
+</body></html>"""
+    return HTMLResponse(html)
+
+
 @router.get("/ops-alerts", response_model=OpsAlertListResponse, summary="运维告警列表")
 def list_ops_alerts(
     limit: int = Query(50, ge=1, le=200),

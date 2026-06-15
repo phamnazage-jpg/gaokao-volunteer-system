@@ -1,5 +1,3 @@
-"""T5.2 性能与并发测试。"""
-
 from __future__ import annotations
 
 import csv
@@ -129,6 +127,8 @@ def test_admin_locust_10_concurrency_success_rate_above_95(
 ) -> None:
     report_prefix = tmp_path / "t5_2"
     command = [
+        sys.executable,
+        "-m",
         "locust",
         "-f",
         str(LOCUST_FILE),

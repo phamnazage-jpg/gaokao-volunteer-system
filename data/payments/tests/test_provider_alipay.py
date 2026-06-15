@@ -33,6 +33,7 @@ def _provider(tmp_path: Path) -> AlipayProvider:
     private_path, public_path = _write_keypair(tmp_path)
     return AlipayProvider(
         app_id="20260001",
+        merchant_id="2088123412341234",
         private_key_path=str(private_path),
         alipay_public_key_path=str(public_path),
         notify_url="https://example.com/api/public/payments/alipay/notify",
@@ -92,4 +93,18 @@ def test_alipay_provider_verifies_signed_webhook_payload(tmp_path):
         "status": "TRADE_SUCCESS",
         "app_id": "20260001",
         "notify_id": "notify_pay_123",
+        "merchant_id": "2088123412341234",
     }
+
+
+def test_alipay_provider_normalizes_seller_id(tmp_path):
+    provider = _provider(tmp_path)
+    payload, _signature = provider.build_webhook_request(
+        payment_id="pay_merchant",
+        amount_cents=9900,
+        provider_trade_no="ALI-TRADE-MERCHANT",
+    )
+    payload["seller_id"] = "2088123412341234"
+
+    normalized = provider.normalize_webhook_payload(payload)
+    assert normalized["merchant_id"] == "2088123412341234"

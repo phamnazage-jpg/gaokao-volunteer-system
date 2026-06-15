@@ -155,7 +155,7 @@ bash scripts/backup_verify.sh
 
 - 异机 / 异地备份尚未落地
 - 目标主机上的 cron / systemd timer 尚未实际安装验收
-- 备份失败告警链（邮件 / IM / 监控）未接入
+- 真实 SMTP / IM / 监控通道的目标机联调与失败演练记录仍未归档
 - 密钥轮换与应急恢复仍缺真实执行记录
 
 ## 10. 不可降级的不变量
@@ -194,6 +194,7 @@ bash scripts/backup_verify.sh
 - 接入 P1-8 整改的 service-level smoke (已完成)
 - 增加异机异地备份 (P2-6 之后)
 - 接入告警推送 (P1-8 后续)
+- 备份失败告警链仍需目标主机接入真实 SMTP / IM / monitoring；仓库内尚未提供可直接安装的 backup alert service
 - 接入密钥轮换演练 (P2-6 之后)
-- 真实演练记录归档 (例: `reports/DR_DRILL_2026-07-01.md`)
+- 真实演练记录归档（模板：`reports/DR_DRILL_TEMPLATE.md`，示例：`reports/DR_DRILL_2026-07-01.md`）
 - 当前 restore smoke 证明的是“最小服务链可用”，不是完整生产级全链恢复

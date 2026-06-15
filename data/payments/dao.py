@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS payments (
     provider TEXT NOT NULL,
     amount_cents INTEGER NOT NULL CHECK(amount_cents >= 0),
     currency TEXT NOT NULL,
-    status TEXT NOT NULL CHECK(status IN ('pending','paid','failed','refund_pending','refunded')),
+    status TEXT NOT NULL CHECK(status IN ('pending','paid','failed','refunded')),
     provider_trade_no TEXT,
     checkout_token TEXT,
     callback_payload TEXT,

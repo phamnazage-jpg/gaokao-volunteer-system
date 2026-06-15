@@ -201,3 +201,48 @@ def test_submit_requires_at_least_one_target_preference(client, settings):
     )
     assert resp.status_code == 422
     assert "至少填写一个偏好与目标字段" in resp.text
+
+
+def test_order_info_page_exposes_policy_and_deletion_links(client, settings):
+    order = _seed_order(settings.orders_db_path, order_id="GKO-20260615-INFO-LINKS")
+    _mark_paid(settings, order)
+    token = issue_portal_token(order.id, settings.portal_token_secret)
+
+    page = client.get(f"/portal/{token}/info")
+    assert page.status_code == 200, page.text
+    assert f'/privacy?token={token}' in page.text
+    assert f'/service-terms?token={token}' in page.text
+    assert f'/portal/{token}/deletion-request' in page.text
+
+
+def test_portal_deletion_request_is_logged_and_visible_in_admin(client, auth_headers, settings):
+    order = _seed_order(settings.orders_db_path, order_id="GKO-20260615-DELETE-REQ")
+    _mark_paid(settings, order)
+    token = issue_portal_token(order.id, settings.portal_token_secret)
+
+    form_page = client.get(f"/portal/{token}/deletion-request")
+    assert form_page.status_code == 200, form_page.text
+    assert "删除申请" in form_page.text
+
+    submit = client.post(
+        f"/portal/{token}/deletion-request",
+        json={
+            "requester_name": "张家长",
+            "requester_contact": "parent@example.com",
+            "reason": "需要撤回资料并删除附件",
+            "scope": "order_and_attachments",
+            "confirm_guardian": True,
+        },
+    )
+    assert submit.status_code == 200, submit.text
+    body = submit.json()
+    assert body["order_id"] == order.id
+    assert body["request_logged"] is True
+
+    admin_page = client.get(
+        f"/admin/deletion-requests?order_id={order.id}", headers=auth_headers
+    )
+    assert admin_page.status_code == 200, admin_page.text
+    assert order.id in admin_page.text
+    assert "需要撤回资料并删除附件" in admin_page.text
+    assert "parent@example.com" in admin_page.text

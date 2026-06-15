@@ -51,10 +51,9 @@
 - core = 100.00%
 - 满足：整体≥80%、核心≥100%
 
-最新覆盖率口径已统一：
-
-- 单一真相源：`scripts/check_coverage_gate.py`
-- CI / dev-verify / codecov 全部指向同一阈值
+- 本地与 CI 的硬门禁统一收敛到 `scripts/check_coverage_gate.py`
+- `dev-verify.sh` 与 GitHub CI 都执行同一组硬阈值检查
+- `codecov.yml` 当前保持同值展示口径，但不是执行单源，也不是阻断门禁
 
 三仓同步状态：
 
@@ -137,19 +136,17 @@
 
 完整清单见 `docs/P0_P1_P2_REMEDIATION_PLAN_2026-06-14.md`：
 
-- P2-1 公共下单孤儿订单
-- P2-3 delivery `sent` 语义修正
 - P1-3 真实支付回调校验
-- P1-4 webhook DB 连接污染
-- P1-6 分享 allowlist
-- P1-8 备份恢复演练
-- P2-4 portal token / JWT secret 分离（已通过 P2-4 单元测试 + prod fail-closed）
-- P2-5 payment webhook secret fail-closed（已通过 P2-5 单元测试 + prod fail-closed）
+- P1-8 备份恢复演练 / 目标机告警接入
+- 隐私政策 / 服务协议 / 删除工单正式入口
 
 已完成并不再列为整改项：
 
+- P2-1 公共下单孤儿订单
 - P2-2 channel_sync 单一 DAO 真相
-- P2-6 历史快照头注补齐
+- P2-3 delivery 通知状态语义收口（`sent` 已移除）
+- P2-4 portal token / JWT secret 分离（已通过 P2-4 单元测试 + prod fail-closed）
+- P2-5 payment webhook secret fail-closed（已通过 P2-5 单元测试 + prod fail-closed）
 - X-02 支付域设计
 - X-03 Delivery 交付服务设计
 - X-04 合规基线文档

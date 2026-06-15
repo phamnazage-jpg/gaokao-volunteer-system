@@ -163,3 +163,33 @@ def test_handle_webhook_rejects_missing_notify_id_for_bound_provider(settings):
     with OrdersDAO.connect(settings.orders_db_path) as dao:
         unchanged = dao.get(order.id)
     assert unchanged.status == "pending"
+
+
+def test_handle_webhook_rejects_merchant_id_mismatch(settings):
+    order = _seed_order(settings.orders_db_path, order_id="GKO-20260615-WEBHOOK-MERCHANT")
+    service = PaymentService.for_db(
+        settings.orders_db_path,
+        base_url=settings.payment_base_url,
+        webhook_secret=settings.payment_webhook_secret,
+    )
+    setattr(service.provider, "app_id", "expected-app-id")
+    setattr(service.provider, "merchant_id", "expected-merchant")
+    checkout = service.create_checkout(order.id, portal_token="portal-token")
+    payload, headers = service.provider.build_webhook_request(
+        payment_id=checkout.payment_id,
+        amount_cents=order.amount_cents,
+        provider_trade_no="MOCK-MERCHANT-001",
+    )
+    payload = cast(dict[str, Any], payload)
+    headers = cast(dict[str, str], headers)
+    payload["app_id"] = "expected-app-id"
+    payload["notify_id"] = "notify-merchant-001"
+    payload["seller_id"] = "wrong-merchant"
+    headers["X-Mock-Signature"] = service.provider.sign_payload(payload)
+
+    with pytest.raises(PaymentError, match="payment merchant_id mismatch"):
+        service.handle_webhook(payload, headers["X-Mock-Signature"])
+
+    with OrdersDAO.connect(settings.orders_db_path) as dao:
+        unchanged = dao.get(order.id)
+    assert unchanged.status == "pending"

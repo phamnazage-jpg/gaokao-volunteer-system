@@ -40,6 +40,7 @@ def settings(tmp_path, secure_secret, monkeypatch):
     share_report_dir = str(tmp_path / "share_reports")
     portal_upload_dir = str(tmp_path / "portal_uploads")
     ops_alert_log = str(tmp_path / "ops-alerts.jsonl")
+    deletion_request_log = str(tmp_path / "deletion-requests.jsonl")
     monkeypatch.setenv("GAOKAO_ENV", "dev")
     monkeypatch.setenv("GAOKAO_DB_PATH", db_path)
     monkeypatch.setenv("GAOKAO_ORDERS_DB_PATH", orders_db_path)
@@ -54,8 +55,9 @@ def settings(tmp_path, secure_secret, monkeypatch):
     monkeypatch.setenv("GAOKAO_ORDERS_FERNET_KEY", "test-secret-for-web-self-service")
     monkeypatch.setenv("GAOKAO_JWT_SECRET", secure_secret)
     monkeypatch.setenv("GAOKAO_JWT_EXP_MIN", "5")
-    monkeypatch.setenv("GAOKAO_ADMIN_USER", "admin")
     monkeypatch.setenv("GAOKAO_ADMIN_PASS", "test-pass-123")
+    monkeypatch.setenv("GAOKAO_OPS_ALERT_LOG", ops_alert_log)
+    monkeypatch.setenv("GAOKAO_DELETION_REQUEST_LOG", deletion_request_log)
 
     from admin.config import load_settings
 
