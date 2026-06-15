@@ -1,5 +1,11 @@
 #!/usr/bin/env python3
-"""Fail CI when coverage gates are not met."""
+"""Fail CI when coverage gates are not met.
+
+Single source of truth for the coverage gate.
+CI workflow, dev-verify, and codecov all read this file (or
+the same OVERALL_MIN / CORE_MIN constants) so the gate no
+longer diverges across surfaces.
+"""
 
 from __future__ import annotations
 
@@ -7,6 +13,7 @@ import sys
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
+# Mirrors `tests/test_coverage_gate_core.py` thresholds.
 OVERALL_MIN = 0.80
 CORE_MIN = 1.00
 CORE_FILES = (

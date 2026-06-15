@@ -1,5 +1,6 @@
 import importlib.util
 import json
+import re
 import runpy
 import sys
 from pathlib import Path
@@ -9,6 +10,10 @@ import pytest
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
+GATE_SCRIPT = REPO_ROOT / "scripts" / "check_coverage_gate.py"
+DEV_VERIFY_SCRIPT = REPO_ROOT / "scripts" / "dev-verify.sh"
+CI_YML = REPO_ROOT / ".github" / "workflows" / "ci.yml"
+CODECOV_YML = REPO_ROOT / "codecov.yml"
 SPEC_CHECKER_PATH = (
     REPO_ROOT / "skills" / "gaokao-spec-checker" / "scripts" / "spec_checker_v2.py"
 )
@@ -218,3 +223,44 @@ def test_visual_report_main_guard_executes_script(tmp_path, capsys, monkeypatch)
     runpy.run_path(str(VISUAL_REPORT_PATH), run_name="__main__")
     output = capsys.readouterr().out
     assert "生成完成" in output
+
+
+# ---------------------------------------------------------------------------
+# P1-7: coverage gate 口径统一
+# CI / dev-verify / codecov / gate script 必须在
+#   - 整体阈值
+#   - 核心文件清单
+#   - 整体阈值的来源
+# 这三点上保持一致；任意漂移都属于“验证链口径分裂”。
+# ---------------------------------------------------------------------------
+
+
+def test_coverage_gate_script_owns_overall_and_core_thresholds():
+    text = GATE_SCRIPT.read_text(encoding="utf-8")
+    spec = importlib.util.spec_from_file_location("gate", GATE_SCRIPT)
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    assert module.OVERALL_MIN == 0.80
+    assert module.CORE_MIN == 1.00
+    assert "skills/gaokao-spec-checker/scripts/spec_checker_v2.py" in module.CORE_FILES
+    assert "skills/gaokao-college-advisor/scripts/gaokao_visual_report.py" in module.CORE_FILES
+    # Single-source note must be present so future readers know where to look.
+    assert "Single source of truth" in text
+
+
+def test_dev_verify_and_ci_use_the_same_threshold_as_gate():
+    dev_verify = DEV_VERIFY_SCRIPT.read_text(encoding="utf-8")
+    ci = CI_YML.read_text(encoding="utf-8")
+    codecov = CODECOV_YML.read_text(encoding="utf-8")
+
+    # All surfaces should point at the same overall threshold (80%).
+    assert "--cov-fail-under=80" in dev_verify
+    assert "scripts/check_coverage_gate.py" in dev_verify
+    assert "scripts/check_coverage_gate.py" in ci or "scripts/dev-verify.sh" in ci
+    # codecov 目标 80% 与 gate overall 阈值一致
+    assert re.search(r"target:\s*80%", codecov) is not None
+    # core = 100% 与 gate 一致
+    assert re.search(r"target:\s*100%", codecov) is not None
+    assert "skills/gaokao-spec-checker/.*" in codecov
+    assert "skills/gaokao-college-advisor/.*" in codecov

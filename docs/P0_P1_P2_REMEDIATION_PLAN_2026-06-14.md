@@ -67,6 +67,8 @@
 
 - ✅ P1-1 支付回调双写裂缝已修复（Payment 与 Order 状态推进收敛到同一事务）
 - ✅ P1-5 退款域模型闭环已修复（payment.status 一步收敛到 `refunded`，并把订单推进到 refunded 终态；幂等请求会自愈）
+- ✅ P1-2 删除/匿名化已覆盖 orders 主表 + payments.callback_payload + order_intakes.payload_json
+- ✅ P1-7 验证链口径统一：dev-verify / CI 统一调用 scripts/check_coverage_gate.py，并以 80% / 100% 与 codecov 对齐
 
 顺序:
 

@@ -32,6 +32,7 @@ install_requirements() {
 run_checks() {
   cd "${ROOT_DIR}"
   log "running pytest with coverage gate"
+  # Single source of truth threshold: matches scripts/check_coverage_gate.py
   python -m pytest admin/tests tests data \
     --ignore=.venv \
     --ignore=.worktrees \
