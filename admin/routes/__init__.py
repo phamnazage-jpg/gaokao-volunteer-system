@@ -4,6 +4,8 @@ from admin.routes.auth import router as auth_router
 from admin.routes.cases import router as cases_router
 from admin.routes.health import router as health_router
 from admin.routes.meta import router as meta_router
+from admin.routes.notifications import page_router as notifications_page_router
+from admin.routes.notifications import router as notifications_router
 from admin.routes.orders import router as orders_router
 from admin.routes.stats import router as stats_router
 from admin.routes.ui import router as ui_router
@@ -15,6 +17,8 @@ __all__ = [
     "cases_router",
     "health_router",
     "meta_router",
+    "notifications_router",
+    "notifications_page_router",
     "orders_router",
     "stats_router",
     "ui_router",

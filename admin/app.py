@@ -42,6 +42,8 @@ from admin.routes import (
     cases_router,
     health_router,
     meta_router,
+    notifications_page_router,
+    notifications_router,
     orders_router,
     stats_router,
     ui_router,
@@ -167,6 +169,8 @@ def create_app(settings: Optional[Settings] = None) -> FastAPI:
     app.include_router(ui_router)
     app.include_router(meta_router)
     app.include_router(users_router)
+    app.include_router(notifications_router)
+    app.include_router(notifications_page_router)
     app.include_router(web_public_router)
 
     static_dir = Path(__file__).resolve().parent / "static"
