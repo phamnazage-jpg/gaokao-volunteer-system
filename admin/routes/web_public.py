@@ -380,9 +380,15 @@ def _build_portal_context(order: Order, settings: Settings) -> dict[str, Any]:
     try:
         sent_station_events = notification_service.list_events(
             order.id,
-            status="sent",
+            status="validated",
             channel="station",
         )
+        if not sent_station_events:
+            sent_station_events = notification_service.list_events(
+                order.id,
+                status="delivered",
+                channel="station",
+            )
     finally:
         notification_service.close()
 

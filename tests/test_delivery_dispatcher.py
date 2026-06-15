@@ -10,6 +10,9 @@ from data.orders.intake_store import IntakeStore
 from data.orders.models import Order
 from data.payments.service import PaymentService
 
+from data.notifications.dispatcher import DeliveryDispatcher
+
+
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
@@ -69,7 +72,9 @@ def _attach_ready_delivery(settings, tmp_path: Path, order_id: str) -> None:
         )
 
 
-def test_dispatch_ready_station_event_marks_sent(settings, tmp_path):
+def test_dispatch_ready_station_event_validates_persisted_payload(
+    settings, tmp_path
+):
     order = _seed_order(settings.orders_db_path)
     _mark_paid(settings, order)
     IntakeStore.for_db(settings.orders_db_path).save(
@@ -86,22 +91,65 @@ def test_dispatch_ready_station_event_marks_sent(settings, tmp_path):
         dispatcher.close()
 
     assert result.processed == 1
-    assert result.sent == 1
+    # station channel is local render only; ``delivered`` must be 0.
+    assert result.delivered == 0
+    assert result.validated == 1
     assert result.failed == 0
+    assert not hasattr(result, "sent")
 
     notification_service = DeliveryNotificationService.for_db(settings.orders_db_path)
     try:
         event = notification_service.list_events(order.id)[0]
     finally:
         notification_service.close()
-    assert event.status == "sent"
+    assert event.status == "validated"
     assert event.attempt_count == 1
     payload = json.loads(event.payload_json)
+    # The portal page consumes ``station_notice`` from the persisted
+    # payload even though ``station`` does not transition to
+    # ``delivered``; the dispatcher stashes it during ``mark_validated``.
     station_notice = payload.get("station_notice")
     assert station_notice is not None
     assert station_notice["title"] == "报告已就绪"
     assert order.id in station_notice["body"]
-    assert station_notice["sent_at"] == event.last_attempt_at
+
+def test_dispatch_station_marks_validated_then_delivered(settings, tmp_path):
+    """P2-3 lock: ``station`` channel cannot be reported as ``delivered``.
+
+    The lifecycle is now ``ready`` -> ``validated``.  ``delivered`` is
+    reserved for channels that actually push the notice externally
+    (today: ``email``).  This test re-asserts the new chain so future
+    regressions that flatten the lifecycle back to a single ``sent``
+    step will fail.
+    """
+    order = _seed_order(
+        settings.orders_db_path,
+        order_id="GKO-20260614-DISPATCH-STATION-DELIVERED",
+    )
+    _mark_paid(settings, order)
+    IntakeStore.for_db(settings.orders_db_path).save(
+        order_id=order.id, payload={"candidate_score": 578}, submit=True
+    )
+    _attach_ready_delivery(settings, tmp_path, order.id)
+
+    dispatcher = DeliveryDispatcher.for_db(settings.orders_db_path)
+    try:
+        result = dispatcher.dispatch_ready_events(channel="station")
+    finally:
+        dispatcher.close()
+
+    assert result.processed == 1
+    assert result.validated == 1
+    assert result.delivered == 0
+    assert result.failed == 0
+    assert not hasattr(result, "sent")
+
+    notification_service = DeliveryNotificationService.for_db(settings.orders_db_path)
+    try:
+        event = notification_service.list_events(order.id)[0]
+    finally:
+        notification_service.close()
+    assert event.status == "validated"
 
 
 class _FakeEmailSender:
@@ -146,7 +194,7 @@ def test_dispatch_ready_email_event_marks_sent(settings, tmp_path):
         dispatcher.close()
 
     assert result.processed == 1
-    assert result.sent == 1
+    assert result.delivered == 1
     assert result.failed == 0
     assert len(email_sender.sent) == 1
     assert email_sender.sent[0]["recipient"] == "parent@example.com"
@@ -156,7 +204,7 @@ def test_dispatch_ready_email_event_marks_sent(settings, tmp_path):
         event = notification_service.list_events(order.id, channel="email")[0]
     finally:
         notification_service.close()
-    assert event.status == "sent"
+    assert event.status == "delivered"
     payload = json.loads(event.payload_json)
     email_notice = payload.get("email_notice")
     assert email_notice is not None
@@ -186,8 +234,9 @@ def test_dispatch_ready_station_event_marks_failed_when_pdf_missing(settings, tm
         dispatcher.close()
 
     assert result.processed == 1
-    assert result.sent == 0
     assert result.failed == 1
+    assert result.validated == 0
+    assert result.delivered == 0
 
     notification_service = DeliveryNotificationService.for_db(settings.orders_db_path)
     try:

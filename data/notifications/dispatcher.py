@@ -15,7 +15,8 @@ from data.orders.models import utc_now_iso
 @dataclass
 class DispatchResult:
     processed: int = 0
-    sent: int = 0
+    validated: int = 0
+    delivered: int = 0
     failed: int = 0
 
 
@@ -48,7 +49,7 @@ class DeliveryDispatcher:
         self,
         *,
         channel: str = "station",
-        statuses: tuple[str, ...] = ("ready", "failed"),
+        statuses: tuple[str, ...] = ("ready", "validated"),
         limit: int = 100,
     ) -> DispatchResult:
         result = DispatchResult()
@@ -68,6 +69,29 @@ class DeliveryDispatcher:
                 continue
             assert payload is not None
             sent_at = utc_now_iso()
+            if event.status != "validated":
+                # Stash the rendered station notice into the validated
+                # payload so the portal status page can still display it
+                # even though ``station`` does not transition to
+                # ``delivered``.
+                persisted_payload = dict(payload)
+                if event.channel == "station":
+                    persisted_payload["station_notice"] = {
+                        "title": "报告已就绪",
+                        "body": (
+                            f"订单 {event.order_id} 的志愿报告已就绪，"
+                            "可在当前状态页查看在线报告并下载 PDF。"
+                        ),
+                        "delivered_at": sent_at,
+                    }
+                self._service.mark_validated(
+                    event.order_id,
+                    event_type=event.event_type,
+                    payload_json=json.dumps(
+                        persisted_payload, ensure_ascii=False
+                    ),
+                )
+            result.validated += 1
             try:
                 rendered_payload = self._deliver_event(
                     event,
@@ -82,13 +106,20 @@ class DeliveryDispatcher:
                 )
                 result.failed += 1
                 continue
-            self._service.mark_sent(
-                event.order_id,
-                event_type=event.event_type,
-                payload_json=json.dumps(rendered_payload, ensure_ascii=False),
-                sent_at=sent_at,
-            )
-            result.sent += 1
+            # Only channels with a real downstream sink (currently
+            # ``email``) get marked ``delivered``.  ``station`` is local
+            # render only; its persisted payload already records the
+            # rendered notice, so we stop at ``validated`` for it.
+            if event.channel == "email":
+                self._service.mark_delivered(
+                    event.order_id,
+                    event_type=event.event_type,
+                    payload_json=json.dumps(
+                        rendered_payload, ensure_ascii=False
+                    ),
+                    sent_at=sent_at,
+                )
+                result.delivered += 1
         return result
 
     @staticmethod
@@ -116,14 +147,19 @@ class DeliveryDispatcher:
         payload: dict[str, object],
         sent_at: str,
     ) -> dict[str, object]:
+        """Push the validated event to the real downstream sink.
+
+        Returns the rendered payload (with the channel-specific
+        downstream notice) so the caller can persist it via
+        :meth:`mark_delivered`.  ``station`` is currently a local
+        notice only — it has no real downstream sink — so we
+        intentionally do not mark it as ``delivered``.  The lifecycle
+        there is ``ready`` -> ``validated`` with the renderer's output
+        captured into the persisted payload.  ``delivered`` is only
+        reached when the channel actually pushes the notice externally
+        (today: ``email``).
+        """
         rendered = dict(payload)
-        if event.channel == "station":
-            rendered["station_notice"] = {
-                "title": "报告已就绪",
-                "body": f"订单 {event.order_id} 的志愿报告已就绪，可在当前状态页查看在线报告并下载 PDF。",
-                "sent_at": sent_at,
-            }
-            return rendered
         if event.channel == "email":
             if self._email_sender is None:
                 raise ValueError("email sender not configured")
@@ -141,7 +177,32 @@ class DeliveryDispatcher:
             )
             rendered["email_notice"] = {
                 **send_result,
-                "sent_at": sent_at,
+                "delivered_at": sent_at,
             }
             return rendered
+        # ``station`` and any future local-render-only channel: do not
+        # claim ``delivered`` because the real downstream push has not
+        # happened yet.  ``delivered`` is reserved for actual external
+        # push completion.
+        return rendered
+
+    @staticmethod
+    def _render_delivered_payload(
+        event: DeliveryNotificationEvent,
+        payload: dict[str, object],
+        sent_at: str,
+    ) -> dict[str, object]:
+        rendered = dict(payload)
+        if event.channel == "station":
+            rendered["station_notice"] = {
+                "title": "报告已就绪",
+                "body": (
+                    f"订单 {event.order_id} 的志愿报告已就绪，"
+                    "可在当前状态页查看在线报告并下载 PDF。"
+                ),
+                "delivered_at": sent_at,
+            }
+        # email_notice is stashed by ``_deliver_event`` directly on the
+        # rendered dict before ``mark_delivered`` is called.  Keep it as
+        # is so consumers see the original sender response.
         return rendered

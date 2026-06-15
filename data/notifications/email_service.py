@@ -26,6 +26,9 @@ CREATE TABLE IF NOT EXISTS delivery_notifications (
 """
 
 
+DELIVERY_EVENT_STATUSES = ("ready", "validated", "delivered", "failed", "sent")
+
+
 @dataclass
 class DeliveryNotificationEvent:
     order_id: str
@@ -147,6 +150,50 @@ class DeliveryNotificationService:
             )
         self._conn.commit()
 
+    def mark_validated(
+        self,
+        order_id: str,
+        event_type: str = "report_ready",
+        *,
+        payload_json: str | None = None,
+        validated_at: str | None = None,
+    ) -> None:
+        if validated_at is None:
+            validated_at = utc_now_iso()
+        if payload_json is None:
+            self._conn.execute(
+                "UPDATE delivery_notifications SET status='validated', last_attempt_at=? WHERE order_id=? AND event_type=?",
+                (validated_at, order_id, event_type),
+            )
+        else:
+            self._conn.execute(
+                "UPDATE delivery_notifications SET status='validated', payload_json=?, last_attempt_at=? WHERE order_id=? AND event_type=?",
+                (payload_json, validated_at, order_id, event_type),
+            )
+        self._conn.commit()
+
+    def mark_delivered(
+        self,
+        order_id: str,
+        event_type: str = "report_ready",
+        *,
+        payload_json: str | None = None,
+        sent_at: str | None = None,
+    ) -> None:
+        if sent_at is None:
+            sent_at = utc_now_iso()
+        if payload_json is None:
+            self._conn.execute(
+                "UPDATE delivery_notifications SET status='delivered', last_attempt_at=?, failure_reason=NULL WHERE order_id=? AND event_type=?",
+                (sent_at, order_id, event_type),
+            )
+        else:
+            self._conn.execute(
+                "UPDATE delivery_notifications SET status='delivered', payload_json=?, last_attempt_at=?, failure_reason=NULL WHERE order_id=? AND event_type=?",
+                (payload_json, sent_at, order_id, event_type),
+            )
+        self._conn.commit()
+
     def mark_failed(
         self,
         order_id: str,
@@ -183,7 +230,7 @@ class DeliveryNotificationService:
         self,
         *,
         channel: str | None = None,
-        statuses: tuple[str, ...] = ("ready",),
+        statuses: tuple[str, ...] = ("ready", "validated"),
         limit: int = 100,
     ) -> list[DeliveryNotificationEvent]:
         placeholders = ",".join("?" for _ in statuses)

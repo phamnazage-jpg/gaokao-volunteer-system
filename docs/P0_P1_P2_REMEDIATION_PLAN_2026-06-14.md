@@ -69,6 +69,8 @@
 - ✅ P1-5 退款域模型闭环已修复（payment.status 一步收敛到 `refunded`，并把订单推进到 refunded 终态；幂等请求会自愈）
 - ✅ P1-2 删除/匿名化已覆盖 orders 主表 + payments.callback_payload + order_intakes.payload_json
 - ✅ P1-7 验证链口径统一：dev-verify / CI 统一调用 scripts/check_coverage_gate.py，并以 80% / 100% 与 codecov 对齐
+- ✅ P2-1 公共下单孤儿订单：已验证有完整回归测试覆盖（admin/tests/test_web_public.py 9 passed）
+- ✅ P2-3 delivery sent 语义修正：dispatcher 现在区分 validated / delivered，station 只到 validated，email 才到 delivered
 
 顺序:
 
