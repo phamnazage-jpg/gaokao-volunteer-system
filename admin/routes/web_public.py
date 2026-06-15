@@ -875,46 +875,79 @@ def _render_info_page(
 <html lang=\"zh-CN\">
   <head><meta charset=\"utf-8\" /><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" /><title>考生资料填写</title></head>
   <body style=\"font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f7fb;padding:24px;\">
-    <main style=\"max-width:760px;margin:0 auto;background:#fff;border:1px solid #dbe3f0;border-radius:18px;padding:24px;\">
+    <main style=\"max-width:860px;margin:0 auto;background:#fff;border:1px solid #dbe3f0;border-radius:18px;padding:24px;\">
       <h1>考生资料填写</h1>
       <p>当前阶段：{escape(_STAGE_META[stage][0])}</p>
       <p style=\"background:#fff7e6;border:1px solid #f4d39b;border-radius:12px;padding:12px 14px;color:#8a5a00;\">提交资料即表示：监护人已知情并同意将考生资料用于志愿填报服务；当前版本号：{escape(consent_version)}</p>
-      <form id=\"intake-form\">
-        <label>高考分数<input name=\"candidate_score\" value=\"{escape(str(payload.get("candidate_score") or ""))}\" /></label><br/>
-        <label>位次<input name=\"candidate_rank\" value=\"{escape(str(payload.get("candidate_rank") or ""))}\" /></label><br/>
-        <label>选科（逗号分隔）<input name=\"candidate_subjects\" value=\"{escape(",".join(payload.get("candidate_subjects") or []))}\" /></label><br/>
-        <label>兴趣方向<input name=\"candidate_interests\" value=\"{escape(str(payload.get("candidate_interests") or ""))}\" /></label><br/>
-        <label>目标城市（逗号分隔）<input name=\"target_cities\" value=\"{escape(",".join(payload.get("target_cities") or []))}\" /></label><br/>
-        <label>目标专业（逗号分隔）<input name=\"target_majors\" value=\"{escape(",".join(payload.get("target_majors") or []))}\" /></label><br/>
-        <label>院校偏好说明<textarea name=\"university_preferences\">{escape(str(payload.get("university_preferences") or ""))}</textarea></label><br/>
-        <label>已有方案说明<textarea name=\"existing_plan_summary\">{escape(str(payload.get("existing_plan_summary") or ""))}</textarea></label><br/>
-        <label>家长备注<textarea name=\"guardian_notes\">{escape(str(payload.get("guardian_notes") or ""))}</textarea></label><br/>
-        <input type=\"hidden\" name=\"consent_version\" value=\"{escape(consent_version)}\" />
-        <input type=\"hidden\" name=\"consent_scope\" value=\"{escape(consent_scope)}\" />
-        <label><input type=\"checkbox\" name=\"privacy_accepted\" {privacy_checked} /> 我已阅读并同意隐私政策草案</label><br/>
-        <label><input type=\"checkbox\" name=\"service_terms_accepted\" {service_terms_checked} /> 我已阅读并同意服务说明与免责声明</label><br/>
-        <label><input type=\"checkbox\" name=\"guardian_confirmed\" {guardian_checked} /> 我确认监护人已知情并同意提交资料</label><br/>
-        <button type=\"button\" onclick=\"submitIntake('draft')\">保存草稿</button>
-        <button type=\"button\" onclick=\"submitIntake('submit')\">提交资料</button>
-      </form>
-      <section style=\"margin-top:16px;padding:12px;border:1px solid #dbe3f0;border-radius:12px;\">
-        <h2>已上传附件</h2>
-        <ul>{attachments_html}</ul>
-        <form id=\"attachment-form\">
-          <input type=\"file\" name=\"file\" />
-          <button type=\"button\" onclick=\"uploadAttachment()\">上传 AI 方案 / 资料附件</button>
-        </form>
+      <section style=\"background:#f7fbff;border:1px solid #dbe3f0;border-radius:14px;padding:16px;margin-bottom:16px;\">
+        <h2>资料向导进度</h2>
+        <ol style=\"display:grid;grid-template-columns:repeat(5,1fr);gap:8px;list-style:none;padding:0;margin:0;\">
+          <li data-step-badge=\"1\" style=\"padding:8px 10px;border-radius:999px;background:#1f6feb;color:#fff;text-align:center;\">1. 基础信息</li>
+          <li data-step-badge=\"2\" style=\"padding:8px 10px;border-radius:999px;background:#e8eef8;color:#334155;text-align:center;\">2. 偏好与目标</li>
+          <li data-step-badge=\"3\" style=\"padding:8px 10px;border-radius:999px;background:#e8eef8;color:#334155;text-align:center;\">3. 已有方案与附件</li>
+          <li data-step-badge=\"4\" style=\"padding:8px 10px;border-radius:999px;background:#e8eef8;color:#334155;text-align:center;\">4. 协议确认</li>
+          <li data-step-badge=\"5\" style=\"padding:8px 10px;border-radius:999px;background:#e8eef8;color:#334155;text-align:center;\">5. 提交确认</li>
+        </ol>
       </section>
+      <form id=\"intake-form\">
+        <section data-step=\"1\">
+          <h2>Step 1 / 基础信息</h2>
+          <label>高考分数<input name=\"candidate_score\" value=\"{escape(str(payload.get("candidate_score") or ""))}\" /></label><br/>
+          <label>位次<input name=\"candidate_rank\" value=\"{escape(str(payload.get("candidate_rank") or ""))}\" /></label><br/>
+          <label>选科（逗号分隔）<input name=\"candidate_subjects\" value=\"{escape(",".join(payload.get("candidate_subjects") or []))}\" /></label><br/>
+        </section>
+        <section data-step=\"2\" style=\"display:none;\">
+          <h2>Step 2 / 偏好与目标</h2>
+          <label>兴趣方向<input name=\"candidate_interests\" value=\"{escape(str(payload.get("candidate_interests") or ""))}\" /></label><br/>
+          <label>目标城市（逗号分隔）<input name=\"target_cities\" value=\"{escape(",".join(payload.get("target_cities") or []))}\" /></label><br/>
+          <label>目标专业（逗号分隔）<input name=\"target_majors\" value=\"{escape(",".join(payload.get("target_majors") or []))}\" /></label><br/>
+          <label>院校偏好说明<textarea name=\"university_preferences\">{escape(str(payload.get("university_preferences") or ""))}</textarea></label><br/>
+        </section>
+        <section data-step=\"3\" style=\"display:none;\">
+          <h2>Step 3 / 已有方案与附件</h2>
+          <label>已有方案说明<textarea name=\"existing_plan_summary\">{escape(str(payload.get("existing_plan_summary") or ""))}</textarea></label><br/>
+          <label>家长备注<textarea name=\"guardian_notes\">{escape(str(payload.get("guardian_notes") or ""))}</textarea></label><br/>
+          <section style=\"margin-top:16px;padding:12px;border:1px solid #dbe3f0;border-radius:12px;\">
+            <h3>已上传附件</h3>
+            <ul>{attachments_html}</ul>
+            <form id=\"attachment-form\">
+              <input type=\"file\" name=\"file\" />
+              <button type=\"button\" onclick=\"uploadAttachment()\">上传 AI 方案 / 资料附件</button>
+            </form>
+          </section>
+        </section>
+        <section data-step=\"4\" style=\"display:none;\">
+          <h2>Step 4 / 协议确认</h2>
+          <input type=\"hidden\" name=\"consent_version\" value=\"{escape(consent_version)}\" />
+          <input type=\"hidden\" name=\"consent_scope\" value=\"{escape(consent_scope)}\" />
+          <label><input type=\"checkbox\" name=\"privacy_accepted\" {privacy_checked} /> 我已阅读并同意隐私政策草案</label><br/>
+          <label><input type=\"checkbox\" name=\"service_terms_accepted\" {service_terms_checked} /> 我已阅读并同意服务说明与免责声明</label><br/>
+          <label><input type=\"checkbox\" name=\"guardian_confirmed\" {guardian_checked} /> 我确认监护人已知情并同意提交资料</label><br/>
+        </section>
+        <section data-step=\"5\" style=\"display:none;\">
+          <h2>Step 5 / 提交确认</h2>
+          <div id=\"confirm-summary\" style=\"background:#f8fafc;border:1px solid #dbe3f0;border-radius:12px;padding:12px;\"></div>
+        </section>
+        <div style=\"display:flex;gap:8px;margin-top:16px;\">
+          <button type=\"button\" id=\"prev-step\" onclick=\"moveStep(-1)\" disabled>上一步</button>
+          <button type=\"button\" id=\"next-step\" onclick=\"moveStep(1)\">下一步</button>
+          <button type=\"button\" onclick=\"submitIntake('draft')\">保存草稿</button>
+          <button type=\"button\" id=\"submit-step\" style=\"display:none;\" onclick=\"submitIntake('submit')\">提交资料</button>
+        </div>
+      </form>
       <p><a href=\"/portal/{escape(token)}/status\">返回订单状态页</a></p>
       <pre id=\"result\"></pre>
     </main>
     <script>
-      async function submitIntake(mode) {{
+      let currentStep = 1;
+      const totalSteps = 5;
+
+      function collectPayload(mode) {{
         const form = new FormData(document.getElementById('intake-form'));
         const subjects = String(form.get('candidate_subjects') || '').split(',').map(s => s.trim()).filter(Boolean);
         const targetCities = String(form.get('target_cities') || '').split(',').map(s => s.trim()).filter(Boolean);
         const targetMajors = String(form.get('target_majors') || '').split(',').map(s => s.trim()).filter(Boolean);
-        const payload = {{
+        return {{
           mode,
           candidate_score: form.get('candidate_score') ? Number(form.get('candidate_score')) : null,
           candidate_rank: form.get('candidate_rank') ? Number(form.get('candidate_rank')) : null,
@@ -931,6 +964,40 @@ def _render_info_page(
           service_terms_accepted: form.get('service_terms_accepted') === 'on',
           guardian_confirmed: form.get('guardian_confirmed') === 'on',
         }};
+      }}
+
+      function renderConfirmSummary() {{
+        const payload = collectPayload('draft');
+        document.getElementById('confirm-summary').textContent = JSON.stringify(payload, null, 2);
+      }}
+
+      function updateWizard() {{
+        document.querySelectorAll('[data-step]').forEach((node) => {{
+          node.style.display = Number(node.getAttribute('data-step')) === currentStep ? '' : 'none';
+        }});
+        document.querySelectorAll('[data-step-badge]').forEach((node) => {{
+          const step = Number(node.getAttribute('data-step-badge'));
+          if (step === currentStep) {{
+            node.style.background = '#1f6feb';
+            node.style.color = '#fff';
+          }} else {{
+            node.style.background = '#e8eef8';
+            node.style.color = '#334155';
+          }}
+        }});
+        document.getElementById('prev-step').disabled = currentStep === 1;
+        document.getElementById('next-step').style.display = currentStep === totalSteps ? 'none' : '';
+        document.getElementById('submit-step').style.display = currentStep === totalSteps ? '' : 'none';
+        if (currentStep === totalSteps) renderConfirmSummary();
+      }}
+
+      function moveStep(delta) {{
+        currentStep = Math.min(totalSteps, Math.max(1, currentStep + delta));
+        updateWizard();
+      }}
+
+      async function submitIntake(mode) {{
+        const payload = collectPayload(mode);
         const resp = await fetch('/portal/{escape(token)}/info', {{
           method: 'POST',
           headers: {{ 'Content-Type': 'application/json' }},
@@ -957,6 +1024,7 @@ def _render_info_page(
         document.getElementById('result').textContent = JSON.stringify(body, null, 2);
         if (resp.ok) window.location.reload();
       }}
+      updateWizard();
     </script>
   </body>
 </html>

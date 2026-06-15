@@ -50,6 +50,12 @@ def test_order_info_form_accepts_draft_and_submit(client, settings):
     assert "目标城市" in page.text
     assert "目标专业" in page.text
     assert "已有方案说明" in page.text
+    assert "资料向导进度" in page.text
+    assert "Step 1 / 基础信息" in page.text
+    assert "Step 2 / 偏好与目标" in page.text
+    assert "Step 3 / 已有方案与附件" in page.text
+    assert "Step 4 / 协议确认" in page.text
+    assert "Step 5 / 提交确认" in page.text
 
     draft = client.post(
         f"/portal/{token}/info",
