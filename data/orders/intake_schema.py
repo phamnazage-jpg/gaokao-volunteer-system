@@ -14,6 +14,10 @@ class IntakePayload(BaseModel):
     candidate_rank: Optional[int] = Field(default=None, ge=0)
     candidate_subjects: list[str] = Field(default_factory=list)
     candidate_interests: Optional[str] = None
+    target_cities: list[str] = Field(default_factory=list)
+    target_majors: list[str] = Field(default_factory=list)
+    university_preferences: Optional[str] = None
+    existing_plan_summary: Optional[str] = None
     guardian_notes: Optional[str] = None
     consent_version: Optional[str] = None
     consent_scope: Optional[str] = None

@@ -512,8 +512,12 @@ def _build_portal_context(order: Order, settings: Settings) -> dict[str, Any]:
     latest_station_notice: dict[str, Any] | None = None
     intake_summary = None
     attachment_count = 0
+    attachment_items: list[dict[str, Any]] = []
     if intake is not None:
-        attachment_count = len(list((intake.payload or {}).get("attachments") or []))
+        attachment_items = [
+            item for item in list((intake.payload or {}).get("attachments") or []) if isinstance(item, dict)
+        ]
+        attachment_count = len(attachment_items)
         intake_summary = {
             "candidate_score": intake.payload.get("candidate_score"),
             "candidate_rank": intake.payload.get("candidate_rank"),
@@ -538,9 +542,11 @@ def _build_portal_context(order: Order, settings: Settings) -> dict[str, Any]:
         "stage_title": title,
         "stage_subtitle": subtitle,
         "payment": payment,
+        "payment_status": payment.status if payment is not None else "pending",
         "intake": intake,
         "intake_summary": intake_summary,
         "attachment_count": attachment_count,
+        "attachments": attachment_items,
         "report_html_ready": report_html_ready,
         "report_pdf_ready": report_pdf_ready,
         "order": order,
@@ -980,6 +986,7 @@ def _render_status_page(token: str, context: dict[str, Any]) -> str:
     summary_html = ""
     intake_summary = context.get("intake_summary") or {}
     attachment_count = int(context.get("attachment_count") or 0)
+    attachments = context.get("attachments") or []
     if intake_summary:
         summary_items = [
             f"<li>分数：{escape(str(intake_summary.get('candidate_score') or '-'))}</li>",
@@ -992,10 +999,34 @@ def _render_status_page(token: str, context: dict[str, Any]) -> str:
             f"<li>已有方案说明：{escape(str(intake_summary.get('existing_plan_summary') or '-'))}</li>",
             f"<li>附件数量：{attachment_count}</li>",
         ]
+        attachment_lines = []
+        for item in attachments:
+            if not isinstance(item, dict):
+                continue
+            attachment_lines.append(
+                f"<li>{escape(str(item.get('original_name') or item.get('stored_name') or '未命名附件'))}"
+                f" / {escape(str(item.get('content_type') or '-'))}"
+                f" / {escape(str(item.get('size_bytes') or '0'))} bytes</li>"
+            )
+        attachment_html = "".join(attachment_lines) or "<li>暂无附件</li>"
         summary_html = f"""
       <section style=\"background:#fff;border:1px solid #dbe3f0;border-radius:18px;padding:24px;\">
         <h2>当前资料摘要</h2>
         <ul>{''.join(summary_items)}</ul>
+        <h3>已上传附件</h3>
+        <ul>{attachment_html}</ul>
+      </section>"""
+    payment_status = escape(str(context.get("payment_status") or "pending"))
+    delivery_html = f"""
+      <section style=\"background:#fff;border:1px solid #dbe3f0;border-radius:18px;padding:24px;\">
+        <h2>支付与交付状态</h2>
+        <ul>
+          <li>支付状态：{payment_status}</li>
+          <li>资料状态：{escape(context['stage_title'])}</li>
+          <li>HTML 报告：{'已就绪' if context['report_html_ready'] else '未就绪'}</li>
+          <li>PDF 报告：{'已就绪' if context['report_pdf_ready'] else '未就绪'}</li>
+          <li>交付阶段：{escape(context['stage'])}</li>
+        </ul>
       </section>"""
     return f"""<!doctype html>
 <html lang=\"zh-CN\"><head><meta charset=\"utf-8\" /><title>订单状态</title></head>
@@ -1009,6 +1040,7 @@ def _render_status_page(token: str, context: dict[str, Any]) -> str:
         <p>当前订单状态：{escape(order.status)}</p>
       </section>
       {summary_html}
+      {delivery_html}
       {station_notice_html}
       <section style=\"background:#fff;border:1px solid #dbe3f0;border-radius:18px;padding:24px;\">
         <h2>下一步操作</h2>
