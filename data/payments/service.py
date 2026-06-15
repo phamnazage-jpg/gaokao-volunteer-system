@@ -193,6 +193,26 @@ class PaymentService:
         payment_id = str(normalized_payload.get("payment_id") or "")
         if not payment_id:
             raise PaymentError("missing payment_id")
+        normalized_status = str(normalized_payload.get("status") or "").strip()
+        success_statuses = {"paid", "TRADE_SUCCESS", "TRADE_FINISHED"}
+        if normalized_status not in success_statuses:
+            raise PaymentError("payment status not successful")
+        expected_app_id = str(getattr(self.provider, "app_id", "") or "").strip()
+        received_app_id = str(
+            normalized_payload.get("app_id") or payload.get("app_id") or ""
+        ).strip()
+        received_notify_id = str(
+            normalized_payload.get("notify_id") or payload.get("notify_id") or ""
+        ).strip()
+        if expected_app_id and not received_notify_id:
+            raise PaymentError("payment notify_id missing")
+        if expected_app_id and received_app_id and expected_app_id != received_app_id:
+            raise PaymentError("payment app_id mismatch")
+        provider_trade_no = str(
+            normalized_payload.get("provider_trade_no") or ""
+        ).strip()
+        if expected_app_id and not provider_trade_no:
+            raise PaymentError("payment provider_trade_no missing")
 
         with OrdersDAO.connect(self.db_path) as orders_dao:
             payments = PaymentDAO.from_connection(orders_dao.conn)
@@ -239,20 +259,42 @@ class PaymentService:
         )
 
     def request_refund(self, order_id: str, *, reason: str) -> RefundRequestResult:
-        payments = PaymentDAO.for_db(self.db_path)
-        try:
-            payment = payments.get_by_order(order_id)
-            if payment is None:
-                raise PaymentError("payment not found for order")
-            if payment.status in {"refund_pending", "refunded"}:
-                return RefundRequestResult(payment_id=payment.id, status=payment.status)
-            if payment.status != "paid":
-                raise PaymentError("payment is not refundable")
-            updated = payments.update_status(
-                payment.id,
-                status="refund_pending",
-                refund_reason=reason,
-            )
-            return RefundRequestResult(payment_id=updated.id, status=updated.status)
-        finally:
-            payments.close()
+        with OrdersDAO.connect(self.db_path) as orders_dao:
+            payments = PaymentDAO.from_connection(orders_dao.conn)
+            with orders_dao.transaction():
+                payment = payments.get_by_order(order_id)
+                if payment is None:
+                    raise PaymentError("payment not found for order")
+                if payment.status == "refunded":
+                    return RefundRequestResult(
+                        payment_id=payment.id, status=payment.status
+                    )
+                if payment.status == "refund_pending":
+                    # Idempotent refund request: keep order advanced to refunded
+                    # to keep portal / analytics in a single coherent terminal state.
+                    if orders_dao.get(order_id).status != "refunded":
+                        orders_dao.transition_status(
+                            order_id,
+                            "refunded",
+                            actor="refund_request_idempotent",
+                            reason=reason,
+                        )
+                    return RefundRequestResult(
+                        payment_id=payment.id, status=payment.status
+                    )
+                if payment.status != "paid":
+                    raise PaymentError("payment is not refundable")
+                updated = payments.update_status(
+                    payment.id,
+                    status="refunded",
+                    refund_reason=reason,
+                )
+                order = orders_dao.get(order_id)
+                if order.status != "refunded":
+                    orders_dao.transition_status(
+                        order_id,
+                        "refunded",
+                        actor="refund_request",
+                        reason=reason,
+                    )
+                return RefundRequestResult(payment_id=updated.id, status=updated.status)

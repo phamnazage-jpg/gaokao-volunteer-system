@@ -180,8 +180,12 @@ def test_prod_rejects_default_admin_password(tmp_path, monkeypatch):
     monkeypatch.setenv("GAOKAO_DB_PATH", str(db_path))
     monkeypatch.setenv("GAOKAO_ORDERS_DB_PATH", str(orders_db_path))
     monkeypatch.setenv("GAOKAO_JWT_SECRET", "x" * 64)
+    monkeypatch.setenv("GAOKAO_PORTAL_TOKEN_SECRET", "Z" * 64)
     monkeypatch.setenv("GAOKAO_ADMIN_USER", "admin")
     monkeypatch.setenv("GAOKAO_ADMIN_PASS", "admin123")
+    # 显式提供合规 webhook secret,避免被 P2-5 fail-closed 提前拦截,
+    # 让本测试聚焦于管理员密码策略。
+    monkeypatch.setenv("GAOKAO_PAYMENT_WEBHOOK_SECRET", "P" + "r" * 31 + "!" * 32)
 
     from fastapi.testclient import TestClient
 

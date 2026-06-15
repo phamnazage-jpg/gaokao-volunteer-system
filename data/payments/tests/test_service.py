@@ -66,9 +66,21 @@ def test_request_refund_is_idempotent_after_payment_success(settings):
     first = service.request_refund(order.id, reason="parent_request")
     second = service.request_refund(order.id, reason="duplicate_request")
 
-    assert first.status == "refund_pending"
-    assert second.status == "refund_pending"
+    assert first.status == "refunded"
+    assert second.status == "refunded"
     assert first.payment_id == second.payment_id
+
+    with OrdersDAO.connect(settings.orders_db_path) as dao:
+        reloaded = dao.get(order.id)
+    assert reloaded.status == "refunded", (
+        "refund request must also move the order into the refunded terminal state"
+    )
+
+    with OrdersDAO.connect(settings.orders_db_path) as dao:
+        refunded_order = dao.get(order.id)
+        history = dao.get_status_history(order.id)
+    assert refunded_order.status == "refunded"
+    assert [item.to_status for item in history] == ["pending", "paid", "refunded"]
 
 
 def test_handle_webhook_rolls_back_payment_if_order_transition_fails(
@@ -92,7 +104,9 @@ def test_handle_webhook_rolls_back_payment_if_order_transition_fails(
     def fail_transition(self, order_id, to_status, *, actor=None, reason=None):
         if order_id == order.id and to_status == "paid":
             raise RuntimeError("boom during order transition")
-        return original_transition(self, order_id, to_status, actor=actor, reason=reason)
+        return original_transition(
+            self, order_id, to_status, actor=actor, reason=reason
+        )
 
     monkeypatch.setattr(OrdersDAO, "transition_status", fail_transition)
 

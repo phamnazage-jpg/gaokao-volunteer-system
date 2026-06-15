@@ -45,10 +45,16 @@ def test_refund_request_marks_portal_as_refund_pending(client, settings):
     first = service.request_refund(order.id, reason="parent_request")
     second = service.request_refund(order.id, reason="duplicate_request")
 
-    assert first.status == "refund_pending"
-    assert second.status == "refund_pending"
+    assert first.status == "refunded"
+    assert second.status == "refunded"
 
-    token = issue_portal_token(order.id, settings.jwt_secret)
+    with OrdersDAO.connect(settings.orders_db_path) as dao:
+        reloaded = dao.get(order.id)
+    assert reloaded.status == "refunded", (
+        "refund request must close the order side of the loop as well"
+    )
+
+    token = issue_portal_token(order.id, settings.portal_token_secret)
     status_page = client.get(f"/portal/{token}/status")
     assert status_page.status_code == 200, status_page.text
-    assert "退款申请中" in status_page.text
+    assert "已退款" in status_page.text

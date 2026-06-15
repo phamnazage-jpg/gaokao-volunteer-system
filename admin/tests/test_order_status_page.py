@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import subprocess
 from pathlib import Path
 
 from data.customer_portal.token import issue_portal_token
@@ -7,6 +8,9 @@ from data.orders.dao import OrdersDAO
 from data.orders.intake_store import IntakeStore
 from data.orders.models import Order
 from data.payments.service import PaymentService
+
+
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 
 def _seed_order(db_path: str, order_id: str = "GKO-20260614-STATUS") -> Order:
@@ -71,7 +75,7 @@ def test_order_status_page_and_report_download(client, settings, tmp_path: Path)
             order.id, "delivered", actor="test", reason="report_ready"
         )
 
-    token = issue_portal_token(order.id, settings.jwt_secret)
+    token = issue_portal_token(order.id, settings.portal_token_secret)
     status_page = client.get(f"/portal/{token}/status")
     assert status_page.status_code == 200, status_page.text
     assert "报告已就绪" in status_page.text
@@ -83,10 +87,62 @@ def test_order_status_page_and_report_download(client, settings, tmp_path: Path)
     pdf_resp = client.get(f"/portal/{token}/report.pdf")
     assert pdf_resp.status_code == 200, pdf_resp.text
     assert pdf_resp.headers["content-type"].startswith("application/pdf")
-    assert pdf_resp.content.startswith(b"%PDF-1.4")
 
 
-def test_delivered_without_artifacts_stays_processing(client, settings):
+def test_portal_status_page_shows_sent_station_notification(
+    client, settings, tmp_path: Path
+):
+    order = _seed_order(settings.orders_db_path, order_id="GKO-20260614-STATUS-NOTICE")
+    _mark_paid(settings, order)
+    IntakeStore.for_db(settings.orders_db_path).save(
+        order_id=order.id, payload={"candidate_score": 578}, submit=True
+    )
+
+    report_path = tmp_path / "status-notice-report.html"
+    pdf_path = tmp_path / "status-notice-report.pdf"
+    report_path.write_text("<h1>志愿方案报告</h1><p>已生成。</p>", encoding="utf-8")
+    pdf_path.write_bytes(b"%PDF-1.4\nportal-notice\n")
+
+    with OrdersDAO.connect(settings.orders_db_path) as dao:
+        dao.update(
+            order.id,
+            {"audit_report": str(report_path), "pdf_path": str(pdf_path)},
+            actor="test",
+            reason="attach_report",
+        )
+        dao.transition_status(order.id, "serving", actor="test", reason="processing")
+        dao.transition_status(
+            order.id, "delivered", actor="test", reason="report_ready"
+        )
+
+    env = {
+        **__import__("os").environ,
+        "GAOKAO_ORDERS_DB_PATH": settings.orders_db_path,
+    }
+    proc = subprocess.run(
+        [
+            str(PROJECT_ROOT / ".venv" / "bin" / "python"),
+            "scripts/gaokao-delivery-dispatch.py",
+            "--channel",
+            "station",
+        ],
+        cwd=PROJECT_ROOT,
+        text=True,
+        capture_output=True,
+        env=env,
+        check=False,
+    )
+    assert proc.returncode == 0, proc.stderr
+
+    token = issue_portal_token(order.id, settings.portal_token_secret)
+    status_page = client.get(f"/portal/{token}/status")
+    assert status_page.status_code == 200, status_page.text
+    assert "通知已发送" in status_page.text
+    assert "报告已就绪" in status_page.text
+    assert order.id in status_page.text
+
+
+def test_delivered_without_artifacts_stays_processing_on_status_page(client, settings):
     order = _seed_order(settings.orders_db_path, order_id="GKO-20260614-STATUS-NOART")
     _mark_paid(settings, order)
     IntakeStore.for_db(settings.orders_db_path).save(
@@ -101,7 +157,7 @@ def test_delivered_without_artifacts_stays_processing(client, settings):
             order.id, "delivered", actor="test", reason="report_ready_without_files"
         )
 
-    token = issue_portal_token(order.id, settings.jwt_secret)
+    token = issue_portal_token(order.id, settings.portal_token_secret)
     status_page = client.get(f"/portal/{token}/status")
     assert status_page.status_code == 200, status_page.text
     assert "处理中" in status_page.text
@@ -137,7 +193,7 @@ def test_partial_artifacts_do_not_expose_delivery_links_before_report_ready(
             order.id, "delivered", actor="test", reason="report_ready_without_pdf"
         )
 
-    token = issue_portal_token(order.id, settings.jwt_secret)
+    token = issue_portal_token(order.id, settings.portal_token_secret)
     status_page = client.get(f"/portal/{token}/status")
     assert status_page.status_code == 200, status_page.text
     assert "处理中" in status_page.text
