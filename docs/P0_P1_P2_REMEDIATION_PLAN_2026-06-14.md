@@ -71,6 +71,9 @@
 - ✅ P1-7 验证链口径统一：dev-verify / CI 统一调用 scripts/check_coverage_gate.py，并以 80% / 100% 与 codecov 对齐
 - ✅ P2-1 公共下单孤儿订单：已验证有完整回归测试覆盖（admin/tests/test_web_public.py 9 passed）
 - ✅ P2-3 delivery sent 语义修正：dispatcher 现在区分 validated / delivered，station 只到 validated，email 才到 delivered
+- ✅ P1-4 webhook server DB 连接污染：已为 per-key 连接缓存新增显式回归测试（test_webhook_server_db_scoping.py 4 passed），锁定“每 db_path 独立 + 释放不影响其他路径 + 线程安全 + release_all 真正关闭所有连接”四项不变量
+- ✅ P1-6 分享 allowlist：edit / admin 模式已强制走显式 frozenset(\_EDIT_VISIBLE_FIELDS)，不再是 None 透传；新增敏感字段不会自动外泄（data/share/permission.py + data/share/tests/test_permission.py 已验证）
+- ✅ P1-8 备份恢复服务级演练：backup_verify.sh 改为优先调用 venv python；新增 tests/test_backup_restore_service_level.py 1 passed 锁定“健康/portal 200 + 真实落单 + 实际闭环”
 
 顺序:
 

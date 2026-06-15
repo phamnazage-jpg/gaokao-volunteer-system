@@ -150,7 +150,15 @@ run_restore_smoke() {
   fi
 
   log "running restore smoke"
-  python3 "$ROOT_DIR/scripts/backup_restore_smoke.py" --backup-dir "$VERIFY_DIR"
+  # Prefer the project virtualenv if present so the smoke step uses
+  # the same dependency set as the rest of the project.  Falling back
+  # to ``python3`` is fine for dev environments where the user has
+  # already installed admin / test requirements globally.
+  local python_bin="${ROOT_DIR}/.venv/bin/python"
+  if [[ ! -x "$python_bin" ]]; then
+    python_bin="python3"
+  fi
+  "$python_bin" "$ROOT_DIR/scripts/backup_restore_smoke.py" --backup-dir "$VERIFY_DIR"
 }
 
 parse_args() {
