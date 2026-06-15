@@ -97,6 +97,8 @@ def ops_alert_audit_page(
 <section style='background:#fff;border:1px solid #dbe3f0;border-radius:18px;padding:24px;'>
   <h1>运维告警审计</h1>
   <p>日志路径：{escape(settings.ops_alert_log_path)}</p>
+  <p>SMTP 告警收件人数量：{len(settings.alert_recipients)}</p>
+  <p>IM Webhook 数量：{len(settings.alert_webhook_urls)}</p>
 </section>
 <section style='background:#fff;border:1px solid #dbe3f0;border-radius:18px;padding:24px;overflow:auto;'>
   <table style='width:100%;border-collapse:collapse;'>

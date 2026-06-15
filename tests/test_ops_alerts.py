@@ -54,3 +54,28 @@ def test_ops_alert_sink_can_use_fake_email_sender(tmp_path: Path):
     assert result.emails_sent == 1
     assert len(sender.sent) == 1
     assert sender.sent[0]["recipient"] == "ops@example.com"
+
+
+def test_ops_alert_sink_can_use_fake_webhook_sender(tmp_path: Path):
+    log_path = tmp_path / "alerts.jsonl"
+
+    class FakeWebhookSender:
+        def __init__(self) -> None:
+            self.payloads: list[dict] = []
+
+        def send(self, payload: dict) -> int:
+            self.payloads.append(payload)
+            return 2
+
+    sender = FakeWebhookSender()
+    sink = OpsAlertSink(log_path=str(log_path), recipients=[], webhook_sender=sender)
+    result = sink.emit(
+        alert_type="watchdog_failed",
+        title="watchdog failed",
+        body="something failed",
+        details={"order_id": "O-3"},
+    )
+
+    assert result.webhooks_sent == 2
+    assert len(sender.payloads) == 1
+    assert sender.payloads[0]["alert_type"] == "watchdog_failed"

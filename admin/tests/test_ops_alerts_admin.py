@@ -26,3 +26,5 @@ def test_admin_ops_alert_list_and_page(client, auth_headers, settings, tmp_path:
     assert "运维告警审计" in page.text
     assert "delivery_watchdog_failed" in page.text
     assert "station failed once" in page.text
+    assert "SMTP 告警收件人数量" in page.text
+    assert "IM Webhook 数量" in page.text

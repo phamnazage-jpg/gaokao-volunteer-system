@@ -50,6 +50,7 @@ def settings(tmp_path, secure_secret, monkeypatch):
     monkeypatch.setenv("GAOKAO_PORTAL_UPLOAD_MAX_FILES", "5")
     monkeypatch.setenv("GAOKAO_OPS_ALERT_LOG", ops_alert_log)
     monkeypatch.setenv("GAOKAO_ALERT_RECIPIENTS", "")
+    monkeypatch.setenv("GAOKAO_ALERT_WEBHOOK_URLS", "")
     monkeypatch.setenv("GAOKAO_ORDERS_FERNET_KEY", "test-secret-for-web-self-service")
     monkeypatch.setenv("GAOKAO_JWT_SECRET", secure_secret)
     monkeypatch.setenv("GAOKAO_JWT_EXP_MIN", "5")

@@ -57,6 +57,7 @@ class Settings:
     smtp_use_tls: bool
     smtp_use_ssl: bool
     alert_recipients: list[str]
+    alert_webhook_urls: list[str]
     ops_alert_log_path: str
     jwt_secret: str
     portal_token_secret: str  # P2-4: 与后台 jwt_secret 分离
@@ -213,6 +214,7 @@ def load_settings() -> Settings:
         smtp_use_tls=os.getenv("GAOKAO_SMTP_USE_TLS", "false").lower() == "true",
         smtp_use_ssl=os.getenv("GAOKAO_SMTP_USE_SSL", "false").lower() == "true",
         alert_recipients=[s.strip() for s in os.getenv("GAOKAO_ALERT_RECIPIENTS", "").split(",") if s.strip()],
+        alert_webhook_urls=[s.strip() for s in os.getenv("GAOKAO_ALERT_WEBHOOK_URLS", "").split(",") if s.strip()],
         ops_alert_log_path=os.getenv("GAOKAO_OPS_ALERT_LOG", "data/alerts/ops-alerts.jsonl"),
         jwt_secret=os.getenv("GAOKAO_JWT_SECRET", _DEV_JWT_SECRET),
         portal_token_secret=_resolve_portal_token_secret(
