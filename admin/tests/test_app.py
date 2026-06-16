@@ -80,6 +80,13 @@ def test_dashboard_page_served(client):
     assert 'id="range-30d"' in body
     assert 'id="system-status"' in body
     assert 'id="pending-orders"' in body
+    assert 'id="pending-overdue-24h"' in body
+    assert 'id="pending-missing-intake"' in body
+    assert 'id="pending-breakdown"' in body
+    assert 'id="pending-overdue-tag"' in body
+    assert 'id="pending-missing-tag"' in body
+    assert 'pending-tag-overdue' in body
+    assert 'pending-tag-missing' in body
     assert 'id="orders-spark"' in body
     assert 'id="revenue-spark"' in body
     assert 'id="status-title"' in body
@@ -126,7 +133,10 @@ def test_dashboard_static_js_served(client):
     assert "setStatus" in body
     assert "setChartEmpty" in body
     assert "pending-orders" in body
-
+    assert "pending-overdue-24h" in body
+    assert "pending-missing-intake" in body
+    assert "setChartEmpty" in body
+    assert "pending-breakdown" in body
 
 def test_bootstrap_admin_only_once(client, settings):
     """lifespan 已 bootstrap 后,再次调用应报告已存在,不再创建。"""
@@ -190,6 +200,8 @@ def test_create_app_bootstraps_orders_schema(tmp_path, monkeypatch):
             "total_revenue_cents": 0,
             "total_users": 1,
             "pending_orders": 0,
+            "pending_overdue_24h": 0,
+            "pending_missing_intake": 0,
             "orders_today": 0,
             "orders_7d": 0,
             "orders_30d": 0,

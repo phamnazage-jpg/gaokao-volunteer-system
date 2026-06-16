@@ -68,10 +68,16 @@ def settings(tmp_path, secure_secret, monkeypatch):
 def orders_db(settings):
     """T6.2 起:管理后台统计端点会读 orders 表,因此 conftest 顺带建一个
     空 orders DB (T4.1 schema),后续 dashboard 测试可在里面塞 fixture 数据。
+
+    T-pending-intake 起: 同时建 order_intakes 表,确保 summary.pending_missing_intake
+    的 LEFT JOIN 不会因为缺表而失败。
     """
+    from data.orders.intake_store import SCHEMA_SQL as INTAKE_SCHEMA_SQL
     from data.orders.schema import apply_schema
 
     conn = apply_schema(settings.orders_db_path)
+    conn.executescript(INTAKE_SCHEMA_SQL)
+    conn.commit()
     conn.close()
     return settings.orders_db_path
 

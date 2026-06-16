@@ -151,10 +151,15 @@ def compute_summary(
     *,
     today: Optional[datetime] = None,
 ) -> dict:
-    """汇总卡片:订单/用户/收入/待处理,以及今日/7d/30d 三个窗口的切片。
+    """汇总卡片:订单/用户/收入/待处理多口径,以及今日/7d/30d 三个窗口的切片。
+
+    待处理订单 (pending_orders) 提供三个互不互斥的视角,用于运营快速分流:
+      - pending_orders             : 所有 status='pending' 的订单数
+      - pending_overdue_24h        : 24h 内仍未付款的待处理订单(超时未付,需主动催付)
+      - pending_missing_intake     : 未提交完整报名资料的待处理订单(资料待补,需主动跟进)
 
     Args:
-        orders_db_path: orders / order_status_history 所在 DB (data.orders.*)
+        orders_db_path: orders / order_status_history / order_intakes 所在 DB (data.orders.*)
         admin_db_path: admin_users 所在 DB;传 None 时跳过用户统计,返回 0
         today: 测试可注入的"当前 UTC 日" (默认 = 真实 now)
 
@@ -166,6 +171,8 @@ def compute_summary(
                 "total_revenue_cents":  int,
                 "total_users":          int,
                 "pending_orders":       int,
+                "pending_overdue_24h":  int,
+                "pending_missing_intake": int,
                 "orders_today":         int,
                 "orders_7d":            int,
                 "orders_30d":           int,
@@ -179,25 +186,40 @@ def compute_summary(
     today_iso = today.date().isoformat()
     seven_ago = (today - timedelta(days=6)).date().isoformat()  # 7 天窗口含今天
     thirty_ago = (today - timedelta(days=29)).date().isoformat()  # 30 天窗口含今天
+    # 24h 超时切割点: 当前 UTC 时刻往前 24h, ISO8601 字符串
+    overdue_cutoff = (datetime.now(timezone.utc) - timedelta(hours=24)).replace(microsecond=0).isoformat()
 
     revenue_status_placeholder = ",".join("?" for _ in _REVENUE_STATUSES)
 
     with _open_conn(orders_db_path) as conn:
-        # 总订单数 / 总收入 / 待处理订单 (一次性走单条聚合 SQL)
+        # 总订单数 / 总收入 / 待处理多口径 (一次性走单条聚合 SQL)
+        # pending_missing_intake 走 LEFT JOIN order_intakes 判定:
+        #   - 没记录 OR 记录 status='draft'  → 资料未提交完整
+        #   - 记录 status='submitted'        → 资料已完整, 不算缺失
         row = conn.execute(
-            f"""
+                f"""
             SELECT
                 COUNT(*) AS total_orders,
                 COALESCE(SUM(
-                    CASE WHEN status IN ({revenue_status_placeholder})
+                    CASE WHEN orders.status IN ({revenue_status_placeholder})
                          THEN amount_cents ELSE 0 END
                 ), 0) AS total_revenue_cents,
                 COALESCE(SUM(
-                    CASE WHEN status = 'pending' THEN 1 ELSE 0 END
-                ), 0) AS pending_orders
+                    CASE WHEN orders.status = 'pending' THEN 1 ELSE 0 END
+                ), 0) AS pending_orders,
+                COALESCE(SUM(
+                    CASE WHEN orders.status = 'pending' AND orders.created_at < ?
+                         THEN 1 ELSE 0 END
+                ), 0) AS pending_overdue_24h,
+                COALESCE(SUM(
+                    CASE WHEN orders.status = 'pending' AND (
+                        i.status IS NULL OR i.status = 'draft'
+                    ) THEN 1 ELSE 0 END
+                ), 0) AS pending_missing_intake
             FROM orders
+            LEFT JOIN order_intakes AS i ON i.order_id = orders.id
             """,
-            _REVENUE_STATUSES,
+            (*_REVENUE_STATUSES, overdue_cutoff),
         ).fetchone()
 
         # 今日 / 7d / 30d 切片 (用 substr 切日期)
@@ -242,6 +264,10 @@ def compute_summary(
                 *_REVENUE_STATUSES,
             ),
         ).fetchone()
+        with open("/tmp/debug_stats.txt", "a") as _f:
+            _f.write(f"ROW_AFTER_QUERY={dict(row)}\n")
+        # Cleanup
+        _ = None
 
     # 用户数 (单独连接 admin DB,避免在 orders DB 上去找可能不存在的表)
     total_users = 0
@@ -255,6 +281,8 @@ def compute_summary(
         "total_revenue_cents": int(row["total_revenue_cents"] or 0),
         "total_users": total_users,
         "pending_orders": int(row["pending_orders"] or 0),
+        "pending_overdue_24h": int(row["pending_overdue_24h"] or 0),
+        "pending_missing_intake": int(row["pending_missing_intake"] or 0),
         "orders_today": int(slice_row["orders_today"] or 0),
         "orders_7d": int(slice_row["orders_7d"] or 0),
         "orders_30d": int(slice_row["orders_30d"] or 0),

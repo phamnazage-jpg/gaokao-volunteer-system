@@ -99,12 +99,14 @@ def test_dashboard_empty_db_shape(client, auth_headers):
     resp = client.get("/api/stats/dashboard", headers=auth_headers)
     body = resp.json()
 
-    # summary 10 字段
+    # summary 12 字段
     assert set(body["summary"].keys()) == {
         "total_orders",
         "total_revenue_cents",
         "total_users",
         "pending_orders",
+        "pending_overdue_24h",
+        "pending_missing_intake",
         "orders_today",
         "orders_7d",
         "orders_30d",
@@ -449,6 +451,82 @@ def test_dashboard_summary_pending_orders(client, auth_headers, settings):
     # paid 2 笔 × 10000 + serving 1 笔 × 10000 = 30000
     assert body["summary"]["total_revenue_cents"] == 30000
     # by_status 的 pending 也应一致,防止两路数据分裂
+    assert body["by_status"]["pending"] == 3
+
+
+def test_dashboard_summary_pending_overdue_24h(client, auth_headers, settings):
+    """pending_overdue_24h 应只数 status='pending' 且 created_at < now-24h 的订单。"""
+    from datetime import timedelta as _td
+
+    db = settings.orders_db_path
+    now = _now_utc()
+    two_days_ago = now - _td(days=2)
+    twelve_hours_ago = now - _td(hours=12)
+    just_now = now
+
+    # 2 天前的 pending → 超时
+    _insert_order(db, order_id="OLD-1", status="pending", created_at=_iso_at(two_days_ago))
+    _insert_order(db, order_id="OLD-2", status="pending", created_at=_iso_at(two_days_ago))
+    # 12h 前的 pending → 未超时
+    _insert_order(db, order_id="NEW-1", status="pending", created_at=_iso_at(twelve_hours_ago))
+    # 现在的 pending → 未超时
+    _insert_order(db, order_id="NEW-2", status="pending", created_at=_iso_at(just_now))
+    # 2 天前但已支付 → 不算 pending
+    _insert_order(db, order_id="OLD-PAID", status="paid", created_at=_iso_at(two_days_ago))
+
+    body = client.get("/api/stats/dashboard", headers=auth_headers).json()
+    s = body["summary"]
+
+    assert s["pending_orders"] == 4
+    assert s["pending_overdue_24h"] == 2
+    # 旧 paid 不应误入 overdue
+    assert body["by_status"]["pending"] == 4
+
+
+def test_dashboard_summary_pending_missing_intake(client, auth_headers, settings):
+    """pending_missing_intake 应数 status='pending' 且 (无 intake 记录 OR intake.status='draft') 的订单。"""
+    from data.orders.intake_store import SCHEMA_SQL as INTAKE_SCHEMA_SQL
+    from admin.db import get_connection
+
+    db = settings.orders_db_path
+    conn = get_connection(db)
+    # 确保 intake 表已建 (conftest 已建,这里只是显式建一次防止测试独立运行)
+    conn.executescript(INTAKE_SCHEMA_SQL)
+    conn.commit()
+
+    now = _now_utc()
+
+    # P-A: pending + 完整 intake(submitted) → 不算缺失
+    _insert_order(db, order_id="P-A", status="pending", created_at=_iso_at(now))
+    conn.execute(
+        "INSERT INTO order_intakes(order_id, status, payload_json, created_at, updated_at, submitted_at) "
+        "VALUES (?, 'submitted', '{}', ?, ?, ?)",
+        ("P-A", _iso_at(now), _iso_at(now), _iso_at(now)),
+    )
+    # P-B: pending + draft intake → 算缺失
+    _insert_order(db, order_id="P-B", status="pending", created_at=_iso_at(now))
+    conn.execute(
+        "INSERT INTO order_intakes(order_id, status, payload_json, created_at, updated_at) "
+        "VALUES (?, 'draft', '{}', ?, ?)",
+        ("P-B", _iso_at(now), _iso_at(now)),
+    )
+    # P-C: pending + 无 intake → 算缺失
+    _insert_order(db, order_id="P-C", status="pending", created_at=_iso_at(now))
+    # P-D: paid + draft intake → 不算 (只统计 pending)
+    _insert_order(db, order_id="P-D", status="paid", created_at=_iso_at(now))
+    conn.execute(
+        "INSERT INTO order_intakes(order_id, status, payload_json, created_at, updated_at) "
+        "VALUES (?, 'draft', '{}', ?, ?)",
+        ("P-D", _iso_at(now), _iso_at(now)),
+    )
+    conn.commit()
+    conn.close()
+
+    body = client.get("/api/stats/dashboard", headers=auth_headers).json()
+    s = body["summary"]
+
+    assert s["pending_orders"] == 3
+    assert s["pending_missing_intake"] == 2  # P-B + P-C
     assert body["by_status"]["pending"] == 3
 
 

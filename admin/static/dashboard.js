@@ -116,7 +116,28 @@ function renderSummary(summary) {
     `今日 ${formatMoney(summary.revenue_today_cents)} / 7d ${formatMoney(summary.revenue_7d_cents)} / 30d ${formatMoney(summary.revenue_30d_cents)}`;
 
   const pending = Number(summary.pending_orders ?? 0);
+  const pendingOverdue = Number(summary.pending_overdue_24h ?? 0);
+  const pendingMissing = Number(summary.pending_missing_intake ?? 0);
   document.getElementById("pending-orders").textContent = String(pending);
+
+  // 待处理多口径: 至少有一个非零才展开
+  const breakdown = document.getElementById("pending-breakdown");
+  const overdueTag = document.getElementById("pending-overdue-tag");
+  const missingTag = document.getElementById("pending-missing-tag");
+  const hasAny = pendingOverdue > 0 || pendingMissing > 0;
+  if (breakdown) breakdown.hidden = !hasAny;
+  if (overdueTag) {
+    overdueTag.hidden = pendingOverdue <= 0;
+    overdueTag.classList.toggle("pending-tag-zero", pendingOverdue <= 0);
+    const overdueEl = document.getElementById("pending-overdue-24h");
+    if (overdueEl) overdueEl.textContent = String(pendingOverdue);
+  }
+  if (missingTag) {
+    missingTag.hidden = pendingMissing <= 0;
+    missingTag.classList.toggle("pending-tag-zero", pendingMissing <= 0);
+    const missingEl = document.getElementById("pending-missing-intake");
+    if (missingEl) missingEl.textContent = String(pendingMissing);
+  }
 }
 
 function clearCardEmptyStates() {

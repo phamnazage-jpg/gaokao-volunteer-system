@@ -185,6 +185,36 @@
         font-weight: 700;
         font-size: 18px;
       }
+      .pending-breakdown {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 10px;
+      }
+      .pending-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 3px 8px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 600;
+        line-height: 1.4;
+      }
+      .pending-tag strong { font-size: 12px; }
+      .pending-tag[hidden] { display: none; }
+      .pending-tag-overdue {
+        background: rgba(220, 38, 38, 0.1);
+        color: #b91c1c;
+      }
+      .pending-tag-missing {
+        background: rgba(217, 119, 6, 0.1);
+        color: #b45309;
+      }
+      .pending-tag-zero {
+        background: rgba(100, 116, 139, 0.08);
+        color: #94a3b8;
+      }
       .card.empty .card-subtitle::before {
         content: "登录后查看 · ";
         color: var(--primary);
@@ -367,6 +397,14 @@
           <div class="card-title">待处理订单 <span class="pill">待办</span></div>
           <div id="pending-orders" class="card-value">--</div>
           <div class="card-subtitle">未支付 / 待补资料订单合计</div>
+          <div class="pending-breakdown" id="pending-breakdown" hidden>
+            <span class="pending-tag pending-tag-overdue" id="pending-overdue-tag" hidden>
+              超时 <strong id="pending-overdue-24h">0</strong>
+            </span>
+            <span class="pending-tag pending-tag-missing" id="pending-missing-tag" hidden>
+              资料待补 <strong id="pending-missing-intake">0</strong>
+            </span>
+          </div>
         </article>
       </section>
 
