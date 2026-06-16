@@ -189,6 +189,7 @@ def test_create_app_bootstraps_orders_schema(tmp_path, monkeypatch):
             "total_orders": 0,
             "total_revenue_cents": 0,
             "total_users": 1,
+            "pending_orders": 0,
             "orders_today": 0,
             "orders_7d": 0,
             "orders_30d": 0,

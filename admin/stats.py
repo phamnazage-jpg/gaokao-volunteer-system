@@ -151,7 +151,7 @@ def compute_summary(
     *,
     today: Optional[datetime] = None,
 ) -> dict:
-    """汇总卡片:订单/用户/收入,以及今日/7d/30d 三个窗口的切片。
+    """汇总卡片:订单/用户/收入/待处理,以及今日/7d/30d 三个窗口的切片。
 
     Args:
         orders_db_path: orders / order_status_history 所在 DB (data.orders.*)
@@ -165,6 +165,7 @@ def compute_summary(
                 "total_orders":         int,
                 "total_revenue_cents":  int,
                 "total_users":          int,
+                "pending_orders":       int,
                 "orders_today":         int,
                 "orders_7d":            int,
                 "orders_30d":           int,
@@ -182,7 +183,7 @@ def compute_summary(
     revenue_status_placeholder = ",".join("?" for _ in _REVENUE_STATUSES)
 
     with _open_conn(orders_db_path) as conn:
-        # 总订单数 / 总收入 (一次性走单条聚合 SQL)
+        # 总订单数 / 总收入 / 待处理订单 (一次性走单条聚合 SQL)
         row = conn.execute(
             f"""
             SELECT
@@ -190,7 +191,10 @@ def compute_summary(
                 COALESCE(SUM(
                     CASE WHEN status IN ({revenue_status_placeholder})
                          THEN amount_cents ELSE 0 END
-                ), 0) AS total_revenue_cents
+                ), 0) AS total_revenue_cents,
+                COALESCE(SUM(
+                    CASE WHEN status = 'pending' THEN 1 ELSE 0 END
+                ), 0) AS pending_orders
             FROM orders
             """,
             _REVENUE_STATUSES,
@@ -250,6 +254,7 @@ def compute_summary(
         "total_orders": int(row["total_orders"] or 0),
         "total_revenue_cents": int(row["total_revenue_cents"] or 0),
         "total_users": total_users,
+        "pending_orders": int(row["pending_orders"] or 0),
         "orders_today": int(slice_row["orders_today"] or 0),
         "orders_7d": int(slice_row["orders_7d"] or 0),
         "orders_30d": int(slice_row["orders_30d"] or 0),

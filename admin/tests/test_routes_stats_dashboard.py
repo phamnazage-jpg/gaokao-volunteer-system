@@ -99,11 +99,12 @@ def test_dashboard_empty_db_shape(client, auth_headers):
     resp = client.get("/api/stats/dashboard", headers=auth_headers)
     body = resp.json()
 
-    # summary 9 字段
+    # summary 10 字段
     assert set(body["summary"].keys()) == {
         "total_orders",
         "total_revenue_cents",
         "total_users",
+        "pending_orders",
         "orders_today",
         "orders_7d",
         "orders_30d",
@@ -423,6 +424,32 @@ def test_dashboard_trends_zero_fills_gaps(client, auth_headers, settings):
     assert len(zero_points) == 6
     for p in zero_points:
         assert p["revenue_cents"] == 0
+
+
+def test_dashboard_summary_pending_orders(client, auth_headers, settings):
+    """summary.pending_orders 应等于所有 status='pending' 订单数,与其他状态无关。"""
+    db = settings.orders_db_path
+    now = _now_utc()
+
+    # 3 pending + 2 paid + 1 serving + 1 refunded = 7 笔
+    _insert_order(db, order_id="P-1", status="pending", created_at=_iso_at(now))
+    _insert_order(db, order_id="P-2", status="pending", created_at=_iso_at(now))
+    _insert_order(db, order_id="P-3", status="pending", created_at=_iso_at(now))
+    _insert_order(db, order_id="PD-1", status="paid", created_at=_iso_at(now))
+    _insert_order(db, order_id="PD-2", status="paid", created_at=_iso_at(now))
+    _insert_order(db, order_id="SV-1", status="serving", created_at=_iso_at(now))
+    _insert_order(db, order_id="RF-1", status="refunded", created_at=_iso_at(now))
+
+    resp = client.get("/api/stats/dashboard", headers=auth_headers)
+    body = resp.json()
+
+    assert body["summary"]["pending_orders"] == 3
+    assert body["summary"]["total_orders"] == 7
+    # pending / refunded 不计入 revenue; paid + serving 才算
+    # paid 2 笔 × 10000 + serving 1 笔 × 10000 = 30000
+    assert body["summary"]["total_revenue_cents"] == 30000
+    # by_status 的 pending 也应一致,防止两路数据分裂
+    assert body["by_status"]["pending"] == 3
 
 
 # ---------------------------------------------------------------------------
