@@ -71,12 +71,35 @@ def test_dashboard_page_served(client):
     assert "运营总览" in body
     assert "核心经营指标" in body
     assert "/static/dashboard.js" in body
+    assert "/static/portal-ui.css" in body
     assert 'id="trend-chart"' in body
     assert 'id="status-chart"' in body
     assert 'id="source-chart"' in body
     assert 'id="service-chart"' in body
     assert 'id="range-7d"' in body
     assert 'id="range-30d"' in body
+    assert 'id="system-status"' in body
+    assert 'id="pending-orders"' in body
+    assert 'id="orders-spark"' in body
+    assert 'id="revenue-spark"' in body
+    assert 'id="status-title"' in body
+    assert 'id="quick-refresh-btn"' in body
+    assert 'id="quick-logout-btn"' in body
+    assert 'id="login-form"' in body
+    assert 'id="quick-links"' in body
+    assert 'class="card empty"' in body
+    assert 'class="chart-empty"' in body
+    assert 'data-card="orders"' in body
+    assert 'data-card="revenue"' in body
+    assert 'data-card="users"' in body
+    assert 'data-card="pending"' in body
+    assert "尚未连接" in body
+    assert "立即刷新" in body
+    assert "退出登录" in body
+    assert "等待加载状态分布" in body
+    assert "等待加载来源分布" in body
+    assert "等待加载服务版本分布" in body
+    assert "登录后展示订单与收入趋势" in body
     assert "/static/vendor/echarts.min.js" in body
     assert "jsdelivr.net" not in body
     assert "最小仪表盘" not in body
@@ -100,6 +123,9 @@ def test_dashboard_static_js_served(client):
     assert "sessionStorage" in body
     assert "localStorage" not in body
     assert "admin_users 总数" not in body
+    assert "setStatus" in body
+    assert "setChartEmpty" in body
+    assert "pending-orders" in body
 
 
 def test_bootstrap_admin_only_once(client, settings):

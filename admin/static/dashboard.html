@@ -4,16 +4,29 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>管理后台仪表盘</title>
+    <link rel="stylesheet" href="/static/portal-ui.css" />
     <style>
       :root {
         color-scheme: light;
         --bg: #f5f7fb;
         --card: #ffffff;
         --border: #dbe3f0;
+        --border-strong: #c5d2e6;
         --text: #0f172a;
         --muted: #64748b;
         --primary: #2563eb;
+        --primary-dark: #1d4ed8;
+        --primary-soft: #e0ebff;
         --success: #059669;
+        --success-soft: #d1fae5;
+        --warning: #b45309;
+        --warning-soft: #fef3c7;
+        --danger: #b91c1c;
+        --danger-soft: #fee2e2;
+        --shadow: 0 12px 32px rgba(15, 23, 42, 0.06);
+        --radius-lg: 18px;
+        --radius-md: 12px;
+        --radius-sm: 8px;
       }
       * { box-sizing: border-box; }
       body {
@@ -23,109 +36,192 @@
         color: var(--text);
       }
       .page {
-        max-width: 1160px;
+        max-width: 1200px;
         margin: 0 auto;
         padding: 24px;
       }
-      .header, .login-panel, .chart-card, .card {
+      .panel {
         background: var(--card);
         border: 1px solid var(--border);
-        border-radius: 16px;
-        box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
-      }
-      .charts-grid {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 16px;
-        margin-top: 16px;
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow);
       }
       .header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
         gap: 16px;
-        padding: 20px 24px;
+        align-items: flex-start;
+        padding: 22px 24px;
         margin-bottom: 16px;
       }
       .title h1 {
-        margin: 0 0 6px;
-        font-size: 28px;
+        margin: 0 0 8px;
+        font-size: 26px;
+        letter-spacing: -0.01em;
       }
-      .title p, .meta, .hint, .error {
+      .title p {
         margin: 0;
         color: var(--muted);
+        line-height: 1.7;
+        max-width: 720px;
       }
+      .quick-links {
+        margin-top: 14px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .quick-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 12px;
+        border-radius: 999px;
+        background: var(--primary-soft);
+        color: var(--primary-dark);
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+        border: 1px solid transparent;
+      }
+      .quick-link:hover { background: #cfe0ff; }
+      .system-status {
+        display: flex;
+        align-items: stretch;
+        gap: 12px;
+        min-width: 280px;
+        padding: 14px 18px;
+        border-radius: var(--radius-md);
+        background: linear-gradient(135deg, #1f6feb, #0e4ec3);
+        border: 1px solid #0e4ec3;
+        color: #fff;
+        box-shadow: 0 14px 30px rgba(31, 111, 235, 0.22);
+      }
+      .system-status.online { background: linear-gradient(135deg, #047857, #065f46); border-color: #065f46; box-shadow: 0 14px 30px rgba(4, 120, 87, 0.22); }
+      .system-status.error { background: linear-gradient(135deg, #b91c1c, #7f1d1d); border-color: #7f1d1d; box-shadow: 0 14px 30px rgba(185, 28, 28, 0.22); }
+      .status-dot {
+        width: 12px;
+        height: 12px;
+        margin-top: 6px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.85);
+        box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.18);
+        flex: 0 0 auto;
+      }
+      .status-body { display: grid; gap: 2px; }
+      .status-title { font-size: 14px; font-weight: 700; }
+      .status-meta { font-size: 12px; color: var(--muted); }
+
       .login-panel {
         display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr)) auto;
+        grid-template-columns: 1.1fr 1.1fr 1.4fr 1.3fr auto;
         gap: 12px;
         padding: 16px;
         margin-bottom: 16px;
+        align-items: end;
       }
-      .field {
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-      }
-      .field label {
-        font-size: 13px;
-        color: var(--muted);
-      }
+      .field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+      .field label { font-size: 13px; color: var(--muted); font-weight: 600; }
       .field input {
         width: 100%;
         padding: 10px 12px;
-        border: 1px solid var(--border);
-        border-radius: 10px;
+        border: 1px solid var(--border-strong);
+        border-radius: var(--radius-sm);
         font-size: 14px;
+        background: #fff;
       }
+      .field input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+      }
+      .login-actions { display: flex; gap: 8px; align-items: center; }
       button {
         border: 0;
-        border-radius: 10px;
+        border-radius: var(--radius-sm);
         padding: 10px 16px;
         background: var(--primary);
         color: #fff;
         font-size: 14px;
+        font-weight: 700;
         cursor: pointer;
       }
-      button.secondary {
-        background: #e2e8f0;
-        color: var(--text);
-      }
-      button.active-range {
-        background: var(--primary);
-        color: #fff;
-      }
-      .actions {
-        display: flex;
-        align-items: end;
-        gap: 8px;
-      }
+      button:hover { background: var(--primary-dark); }
+      button.secondary { background: #e2e8f0; color: var(--text); }
+      button.secondary:hover { background: #d8e0ec; }
+      button.active-range { background: var(--primary); color: #fff; }
       .cards {
         display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-columns: repeat(4, minmax(0, 1fr));
         gap: 16px;
         margin-bottom: 16px;
       }
-      .card {
-        padding: 20px;
-      }
+      .card { padding: 18px 20px; }
       .card-title {
-        font-size: 14px;
-        color: var(--muted);
-        margin-bottom: 10px;
-      }
-      .card-value {
-        font-size: 32px;
-        font-weight: 700;
-        margin-bottom: 8px;
-      }
-      .card-subtitle {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
         font-size: 13px;
         color: var(--muted);
+        margin-bottom: 10px;
+        font-weight: 600;
       }
-      .chart-card {
-        padding: 20px;
+      .card-title .pill {
+        font-size: 11px;
+        padding: 2px 8px;
+        border-radius: 999px;
+        background: #eef2f7;
+        color: var(--muted);
       }
+      .card-value {
+        font-size: 30px;
+        font-weight: 800;
+        margin-bottom: 6px;
+        letter-spacing: -0.02em;
+      }
+      .card-subtitle { font-size: 12px; color: var(--muted); }
+      .card.empty .card-value {
+        color: #94a3b8;
+        font-weight: 700;
+        font-size: 18px;
+      }
+      .card.empty .card-subtitle::before {
+        content: "登录后查看 · ";
+        color: var(--primary);
+        font-weight: 600;
+      }
+      .spark {
+        display: block;
+        height: 24px;
+        margin: 6px 0 8px;
+        background-image: linear-gradient(90deg, #e2e8f0 0 4px, transparent 4px),
+          linear-gradient(0deg, #e2e8f0 0 1px, transparent 1px);
+        background-size: 12px 100%, 100% 24px;
+        background-repeat: repeat-x, no-repeat;
+        background-position: 0 100%, 0 100%;
+        border-radius: 4px;
+        opacity: 0.65;
+      }
+      .card.loaded .spark { background: linear-gradient(180deg, #e0ebff 0 60%, transparent 60%); }
+      .skeleton {
+        display: block;
+        height: 16px;
+        border-radius: 6px;
+        background: linear-gradient(90deg, #e2e8f0 0%, #f1f5f9 50%, #e2e8f0 100%);
+        background-size: 200% 100%;
+        animation: skeleton-shimmer 1.4s ease-in-out infinite;
+        margin-bottom: 6px;
+      }
+      .skeleton.lg { height: 30px; width: 60%; }
+      .skeleton.sm { height: 12px; width: 80%; }
+      @keyframes skeleton-shimmer {
+        0% { background-position: 200% 0; }
+        100% { background-position: -200% 0; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .skeleton { animation: none; }
+      }
+      .chart-card { padding: 20px; }
       .chart-head {
         display: flex;
         justify-content: space-between;
@@ -133,44 +229,97 @@
         align-items: center;
         margin-bottom: 8px;
       }
-      #trend-chart {
-        width: 100%;
-        height: 380px;
+      .chart-head h2 { margin: 0; font-size: 18px; }
+      .chart-head p { margin: 2px 0 0; color: var(--muted); font-size: 13px; }
+      .chart-actions { display: flex; gap: 6px; }
+      .range-btn {
+        font-size: 13px;
+        padding: 6px 12px;
       }
+      #trend-chart { width: 100%; height: 360px; position: relative; }
       .mini-chart {
         width: 100%;
-        height: 280px;
+        height: 260px;
+        position: relative;
       }
-      .error {
-        color: #b91c1c;
-        min-height: 20px;
-        margin-top: 8px;
+      .chart-empty {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        color: var(--muted);
+        font-size: 14px;
+        pointer-events: none;
       }
-      .success {
-        color: var(--success);
+      .chart-empty .label {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 16px;
+        border-radius: 999px;
+        background: #f1f5f9;
+        border: 1px dashed var(--border-strong);
       }
-      @media (max-width: 900px) {
-        .login-panel, .cards, .charts-grid { grid-template-columns: 1fr; }
-        .actions { align-items: stretch; flex-direction: column; }
-        .header, .chart-head { flex-direction: column; align-items: flex-start; }
+      .charts-grid {
+        display: grid;
+        grid-template-columns: 1.4fr 1fr 1fr;
+        gap: 16px;
+        margin-bottom: 16px;
+      }
+      .message {
+        margin: 0 0 16px;
+        padding: 12px 16px;
+        border-radius: var(--radius-md);
+        background: #f1f5f9;
+        color: var(--muted);
+        font-size: 14px;
+        border: 1px solid var(--border);
+      }
+      .message.success { background: var(--success-soft); color: #065f46; border-color: #a7f3d0; }
+      .message.error { background: var(--danger-soft); color: #7f1d1d; border-color: #fecaca; }
+      .message.loading { background: var(--primary-soft); color: var(--primary-dark); border-color: #c7d9ff; }
+      .error-line { color: var(--danger); font-size: 13px; min-height: 18px; margin-bottom: 8px; }
+      .hidden { display: none !important; }
+      @media (max-width: 1024px) {
+        .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .charts-grid { grid-template-columns: 1fr; }
+      }
+      @media (max-width: 720px) {
+        .header { grid-template-columns: 1fr; }
+        .login-panel { grid-template-columns: 1fr; }
+        .login-actions { justify-content: flex-start; }
+        .system-status { width: 100%; }
+        .cards { grid-template-columns: 1fr; }
+        .chart-actions { align-self: stretch; }
       }
     </style>
   </head>
   <body>
     <div class="page">
-      <section class="header">
+      <section class="header panel" aria-label="页面标题与系统状态">
         <div class="title">
           <h1>运营总览</h1>
           <p>聚合查看订单、收入、用户与主要结构指标，帮助后台快速判断当前经营状态。</p>
-          <p><a href="/admin/orders/new">手动添加订单</a> · <a href="/admin/notifications">通知审计</a> · <a href="/admin/ops-alerts">运维告警</a></p>
+          <div class="quick-links" id="quick-links">
+            <a class="quick-link" href="/admin/orders/new">手动添加订单 →</a>
+            <a class="quick-link" href="/admin/notifications">通知审计 →</a>
+            <a class="quick-link" href="/admin/ops-alerts">运维告警 →</a>
+          </div>
         </div>
-        <div class="meta">
-          <div>核心经营指标</div>
-          <div id="generated-at">尚未加载</div>
-        </div>
+        <aside class="system-status" id="system-status" role="status" aria-live="polite">
+          <span class="status-dot" id="status-dot" aria-hidden="true"></span>
+          <div class="status-body">
+            <span class="status-title" id="status-title">尚未连接</span>
+            <span class="status-meta" id="status-meta">登录后查看核心经营指标</span>
+          </div>
+          <div class="status-actions">
+            <button class="status-btn" id="quick-refresh-btn" type="button">立即刷新</button>
+            <button class="status-btn secondary" id="quick-logout-btn" type="button">退出登录</button>
+          </div>
+        </aside>
       </section>
 
-      <section class="login-panel">
+      <section class="login-panel panel" id="login-form" aria-label="登录与数据服务">
         <div class="field">
           <label for="username">用户名</label>
           <input id="username" autocomplete="username" placeholder="admin" />
@@ -187,76 +336,91 @@
           <label for="api-base">数据服务地址</label>
           <input id="api-base" value="" placeholder="默认使用当前站点地址" />
         </div>
-        <div class="actions">
+        <div class="login-actions">
           <button id="login-btn" type="button">登录并加载</button>
           <button id="refresh-btn" class="secondary" type="button">仅刷新数据</button>
         </div>
       </section>
 
-      <div id="message" class="hint">请先登录，或粘贴已有登录令牌后加载数据。</div>
-      <div id="error" class="error"></div>
+      <div id="message" class="message">请先登录，或粘贴已有登录令牌后加载数据。</div>
+      <div id="error" class="error-line"></div>
 
-      <section class="cards">
-        <article class="card">
-          <div class="card-title">订单数</div>
+      <section class="cards" aria-label="核心经营指标">
+        <article class="card empty" data-card="orders">
+          <div class="card-title">订单数 <span class="pill">实时</span></div>
           <div id="total-orders" class="card-value">--</div>
+          <div class="spark" id="orders-spark" aria-hidden="true"></div>
           <div id="orders-subtitle" class="card-subtitle">今日 -- / 7d -- / 30d --</div>
         </article>
-        <article class="card">
-          <div class="card-title">后台可登录用户</div>
+        <article class="card empty" data-card="revenue">
+          <div class="card-title">收入 <span class="pill">实时</span></div>
+          <div id="total-revenue" class="card-value">--</div>
+          <div class="spark" id="revenue-spark" aria-hidden="true"></div>
+          <div id="revenue-subtitle" class="card-subtitle">今日 -- / 7d -- / 30d --</div>
+        </article>
+        <article class="card empty" data-card="users">
+          <div class="card-title">后台可登录用户 <span class="pill">累计</span></div>
           <div id="total-users" class="card-value">--</div>
           <div class="card-subtitle">已创建后台账号总数</div>
         </article>
-        <article class="card">
-          <div class="card-title">收入</div>
-          <div id="total-revenue" class="card-value">--</div>
-          <div id="revenue-subtitle" class="card-subtitle">今日 -- / 7d -- / 30d --</div>
+        <article class="card empty" data-card="pending">
+          <div class="card-title">待处理订单 <span class="pill">待办</span></div>
+          <div id="pending-orders" class="card-value">--</div>
+          <div class="card-subtitle">未支付 / 待补资料订单合计</div>
         </article>
       </section>
 
-      <section class="chart-card">
+      <section class="chart-card panel" aria-label="订单与收入趋势">
         <div class="chart-head">
           <div>
-            <h2 id="trend-title" style="margin: 0 0 4px; font-size: 20px;">7 天趋势</h2>
-            <p class="hint">订单数与收入共用同一时间轴。</p>
+            <h2 id="trend-title">7 天趋势</h2>
+            <p>订单数与收入共用同一时间轴，可切换查看更长周期。</p>
           </div>
-          <div class="actions">
-            <button id="range-7d" type="button">7d</button>
-            <button id="range-30d" class="secondary" type="button">30d</button>
+          <div class="chart-actions">
+            <button id="range-7d" class="range-btn active-range" type="button">7 天</button>
+            <button id="range-30d" class="range-btn secondary" type="button">30 天</button>
           </div>
         </div>
-        <div id="trend-chart"></div>
+        <div id="trend-chart">
+          <div class="chart-empty" id="trend-empty"><span class="label">登录后展示订单与收入趋势</span></div>
+        </div>
       </section>
 
-      <section class="charts-grid">
-        <section class="chart-card">
+      <section class="charts-grid" aria-label="结构分布">
+        <section class="chart-card panel">
           <div class="chart-head">
             <div>
-              <h2 style="margin: 0 0 4px; font-size: 18px;">状态分布</h2>
-              <p class="hint">观察订单漏斗积压。</p>
+              <h2>状态分布</h2>
+              <p>观察订单漏斗积压情况。</p>
             </div>
           </div>
-          <div id="status-chart" class="mini-chart"></div>
+          <div id="status-chart" class="mini-chart">
+            <div class="chart-empty"><span class="label">等待加载状态分布</span></div>
+          </div>
         </section>
 
-        <section class="chart-card">
+        <section class="chart-card panel">
           <div class="chart-head">
             <div>
-              <h2 style="margin: 0 0 4px; font-size: 18px;">来源分布</h2>
-              <p class="hint">查看渠道结构。</p>
+              <h2>来源分布</h2>
+              <p>查看渠道结构。</p>
             </div>
           </div>
-          <div id="source-chart" class="mini-chart"></div>
+          <div id="source-chart" class="mini-chart">
+            <div class="chart-empty"><span class="label">等待加载来源分布</span></div>
+          </div>
         </section>
 
-        <section class="chart-card">
+        <section class="chart-card panel">
           <div class="chart-head">
             <div>
-              <h2 style="margin: 0 0 4px; font-size: 18px;">服务版本分布</h2>
-              <p class="hint">查看产品结构。</p>
+              <h2>服务版本分布</h2>
+              <p>查看产品结构。</p>
             </div>
           </div>
-          <div id="service-chart" class="mini-chart"></div>
+          <div id="service-chart" class="mini-chart">
+            <div class="chart-empty"><span class="label">等待加载服务版本分布</span></div>
+          </div>
         </section>
       </section>
     </div>
