@@ -1,0 +1,94 @@
+scope: province
+province: 江西
+year: 2026
+version: '2026.1'
+status: active
+rules:
+  mode:
+    title: 志愿模式
+    severity: fatal
+    value:
+      mode: 院校专业组
+    source_evidence_id: jiangxi-2026-mode
+    effective_date: '2026-01-01'
+    status: active
+  batch:
+    title: 批次名称
+    severity: info
+    value:
+      batch: 本科批
+    source_evidence_id: jiangxi-2026-batch
+    effective_date: '2026-01-01'
+    status: active
+  max_volunteers:
+    title: 志愿上限
+    severity: fatal
+    value:
+      max_volunteers: 45
+    source_evidence_id: jiangxi-2026-max_volunteers
+    effective_date: '2026-01-01'
+    status: active
+  max_majors_per_group:
+    title: 每组专业上限
+    severity: warning
+    value:
+      max_majors_per_group: 6
+    source_evidence_id: jiangxi-2026-max_majors_per_group
+    effective_date: '2026-01-01'
+    status: active
+  has_adjustment:
+    title: 是否允许调剂
+    severity: warning
+    value:
+      has_adjustment: true
+    source_evidence_id: jiangxi-2026-has_adjustment
+    effective_date: '2026-01-01'
+    status: active
+  adjustment_scope:
+    title: 调剂范围
+    severity: fatal
+    value:
+      adjustment_scope: 组内专业
+    source_evidence_id: jiangxi-2026-adjustment_scope
+    effective_date: '2026-01-01'
+    status: active
+  retrieval_rule:
+    title: 投档原则
+    severity: critical
+    value:
+      retrieval_rule: 分数优先、遵循志愿、一次投档
+    source_evidence_id: jiangxi-2026-retrieval_rule
+    effective_date: '2026-01-01'
+    status: active
+  collection_count:
+    title: 征集志愿次数
+    severity: warning
+    value:
+      collection_count: 2
+    source_evidence_id: jiangxi-2026-collection_count
+    effective_date: '2026-01-01'
+    status: active
+  subject_mode:
+    title: 选科模式
+    severity: warning
+    value:
+      subject_mode: 3+1+2
+    source_evidence_id: jiangxi-2026-subject_mode
+    effective_date: '2026-01-01'
+    status: active
+  official_url:
+    title: 官方来源链接
+    severity: info
+    value:
+      official_url: http://www.jxeea.cn/
+    source_evidence_id: jiangxi-2026-official_url
+    effective_date: '2026-01-01'
+    status: active
+  exam_subject_total:
+    title: 总分
+    severity: info
+    value:
+      exam_subject_total: 750
+    source_evidence_id: jiangxi-2026-exam_subject_total
+    effective_date: '2026-01-01'
+    status: active

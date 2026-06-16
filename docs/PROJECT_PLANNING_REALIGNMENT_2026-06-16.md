@@ -29,15 +29,15 @@
   - 传统模式 5 省
   - 合计 27 省
 - `skills/gaokao-spec-checker/SKILL.md` frontmatter:
-  - 列名包含 28 省(含广西)
-  - 摘要中按 14/8/6 描述,与 provinces.md 传统模式数量不同(5 vs 6)
+  - 列名宣称支持 27 省
+  - 摘要中按 14/8/6 描述,与 `rules/provinces.md` 的传统模式数量(5) 不一致
 - `scripts/gaokao-checker` 的 `PROVINCE_RULES`:
-  - 实际定义 28 省(含广西、山西)
-  - 但不包含陕西
+  - 实际定义 27 省
+  - 与 `rules/provinces.md` 的 27 省口径一致
 - 真实差距:
   - 文档对外宣称 27 省
-  - 实际规则 28 省
-  - SKILL.md 与 provinces.md 的传统模式数对不上(6 vs 5)
+  - 实际规则也是 27 省
+  - 但 `gaokao-spec-checker` 摘要里的传统模式数仍写成 6,与 `rules/provinces.md` 的 5 不一致
 - 风险:
   - 客服/智能体在文档与脚本之间会获得不同省份覆盖承诺
   - 后续任何"加省/删省"都会在三个真相源之间产生连锁漂移

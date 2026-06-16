@@ -162,7 +162,7 @@ class AuditIssue:
 - 输出 `rules/_truth/province/*.yaml`
 - 保留 `gaokao-checker` 旧 API,但内部委托给 `audit_engine`
 
-不破坏现有 28 省的覆盖。迁移后:
+不破坏现有 27 省的覆盖。迁移后:
 
 - `PROVINCE_RULES` 作为"过渡期镜像"保留
 - 新代码只读 `data/rules/loader.py`
@@ -831,7 +831,7 @@ SQLite / 文件存储
 
 任务:
 
-1. 落 `rules/_truth/national.yaml` + `province/<prov>.yaml`(28 省)
+1. 落 `rules/_truth/national.yaml` + `province/<prov>.yaml`(27 省)
 2. 写迁移脚本 `scripts/migrate_province_rules_to_truth.py`
 3. 落 `data/rules/loader.py` + `audit_engine.py` 最小可用版
 4. 保留 `scripts/gaokao-checker` 与 SKILL 行为
@@ -841,7 +841,7 @@ SQLite / 文件存储
 
 - `gaokao-cli rules status` 可用
 - `gaokao-cli audit run` 行为与旧 `gaokao-checker` 一致
-- 28 省规则 100% 迁移
+- 27 省规则 100% 迁移
 
 ---
 

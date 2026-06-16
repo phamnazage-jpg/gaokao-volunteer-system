@@ -81,15 +81,15 @@ Rule:
 | 河南   | 传统       | ✅              | ✅             |                                |
 | 四川   | 传统       | ✅              | ✅             |                                |
 | 云南   | 传统       | ✅              | ✅             |                                |
-| 山西   | 传统       | ❌(SKILL.md 漏) | ✅(checker 有) | SKILL.md frontmatter 漂移待修  |
-| 陕西   | —          | ❌(SKILL.md 含) | ❌(checker 无) | checker 漂移待修               |
+| 山西   | —          | ❌(SKILL.md 漏) | ❌(checker 无) | SKILL.md frontmatter 漂移待修  |
+| 陕西   | —          | ❌(SKILL.md 含) | ❌(checker 无) | SKILL.md / checker 漂移待修    |
 
 ---
 
 ## 5. 文档漂移清单(已识别)
 
-- D1: `rules/provinces.md` 描述 27 省,实际 28 省
-- D2: `skills/gaokao-spec-checker/SKILL.md` 含山西漏陕西
+- D1: `rules/provinces.md` 与 `scripts/gaokao-checker` 口径一致为 27 省
+- D2: `skills/gaokao-spec-checker/SKILL.md` frontmatter 与实际 checker 省份集仍有漂移
 - D3: 传统模式数 provinces.md 写 5,SKILL.md 写 6
 - D4: 文档与代码都没有 source_evidence_id 链
 
@@ -97,7 +97,7 @@ Rule:
 
 ## 6. Phase 1 必须收口
 
-- 28 省全部有 `province/<prov>.yaml`
+- 27 省全部有 `province/<prov>.yaml`
 - 至少 1 条全国通用规则有 `national.yaml`
 - 1-2 个规则有真实 `source_evidence_id` 链路(湖南优先)
 - `gaokao-cli rules status` 可用
