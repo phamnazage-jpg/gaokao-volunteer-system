@@ -78,6 +78,8 @@ def test_notification_audit_page_shows_station_and_email_events(client, settings
     page = client.get(f"/portal/{token}/notifications")
     assert page.status_code == 200, page.text
     assert "通知审计" in page.text
+    assert '/static/portal-ui.css' in page.text
+    assert "返回订单状态页" in page.text
     assert order.id in page.text
     assert "station" in page.text
     assert "email" in page.text

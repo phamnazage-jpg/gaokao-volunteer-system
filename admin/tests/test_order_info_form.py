@@ -231,6 +231,8 @@ def test_portal_deletion_request_is_logged_and_visible_in_admin(client, auth_hea
     form_page = client.get(f"/portal/{token}/deletion-request")
     assert form_page.status_code == 200, form_page.text
     assert "删除申请" in form_page.text
+    assert "提交删除申请" in form_page.text
+    assert '/static/portal-ui.css' in form_page.text
 
     submit = client.post(
         f"/portal/{token}/deletion-request",

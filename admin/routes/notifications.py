@@ -177,18 +177,21 @@ def ops_alert_audit_page(
         )
     rows_html = "".join(rows) or "<tr><td colspan='5'>暂无运维告警</td></tr>"
     html = f"""<!doctype html>
-<html lang='zh-CN'><head><meta charset='utf-8' /><title>运维告警审计</title></head>
-<body style='font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f4f7fb;margin:0;padding:32px 20px;color:#172033;'>
-<main style='max-width:1280px;margin:0 auto;display:grid;gap:16px;'>
-<section style='background:#fff;border:1px solid #dbe3f0;border-radius:18px;padding:24px;'>
+<html lang='zh-CN'><head><meta charset='utf-8' /><meta name='viewport' content='width=device-width, initial-scale=1' /><title>运维告警审计</title><link rel='stylesheet' href='/static/portal-ui.css' /><style>body{{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f4f7fb;margin:0;padding:32px 20px;color:#172033}}.wrap{{max-width:1280px;margin:0 auto;display:grid;gap:16px}}.panel{{background:#fff;border:1px solid #dbe3f0;border-radius:20px;padding:24px;box-shadow:0 18px 42px rgba(20,34,53,.08)}}.meta-grid{{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:16px}}.meta-item{{padding:14px 16px;border-radius:16px;background:linear-gradient(180deg,#f8fbff,#eef5ff);border:1px solid #d7e3f1}}.meta-item strong{{display:block;margin-bottom:4px}}table{{width:100%;border-collapse:collapse}}th,td{{padding:12px 10px;border-bottom:1px solid #e5edf7;text-align:left;vertical-align:top;font-size:14px}}th{{color:#475569;font-size:13px;text-transform:uppercase;letter-spacing:.03em}}pre{{white-space:pre-wrap;max-width:520px;margin:0;color:#5b6b88}}@media (max-width:900px){{.meta-grid{{grid-template-columns:1fr}}}}</style></head>
+<body>
+<main class='wrap'>
+<section class='panel'>
   <h1>运维告警审计</h1>
-  <p>日志路径：{escape(settings.ops_alert_log_path)}</p>
-  <p>SMTP 告警收件人数量：{len(settings.alert_recipients)}</p>
-  <p>IM Webhook 数量：{len(settings.alert_webhook_urls)}</p>
+  <p>集中查看通知链路中的异常告警、摘要与上下文，方便快速判断是否需要人工介入。</p>
+  <div class='meta-grid'>
+    <article class='meta-item'><strong>告警来源文件</strong><span>{escape(settings.ops_alert_log_path)}</span></article>
+    <article class='meta-item'><strong>SMTP 告警收件人数量</strong><span>{len(settings.alert_recipients)}</span></article>
+    <article class='meta-item'><strong>IM Webhook 数量</strong><span>{len(settings.alert_webhook_urls)}</span></article>
+  </div>
 </section>
-<section style='background:#fff;border:1px solid #dbe3f0;border-radius:18px;padding:24px;overflow:auto;'>
-  <table style='width:100%;border-collapse:collapse;'>
-    <thead><tr><th>时间</th><th>类型</th><th>标题</th><th>摘要</th><th>details</th></tr></thead>
+<section class='panel' style='overflow:auto;'>
+  <table>
+    <thead><tr><th>时间</th><th>类型</th><th>标题</th><th>摘要</th><th>详细上下文</th></tr></thead>
     <tbody>{rows_html}</tbody>
   </table>
 </section>
@@ -299,17 +302,21 @@ def notification_audit_admin_page(
         )
     rows_html = "".join(rows) or "<tr><td colspan='8'>暂无通知事件</td></tr>"
     html = f"""<!doctype html>
-<html lang='zh-CN'><head><meta charset='utf-8' /><title>后台通知审计</title></head>
-<body style='font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f4f7fb;margin:0;padding:32px 20px;color:#172033;'>
-<main style='max-width:1280px;margin:0 auto;display:grid;gap:16px;'>
-<section style='background:#fff;border:1px solid #dbe3f0;border-radius:18px;padding:24px;'>
+<html lang='zh-CN'><head><meta charset='utf-8' /><meta name='viewport' content='width=device-width, initial-scale=1' /><title>后台通知审计</title><link rel='stylesheet' href='/static/portal-ui.css' /><style>body{{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f4f7fb;margin:0;padding:32px 20px;color:#172033}}.wrap{{max-width:1280px;margin:0 auto;display:grid;gap:16px}}.panel{{background:#fff;border:1px solid #dbe3f0;border-radius:20px;padding:24px;box-shadow:0 18px 42px rgba(20,34,53,.08)}}.meta-grid{{display:grid;grid-template-columns:220px 1fr 1fr;gap:12px;margin-top:16px}}.meta-item{{padding:14px 16px;border-radius:16px;background:linear-gradient(180deg,#f8fbff,#eef5ff);border:1px solid #d7e3f1}}.meta-item strong{{display:block;margin-bottom:4px}}table{{width:100%;border-collapse:collapse}}th,td{{padding:12px 10px;border-bottom:1px solid #e5edf7;text-align:left;vertical-align:top;font-size:14px}}th{{color:#475569;font-size:13px;text-transform:uppercase;letter-spacing:.03em}}pre{{white-space:pre-wrap;max-width:480px;margin:0;color:#5b6b88}}@media (max-width:900px){{.meta-grid{{grid-template-columns:1fr}}}}</style></head>
+<body>
+<main class='wrap'>
+<section class='panel'>
   <h1>后台通知审计</h1>
-  <p>总数：{payload['total']}</p>
-  <p>筛选：order_id={escape(str(order_id or '-'))} / status={escape(str(status or '-'))} / channel={escape(str(channel or '-'))}</p>
+  <p>集中查看订单通知状态、重试情况与失败原因，便于客服或运营快速定位交付链路问题。</p>
+  <div class='meta-grid'>
+    <article class='meta-item'><strong>总数</strong><span>{payload['total']}</span></article>
+    <article class='meta-item'><strong>当前筛选</strong><span>order_id={escape(str(order_id or '-'))} / status={escape(str(status or '-'))} / channel={escape(str(channel or '-'))}</span></article>
+    <article class='meta-item'><strong>查看重点</strong><span>优先关注失败原因、尝试次数与最后尝试时间，确认是否需要人工补发。</span></article>
+  </div>
 </section>
-<section style='background:#fff;border:1px solid #dbe3f0;border-radius:18px;padding:24px;overflow:auto;'>
-  <table style='width:100%;border-collapse:collapse;'>
-    <thead><tr><th>订单</th><th>渠道</th><th>事件</th><th>状态</th><th>尝试次数</th><th>最后尝试</th><th>失败原因</th><th>payload</th></tr></thead>
+<section class='panel' style='overflow:auto;'>
+  <table>
+    <thead><tr><th>订单</th><th>渠道</th><th>事件</th><th>状态</th><th>尝试次数</th><th>最后尝试</th><th>失败原因</th><th>通知内容摘要</th></tr></thead>
     <tbody>{rows_html}</tbody>
   </table>
 </section>

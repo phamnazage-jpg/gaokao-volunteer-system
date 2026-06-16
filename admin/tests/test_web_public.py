@@ -17,9 +17,12 @@ def test_public_landing_page_served(client):
     assert "湖南新高考志愿填报" not in body
     assert "为什么选择我们" in body
     assert 'href="/pricing"' in body
+    assert "先做快速审核" in body
+    assert "了解服务流程" in body
+    assert "最常见的不是“不会选”，而是先选错方向" in body
+    assert "先把方案看清，再决定要不要重做" in body
+    assert "我们先把现有方案看明白" in body
     assert "服务流程" in body
-    assert "志愿方案审计更聚焦" in body
-    assert "先判断现有方案值不值得继续" in body
     assert "把风险解释清楚" in body
     assert "先审计后规划" in body
     assert "风险重点可解释" in body
@@ -247,14 +250,20 @@ def test_privacy_and_deletion_pages_are_served(client):
     privacy = client.get("/privacy")
     assert privacy.status_code == 200, privacy.text
     assert "隐私政策" in privacy.text
+    assert "隐私说明" in privacy.text
+    assert '/static/portal-ui.css' in privacy.text
 
     terms = client.get("/service-terms")
     assert terms.status_code == 200, terms.text
     assert "服务说明与免责声明" in terms.text
+    assert "服务边界" in terms.text
+    assert '/static/portal-ui.css' in terms.text
 
     deletion = client.get("/deletion-policy")
     assert deletion.status_code == 200, deletion.text
     assert "删除申请" in deletion.text
+    assert "数据删除" in deletion.text
+    assert '/static/portal-ui.css' in deletion.text
 
 
 def test_public_create_order_returns_503_without_creating_orphan_order_when_provider_unavailable(

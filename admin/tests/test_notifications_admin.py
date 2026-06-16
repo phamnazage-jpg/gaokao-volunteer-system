@@ -75,6 +75,9 @@ def test_admin_notification_audit_page_renders_table(client, auth_headers, setti
     resp = client.get(f"/admin/notifications?order_id={order.id}", headers=auth_headers)
     assert resp.status_code == 200, resp.text
     assert "后台通知审计" in resp.text
+    assert '/static/portal-ui.css' in resp.text
+    assert "通知内容摘要" in resp.text
+    assert "查看重点" in resp.text
     assert order.id in resp.text
     assert "station" in resp.text
     assert "report_ready" in resp.text

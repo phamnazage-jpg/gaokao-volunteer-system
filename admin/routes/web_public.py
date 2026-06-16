@@ -661,14 +661,17 @@ def _render_footer_links(token: str | None = None) -> str:
 @router.get("/privacy", include_in_schema=False)
 def privacy_page(token: str | None = None) -> HTMLResponse:
     body = (
-        "<!doctype html><html lang='zh-CN'><head><meta charset='utf-8' /><title>隐私政策</title></head>"
-        "<body style='font-family:-apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif;background:#f4f7fb;padding:32px;color:#172033;'>"
-        "<main style='max-width:860px;margin:0 auto;background:#fff;border:1px solid #dbe3f0;border-radius:18px;padding:24px;'>"
-        "<h1>隐私政策</h1>"
-        "<p>我们收集下单、资料填写、支付与交付所需的最小信息，仅用于高考志愿填报服务，不用于营销出售。</p>"
-        "<p>如需撤回资料或申请删除，可使用“删除申请 / 数据删除说明”入口提交请求。</p>"
+        "<!doctype html><html lang='zh-CN'><head><meta charset='utf-8' />"
+        "<meta name='viewport' content='width=device-width, initial-scale=1' />"
+        "<title>隐私政策</title>"
+        "<link rel='stylesheet' href='/static/portal-ui.css' />"
+        "<style>body{font-family:-apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif;background:#f4f7fb;padding:32px 20px;color:#172033;margin:0}.wrap{max-width:920px;margin:0 auto;display:grid;gap:18px}.panel{background:#fff;border:1px solid #dbe3f0;border-radius:20px;padding:24px;box-shadow:0 18px 42px rgba(20,34,53,.08)}.eyebrow{display:inline-flex;padding:6px 10px;border-radius:999px;background:#dff7f1;color:#0f766e;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}.lead{color:#5b6b88;line-height:1.8}.checklist{margin:0;padding-left:18px;color:#5b6b88;line-height:1.8}</style></head>"
+        "<body><main class='wrap'>"
+        "<section class='panel'><span class='eyebrow'>隐私说明</span><h1>隐私政策</h1>"
+        "<p class='lead'>我们只收集下单、资料填写、支付与交付所需的最小信息，用于志愿服务流程，不用于营销出售或无关用途。</p></section>"
+        "<section class='panel'><h2>你可以预期什么</h2><ul class='checklist'><li>支付前只收必要下单信息</li><li>详细资料在支付后通过资料向导分步补充</li><li>隐私政策、服务说明与删除申请入口全程可见</li><li>如需撤回资料或申请删除，可通过删除申请入口提交请求</li></ul>"
         + _render_footer_links(token)
-        + "</main></body></html>"
+        + "</section></main></body></html>"
     )
     return HTMLResponse(body)
 
@@ -676,13 +679,17 @@ def privacy_page(token: str | None = None) -> HTMLResponse:
 @router.get("/service-terms", include_in_schema=False)
 def service_terms_page(token: str | None = None) -> HTMLResponse:
     body = (
-        "<!doctype html><html lang='zh-CN'><head><meta charset='utf-8' /><title>服务说明与免责声明</title></head>"
-        "<body style='font-family:-apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif;background:#f4f7fb;padding:32px;color:#172033;'>"
-        "<main style='max-width:860px;margin:0 auto;background:#fff;border:1px solid #dbe3f0;border-radius:18px;padding:24px;'>"
-        "<h1>服务说明与免责声明</h1>"
-        "<p>本服务提供志愿填报辅助建议与报告，不承诺录取结果；监护人需知情并同意提交资料。</p>"
+        "<!doctype html><html lang='zh-CN'><head><meta charset='utf-8' />"
+        "<meta name='viewport' content='width=device-width, initial-scale=1' />"
+        "<title>服务说明与免责声明</title>"
+        "<link rel='stylesheet' href='/static/portal-ui.css' />"
+        "<style>body{font-family:-apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif;background:#f4f7fb;padding:32px 20px;color:#172033;margin:0}.wrap{max-width:920px;margin:0 auto;display:grid;gap:18px}.panel{background:#fff;border:1px solid #dbe3f0;border-radius:20px;padding:24px;box-shadow:0 18px 42px rgba(20,34,53,.08)}.eyebrow{display:inline-flex;padding:6px 10px;border-radius:999px;background:#eef5ff;color:#1f6feb;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}.lead{color:#5b6b88;line-height:1.8}.checklist{margin:0;padding-left:18px;color:#5b6b88;line-height:1.8}</style></head>"
+        "<body><main class='wrap'>"
+        "<section class='panel'><span class='eyebrow'>服务边界</span><h1>服务说明与免责声明</h1>"
+        "<p class='lead'>本服务提供志愿填报辅助建议、方案审计与交付支持，不承诺录取结果；提交资料前请确认监护人与考生已知情。</p></section>"
+        "<section class='panel'><h2>下单前请了解</h2><ul class='checklist'><li>我们优先帮助你审计现有方案与风险点</li><li>支付后可继续补充详细资料与附件</li><li>交付状态、通知与报告入口会在站内持续更新</li><li>如需撤回资料或删除交付物，可通过删除申请入口提交请求</li></ul>"
         + _render_footer_links(token)
-        + "</main></body></html>"
+        + "</section></main></body></html>"
     )
     return HTMLResponse(body)
 
@@ -690,13 +697,17 @@ def service_terms_page(token: str | None = None) -> HTMLResponse:
 @router.get("/deletion-policy", include_in_schema=False)
 def deletion_policy_page() -> HTMLResponse:
     body = (
-        "<!doctype html><html lang='zh-CN'><head><meta charset='utf-8' /><title>删除申请 / 数据删除说明</title></head>"
-        "<body style='font-family:-apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif;background:#f4f7fb;padding:32px;color:#172033;'>"
-        "<main style='max-width:860px;margin:0 auto;background:#fff;border:1px solid #dbe3f0;border-radius:18px;padding:24px;'>"
-        "<h1>删除申请 / 数据删除说明</h1>"
-        "<p>如需申请删除订单资料、附件或交付物，请在支付后的 Portal 中提交删除申请，客服会核验订单与监护人信息后处理。</p>"
+        "<!doctype html><html lang='zh-CN'><head><meta charset='utf-8' />"
+        "<meta name='viewport' content='width=device-width, initial-scale=1' />"
+        "<title>删除申请 / 数据删除说明</title>"
+        "<link rel='stylesheet' href='/static/portal-ui.css' />"
+        "<style>body{font-family:-apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif;background:#f4f7fb;padding:32px 20px;color:#172033;margin:0}.wrap{max-width:920px;margin:0 auto;display:grid;gap:18px}.panel{background:#fff;border:1px solid #dbe3f0;border-radius:20px;padding:24px;box-shadow:0 18px 42px rgba(20,34,53,.08)}.eyebrow{display:inline-flex;padding:6px 10px;border-radius:999px;background:#fff7e6;color:#8a5a00;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}.lead{color:#5b6b88;line-height:1.8}.checklist{margin:0;padding-left:18px;color:#5b6b88;line-height:1.8}</style></head>"
+        "<body><main class='wrap'>"
+        "<section class='panel'><span class='eyebrow'>数据删除</span><h1>删除申请 / 数据删除说明</h1>"
+        "<p class='lead'>如需申请删除订单资料、附件或交付物，可在支付后的 Portal 中提交删除申请；系统会保留必要的审计记录，并由人工核验后处理。</p></section>"
+        "<section class='panel'><h2>你可以怎么做</h2><ul class='checklist'><li>在 Portal 中提交删除申请</li><li>填写申请人姓名、联系方式、删除范围与原因</li><li>确认监护人已知情并同意发起删除申请</li><li>处理结果会回到站内状态链路中查看</li></ul>"
         + _render_footer_links()
-        + "</main></body></html>"
+        + "</section></main></body></html>"
     )
     return HTMLResponse(body)
 
@@ -729,25 +740,32 @@ def _render_landing_page() -> str:
       }}
       * {{ box-sizing: border-box; }}
       body {{ margin: 0; font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; background: linear-gradient(180deg,#0e1a2b 0,#13243d 38%,var(--bg) 38%,var(--bg) 100%); color: var(--text); }}
-      .wrap {{ max-width: 1180px; margin: 0 auto; padding: 32px 20px 72px; }}
-      .hero {{ display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(320px, .8fr); gap: 24px; align-items: stretch; }}
-      .hero-copy {{ color: #ecf4ff; padding: 28px 8px 12px 0; }}
+      .wrap {{ max-width: 1180px; margin: 0 auto; padding: 40px 20px 72px; }}
+      .hero {{ display: grid; grid-template-columns: minmax(0, 1.22fr) minmax(340px, .78fr); gap: 32px; align-items: stretch; }}
+      .hero-copy {{ color: #ecf4ff; padding: 40px 8px 18px 0; }}
       .eyebrow {{ display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 999px; background: rgba(223,247,241,.12); border: 1px solid rgba(223,247,241,.24); color: #c9fff3; font-size: 13px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }}
-      h1 {{ margin: 18px 0 14px; font-size: clamp(34px, 6vw, 52px); line-height: 1.08; letter-spacing: -0.03em; }}
-      .sub {{ margin: 0; max-width: 680px; color: #b8c8e4; line-height: 1.8; font-size: 17px; }}
-      .hero-actions {{ display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }}
+      h1 {{ margin: 18px 0 14px; max-width: 760px; font-size: clamp(36px, 6vw, 56px); line-height: 1.04; letter-spacing: -0.04em; }}
+      .sub {{ margin: 0; max-width: 700px; color: #b8c8e4; line-height: 1.82; font-size: 17px; }}
+      .hero-actions {{ display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; align-items: center; }}
       .btn {{ display: inline-flex; align-items: center; justify-content: center; min-height: 46px; padding: 0 18px; border-radius: 14px; text-decoration: none; font-weight: 700; transition: .18s ease; }}
-      .btn-primary {{ background: var(--primary); color: #fff; box-shadow: 0 12px 28px rgba(31,111,235,.28); }}
-      .btn-primary:hover {{ background: var(--primary-dark); }}
-      .btn-secondary {{ background: rgba(255,255,255,.08); color: #fff; border: 1px solid rgba(255,255,255,.18); }}
+      .btn-primary {{ min-height: 54px; padding: 0 28px; font-size: 17px; background: linear-gradient(135deg,#2d7cff,#0f4fd6); color: #fff; box-shadow: 0 22px 40px rgba(31,111,235,.42), inset 0 1px 0 rgba(255,255,255,.18); letter-spacing: .01em; }}
+      .btn-primary:hover {{ background: linear-gradient(135deg,#276fe7,#0d45bf); transform: translateY(-1px); }}
+      .btn-secondary {{ background: rgba(255,255,255,.08); color: #fff; border: 1px solid rgba(255,255,255,.18); min-height: 44px; padding: 0 14px; font-size: 14px; }}
       .btn-secondary:hover {{ background: rgba(255,255,255,.14); }}
+      .btn-text {{ color:#cfe0ff; padding: 0 6px; min-height: 44px; font-size: 14px; text-decoration: underline; text-underline-offset: 4px; }}
+      .hero-note {{ margin-top: 12px; color:#8fb0df; font-size:13px; line-height:1.6; }}
+      .hero-risk-band {{ display:grid; gap:6px; margin-bottom:16px; padding:12px 14px; border-radius:14px; background: rgba(255,255,255,.7); border:1px solid #f3d49f; }}
+      .hero-risk-band strong {{ font-size:14px; color:#7a5a00; }}
+      .hero-risk-band span {{ color:#7a5c24; font-size:13px; line-height:1.55; }}
       .hero-trust {{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; margin-top:18px; }}
       .hero-trust-item {{ padding:12px 14px; border-radius:14px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12); color:#d9e7ff; font-size:13px; line-height:1.5; }}
       .hero-trust-item strong {{ display:block; color:#fff; margin-bottom:4px; font-size:14px; }}
       .hero-points {{ display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 12px; margin-top: 24px; }}
       .point {{ padding: 14px; border-radius: 16px; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.12); }}
+      .point.lead {{ background: rgba(31,111,235,.18); border-color: rgba(125,180,255,.42); }}
       .point strong {{ display: block; color: #fff; margin-bottom: 6px; font-size: 15px; }}
       .point span {{ color: #b8c8e4; font-size: 13px; line-height: 1.6; }}
+      .hero-divider {{ margin: 28px 0 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,.18), transparent); }}
       .hero-panel {{ background: rgba(255,255,255,.98); border: 1px solid rgba(215,227,241,.88); border-radius: var(--radius-xl); box-shadow: var(--shadow); padding: 24px; align-self: end; }}
       .hero-panel h2 {{ margin: 0 0 10px; font-size: 22px; }}
       .hero-panel p {{ margin: 0 0 16px; color: var(--muted); line-height: 1.7; }}
@@ -788,29 +806,32 @@ def _render_landing_page() -> str:
           <div class=\"eyebrow\">新高考志愿填报 · 志愿决策支持</div>
           <h1>高考志愿填报智能规划服务</h1>
           <p class=\"sub\">先审计现有志愿方案，再判断是否踩线、扎堆或梯度失衡，再决定要不要进入完整规划。先完成线上下单，再进入资料向导补充详细信息，后续可在站内查看报告与交付进度。</p>
-          <div class=\"hero-actions\">
-            <a class=\"btn btn-primary\" href=\"/pricing\">查看服务套餐</a>
-            <a class=\"btn btn-secondary\" href=\"#service-flow\">了解服务流程</a>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="/pricing">先做快速审核</a>
+            <a class="btn btn-text" href="#service-flow">了解服务流程 →</a>
           </div>
-          <div class=\"hero-trust\">
-            <article class=\"hero-trust-item\"><strong>先审计后规划</strong><span>先判断现有方案有没有明显风险，再决定要不要进入完整规划。</span></article>
-            <article class=\"hero-trust-item\"><strong>风险重点可解释</strong><span>重点识别踩线、扎堆、梯度失衡和结构异常，不只给结果。</span></article>
-            <article class=\"hero-trust-item\"><strong>进度站内可查</strong><span>资料、通知、报告、下载入口都能在站内持续追踪。</span></article>
-            <article class=\"hero-trust-item\"><strong>隐私与删除入口可见</strong><span>隐私政策、服务说明与删除申请入口全程可访问。</span></article>
+          <p class="hero-note">适合已经拿到一版志愿方案、想先判断有没有明显风险的人。</p>
+          <div class="hero-trust">
+            <article class="hero-trust-item"><strong>先审计后规划</strong><span>先判断现有方案有没有明显风险，再决定要不要进入完整规划。</span></article>
+            <article class="hero-trust-item"><strong>风险重点可解释</strong><span>重点识别踩线、扎堆、梯度失衡和结构异常，不只给结果。</span></article>
+            <article class="hero-trust-item"><strong>进度站内可查</strong><span>资料、通知、报告、下载入口都能在站内持续追踪。</span></article>
+            <article class="hero-trust-item"><strong>隐私与删除入口可见</strong><span>隐私政策、服务说明与删除申请入口全程可访问。</span></article>
           </div>
-          <div class=\"hero-points\">
-            <article class=\"point\"><strong>志愿方案审计更聚焦</strong><span>重点帮你识别方案是否踩线、是否扎堆、梯度是否失衡，以及哪些风险需要进一步人工确认。</span></article>
-            <article class=\"point\"><strong>先下单后补资料</strong><span>先确认联系方式与考生基础信息，支付后进入 4 步资料向导。</span></article>
-            <article class=\"point\"><strong>站内可追踪交付</strong><span>支持资料进度、通知记录、报告在线查看与 PDF 下载入口。</span></article>
+          <div class="hero-divider"></div>
+          <div class="hero-points">
+            <article class="point lead"><strong>先把方案看清，再决定要不要重做</strong><span>如果你已经拿到一版方案，先做审核看是否踩线、扎堆、梯度失衡，再决定是否进入完整规划。</span></article>
+            <article class="point"><strong>重点可解释</strong><span>不只给一份结论，更说明为什么这样选、需要确认什么。</span></article>
+            <article class="point"><strong>资料、通知、报告都在站内</strong><span>支付后只需按提示补充资料，状态、通知、报告、下载入口全部站内可查。</span></article>
           </div>
         </div>
-        <aside class=\"hero-panel\">
+        <aside class="hero-panel">
+          <div class="hero-risk-band"><strong>最常见的不是“不会选”，而是先选错方向</strong><span>我们优先帮你筛出踩线、扎堆、梯度失衡这三类最容易带来后悔成本的风险。</span></div>
           <h2>我们先把现有方案看明白</h2>
           <p>不让你在海量院校、专业、城市与预算之间盲目来回切换，先审计现有方案的风险与结构，再决定是否进入更完整的志愿规划。</p>
-          <div class=\"metric-list\">
-            <div class=\"metric\"><strong>资料采集更克制</strong><span>首屏只收真正影响下单的最小信息，详细资料支付后分步完成。</span></div>
-            <div class=\"metric\"><strong>方案表达更可读</strong><span>优先解释为什么这样选，而不是堆给用户一页难消化的数据。</span></div>
-            <div class=\"metric\"><strong>交付链路更透明</strong><span>资料、通知、报告、下载入口都放在同一条可追踪用户路径里。</span></div>
+          <div class="metric-list">
+            <div class="metric"><strong>资料采集更克制</strong><span>首屏只收真正影响下单的最小信息，详细资料支付后分步完成。</span></div>
+            <div class="metric"><strong>方案表达更可读</strong><span>优先解释为什么这样选，而不是堆给用户一页难消化的数据。</span></div>
+            <div class="metric"><strong>交付链路更透明</strong><span>资料、通知、报告、下载入口都放在同一条可追踪用户路径里。</span></div>
           </div>
         </aside>
       </section>
@@ -1893,18 +1914,15 @@ def _render_notification_audit_page(token: str, order: Order, events: list[Any])
         )
     rows_html = "".join(rows) or "<tr><td colspan='6'>暂无通知事件</td></tr>"
     return f"""<!doctype html>
-<html lang=\"zh-CN\"><head><meta charset=\"utf-8\" /><title>通知审计</title></head>
-  <body style=\"font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f4f7fb;margin:0;padding:32px 20px;color:#172033;\">
-    <main style=\"max-width:1100px;margin:0 auto;display:grid;gap:16px;\">
-      <section style=\"background:#fff;border:1px solid #dbe3f0;border-radius:18px;padding:24px;\">
-        <h1>通知审计</h1>
-        <p>订单号：{escape(order.id)}</p>
-        <p>服务版本：{escape(order.service_version)}</p>
-        <p>仅展示通知摘要；原始 payload 与附件路径不会在前台显示。</p>
-        <p><a href=\"/portal/{escape(token)}/status\">返回订单状态页</a></p>
+<html lang=\"zh-CN\"><head><meta charset=\"utf-8\" /><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" /><title>通知审计</title><link rel=\"stylesheet\" href=\"/static/portal-ui.css\" /><style>body{{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f4f7fb;margin:0;padding:32px 20px;color:#172033}}.wrap{{max-width:1100px;margin:0 auto;display:grid;gap:16px}}.panel{{background:#fff;border:1px solid #dbe3f0;border-radius:20px;padding:24px;box-shadow:0 18px 42px rgba(20,34,53,.08)}}.meta{{color:#5b6b88;line-height:1.7}}table{{width:100%;border-collapse:collapse}}th,td{{padding:12px 10px;border-bottom:1px solid #e5edf7;text-align:left;font-size:14px}}th{{color:#475569;font-size:13px;text-transform:uppercase;letter-spacing:.03em}}.toolbar{{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap}}</style></head>
+  <body>
+    <main class=\"wrap\">
+      <section class=\"panel\">
+        <div class=\"toolbar\"><div><h1>通知审计</h1><p class=\"meta\">订单号：{escape(order.id)} · 服务版本：{escape(order.service_version)}</p></div><div><a href=\"/portal/{escape(token)}/status\">返回订单状态页</a></div></div>
+        <p class=\"meta\">这里只展示通知摘要，方便你确认系统是否已经发出站内提醒或邮件通知；原始 payload 与附件路径不会在前台显示。</p>
       </section>
-      <section style=\"background:#fff;border:1px solid #dbe3f0;border-radius:18px;padding:24px;overflow:auto;\">
-        <table style=\"width:100%;border-collapse:collapse;\">
+      <section class=\"panel\" style=\"overflow:auto\">
+        <table>
           <thead>
             <tr>
               <th>渠道</th><th>事件</th><th>状态</th><th>尝试次数</th><th>最后尝试时间</th><th>失败原因</th>
@@ -1937,23 +1955,22 @@ def _render_report_page(order: Order) -> str:
 
 def _render_deletion_request_page(token: str, order: Order) -> str:
     return f"""<!doctype html>
-<html lang='zh-CN'><head><meta charset='utf-8' /><title>删除申请</title></head>
-<body style='font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f4f7fb;padding:32px;color:#172033;'>
-<main style='max-width:860px;margin:0 auto;background:#fff;border:1px solid #dbe3f0;border-radius:18px;padding:24px;'>
-  <h1>删除申请</h1>
-  <p>订单号：{escape(order.id)}</p>
-  <p>可用于申请删除资料、附件、交付物；客服会核验订单与监护人信息后处理。</p>
+<html lang='zh-CN'><head><meta charset='utf-8' /><meta name='viewport' content='width=device-width, initial-scale=1' /><title>删除申请</title><link rel='stylesheet' href='/static/portal-ui.css' /><style>body{{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f4f7fb;padding:32px 20px;color:#172033;margin:0}}.wrap{{max-width:920px;margin:0 auto;display:grid;gap:16px}}.panel{{background:#fff;border:1px solid #dbe3f0;border-radius:20px;padding:24px;box-shadow:0 18px 42px rgba(20,34,53,.08)}}.eyebrow{{display:inline-flex;padding:6px 10px;border-radius:999px;background:#fff7e6;color:#8a5a00;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}}.lead{{color:#5b6b88;line-height:1.8}}.field{{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}}input,textarea{{width:100%;padding:12px;border-radius:12px;border:1px solid #cfd7e6}}textarea{{min-height:120px;resize:vertical}}.check{{display:flex;gap:10px;align-items:flex-start;margin:12px 0}}button{{border:none;border-radius:14px;background:#1f6feb;color:#fff;font-weight:700;padding:13px 18px;cursor:pointer}}#result{{margin-top:14px;min-height:24px;color:#5b6b88;white-space:pre-wrap}}</style></head>
+<body><main class='wrap'>
+<section class='panel'><span class='eyebrow'>删除申请</span><h1>提交删除申请</h1><p class='lead'>可用于申请删除资料、附件或交付物。提交后，系统会保留必要审计记录，并由人工核验订单与监护人信息后处理。</p></section>
+<section class='panel'>
+  <p><strong>订单号：</strong>{escape(order.id)}</p>
   <form id='deletion-request-form'>
-    <label>申请人姓名<input name='requester_name' required /></label><br/>
-    <label>联系方式<input name='requester_contact' required /></label><br/>
-    <label>删除范围<input name='scope' value='order_and_attachments' required /></label><br/>
-    <label>申请原因<textarea name='reason' required></textarea></label><br/>
-    <label><input type='checkbox' name='confirm_guardian' /> 我确认监护人已知情并同意发起删除申请</label><br/>
+    <div class='field'><label>申请人姓名</label><input name='requester_name' required /></div>
+    <div class='field'><label>联系方式</label><input name='requester_contact' required /></div>
+    <div class='field'><label>删除范围</label><input name='scope' value='order_and_attachments' required /></div>
+    <div class='field'><label>申请原因</label><textarea name='reason' required></textarea></div>
+    <label class='check'><input type='checkbox' name='confirm_guardian' /> <span>我确认监护人已知情并同意发起删除申请</span></label>
     <button type='button' onclick='submitDeletionRequest()'>提交删除申请</button>
   </form>
   {_render_footer_links(token)}
-  <pre id='result'></pre>
-</main>
+  <div id='result'></div>
+</section>
 <script>
 async function submitDeletionRequest() {{
   const form = new FormData(document.getElementById('deletion-request-form'));
@@ -1964,13 +1981,15 @@ async function submitDeletionRequest() {{
     reason: form.get('reason') || '',
     confirm_guardian: form.get('confirm_guardian') === 'on',
   }};
+  const resultNode = document.getElementById('result');
+  resultNode.textContent = '正在提交删除申请…';
   const resp = await fetch('/portal/{escape(token)}/deletion-request', {{
     method: 'POST',
     headers: {{ 'Content-Type': 'application/json' }},
     body: JSON.stringify(payload),
   }});
   const body = await resp.json();
-  document.getElementById('result').textContent = JSON.stringify(body, null, 2);
+  resultNode.textContent = resp.ok ? '删除申请已提交，后续可在订单状态链路中继续跟踪。' : JSON.stringify(body, null, 2);
 }}
 </script>
-</body></html>"""
+</main></body></html>"""
