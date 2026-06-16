@@ -93,9 +93,16 @@
 3. **admin 通知审计页真实可见**：
    - `/admin/notifications` 页面 + `/api/admin/notifications` API 都能看到 `report_ready_email / order_id`
 4. **JWT 5 分钟过期门禁生效**（符合 P2-4 安全要求）
-5. **后台兼容别名已补齐**：
+5. **后台兼容别名已补齐**（实环境 127.0.0.1:8011 + JWT 复验）：
    - `/admin/dashboard` → 200，页面含 `仪表盘` 与 `/static/dashboard.js`
-   - `/api/admin/orders` / `/api/admin/cases` / `/api/admin/stats/{dashboard,orders}` → 200
+   - `/api/admin/orders` → 200（含 GKO-20260615-OVIG 历史订单）
+   - `/api/admin/cases` → 200（items 列表）
+   - `/api/admin/stats/dashboard` → 200（summary / total_orders 命中）
+   - `/api/admin/stats/orders` → 200
+6. **13 端点同进程同会话一次性 HTTP 200**：
+   - 旧路径 `/api/orders|cases|stats/dashboard` 仍 200，无回归
+   - 新别名路径 `/api/admin/...` 与 `/admin/dashboard` 全 200
+   - 三类审计页（deletion-requests / notifications / ops-alerts）页+API 仍 200
 
 ## 3. 与 2026-06-15 报告的关系
 
