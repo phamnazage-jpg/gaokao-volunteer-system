@@ -26,6 +26,7 @@ from data.customer_portal.token import (
     verify_portal_token,
 )
 from data.notifications.email_service import DeliveryNotificationService
+from data.orders import crypto
 from data.orders.dao import OrderNotFound, OrdersDAO
 from data.orders.intake_schema import IntakePayload
 from data.orders.intake_store import IntakeStore
@@ -34,6 +35,7 @@ from data.orders.public_flow import (
     PublicOrderCreate,
     create_public_order,
 )
+from data.orders.crypto import MissingEncryptionKey
 from data.payments.service import PaymentError, PaymentService
 
 
@@ -154,8 +156,17 @@ def create_public_order_endpoint(
             detail=f"payment provider unavailable: {exc}",
         ) from exc
 
-    with OrdersDAO.connect(settings.orders_db_path) as dao:
-        order = create_public_order(dao, payload)
+    try:
+        with OrdersDAO.connect(settings.orders_db_path) as dao:
+            order = create_public_order(dao, payload)
+    except MissingEncryptionKey as exc:
+        crypto.get_fernet.cache_clear()
+        logger.warning("public order create blocked by missing encryption key: %s", exc)
+        raise HTTPException(
+            status_code=503,
+            detail="当前暂时无法创建订单，请稍后重试或联系客服获取人工协助。",
+        ) from exc
+
     portal_token = issue_portal_token(order.id, settings.portal_token_secret)
     try:
         checkout = payment_service.create_checkout(order.id, portal_token=portal_token)
@@ -696,44 +707,155 @@ def _render_landing_page() -> str:
   <head>
     <meta charset=\"utf-8\" />
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />
-    <title>高考志愿填报智能系统 - 用户端 Web 自助服务</title>
+    <title>高考志愿填报智能规划服务</title>
+    <link rel=\"stylesheet\" href=\"/static/portal-ui.css\" />
     <style>
-      body {{ margin: 0; font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; background: linear-gradient(180deg,#0b1020,#121a31 65%,#f7f9fc 65%); color: #e8edf7; }}
-      .wrap {{ max-width: 1080px; margin: 0 auto; padding: 48px 20px 72px; }}
-      .hero {{ display: grid; gap: 20px; }}
-      h1 {{ margin: 0; font-size: 42px; }}
-      .sub {{ color: #9fb0d0; line-height: 1.7; }}
-      .btn {{ display:inline-flex; padding:12px 18px; border-radius:12px; text-decoration:none; font-weight:700; }}
-      .btn-primary {{ background:#7c9cff; color:#fff; }}
-      .btn-secondary {{ border:1px solid rgba(159,176,208,.18); color:#fff; }}
-      .grid {{ display:grid; gap:16px; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); margin-top:28px; }}
-      .card {{ background:rgba(18,26,49,.84); border:1px solid rgba(159,176,208,.18); border-radius:18px; padding:20px; }}
-      .section {{ background:#f7f9fc; color:#172033; border-radius:28px; padding:28px; margin-top:32px; }}
+      :root {{
+        color-scheme: light;
+        --bg: #f3f7fb;
+        --surface: #ffffff;
+        --surface-soft: #eef5ff;
+        --border: #d7e3f1;
+        --text: #142235;
+        --muted: #5b6b88;
+        --primary: #1f6feb;
+        --primary-dark: #194fb6;
+        --accent: #0f766e;
+        --accent-soft: #dff7f1;
+        --shadow: 0 18px 42px rgba(20, 34, 53, 0.08);
+        --radius-xl: 28px;
+        --radius-lg: 20px;
+        --radius-md: 14px;
+      }}
+      * {{ box-sizing: border-box; }}
+      body {{ margin: 0; font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; background: linear-gradient(180deg,#0e1a2b 0,#13243d 38%,var(--bg) 38%,var(--bg) 100%); color: var(--text); }}
+      .wrap {{ max-width: 1180px; margin: 0 auto; padding: 32px 20px 72px; }}
+      .hero {{ display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(320px, .8fr); gap: 24px; align-items: stretch; }}
+      .hero-copy {{ color: #ecf4ff; padding: 28px 8px 12px 0; }}
+      .eyebrow {{ display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 999px; background: rgba(223,247,241,.12); border: 1px solid rgba(223,247,241,.24); color: #c9fff3; font-size: 13px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }}
+      h1 {{ margin: 18px 0 14px; font-size: clamp(34px, 6vw, 52px); line-height: 1.08; letter-spacing: -0.03em; }}
+      .sub {{ margin: 0; max-width: 680px; color: #b8c8e4; line-height: 1.8; font-size: 17px; }}
+      .hero-actions {{ display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }}
+      .btn {{ display: inline-flex; align-items: center; justify-content: center; min-height: 46px; padding: 0 18px; border-radius: 14px; text-decoration: none; font-weight: 700; transition: .18s ease; }}
+      .btn-primary {{ background: var(--primary); color: #fff; box-shadow: 0 12px 28px rgba(31,111,235,.28); }}
+      .btn-primary:hover {{ background: var(--primary-dark); }}
+      .btn-secondary {{ background: rgba(255,255,255,.08); color: #fff; border: 1px solid rgba(255,255,255,.18); }}
+      .btn-secondary:hover {{ background: rgba(255,255,255,.14); }}
+      .hero-points {{ display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 12px; margin-top: 24px; }}
+      .point {{ padding: 14px; border-radius: 16px; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.12); }}
+      .point strong {{ display: block; color: #fff; margin-bottom: 6px; font-size: 15px; }}
+      .point span {{ color: #b8c8e4; font-size: 13px; line-height: 1.6; }}
+      .hero-panel {{ background: rgba(255,255,255,.98); border: 1px solid rgba(215,227,241,.88); border-radius: var(--radius-xl); box-shadow: var(--shadow); padding: 24px; align-self: end; }}
+      .hero-panel h2 {{ margin: 0 0 10px; font-size: 22px; }}
+      .hero-panel p {{ margin: 0 0 16px; color: var(--muted); line-height: 1.7; }}
+      .metric-list {{ display: grid; gap: 12px; }}
+      .metric {{ padding: 14px 16px; border-radius: 16px; background: var(--surface-soft); border: 1px solid var(--border); }}
+      .metric strong {{ display: block; font-size: 15px; margin-bottom: 6px; }}
+      .metric span {{ color: var(--muted); font-size: 13px; line-height: 1.6; }}
+      .section {{ background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-xl); box-shadow: var(--shadow); padding: 30px; margin-top: 26px; }}
+      .section h2 {{ margin: 0 0 10px; font-size: 28px; letter-spacing: -0.02em; }}
+      .section-intro {{ margin: 0 0 22px; color: var(--muted); line-height: 1.75; }}
+      .grid-3 {{ display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }}
+      .card {{ background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 22px; }}
+      .card .tag {{ display: inline-flex; margin-bottom: 12px; padding: 6px 10px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); font-size: 12px; font-weight: 700; }}
+      .card h3 {{ margin: 0 0 8px; font-size: 20px; }}
+      .card p, .card li {{ color: var(--muted); line-height: 1.7; }}
+      .flow {{ display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }}
+      .flow-step {{ padding: 20px; border-radius: 20px; background: linear-gradient(180deg,#f9fbff,#eef5ff); border: 1px solid var(--border); }}
+      .flow-step strong {{ display: block; margin-bottom: 10px; color: var(--primary); font-size: 13px; letter-spacing: .05em; text-transform: uppercase; }}
+      .flow-step h3 {{ margin: 0 0 8px; font-size: 18px; }}
+      .flow-step p {{ margin: 0; color: var(--muted); line-height: 1.7; }}
+      .trust {{ display:grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 16px; }}
+      .trust-item {{ padding: 18px 20px; border-radius: 18px; background:#f8fbff; border:1px solid var(--border); }}
+      .trust-item strong {{ display:block; margin-bottom:8px; }}
+      .cta-band {{ display:flex; justify-content:space-between; gap:18px; align-items:center; flex-wrap:wrap; background: linear-gradient(135deg,#16355e,#1f6feb); color:#fff; }}
+      .cta-band p {{ margin: 0; color: rgba(255,255,255,.82); }}
+      .cta-band .btn-secondary {{ background: rgba(255,255,255,.12); border-color: rgba(255,255,255,.22); }}
+      @media (max-width: 960px) {{
+        .hero, .grid-3, .flow, .trust {{ grid-template-columns: 1fr; }}
+        .hero-points {{ grid-template-columns: 1fr; }}
+      }}
     </style>
   </head>
   <body>
     <main class=\"wrap\">
       <section class=\"hero\">
-        <h1>高考志愿填报智能系统</h1>
-        <p class=\"sub\">用户端 Web 自助服务已接入公开套餐、下单、Mock 支付沙箱、资料填写、订单状态页与报告查看/下载链路。</p>
-        <div>
-          <a class=\"btn btn-primary\" href=\"/pricing\">查看服务套餐</a>
-          <a class=\"btn btn-secondary\" href=\"/dashboard\">进入运营后台</a>
+        <div class=\"hero-copy\">
+          <div class=\"eyebrow\">湖南新高考志愿填报 · 家长决策支持</div>
+          <h1>高考志愿填报智能规划服务</h1>
+          <p class=\"sub\">把分数、位次、选科、意向城市和专业偏好整理成可执行的志愿方案。先完成线上下单，再进入资料向导补充详细信息，后续可在站内查看报告与交付进度。</p>
+          <div class=\"hero-actions\">
+            <a class=\"btn btn-primary\" href=\"/pricing\">查看服务套餐</a>
+            <a class=\"btn btn-secondary\" href=\"#service-flow\">了解服务流程</a>
+          </div>
+          <div class=\"hero-points\">
+            <article class=\"point\"><strong>适配湖南志愿规则</strong><span>围绕本科批 / 专业组 / 风险梯度做信息整理与方案表达。</span></article>
+            <article class=\"point\"><strong>先下单后补资料</strong><span>先确认家长联系方式与考生基础信息，支付后进入 5 步资料向导。</span></article>
+            <article class=\"point\"><strong>站内可追踪交付</strong><span>支持资料进度、通知记录、报告在线查看与 PDF 下载入口。</span></article>
+          </div>
         </div>
-        <div class=\"grid\">
-          <article class=\"card\"><strong>49元 AI方案审核</strong><p class=\"sub\">适合已拿到其他 AI 方案，需要快速校验政策、扎堆和数据来源的用户。</p></article>
-          <article class=\"card\"><strong>99元 完整志愿方案</strong><p class=\"sub\">适合需要从资料收集到完整方案输出的标准 Web 自助用户。</p></article>
-          <article class=\"card\"><strong>199元 深度辅导版</strong><p class=\"sub\">适合需要人工介入、反复沟通和多轮修订的复杂场景。</p></article>
+        <aside class=\"hero-panel\">
+          <h2>我们先帮你把决策顺序理清</h2>
+          <p>不让家长在海量院校、专业、城市与预算之间盲目来回切换，先明确选择边界，再进入方案产出。</p>
+          <div class=\"metric-list\">
+            <div class=\"metric\"><strong>资料采集更克制</strong><span>首屏只收真正影响下单的最小信息，详细资料支付后分步完成。</span></div>
+            <div class=\"metric\"><strong>方案表达更可读</strong><span>优先解释为什么这样选，而不是堆给家长一页难消化的数据。</span></div>
+            <div class=\"metric\"><strong>交付链路更透明</strong><span>资料、通知、报告、下载入口都放在同一条可追踪用户路径里。</span></div>
+          </div>
+        </aside>
+      </section>
+
+      <section class=\"section\">
+        <h2>为什么家长选择我们</h2>
+        <p class=\"section-intro\">高考志愿填报不是只看一个分数，而是要在时间、信息、风险和沟通成本之间做平衡。页面设计先把这些关键决策点讲清楚，再引导进入下单。</p>
+        <div class=\"grid-3\">
+          <article class=\"card\">
+            <span class=\"tag\">信息整理</span>
+            <h3>先收敛决策范围</h3>
+            <p>先明确分数位次、城市偏好、专业倾向和预算，再决定应该看哪些院校与专业组。</p>
+          </article>
+          <article class=\"card\">
+            <span class=\"tag\">风险沟通</span>
+            <h3>把风险解释给家长听懂</h3>
+            <p>不只输出结果，还会说明冲稳保梯度、可能踩线的位置，以及需要重点确认的选择风险。</p>
+          </article>
+          <article class=\"card\">
+            <span class=\"tag\">交付透明</span>
+            <h3>过程可追踪</h3>
+            <p>从下单、资料填写、通知到报告查看，都能在站内看到当前进度，减少反复追问。</p>
+          </article>
         </div>
       </section>
+
+      <section id=\"service-flow\" class=\"section\">
+        <h2>服务流程</h2>
+        <p class=\"section-intro\">让家长知道每一步会发生什么，比空泛地说“智能系统已接入”更重要。</p>
+        <div class=\"flow\">
+          <article class=\"flow-step\"><strong>Step 1</strong><h3>选择套餐</h3><p>按需要的服务深度选择审核版、完整方案版或深度辅导版。</p></article>
+          <article class=\"flow-step\"><strong>Step 2</strong><h3>确认下单</h3><p>先填写考生姓名、手机号等最小信息，避免在支付前被长表单劝退。</p></article>
+          <article class=\"flow-step\"><strong>Step 3</strong><h3>补充资料</h3><p>支付成功后进入资料向导，分步提交分数、位次、偏好与已有方案附件。</p></article>
+          <article class=\"flow-step\"><strong>Step 4</strong><h3>查看交付</h3><p>在站内追踪状态、查看通知，并在交付就绪后在线阅读或下载 PDF。</p></article>
+        </div>
+      </section>
+
       <section class=\"section\">
-        <h2>当前自助流程建设重点</h2>
-        <ul>
-          <li>公开套餐页与下单入口</li>
-          <li>系统内支付与回调验签</li>
-          <li>支付后资料填写与订单状态页</li>
-          <li>站内查看报告 + PDF 交付</li>
-        </ul>
+        <h2>基础信任说明</h2>
+        <div class=\"trust\">
+          <article class=\"trust-item\"><strong>资料最小化采集</strong><span>支付前只收必要信息，详细资料在支付后按步骤补充。</span></article>
+          <article class=\"trust-item\"><strong>隐私与删除入口可见</strong><span>隐私政策、服务说明和删除申请入口在全站统一可访问。</span></article>
+          <article class=\"trust-item\"><strong>交付状态有记录</strong><span>资料提交、通知、报告状态都会在用户可见页面持续更新。</span></article>
+        </div>
+      </section>
+
+      <section class=\"section cta-band\">
+        <div>
+          <h2 style=\"margin:0 0 8px;font-size:28px;\">先看套餐，再决定是否立即下单</h2>
+          <p>如果你已经明确要做完整方案，可以直接进入 99 元方案页查看内容和下单说明。</p>
+        </div>
+        <div class=\"hero-actions\" style=\"margin-top:0;\">
+          <a class=\"btn btn-primary\" href=\"/pricing\">进入套餐页</a>
+          <a class=\"btn btn-secondary\" href=\"/service-terms\">查看服务说明</a>
+        </div>
       </section>
       {_render_footer_links()}
     </main>
@@ -748,39 +870,132 @@ def _render_pricing_page() -> str:
   <head>
     <meta charset=\"utf-8\" />
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />
-    <title>服务套餐 - 高考志愿填报智能系统</title>
+    <title>服务套餐 - 高考志愿填报智能规划服务</title>
+    <link rel=\"stylesheet\" href=\"/static/portal-ui.css\" />
     <style>
-      body {{ margin: 0; font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; background:#f4f7fb; color:#172033; }}
-      .wrap {{ max-width:1080px; margin:0 auto; padding:40px 20px 72px; }}
-      .grid {{ display:grid; gap:18px; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); margin-top:28px; }}
-      .card {{ background:#fff; border:1px solid #dbe3f0; border-radius:18px; padding:22px; box-shadow:0 10px 30px rgba(23,32,51,.06); }}
-      .price {{ font-size:30px; font-weight:800; margin:10px 0; }}
-      .button {{ display:inline-flex; margin-top:16px; padding:11px 16px; border-radius:12px; background:#1f6feb; color:#fff; text-decoration:none; font-weight:700; }}
-      .notice {{ margin-top:26px; padding:16px 18px; border-radius:14px; background:#fff7e6; color:#8a5a00; border:1px solid #f4d39b; }}
+      :root {{
+        --bg: #f3f7fb;
+        --surface: #ffffff;
+        --surface-soft: #eef5ff;
+        --border: #d7e3f1;
+        --text: #142235;
+        --muted: #5b6b88;
+        --primary: #1f6feb;
+        --primary-dark: #194fb6;
+        --accent: #0f766e;
+        --accent-soft: #dff7f1;
+        --warning-soft: #fff7e6;
+        --warning-text: #8a5a00;
+        --shadow: 0 18px 42px rgba(20,34,53,.08);
+      }}
+      * {{ box-sizing: border-box; }}
+      body {{ margin: 0; font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; background: var(--bg); color: var(--text); }}
+      .wrap {{ max-width: 1180px; margin: 0 auto; padding: 40px 20px 72px; }}
+      .hero {{ display:grid; grid-template-columns: minmax(0,1.1fr) 320px; gap: 20px; align-items:start; }}
+      .panel {{ background: var(--surface); border: 1px solid var(--border); border-radius: 26px; box-shadow: var(--shadow); padding: 28px; }}
+      h1 {{ margin: 0 0 12px; font-size: clamp(32px, 5vw, 44px); letter-spacing: -0.03em; }}
+      .lead {{ margin: 0; color: var(--muted); line-height: 1.8; font-size: 16px; }}
+      .summary {{ background: linear-gradient(180deg,#f7fbff,#eef5ff); }}
+      .summary h2 {{ margin: 0 0 12px; font-size: 22px; }}
+      .summary ul {{ margin: 0; padding-left: 18px; color: var(--muted); line-height: 1.75; }}
+      .pricing-grid {{ display:grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 18px; margin-top: 24px; }}
+      .card {{ position: relative; display:flex; flex-direction:column; gap: 14px; background: var(--surface); border: 1px solid var(--border); border-radius: 24px; padding: 24px; box-shadow: var(--shadow); }}
+      .card.recommended {{ border: 2px solid var(--primary); transform: translateY(-6px); }}
+      .badge {{ position:absolute; top:18px; right:18px; display:inline-flex; padding:6px 10px; border-radius:999px; background: var(--accent-soft); color: var(--accent); font-size:12px; font-weight:700; }}
+      .eyebrow {{ font-size: 13px; font-weight: 700; color: var(--primary); letter-spacing: .04em; text-transform: uppercase; }}
+      .price {{ font-size: 40px; font-weight: 800; letter-spacing: -0.04em; }}
+      .price small {{ font-size: 15px; font-weight: 600; color: var(--muted); margin-left: 4px; }}
+      .desc {{ color: var(--muted); line-height: 1.75; min-height: 72px; }}
+      .feature-list {{ margin: 0; padding-left: 18px; color: var(--muted); line-height: 1.75; display:grid; gap:6px; }}
+      .button {{ display:inline-flex; align-items:center; justify-content:center; min-height:46px; border-radius:14px; background: var(--primary); color:#fff; text-decoration:none; font-weight:700; }}
+      .button:hover {{ background: var(--primary-dark); }}
+      .button.secondary {{ background:#edf3ff; color:var(--primary-dark); }}
+      .trust-band {{ display:grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 14px; margin-top: 24px; }}
+      .trust-item {{ padding: 18px 20px; border-radius: 18px; background: #fff; border:1px solid var(--border); }}
+      .trust-item strong {{ display:block; margin-bottom:8px; }}
+      .faq {{ margin-top: 24px; display:grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 16px; }}
+      .faq-item {{ padding: 20px; border-radius: 20px; background: #fff; border:1px solid var(--border); }}
+      .faq-item h3 {{ margin:0 0 8px; font-size:18px; }}
+      .faq-item p {{ margin:0; color:var(--muted); line-height:1.7; }}
+      .notice {{ margin-top:26px; padding:16px 18px; border-radius:16px; background:var(--warning-soft); color:var(--warning-text); border:1px solid #f4d39b; line-height:1.7; }}
+      @media (max-width: 980px) {{
+        .hero, .pricing-grid, .trust-band, .faq {{ grid-template-columns: 1fr; }}
+        .card.recommended {{ transform: none; }}
+      }}
     </style>
   </head>
   <body>
     <main class=\"wrap\">
-      <h1>服务套餐</h1>
-      <p>当前页面已接入最小 Web 自助闭环，可直接进入下单与支付沙箱。</p>
-      <section class=\"grid\">
+      <section class=\"hero\">
+        <div class=\"panel\">
+          <h1>服务套餐</h1>
+          <p class=\"lead\">先按服务深度选择适合自己的方案：如果你已经拿到其他方案，先做审核；如果希望一次拿到完整建议，优先看完整志愿方案；如果家庭需要反复沟通和多轮修订，再选择深度辅导版。</p>
+        </div>
+        <aside class=\"panel summary\">
+          <h2>下单前你会看到什么</h2>
+          <ul>
+            <li>套餐说明与适用场景</li>
+            <li>下单后需要补充的资料范围</li>
+            <li>交付形式：站内查看 + PDF 下载</li>
+            <li>隐私政策、服务说明与删除申请入口</li>
+          </ul>
+        </aside>
+      </section>
+
+      <section class=\"pricing-grid\">
         <article class=\"card\" data-package=\"audit\">
+          <div class=\"eyebrow\">快速校验</div>
           <h2>49元 AI方案审核</h2>
-          <div class=\"price\">¥49</div>
-          <a class=\"button\" href=\"/checkout/audit\">立即下单</a>
+          <div class=\"price\">¥49<small>/ 次</small></div>
+          <p class=\"desc\">适合已经拿到其他 AI 志愿方案，想先判断方案是否踩线、是否扎堆、是否存在明显风险的家庭。</p>
+          <ul class=\"feature-list\">
+            <li>适合已有初版方案的家长</li>
+            <li>聚焦风险点、冲稳保结构与明显异常</li>
+            <li>给出是否值得继续深做的判断</li>
+          </ul>
+          <a class=\"button secondary\" href=\"/checkout/audit\">立即下单</a>
         </article>
-        <article class=\"card\" data-package=\"standard\">
+
+        <article class=\"card recommended\" data-package=\"standard\">
+          <span class=\"badge\">推荐方案</span>
+          <div class=\"eyebrow\">完整规划</div>
           <h2>99元 完整志愿方案</h2>
-          <div class=\"price\">¥99</div>
+          <div class=\"price\">¥99<small>/ 单</small></div>
+          <p class=\"desc\">适合大多数希望一次拿到完整志愿建议的家庭：先完成线上下单，再在资料向导里补充分数、位次、偏好与已有方案信息。</p>
+          <ul class=\"feature-list\">
+            <li>适合首次系统化做志愿规划的家长</li>
+            <li>站内追踪资料、通知与交付状态</li>
+            <li>支持在线查看报告与 PDF 下载</li>
+          </ul>
           <a class=\"button\" href=\"/checkout/standard\">立即下单</a>
         </article>
+
         <article class=\"card\" data-package=\"premium\">
+          <div class=\"eyebrow\">深度辅导</div>
           <h2>199元 深度辅导版</h2>
-          <div class=\"price\">¥199</div>
-          <a class=\"button\" href=\"/checkout/premium\">立即下单</a>
+          <div class=\"price\">¥199<small>/ 单</small></div>
+          <p class=\"desc\">适合志愿范围复杂、目标城市/专业冲突较大，或需要更多人工沟通、反复修订和深度解释的家庭。</p>
+          <ul class=\"feature-list\">
+            <li>适合目标复杂或分歧较大的家庭</li>
+            <li>留出多轮沟通与补充说明空间</li>
+            <li>更强调过程解释与决策支持</li>
+          </ul>
+          <a class=\"button secondary\" href=\"/checkout/premium\">立即下单</a>
         </article>
       </section>
-      <div class=\"notice\">支付接入建设中：当前使用 Mock 支付沙箱完成本地闭环验证，后续可切换真实 provider。</div>
+
+      <section class=\"trust-band\">
+        <article class=\"trust-item\"><strong>站内可追踪</strong><span>下单后可以查看资料提交、通知记录和交付状态，不需要反复追问进度。</span></article>
+        <article class=\"trust-item\"><strong>资料入口清晰</strong><span>支付前只收必要下单信息，详细资料在支付后通过资料向导分步补充。</span></article>
+        <article class=\"trust-item\"><strong>合规入口可见</strong><span>隐私政策、服务说明与删除申请入口始终保留在页面底部。</span></article>
+      </section>
+
+      <section class=\"faq\">
+        <article class=\"faq-item\"><h3>为什么推荐 99 元完整志愿方案？</h3><p>它覆盖大多数家庭最关心的完整资料收集、站内进度追踪与报告交付，是当前最适合线上自助下单的标准路径。</p></article>
+        <article class=\"faq-item\"><h3>支付后还要补哪些信息？</h3><p>主要是分数、位次、选科、目标城市/专业、已有方案说明与附件。支付前不让家长一次填太长的表单。</p></article>
+      </section>
+
+      <div class=\"notice\">如你当前只想先快速判断现有方案是否有明显问题，可先选择 49 元审核版；若希望直接拿到完整线上方案，优先进入 99 元完整志愿方案。</div>
       {_render_footer_links()}
     </main>
   </body>
@@ -794,11 +1009,17 @@ def _render_checkout_page(service_version: str) -> str:
         "standard": "99元 完整志愿方案",
         "premium": "199元 深度辅导版",
     }[service_version]
+    service_desc = {
+        "audit": "适合已经拿到其他方案、希望先快速校验风险的家庭。",
+        "basic": "适合需求较轻、希望先收敛选校范围的家庭。",
+        "standard": "适合大多数希望一次拿到完整建议与站内交付追踪的家庭。",
+        "premium": "适合需要更多沟通、补充说明与深度修订支持的家庭。",
+    }[service_version]
     province_options = [
         "", "北京", "上海", "天津", "重庆", "河北", "河南", "山东", "山西", "陕西", "辽宁", "吉林", "黑龙江", "江苏", "浙江", "安徽", "福建", "江西", "湖北", "湖南", "广东", "广西", "海南", "四川", "贵州", "云南", "甘肃", "青海", "宁夏", "新疆", "内蒙古", "西藏",
     ]
     province_html = "".join(
-        f"<option value=\"{escape(p)}\">{escape(p) or '后续补充'}</option>" for p in province_options
+        f"<option value=\"{escape(p)}\">{escape(p) or '请选择考试省份（可稍后补充）'}</option>" for p in province_options
     )
     return f"""<!doctype html>
 <html lang=\"zh-CN\">
@@ -806,63 +1027,142 @@ def _render_checkout_page(service_version: str) -> str:
     <meta charset=\"utf-8\" />
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />
     <title>下单 - {escape(service_label)}</title>
+    <link rel=\"stylesheet\" href=\"/static/portal-ui.css\" />
     <style>
-      body {{ font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; background:#f4f7fb; color:#172033; margin:0; }}
-      .wrap {{ max-width:760px; margin:0 auto; padding:32px 20px; }}
-      .panel {{ background:#fff; border:1px solid #dbe3f0; border-radius:18px; padding:22px; }}
+      :root {{
+        --bg: #f3f7fb;
+        --surface: #ffffff;
+        --surface-soft: #f8fbff;
+        --border: #d7e3f1;
+        --text: #142235;
+        --muted: #5b6b88;
+        --primary: #1f6feb;
+        --primary-dark: #194fb6;
+        --success: #0f766e;
+        --success-soft: #dff7f1;
+        --danger: #b42318;
+        --shadow: 0 18px 42px rgba(20,34,53,.08);
+      }}
+      * {{ box-sizing: border-box; }}
+      body {{ font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; background: var(--bg); color: var(--text); margin:0; }}
+      .wrap {{ max-width: 1160px; margin:0 auto; padding:32px 20px 72px; }}
+      .header {{ margin-bottom: 18px; }}
+      .eyebrow {{ display:inline-flex; padding:6px 10px; border-radius:999px; background: var(--success-soft); color: var(--success); font-size:12px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; }}
+      h1 {{ margin: 14px 0 10px; font-size: clamp(30px, 5vw, 42px); letter-spacing:-0.03em; }}
+      .lead {{ margin:0; max-width:760px; color: var(--muted); line-height: 1.8; }}
+      .layout {{ display:grid; grid-template-columns: minmax(0,1.1fr) 360px; gap: 20px; align-items:start; }}
+      .panel {{ background:#fff; border:1px solid var(--border); border-radius:24px; padding:24px; box-shadow: var(--shadow); }}
+      .summary {{ position: sticky; top: 20px; background: linear-gradient(180deg,#f9fbff,#eef5ff); }}
+      .summary h2, .form-panel h2 {{ margin: 0 0 10px; font-size: 22px; }}
+      .summary p, .summary li {{ color: var(--muted); line-height: 1.7; }}
+      .summary-list {{ display:grid; gap:12px; margin:18px 0; }}
+      .summary-item {{ padding:14px 16px; border-radius:16px; background:#fff; border:1px solid var(--border); }}
+      .summary-item strong {{ display:block; margin-bottom:6px; font-size:15px; }}
+      .price-box {{ display:flex; align-items:end; justify-content:space-between; gap:12px; margin-top:18px; padding:16px 18px; border-radius:18px; background:#fff; border:1px solid var(--border); }}
+      .price-box .label {{ color: var(--muted); font-size: 13px; }}
+      .price-box .amount {{ font-size: 36px; font-weight: 800; letter-spacing: -0.04em; }}
       .grid {{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }}
-      .field {{ display:flex; flex-direction:column; gap:6px; margin-bottom:14px; }}
+      .field {{ display:flex; flex-direction:column; gap:6px; margin-bottom:16px; }}
       .field label {{ font-size:14px; color:#334155; font-weight:600; }}
       .required {{ color:#dc2626; margin-left:4px; }}
-      input, textarea, select {{ width:100%; padding:12px; border-radius:10px; border:1px solid #cfd7e6; font-size:14px; background:#fff; }}
-      .hint {{ color:#64748b; font-size:12px; margin-top:4px; }}
-      .error {{ color:#b42318; font-size:12px; min-height:18px; }}
-      button {{ border:none; border-radius:12px; background:#1f6feb; color:#fff; font-weight:700; padding:12px 18px; cursor:pointer; }}
+      input, textarea, select {{ width:100%; padding:12px; border-radius:12px; border:1px solid #cfd7e6; font-size:14px; background:#fff; color:var(--text); }}
+      textarea {{ min-height: 112px; resize: vertical; }}
+      input:focus, textarea:focus, select:focus {{ outline:none; border-color: var(--primary); box-shadow: 0 0 0 4px rgba(31,111,235,.12); }}
+      .hint {{ color: var(--muted); font-size: 12px; line-height: 1.6; }}
+      .error {{ color: var(--danger); font-size:12px; min-height:18px; }}
+      .helper {{ margin: 0 0 18px; color: var(--muted); line-height: 1.7; }}
+      .trust-strip {{ display:grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 12px; margin: 8px 0 20px; }}
+      .trust-card {{ padding: 14px 16px; border-radius: 16px; background: var(--surface-soft); border:1px solid var(--border); }}
+      .trust-card strong {{ display:block; margin-bottom:6px; font-size:14px; }}
+      .actions {{ display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-top: 8px; }}
+      button {{ border:none; border-radius:14px; background: var(--primary); color:#fff; font-weight:700; padding:13px 18px; cursor:pointer; min-height:48px; }}
+      button:hover {{ background: var(--primary-dark); }}
+      button[disabled] {{ opacity:.6; cursor:not-allowed; }}
+      #result {{ margin-top:14px; min-height:24px; color:var(--muted); line-height:1.7; }}
+      .service-note {{ margin-top: 18px; padding: 16px 18px; border-radius: 16px; background:#fff7e6; border:1px solid #f4d39b; color:#8a5a00; line-height:1.7; }}
+      @media (max-width: 980px) {{
+        .layout, .grid, .trust-strip {{ grid-template-columns: 1fr; }}
+        .summary {{ position: static; }}
+      }}
     </style>
   </head>
   <body>
     <main class=\"wrap\">
-      <section class=\"panel\">
+      <header class=\"header\">
+        <span class=\"eyebrow\">在线下单</span>
         <h1>{escape(service_label)}</h1>
-        <p>先完成最小下单：只要求考生姓名与手机号；其余信息可在支付后补充。</p>
-        <form id=\"checkout-form\">
-          <div class=\"grid\">
-            <div class=\"field\">
-              <label>考生姓名<span class=\"required\">*</span></label>
-              <input name=\"candidate_name\" required maxlength=\"32\" placeholder=\"请输入考生姓名\" />
-              <div class=\"error\" data-error=\"candidate_name\"></div>
-            </div>
-            <div class=\"field\">
-              <label>手机号<span class=\"required\">*</span></label>
-              <input name=\"customer_phone\" required inputmode=\"tel\" maxlength=\"20\" placeholder=\"请输入手机号\" />
-              <div class=\"error\" data-error=\"customer_phone\"></div>
-            </div>
+        <p class=\"lead\">{escape(service_desc)} 现在先确认联系人与考生基础信息；支付成功后，再进入资料向导补充分数、位次、偏好和已有方案附件。</p>
+      </header>
+
+      <section class=\"layout\">
+        <section class=\"panel form-panel\">
+          <h2>填写下单信息</h2>
+          <p class=\"helper\">当前这一步只收会影响下单与后续联系的必要信息，不要求你一次性填完整个长表单。</p>
+          <div class=\"trust-strip\">
+            <article class=\"trust-card\"><strong>步骤更短</strong><span>先支付，再补详细资料。</span></article>
+            <article class=\"trust-card\"><strong>进度可追踪</strong><span>资料、通知和交付状态都可站内查看。</span></article>
+            <article class=\"trust-card\"><strong>入口可核查</strong><span>隐私政策、服务说明、删除申请入口全程可见。</span></article>
           </div>
-          <div class=\"grid\">
-            <div class=\"field\">
-              <label>家长称呼</label>
-              <input name=\"customer_name\" maxlength=\"32\" placeholder=\"可选，例如：张家长\" />
+          <form id=\"checkout-form\">
+            <div class=\"grid\">
+              <div class=\"field\">
+                <label>考生姓名<span class=\"required\">*</span></label>
+                <input name=\"candidate_name\" required maxlength=\"32\" placeholder=\"请输入考生姓名\" />
+                <div class=\"error\" data-error=\"candidate_name\"></div>
+              </div>
+              <div class=\"field\">
+                <label>手机号<span class=\"required\">*</span></label>
+                <input name=\"customer_phone\" required inputmode=\"tel\" maxlength=\"20\" placeholder=\"请输入便于联系的手机号\" />
+                <div class=\"error\" data-error=\"customer_phone\"></div>
+              </div>
             </div>
-            <div class=\"field\">
-              <label>邮箱（接收通知）</label>
-              <input name=\"customer_email\" type=\"email\" maxlength=\"120\" placeholder=\"可选\" />
+            <div class=\"grid\">
+              <div class=\"field\">
+                <label>家长称呼</label>
+                <input name=\"customer_name\" maxlength=\"32\" placeholder=\"可选，例如：张家长\" />
+              </div>
+              <div class=\"field\">
+                <label>邮箱（接收通知）</label>
+                <input name=\"customer_email\" type=\"email\" maxlength=\"120\" placeholder=\"可选，用于接收交付提醒\" />
+              </div>
             </div>
+            <div class=\"grid\">
+              <div class=\"field\">
+                <label>考试省份</label>
+                <select name=\"candidate_province\">{province_html}</select>
+                <div class=\"hint\">如果你暂时还没决定，也可以支付后在资料向导中补充。</div>
+              </div>
+              <div class=\"field\">
+                <label>备注</label>
+                <textarea name=\"notes\" maxlength=\"500\" placeholder=\"可选，例如希望重点关注的城市、专业或顾虑\"></textarea>
+              </div>
+            </div>
+            <div class=\"actions\">
+              <button type=\"submit\" id=\"submit-btn\">立即支付 ¥{amount / 100:.0f}</button>
+              <span class=\"hint\">提交后会进入支付与资料完善流程。</span>
+            </div>
+          </form>
+          <p id=\"result\"></p>
+          <div class=\"service-note\">服务保障：支付后可进入资料向导继续补充详细信息；提交资料后，后续状态、通知与交付入口都将在站内持续更新。</div>
+          {_render_footer_links()}
+        </section>
+
+        <aside class=\"panel summary\">
+          <h2>订单摘要</h2>
+          <p>你当前选择的是 <strong>{escape(service_label)}</strong>。这一步先确认下单人与考生基础信息，支付成功后再继续补完整资料。</p>
+          <div class=\"summary-list\">
+            <div class=\"summary-item\"><strong>适合谁</strong><span>{escape(service_desc)}</span></div>
+            <div class=\"summary-item\"><strong>你会得到什么</strong><span>站内资料向导、通知状态、报告在线查看和 PDF 下载入口。</span></div>
+            <div class=\"summary-item\"><strong>下单后下一步</strong><span>支付成功 → 进入资料向导 → 查看状态与交付。</span></div>
           </div>
-          <div class=\"grid\">
-            <div class=\"field\">
-              <label>考试省份</label>
-              <select name=\"candidate_province\">{province_html}</select>
-              <div class=\"hint\">可选；支付后在资料向导中补全</div>
+          <div class=\"price-box\">
+            <div>
+              <div class=\"label\">当前应付</div>
+              <div class=\"amount\">¥{amount / 100:.0f}</div>
             </div>
-            <div class=\"field\">
-              <label>备注</label>
-              <textarea name=\"notes\" maxlength=\"500\" placeholder=\"可选\"></textarea>
-            </div>
+            <div class=\"label\">在线下单后可继续补详细资料</div>
           </div>
-          <button type=\"submit\">创建订单并去支付（¥{amount / 100:.0f}）</button>
-        </form>
-        <p id=\"result\"></p>
-        {_render_footer_links()}
+        </aside>
       </section>
     </main>
     <script>
@@ -872,17 +1172,25 @@ def _render_checkout_page(service_version: str) -> str:
         const phone = String(form.get('customer_phone') || '').trim();
         if (!name) errors.candidate_name = '请填写考生姓名';
         if (!phone) errors.customer_phone = '请填写手机号';
-        if (phone && !/^1[3-9]\d{{9}}$/.test(phone)) errors.customer_phone = '手机号格式不正确';
+        if (phone && !/^1[3-9]\\d{{9}}$/.test(phone)) errors.customer_phone = '手机号格式不正确';
         for (const [key, msg] of Object.entries(errors)) {{
           const node = document.querySelector(`[data-error="${{key}}"]`);
           if (node) node.textContent = msg;
         }}
         return !errors.candidate_name && !errors.customer_phone;
       }}
+
+      function setSubmitState(loading) {{
+        const button = document.getElementById('submit-btn');
+        button.disabled = loading;
+        button.textContent = loading ? '正在创建订单…' : '立即支付 ¥{amount / 100:.0f}';
+      }}
+
       document.getElementById('checkout-form').addEventListener('input', function (event) {{
         const form = new FormData(event.currentTarget);
         validateCheckout(form);
       }});
+
       document.getElementById('checkout-form').addEventListener('submit', async function (event) {{
         event.preventDefault();
         const form = new FormData(event.target);
@@ -897,17 +1205,27 @@ def _render_checkout_page(service_version: str) -> str:
           candidate_province: form.get('candidate_province') || null,
           notes: form.get('notes') || null,
         }};
-        const resp = await fetch('/api/public/orders', {{
-          method: 'POST',
-          headers: {{ 'Content-Type': 'application/json' }},
-          body: JSON.stringify(payload),
-        }});
-        const body = await resp.json();
-        if (!resp.ok) {{
-          document.getElementById('result').textContent = body.message || body.detail || '下单失败';
-          return;
+        const resultNode = document.getElementById('result');
+        resultNode.textContent = '正在创建订单，请稍候…';
+        setSubmitState(true);
+        try {{
+          const resp = await fetch('/api/public/orders', {{
+            method: 'POST',
+            headers: {{ 'Content-Type': 'application/json' }},
+            body: JSON.stringify(payload),
+          }});
+          const body = await resp.json();
+          if (!resp.ok) {{
+            resultNode.textContent = body.detail || body.message || '当前暂时无法创建订单，请稍后重试或联系客服。';
+            return;
+          }}
+          resultNode.textContent = '订单创建成功，正在进入支付流程…';
+          window.location.href = body.checkout_url;
+        }} catch (error) {{
+          resultNode.textContent = '网络异常，请稍后重试或联系客服获取人工协助。';
+        }} finally {{
+          setSubmitState(false);
         }}
-        window.location.href = body.checkout_url;
       }});
     </script>
   </body>
@@ -917,12 +1235,12 @@ def _render_checkout_page(service_version: str) -> str:
 
 def _render_mock_payment_page(payment_id: str, amount_cents: int, token: str) -> str:
     return _render_simulated_payment_html(
-        title="Mock 支付沙箱",
+        title="支付确认页",
         provider_slug="mock",
         payment_id=payment_id,
         amount_cents=amount_cents,
         token=token,
-        submit_label="模拟支付成功并返回订单页",
+        submit_label="确认支付并返回订单页",
     )
 
 
@@ -1049,76 +1367,187 @@ def _render_info_page(
             continue
         attachment_items.append(
             f"<li>{escape(str(item.get('original_name') or item.get('stored_name') or '未命名附件'))}"
-            f" ({escape(str(item.get('size_bytes') or '0'))} bytes)</li>"
+            f"<span>{escape(str(item.get('size_bytes') or '0'))} bytes</span></li>"
         )
-    attachments_html = "".join(attachment_items) or "<li>暂无附件</li>"
+    attachments_html = "".join(attachment_items) or "<li class='empty'>暂无附件</li>"
+    stage_title, stage_subtitle = _STAGE_META[stage]
     return f"""<!doctype html>
 <html lang=\"zh-CN\">
-  <head><meta charset=\"utf-8\" /><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" /><title>考生资料填写</title></head>
-  <body style=\"font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f7fb;padding:24px;\">
-    <main style=\"max-width:860px;margin:0 auto;background:#fff;border:1px solid #dbe3f0;border-radius:18px;padding:24px;\">
-      <h1>考生资料填写</h1>
-      <p>当前阶段：{escape(_STAGE_META[stage][0])}</p>
-      <p style=\"background:#fff7e6;border:1px solid #f4d39b;border-radius:12px;padding:12px 14px;color:#8a5a00;\">提交资料即表示：监护人已知情并同意将考生资料用于志愿填报服务；当前版本号：{escape(consent_version)}</p>
-      <section style=\"background:#f7fbff;border:1px solid #dbe3f0;border-radius:14px;padding:16px;margin-bottom:16px;\">
-        <h2>资料向导进度</h2>
-        <ol style=\"display:grid;grid-template-columns:repeat(5,1fr);gap:8px;list-style:none;padding:0;margin:0;\">
-          <li data-step-badge=\"1\" style=\"padding:8px 10px;border-radius:999px;background:#1f6feb;color:#fff;text-align:center;\">1. 基础信息</li>
-          <li data-step-badge=\"2\" style=\"padding:8px 10px;border-radius:999px;background:#e8eef8;color:#334155;text-align:center;\">2. 偏好与目标</li>
-          <li data-step-badge=\"3\" style=\"padding:8px 10px;border-radius:999px;background:#e8eef8;color:#334155;text-align:center;\">3. 已有方案与附件</li>
-          <li data-step-badge=\"4\" style=\"padding:8px 10px;border-radius:999px;background:#e8eef8;color:#334155;text-align:center;\">4. 协议确认</li>
-          <li data-step-badge=\"5\" style=\"padding:8px 10px;border-radius:999px;background:#e8eef8;color:#334155;text-align:center;\">5. 提交确认</li>
-        </ol>
-      </section>
-      <form id=\"intake-form\">
-        <section data-step=\"1\">
-          <h2>Step 1 / 基础信息</h2>
-          <label>高考分数<input name=\"candidate_score\" value=\"{escape(str(payload.get("candidate_score") or ""))}\" /></label><br/>
-          <label>位次<input name=\"candidate_rank\" value=\"{escape(str(payload.get("candidate_rank") or ""))}\" /></label><br/>
-          <label>选科（逗号分隔）<input name=\"candidate_subjects\" value=\"{escape(",".join(payload.get("candidate_subjects") or []))}\" /></label><br/>
-        </section>
-        <section data-step=\"2\" style=\"display:none;\">
-          <h2>Step 2 / 偏好与目标</h2>
-          <label>兴趣方向<input name=\"candidate_interests\" value=\"{escape(str(payload.get("candidate_interests") or ""))}\" /></label><br/>
-          <label>目标城市（逗号分隔）<input name=\"target_cities\" value=\"{escape(",".join(payload.get("target_cities") or []))}\" /></label><br/>
-          <label>目标专业（逗号分隔）<input name=\"target_majors\" value=\"{escape(",".join(payload.get("target_majors") or []))}\" /></label><br/>
-          <label>院校偏好说明<textarea name=\"university_preferences\">{escape(str(payload.get("university_preferences") or ""))}</textarea></label><br/>
-        </section>
-        <section data-step=\"3\" style=\"display:none;\">
-          <h2>Step 3 / 已有方案与附件</h2>
-          <label>已有方案说明<textarea name=\"existing_plan_summary\">{escape(str(payload.get("existing_plan_summary") or ""))}</textarea></label><br/>
-          <label>家长备注<textarea name=\"guardian_notes\">{escape(str(payload.get("guardian_notes") or ""))}</textarea></label><br/>
-          <section style="margin-top:16px;padding:12px;border:1px solid #dbe3f0;border-radius:12px;">
-            <h3>已上传附件</h3>
-            <ul>{attachments_html}</ul>
-            <div id="attachment-panel">
-              <input type="file" name="files" multiple />
-              <button type="button" onclick="uploadAttachment()">上传 AI 方案 / 资料附件</button>
-            </div>
+  <head>
+    <meta charset=\"utf-8\" />
+    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />
+    <title>资料填写向导</title>
+    <link rel=\"stylesheet\" href=\"/static/portal-ui.css\" />
+    <style>
+      :root {{
+        --bg: #f3f7fb;
+        --surface: #ffffff;
+        --surface-soft: #f7fbff;
+        --border: #d7e3f1;
+        --text: #142235;
+        --muted: #5b6b88;
+        --primary: #1f6feb;
+        --primary-soft: rgba(31,111,235,.12);
+        --success: #0f766e;
+        --success-soft: #dff7f1;
+        --warning: #8a5a00;
+        --warning-soft: #fff7e6;
+        --shadow: 0 18px 42px rgba(20,34,53,.08);
+      }}
+      * {{ box-sizing: border-box; }}
+      body {{ font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);margin:0;color:var(--text); }}
+      .wrap {{ max-width: 1160px; margin:0 auto; padding:32px 20px 72px; }}
+      .hero {{ display:grid; grid-template-columns:minmax(0,1.12fr) 340px; gap:20px; align-items:start; }}
+      .panel {{ background:var(--surface); border:1px solid var(--border); border-radius:24px; box-shadow:var(--shadow); padding:24px; }}
+      .eyebrow {{ display:inline-flex; padding:6px 10px; border-radius:999px; background:var(--success-soft); color:var(--success); font-size:12px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; }}
+      h1 {{ margin:14px 0 10px; font-size:clamp(30px,5vw,42px); letter-spacing:-0.03em; }}
+      .lead {{ margin:0; color:var(--muted); line-height:1.8; }}
+      .status-card {{ background:linear-gradient(180deg,#f9fbff,#eef5ff); }}
+      .status-card h2, .main-panel h2 {{ margin:0 0 10px; font-size:22px; }}
+      .status-card p {{ margin:0 0 12px; color:var(--muted); line-height:1.7; }}
+      .status-pill {{ display:inline-flex; padding:8px 12px; border-radius:999px; background:var(--primary); color:#fff; font-weight:700; font-size:13px; }}
+      .status-list {{ display:grid; gap:12px; margin-top:16px; }}
+      .status-item {{ padding:14px 16px; border-radius:16px; background:#fff; border:1px solid var(--border); }}
+      .status-item strong {{ display:block; margin-bottom:6px; font-size:14px; }}
+      .compliance-note {{ margin-top:16px; padding:16px 18px; border-radius:16px; background:var(--warning-soft); border:1px solid #f4d39b; color:var(--warning); line-height:1.7; }}
+      .wizard-head {{ margin-top:20px; padding:18px 20px; border-radius:18px; background:var(--surface-soft); border:1px solid var(--border); }}
+      .wizard-head h2 {{ margin:0 0 8px; font-size:22px; }}
+      .wizard-head p {{ margin:0; color:var(--muted); line-height:1.7; }}
+      .wizard-steps {{ display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:10px; list-style:none; padding:0; margin:18px 0 0; }}
+      .wizard-steps li {{ padding:10px 12px; border-radius:999px; background:#e8eef8; color:#334155; text-align:center; font-size:13px; font-weight:700; }}
+      .step-panel {{ margin-top:18px; padding:20px; border-radius:20px; background:#fff; border:1px solid var(--border); }}
+      .step-panel h3 {{ margin:0 0 8px; font-size:20px; }}
+      .step-panel > p {{ margin:0 0 16px; color:var(--muted); line-height:1.7; }}
+      .field-grid {{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }}
+      .field {{ display:flex; flex-direction:column; gap:6px; margin-bottom:16px; }}
+      .field label {{ font-size:14px; font-weight:600; color:#334155; }}
+      input, textarea, select {{ width:100%; padding:12px; border-radius:12px; border:1px solid #cfd7e6; font-size:14px; background:#fff; color:var(--text); }}
+      textarea {{ min-height:110px; resize:vertical; }}
+      input:focus, textarea:focus, select:focus {{ outline:none; border-color:var(--primary); box-shadow:0 0 0 4px var(--primary-soft); }}
+      .helper {{ color:var(--muted); font-size:12px; line-height:1.6; }}
+      .upload-box {{ margin-top:16px; padding:16px 18px; border:1px solid var(--border); border-radius:16px; background:var(--surface-soft); }}
+      .attachment-list {{ list-style:none; padding:0; margin:12px 0 0; display:grid; gap:8px; }}
+      .attachment-list li {{ display:flex; justify-content:space-between; gap:12px; padding:12px 14px; border-radius:14px; background:#fff; border:1px solid var(--border); color:var(--muted); }}
+      .attachment-list li.empty {{ justify-content:flex-start; }}
+      .check-list {{ display:grid; gap:10px; margin-top:12px; }}
+      .check-list label {{ display:flex; gap:10px; align-items:flex-start; color:var(--text); font-weight:500; }}
+      .check-list input {{ width:auto; margin-top:2px; }}
+      .actions {{ display:flex; gap:10px; flex-wrap:wrap; margin-top:18px; }}
+      button {{ border:none; border-radius:14px; background:var(--primary); color:#fff; font-weight:700; padding:13px 18px; cursor:pointer; min-height:46px; }}
+      button:hover {{ background:#194fb6; }}
+      button[disabled] {{ opacity:.55; cursor:not-allowed; }}
+      #prev-step, .ghost {{ background:#edf3ff; color:#194fb6; }}
+      #result {{ margin-top:16px; min-height:24px; color:var(--muted); line-height:1.7; white-space:pre-wrap; }}
+      .summary-box {{ background:#f8fafc; border:1px solid var(--border); border-radius:16px; padding:14px 16px; white-space:pre-wrap; font-size:13px; line-height:1.7; color:var(--muted); }}
+      .footer-link {{ margin-top:18px; }}
+      @media (max-width: 980px) {{
+        .hero, .field-grid, .wizard-steps {{ grid-template-columns:1fr; }}
+      }}
+    </style>
+  </head>
+  <body>
+    <main class=\"wrap\">
+      <section class=\"hero\">
+        <section class=\"panel main-panel\">
+          <span class=\"eyebrow\">资料填写向导</span>
+          <h1>填写并提交资料</h1>
+          <p class=\"lead\">支付完成后，请按向导逐步补充分数、位次、偏好与已有方案信息。我们会把这份资料作为后续方案分析与交付的基础。</p>
+
+          <section class=\"wizard-head\">
+            <h2>五步资料向导</h2>
+            <p>你不需要一次性完成所有内容。可以先保存草稿，再回来继续补充；提交成功后，状态页会更新为下一阶段。</p>
+            <ol class=\"wizard-steps\">
+              <li data-step-badge=\"1\">基础信息</li>
+              <li data-step-badge=\"2\">偏好与目标</li>
+              <li data-step-badge=\"3\">已有方案与附件</li>
+              <li data-step-badge=\"4\">协议确认</li>
+              <li data-step-badge=\"5\">提交确认</li>
+            </ol>
           </section>
+
+          <form id=\"intake-form\">
+            <section class=\"step-panel\" data-step=\"1\">
+              <h3>基础信息</h3>
+              <p>先确认最影响志愿方案判断的基本数据：分数、位次、选科。</p>
+              <div class=\"field-grid\">
+                <div class=\"field\"><label>高考分数</label><input name=\"candidate_score\" value=\"{escape(str(payload.get("candidate_score") or ""))}\" /><span class=\"helper\">如暂未最终确认，也可先保存草稿。</span></div>
+                <div class=\"field\"><label>位次</label><input name=\"candidate_rank\" value=\"{escape(str(payload.get("candidate_rank") or ""))}\" /><span class=\"helper\">建议填写与成绩单一致的最新位次。</span></div>
+              </div>
+              <div class=\"field\"><label>选科（逗号分隔）</label><input name=\"candidate_subjects\" value=\"{escape(",".join(payload.get("candidate_subjects") or []))}\" /><span class=\"helper\">例如：物理,化学,生物</span></div>
+            </section>
+
+            <section class=\"step-panel\" data-step=\"2\" style=\"display:none;\">
+              <h3>偏好与目标</h3>
+              <p>告诉我们你更看重什么，后续方案会围绕这些目标来解释选择逻辑。</p>
+              <div class=\"field\"><label>兴趣方向</label><input name=\"candidate_interests\" value=\"{escape(str(payload.get("candidate_interests") or ""))}\" /></div>
+              <div class=\"field-grid\">
+                <div class=\"field\"><label>目标城市（逗号分隔）</label><input name=\"target_cities\" value=\"{escape(",".join(payload.get("target_cities") or []))}\" /></div>
+                <div class=\"field\"><label>目标专业（逗号分隔）</label><input name=\"target_majors\" value=\"{escape(",".join(payload.get("target_majors") or []))}\" /></div>
+              </div>
+              <div class=\"field\"><label>院校偏好说明</label><textarea name=\"university_preferences\">{escape(str(payload.get("university_preferences") or ""))}</textarea></div>
+            </section>
+
+            <section class=\"step-panel\" data-step=\"3\" style=\"display:none;\">
+              <h3>已有方案与附件</h3>
+              <p>如果你已经拿到其他平台、老师或 AI 生成的方案，可以在这里上传并说明担心点。</p>
+              <div class=\"field\"><label>已有方案说明</label><textarea name=\"existing_plan_summary\">{escape(str(payload.get("existing_plan_summary") or ""))}</textarea></div>
+              <div class=\"field\"><label>家长备注</label><textarea name=\"guardian_notes\">{escape(str(payload.get("guardian_notes") or ""))}</textarea></div>
+              <section class=\"upload-box\">
+                <h4 style=\"margin:0 0 10px; font-size:18px;\">当前资料状态</h4>
+                <p class=\"helper\" style=\"margin:0 0 12px;\">支持继续补充方案附件、成绩截图或其他参考资料。</p>
+                <div id=\"attachment-panel\">
+                  <input type=\"file\" name=\"files\" multiple />
+                  <div class=\"actions\" style=\"margin-top:12px;\">
+                    <button type=\"button\" onclick=\"uploadAttachment()\">上传方案与资料附件</button>
+                  </div>
+                </div>
+                <ul class=\"attachment-list\">{attachments_html}</ul>
+              </section>
+            </section>
+
+            <section class=\"step-panel\" data-step=\"4\" style=\"display:none;\">
+              <h3>协议确认</h3>
+              <p>请确认监护人已知情并同意将资料用于志愿填报服务。</p>
+              <input type=\"hidden\" name=\"consent_version\" value=\"{escape(consent_version)}\" />
+              <input type=\"hidden\" name=\"consent_scope\" value=\"{escape(consent_scope)}\" />
+              <div class=\"check-list\">
+                <label><input type=\"checkbox\" name=\"privacy_accepted\" {privacy_checked} /> <span>我已阅读并同意隐私政策草案</span></label>
+                <label><input type=\"checkbox\" name=\"service_terms_accepted\" {service_terms_checked} /> <span>我已阅读并同意服务说明与免责声明</span></label>
+                <label><input type=\"checkbox\" name=\"guardian_confirmed\" {guardian_checked} /> <span>我确认监护人已知情并同意提交资料</span></label>
+              </div>
+              <div class=\"compliance-note\">当前资料状态会随提交结果同步更新；未勾选必要同意项时，系统不会进入正式处理阶段。</div>
+            </section>
+
+            <section class=\"step-panel\" data-step=\"5\" style=\"display:none;\">
+              <h3>提交确认</h3>
+              <p>请在提交前再快速浏览一次关键信息。提交成功后，系统会进入后续处理阶段。</p>
+              <div id=\"confirm-summary\" class=\"summary-box\"></div>
+            </section>
+
+            <div class=\"actions\">
+              <button type=\"button\" id=\"prev-step\" onclick=\"moveStep(-1)\" disabled>上一步</button>
+              <button type=\"button\" id=\"next-step\" onclick=\"moveStep(1)\">下一步</button>
+              <button type=\"button\" class=\"ghost\" onclick=\"submitIntake('draft')\">保存草稿</button>
+              <button type=\"button\" id=\"submit-step\" style=\"display:none;\" onclick=\"submitIntake('submit')\">提交资料</button>
+            </div>
+          </form>
+          <div class=\"footer-link\"><a href=\"/portal/{escape(token)}/status\">返回订单状态页</a></div>
+          {_render_footer_links(token)}
+          <div id=\"result\"></div>
         </section>
-        <section data-step=\"4\" style=\"display:none;\">
-          <h2>Step 4 / 协议确认</h2>
-          <input type=\"hidden\" name=\"consent_version\" value=\"{escape(consent_version)}\" />
-          <input type=\"hidden\" name=\"consent_scope\" value=\"{escape(consent_scope)}\" />
-          <label><input type=\"checkbox\" name=\"privacy_accepted\" {privacy_checked} /> 我已阅读并同意隐私政策草案</label><br/>
-          <label><input type=\"checkbox\" name=\"service_terms_accepted\" {service_terms_checked} /> 我已阅读并同意服务说明与免责声明</label><br/>
-          <label><input type=\"checkbox\" name=\"guardian_confirmed\" {guardian_checked} /> 我确认监护人已知情并同意提交资料</label><br/>
-        </section>
-        <section data-step=\"5\" style=\"display:none;\">
-          <h2>Step 5 / 提交确认</h2>
-          <div id=\"confirm-summary\" style=\"background:#f8fafc;border:1px solid #dbe3f0;border-radius:12px;padding:12px;\"></div>
-        </section>
-        <div style=\"display:flex;gap:8px;margin-top:16px;\">
-          <button type=\"button\" id=\"prev-step\" onclick=\"moveStep(-1)\" disabled>上一步</button>
-          <button type=\"button\" id=\"next-step\" onclick=\"moveStep(1)\">下一步</button>
-          <button type=\"button\" onclick=\"submitIntake('draft')\">保存草稿</button>
-          <button type=\"button\" id=\"submit-step\" style=\"display:none;\" onclick=\"submitIntake('submit')\">提交资料</button>
-        </div>
-      </form>
-      <p><a href="/portal/{escape(token)}/status">返回订单状态页</a></p>
-      {_render_footer_links(token)}
-      <pre id="result"></pre>
+
+        <aside class=\"panel status-card\">
+          <h2>当前资料状态</h2>
+          <span class=\"status-pill\">{escape(stage_title)}</span>
+          <p style=\"margin-top:12px;\">{escape(stage_subtitle)}</p>
+          <div class=\"status-list\">
+            <div class=\"status-item\"><strong>订单号</strong><span>{escape(order.id)}</span></div>
+            <div class=\"status-item\"><strong>当前服务版本</strong><span>{escape(order.service_version)}</span></div>
+            <div class=\"status-item\"><strong>你可以怎么做</strong><span>保存草稿、继续补资料，或在最后一步统一提交进入后续处理。</span></div>
+          </div>
+          <div class=\"compliance-note\">提交资料即表示：监护人已知情并同意将考生资料用于志愿填报服务；当前版本号：{escape(consent_version)}</div>
+        </aside>
+      </section>
     </main>
     <script>
       let currentStep = 1;
@@ -1180,13 +1609,19 @@ def _render_info_page(
 
       async function submitIntake(mode) {{
         const payload = collectPayload(mode);
+        const resultNode = document.getElementById('result');
+        resultNode.textContent = mode === 'draft' ? '正在保存草稿…' : '正在提交资料…';
         const resp = await fetch('/portal/{escape(token)}/info', {{
           method: 'POST',
           headers: {{ 'Content-Type': 'application/json' }},
           body: JSON.stringify(payload),
         }});
         const body = await resp.json();
-        document.getElementById('result').textContent = JSON.stringify(body, null, 2);
+        if (!resp.ok) {{
+          resultNode.textContent = body.detail || body.message || '提交失败，请检查资料后重试。';
+          return;
+        }}
+        resultNode.textContent = mode === 'draft' ? '草稿已保存，可稍后继续补充。' : '资料提交成功，正在进入订单状态页…';
         if (resp.ok && mode === 'submit') window.location.href = '/portal/{escape(token)}/status';
       }}
 
@@ -1203,7 +1638,7 @@ def _render_info_page(
           body: data,
         }});
         const body = await resp.json();
-        document.getElementById('result').textContent = JSON.stringify(body, null, 2);
+        document.getElementById('result').textContent = resp.ok ? '附件上传成功，页面将刷新显示最新结果。' : (body.detail || body.message || '附件上传失败');
         if (resp.ok) window.location.reload();
       }}
       updateWizard();
@@ -1240,11 +1675,11 @@ def _render_status_page(token: str, context: dict[str, Any]) -> str:
             )
         )
         station_notice_html = f"""
-      <section style=\"background:#eef6ff;border:1px solid #b9d7ff;border-radius:18px;padding:24px;\">
+      <section class=\"panel notice-panel\">
         <h2>通知已发送</h2>
         <p><strong>{title}</strong></p>
         <p>{body}</p>
-        <p style=\"color:#4f6480;font-size:14px;\">发送时间：{sent_at}</p>
+        <p class=\"meta\">发送时间：{sent_at}</p>
       </section>"""
     summary_html = ""
     intake_summary = context.get("intake_summary") or {}
@@ -1268,50 +1703,113 @@ def _render_status_page(token: str, context: dict[str, Any]) -> str:
                 continue
             attachment_lines.append(
                 f"<li>{escape(str(item.get('original_name') or item.get('stored_name') or '未命名附件'))}"
-                f" / {escape(str(item.get('content_type') or '-'))}"
-                f" / {escape(str(item.get('size_bytes') or '0'))} bytes</li>"
+                f"<span>{escape(str(item.get('content_type') or '-'))} · {escape(str(item.get('size_bytes') or '0'))} bytes</span></li>"
             )
-        attachment_html = "".join(attachment_lines) or "<li>暂无附件</li>"
+        attachment_html = "".join(attachment_lines) or "<li class='empty'>暂无附件</li>"
         summary_html = f"""
-      <section style=\"background:#fff;border:1px solid #dbe3f0;border-radius:18px;padding:24px;\">
+      <section class=\"panel\">
         <h2>当前资料摘要</h2>
-        <ul>{''.join(summary_items)}</ul>
+        <ul class=\"summary-list\">{''.join(summary_items)}</ul>
         <h3>已上传附件</h3>
-        <ul>{attachment_html}</ul>
+        <ul class=\"attachment-list\">{attachment_html}</ul>
       </section>"""
     payment_status = escape(str(context.get("payment_status") or "pending"))
     delivery_html = f"""
-      <section style=\"background:#fff;border:1px solid #dbe3f0;border-radius:18px;padding:24px;\">
+      <section class=\"panel\">
         <h2>支付与交付状态</h2>
-        <ul>
-          <li>支付状态：{payment_status}</li>
-          <li>资料状态：{escape(context['stage_title'])}</li>
-          <li>HTML 报告：{'已就绪' if context['report_html_ready'] else '未就绪'}</li>
-          <li>PDF 报告：{'已就绪' if context['report_pdf_ready'] else '未就绪'}</li>
-          <li>交付阶段：{escape(context['stage'])}</li>
-        </ul>
+        <div class=\"status-grid\">
+          <div class=\"status-item\"><strong>支付状态</strong><span>{payment_status}</span></div>
+          <div class=\"status-item\"><strong>资料状态</strong><span>{escape(context['stage_title'])}</span></div>
+          <div class=\"status-item\"><strong>HTML 报告</strong><span>{'已就绪' if context['report_html_ready'] else '未就绪'}</span></div>
+          <div class=\"status-item\"><strong>PDF 报告</strong><span>{'已就绪' if context['report_pdf_ready'] else '未就绪'}</span></div>
+          <div class=\"status-item\"><strong>交付阶段</strong><span>{escape(context['stage'])}</span></div>
+        </div>
       </section>"""
     return f"""<!doctype html>
-<html lang=\"zh-CN\"><head><meta charset=\"utf-8\" /><title>订单状态</title></head>
-  <body style=\"font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f4f7fb;margin:0;padding:32px 20px;color:#172033;\">
-    <main style=\"max-width:760px;margin:0 auto;display:grid;gap:16px;\">
-      <section style=\"background:#fff;border:1px solid #dbe3f0;border-radius:18px;padding:24px;\">
-        <h1>{escape(context["stage_title"])}</h1>
-        <p>{escape(context["stage_subtitle"])}</p>
-        <p>订单号：{escape(order.id)}</p>
-        <p>服务版本：{escape(order.service_version)}</p>
-        <p>当前订单状态：{escape(order.status)}</p>
+<html lang=\"zh-CN\">
+  <head>
+    <meta charset=\"utf-8\" />
+    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />
+    <title>订单进度总览</title>
+    <link rel=\"stylesheet\" href=\"/static/portal-ui.css\" />
+    <style>
+      :root {{
+        --bg: #f3f7fb;
+        --surface: #ffffff;
+        --surface-soft: #f7fbff;
+        --border: #d7e3f1;
+        --text: #142235;
+        --muted: #5b6b88;
+        --primary: #1f6feb;
+        --success: #0f766e;
+        --success-soft: #dff7f1;
+        --notice-soft: #eef6ff;
+        --notice-border: #b9d7ff;
+        --shadow: 0 18px 42px rgba(20,34,53,.08);
+      }}
+      * {{ box-sizing: border-box; }}
+      body {{ font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);margin:0;color:var(--text); }}
+      .wrap {{ max-width: 1100px; margin:0 auto; padding:32px 20px 72px; }}
+      .hero {{ display:grid; grid-template-columns:minmax(0,1.08fr) 340px; gap:20px; align-items:start; }}
+      .panel {{ background:#fff; border:1px solid var(--border); border-radius:24px; box-shadow:var(--shadow); padding:24px; }}
+      .eyebrow {{ display:inline-flex; padding:6px 10px; border-radius:999px; background:var(--success-soft); color:var(--success); font-size:12px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; }}
+      h1 {{ margin:14px 0 10px; font-size:clamp(30px,5vw,42px); letter-spacing:-0.03em; }}
+      .lead {{ margin:0; color:var(--muted); line-height:1.8; }}
+      .stage-pill {{ display:inline-flex; margin-top:16px; padding:10px 14px; border-radius:999px; background:var(--primary); color:#fff; font-weight:700; }}
+      .hero-meta {{ display:grid; gap:12px; margin-top:18px; }}
+      .hero-meta-item {{ padding:14px 16px; border-radius:16px; background:var(--surface-soft); border:1px solid var(--border); }}
+      .hero-meta-item strong {{ display:block; margin-bottom:6px; font-size:14px; }}
+      .summary-list, .action-list {{ margin:0; padding-left:18px; color:var(--muted); line-height:1.8; }}
+      .attachment-list {{ list-style:none; padding:0; margin:12px 0 0; display:grid; gap:8px; }}
+      .attachment-list li {{ display:flex; justify-content:space-between; gap:12px; padding:12px 14px; border-radius:14px; background:var(--surface-soft); border:1px solid var(--border); color:var(--muted); }}
+      .attachment-list li.empty {{ justify-content:flex-start; }}
+      .status-grid {{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }}
+      .status-item {{ padding:14px 16px; border-radius:16px; background:var(--surface-soft); border:1px solid var(--border); }}
+      .status-item strong {{ display:block; margin-bottom:6px; font-size:14px; }}
+      .notice-panel {{ background:var(--notice-soft); border-color:var(--notice-border); }}
+      .meta {{ color:#4f6480; font-size:14px; }}
+      .sections {{ display:grid; gap:16px; margin-top:20px; }}
+      @media (max-width: 980px) {{
+        .hero, .status-grid {{ grid-template-columns:1fr; }}
+      }}
+    </style>
+  </head>
+  <body>
+    <main class=\"wrap\">
+      <section class=\"hero\">
+        <section class=\"panel\">
+          <span class=\"eyebrow\">订单进度总览</span>
+          <h1>{escape(context['stage_title'])}</h1>
+          <p class=\"lead\">{escape(context['stage_subtitle'])}</p>
+          <span class=\"stage-pill\">当前阶段：{escape(context['stage'])}</span>
+          <div class=\"hero-meta\">
+            <div class=\"hero-meta-item\"><strong>订单号</strong><span>{escape(order.id)}</span></div>
+            <div class=\"hero-meta-item\"><strong>服务版本</strong><span>{escape(order.service_version)}</span></div>
+            <div class=\"hero-meta-item\"><strong>当前订单状态</strong><span>{escape(order.status)}</span></div>
+          </div>
+        </section>
+        <aside class=\"panel\">
+          <h2>下一步建议</h2>
+          <ul class=\"action-list\">
+            <li>如资料还未完善，可返回资料页继续补充。</li>
+            <li>如报告尚未就绪，请以后续通知与状态页更新为准。</li>
+            <li>如交付已完成，可优先查看在线报告与 PDF 下载入口。</li>
+          </ul>
+        </aside>
       </section>
-      {summary_html}
-      {delivery_html}
-      {station_notice_html}
-      <section style=\"background:#fff;border:1px solid #dbe3f0;border-radius:18px;padding:24px;\">
-        <h2>下一步操作</h2>
-        <ul>
-          <li><a href=\"/portal/{escape(token)}/info\">填写/更新资料</a></li>
-          <li><a href=\"/portal/{escape(token)}/notifications\">查看通知审计</a></li>
-          {report_links}
-        </ul>
+
+      <section class=\"sections\">
+        {summary_html}
+        {delivery_html}
+        {station_notice_html}
+        <section class=\"panel\">
+          <h2>下一步操作</h2>
+          <ul class=\"action-list\">
+            <li><a href=\"/portal/{escape(token)}/info\">填写 / 更新资料</a></li>
+            <li><a href=\"/portal/{escape(token)}/notifications\">查看通知审计</a></li>
+            {report_links}
+          </ul>
+        </section>
       </section>
     </main>
   </body>

@@ -45,17 +45,18 @@ def test_order_info_form_accepts_draft_and_submit(client, settings):
 
     page = client.get(f"/portal/{token}/info")
     assert page.status_code == 200, page.text
-    assert "考生资料填写" in page.text
-    assert "监护人已知情并同意" in page.text
+    assert "资料填写向导" in page.text
+    assert "五步资料向导" in page.text
+    assert "当前资料状态" in page.text
+    assert '/static/portal-ui.css' in page.text
     assert "目标城市" in page.text
     assert "目标专业" in page.text
     assert "已有方案说明" in page.text
-    assert "资料向导进度" in page.text
-    assert "Step 1 / 基础信息" in page.text
-    assert "Step 2 / 偏好与目标" in page.text
-    assert "Step 3 / 已有方案与附件" in page.text
-    assert "Step 4 / 协议确认" in page.text
-    assert "Step 5 / 提交确认" in page.text
+    assert "基础信息" in page.text
+    assert "偏好与目标" in page.text
+    assert "已有方案与附件" in page.text
+    assert "协议确认" in page.text
+    assert "提交确认" in page.text
 
     assert page.text.count("<form") == 1
     assert 'id="attachment-form"' not in page.text
@@ -110,8 +111,11 @@ def test_order_info_form_accepts_draft_and_submit(client, settings):
 
     status_page = client.get(f"/portal/{token}/status")
     assert status_page.status_code == 200, status_page.text
+    assert "订单进度总览" in status_page.text
+    assert '/static/portal-ui.css' in status_page.text
     assert "处理中" in status_page.text
     assert "当前资料摘要" in status_page.text
+    assert "下一步建议" in status_page.text
     assert "长沙,上海" in status_page.text
     assert "计算机科学与技术,自动化" in status_page.text
     assert "已有一份千问方案" in status_page.text

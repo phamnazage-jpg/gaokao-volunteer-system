@@ -63,12 +63,13 @@ def test_redoc_served(client):
 
 
 def test_dashboard_page_served(client):
-    """/dashboard 提供 T6.6 所需的 ECharts 页面骨架。"""
+    """/dashboard 提供运营后台页面骨架，并避免技术细节直出。"""
     resp = client.get("/dashboard")
     assert resp.status_code == 200
     assert "text/html" in resp.headers["content-type"]
     body = resp.text
-    assert "仪表盘" in body
+    assert "运营总览" in body
+    assert "核心经营指标" in body
     assert "/static/dashboard.js" in body
     assert 'id="trend-chart"' in body
     assert 'id="status-chart"' in body
@@ -78,6 +79,9 @@ def test_dashboard_page_served(client):
     assert 'id="range-30d"' in body
     assert "/static/vendor/echarts.min.js" in body
     assert "jsdelivr.net" not in body
+    assert "最小仪表盘" not in body
+    assert "admin_users 总数" not in body
+    assert "接口: <code>/api/stats/dashboard</code>" not in body
 
 
 def test_dashboard_static_js_served(client):
@@ -95,6 +99,7 @@ def test_dashboard_static_js_served(client):
     assert "trends?.[state.range]" in body
     assert "sessionStorage" in body
     assert "localStorage" not in body
+    assert "admin_users 总数" not in body
 
 
 def test_bootstrap_admin_only_once(client, settings):

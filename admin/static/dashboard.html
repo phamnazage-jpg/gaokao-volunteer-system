@@ -160,12 +160,12 @@
     <div class="page">
       <section class="header">
         <div class="title">
-          <h1>最小仪表盘</h1>
-          <p>3 个指标卡 + 1 个趋势图 + 3 个分布图，仅保留 7d/30d 切换。</p>
+          <h1>运营总览</h1>
+          <p>聚合查看订单、收入、用户与主要结构指标，帮助后台快速判断当前经营状态。</p>
           <p><a href="/admin/orders/new">手动添加订单</a> · <a href="/admin/notifications">通知审计</a> · <a href="/admin/ops-alerts">运维告警</a></p>
         </div>
         <div class="meta">
-          <div>接口: <code>/api/stats/dashboard</code></div>
+          <div>核心经营指标</div>
           <div id="generated-at">尚未加载</div>
         </div>
       </section>
@@ -180,12 +180,12 @@
           <input id="password" type="password" autocomplete="current-password" placeholder="请输入密码" />
         </div>
         <div class="field">
-          <label for="token">Bearer Token（可选）</label>
-          <input id="token" placeholder="已有 JWT 时可直接粘贴" />
+          <label for="token">登录令牌（可选）</label>
+          <input id="token" placeholder="如已获取登录令牌，可直接粘贴" />
         </div>
         <div class="field">
-          <label for="api-base">API Base</label>
-          <input id="api-base" value="" placeholder="默认当前站点" />
+          <label for="api-base">数据服务地址</label>
+          <input id="api-base" value="" placeholder="默认使用当前站点地址" />
         </div>
         <div class="actions">
           <button id="login-btn" type="button">登录并加载</button>
@@ -193,7 +193,7 @@
         </div>
       </section>
 
-      <div id="message" class="hint">提示：请通过服务端 `/dashboard` 页面访问；先登录或粘贴 JWT 后拉取数据。</div>
+      <div id="message" class="hint">请先登录，或粘贴已有登录令牌后加载数据。</div>
       <div id="error" class="error"></div>
 
       <section class="cards">
@@ -203,9 +203,9 @@
           <div id="orders-subtitle" class="card-subtitle">今日 -- / 7d -- / 30d --</div>
         </article>
         <article class="card">
-          <div class="card-title">用户数</div>
+          <div class="card-title">后台可登录用户</div>
           <div id="total-users" class="card-value">--</div>
-          <div class="card-subtitle">admin_users 总数</div>
+          <div class="card-subtitle">已创建后台账号总数</div>
         </article>
         <article class="card">
           <div class="card-title">收入</div>

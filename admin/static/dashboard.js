@@ -88,7 +88,9 @@ function ensureChart(id) {
 }
 
 function renderTrend(trends) {
-  const points = Array.isArray(trends?.[state.range]) ? trends?.[state.range] : [];
+  const points = Array.isArray(trends?.[state.range])
+    ? trends?.[state.range]
+    : [];
   const chart = ensureChart("trend-chart");
   document.getElementById("trend-title").textContent =
     state.range === "30d" ? "30 天趋势" : "7 天趋势";
@@ -160,8 +162,12 @@ function renderDistributions(payload) {
 
 function updateRangeButtons() {
   const isThirty = state.range === "30d";
-  document.getElementById("range-7d").className = isThirty ? "secondary" : "active-range";
-  document.getElementById("range-30d").className = isThirty ? "active-range" : "secondary";
+  document.getElementById("range-7d").className = isThirty
+    ? "secondary"
+    : "active-range";
+  document.getElementById("range-30d").className = isThirty
+    ? "active-range"
+    : "secondary";
 }
 
 async function fetchDashboard(token) {
@@ -172,7 +178,7 @@ async function fetchDashboard(token) {
   });
 
   if (!resp.ok) {
-    throw new Error(`/api/stats/dashboard 请求失败: HTTP ${resp.status}`);
+    throw new Error(`数据加载失败：HTTP ${resp.status}`);
   }
   return resp.json();
 }

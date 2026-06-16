@@ -7,10 +7,12 @@
 1. 本文件
 2. docs/FINAL_COMPLETION_REPORT_2026-06-13.md
 3. docs/P0_P1_P2_REMEDIATION_PLAN_2026-06-14.md（当前整改板；2026-06-15 已做状态归一）
-4. docs/ACTIVE_REMEDIATION_2026-06-13.md
-5. product/PRD.md / product/ROADMAP.md / docs/IMPLEMENTATION_PLAN_v2.md
-6. docs/PRODUCTION_DEPLOYMENT_CHECKLIST_2026-06-15.md
-7. reports/PRODUCT_PLANNING_TECH_ALIGNMENT_REVIEW_2026-06-13.md（历史评审快照）
+4. docs/FRONTEND_UI_AUDIT_2026-06-16.md
+5. docs/FRONTEND_UI_EXECUTION_BOARD_2026-06-16.md
+6. docs/ACTIVE_REMEDIATION_2026-06-13.md
+7. product/PRD.md / product/ROADMAP.md / docs/IMPLEMENTATION_PLAN_v2.md
+8. docs/PRODUCTION_DEPLOYMENT_CHECKLIST_2026-06-15.md
+9. reports/PRODUCT_PLANNING_TECH_ALIGNMENT_REVIEW_2026-06-13.md（历史评审快照）
 
 ---
 
@@ -114,6 +116,9 @@
 - 用户端 Web 自助支付闭环缺失
 - 生产通知链已有底层 validated/delivered 状态机、portal 通知审计页、后台独立通知审计页、运维告警审计页与 watchdog alert sink；已支持 SMTP/IM webhook sink 代码接入，但仍缺线上真实通道配置后的生产联调
 - 前台入口已支持基础资料填写、最多 5 个附件上传与 5 步向导（基础信息 / 偏好与目标 / 已有方案与附件 / 协议确认 / 提交确认）；仍缺更完整文件类型策略与更细粒度错误提示
+- 2026-06-16 前端专项审计结论：用户端首页 / 定价页 / 结账页存在明显 AI 模板痕迹、开发术语外露与商业转化不足；后台 `/dashboard` 仍偏开发者自检页。当前执行板见 `docs/FRONTEND_UI_EXECUTION_BOARD_2026-06-16.md`
+- 2026-06-16 第二轮本地整改已完成：首页、定价页、结账页、portal 向导页 / 状态页、后台 `/dashboard` 已完成首轮产品化与去技术暴露重构；剩余前端工作聚焦 design token 基线与更强回归门禁
+- 2026-06-16 第三轮本地整改已完成：`admin/static/portal-ui.css` 已建立为共享样式基线，关键用户页面已接入 shared CSS，并补齐页面级回归断言；前端整改范围已本地收口，剩余仅为 Git 交付或后续更深层视觉迭代
 - 业务数据备份 / 恢复 / 密钥托管已有本地基线与验证，但异机备份和生产接入仍不足
 - 隐私政策 / 服务协议 / 监护人同意 / 数据保留与删除流程仍缺前台/客服自助工单与正式法务版本
 
