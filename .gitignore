@@ -71,3 +71,9 @@ admin/_tmp_test.txt
 /data/*.db-*
 /data/orders/*.db
 /data/orders/*.db-*
+
+# 本地工具元数据 / 运行产物
+.serena/
+/data/alerts/
+/data/portal_uploads/
+/=0.0.20,
