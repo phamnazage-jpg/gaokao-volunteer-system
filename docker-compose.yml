@@ -10,14 +10,26 @@ services:
     restart: unless-stopped
     environment:
       GAOKAO_ENV: ${GAOKAO_ENV:-dev}
+      GAOKAO_ADMIN_BIND: ${GAOKAO_ADMIN_BIND:-127.0.0.1}
+      GAOKAO_ADMIN_PORT: ${GAOKAO_ADMIN_PORT:-8000}
       GAOKAO_JWT_SECRET: ${GAOKAO_JWT_SECRET:-dev-only-local-jwt-secret-please-override-before-production-1234567890abcdef}
       GAOKAO_ADMIN_USER: ${GAOKAO_ADMIN_USER:-admin}
       GAOKAO_ADMIN_PASS: ${GAOKAO_ADMIN_PASS:-dev-only-local-admin-pass-please-change}
+      GAOKAO_PORTAL_TOKEN_SECRET: ${GAOKAO_PORTAL_TOKEN_SECRET:-dev-only-local-portal-token-secret-please-override-before-production-abcdef1234567890}
       GAOKAO_ORDERS_FERNET_KEY: ${GAOKAO_ORDERS_FERNET_KEY:-dev-only-local-orders-fernet-key-please-change}
       GAOKAO_DB_PATH: /var/lib/gaokao/orders/admin.db
       GAOKAO_ORDERS_DB_PATH: /var/lib/gaokao/orders.db
       GAOKAO_SHARE_DB_PATH: /var/lib/gaokao/share/short_links.db
       GAOKAO_SHARE_REPORT_DIR: /var/lib/gaokao/share/reports
+      GAOKAO_PAYMENT_PROVIDER: ${GAOKAO_PAYMENT_PROVIDER:-mock}
+      GAOKAO_PAYMENT_BASE_URL: ${GAOKAO_PAYMENT_BASE_URL:-https://example.com}
+      GAOKAO_PAYMENT_WEBHOOK_SECRET: ${GAOKAO_PAYMENT_WEBHOOK_SECRET:-dev-only-local-payment-webhook-secret-please-change-before-production-1234567890abcdef}
+      GAOKAO_PAYMENT_NOTIFY_URL: ${GAOKAO_PAYMENT_NOTIFY_URL:-}
+      GAOKAO_PAYMENT_RETURN_URL: ${GAOKAO_PAYMENT_RETURN_URL:-}
+      GAOKAO_PAYMENT_APP_ID: ${GAOKAO_PAYMENT_APP_ID:-}
+      GAOKAO_PAYMENT_PRIVATE_KEY_PATH: ${GAOKAO_PAYMENT_PRIVATE_KEY_PATH:-}
+      GAOKAO_PAYMENT_ALIPAY_PUBLIC_KEY_PATH: ${GAOKAO_PAYMENT_ALIPAY_PUBLIC_KEY_PATH:-}
+      GAOKAO_OPS_ALERT_LOG: ${GAOKAO_OPS_ALERT_LOG:-/var/lib/gaokao/ops-alerts.jsonl}
     ports:
       - "${GAOKAO_ADMIN_BIND:-127.0.0.1}:${GAOKAO_ADMIN_PORT:-8000}:8000"
     volumes:
