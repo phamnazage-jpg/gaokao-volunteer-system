@@ -26,18 +26,16 @@ def service_price_for(service_version: ServiceVersion) -> int:
 class PublicOrderCreate(BaseModel):
     service_version: ServiceVersion
     amount_cents: int = Field(ge=0)
-    customer_name: str = Field(min_length=1)
-    customer_phone: Optional[str] = None
+    customer_name: Optional[str] = None
+    customer_phone: str = Field(min_length=1)
     customer_wechat: Optional[str] = None
     customer_email: Optional[str] = None
-    candidate_name: Optional[str] = None
-    candidate_province: str = Field(min_length=1)
+    candidate_name: str = Field(min_length=1)
+    candidate_province: Optional[str] = None
     notes: Optional[str] = None
 
     @model_validator(mode="after")
-    def _require_contact_channel(self) -> "PublicOrderCreate":
-        if not self.customer_phone and not self.customer_wechat:
-            raise ValueError("customer_phone / customer_wechat 至少填写一个")
+    def _validate_minimal_checkout(self) -> "PublicOrderCreate":
         expected_amount = service_price_for(self.service_version)
         if self.amount_cents != expected_amount:
             raise ValueError("amount_cents 与套餐价格不一致")

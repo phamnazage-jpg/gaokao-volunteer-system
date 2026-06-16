@@ -57,6 +57,9 @@ def test_order_info_form_accepts_draft_and_submit(client, settings):
     assert "Step 4 / 协议确认" in page.text
     assert "Step 5 / 提交确认" in page.text
 
+    assert page.text.count("<form") == 1
+    assert 'id="attachment-form"' not in page.text
+
     draft = client.post(
         f"/portal/{token}/info",
         json={
@@ -243,6 +246,20 @@ def test_portal_deletion_request_is_logged_and_visible_in_admin(client, auth_hea
         f"/admin/deletion-requests?order_id={order.id}", headers=auth_headers
     )
     assert admin_page.status_code == 200, admin_page.text
+
     assert order.id in admin_page.text
     assert "需要撤回资料并删除附件" in admin_page.text
     assert "parent@example.com" in admin_page.text
+
+
+def test_order_info_page_uses_checkbox_checked_state_for_submit(client, settings):
+    order = _seed_order(settings.orders_db_path, order_id="GKO-20260615-INFO-CHECKED")
+    _mark_paid(settings, order)
+    token = issue_portal_token(order.id, settings.portal_token_secret)
+
+    page = client.get(f"/portal/{token}/info")
+    assert page.status_code == 200, page.text
+    assert 'document.querySelector(\'input[name="privacy_accepted"]\')?.checked' in page.text
+    assert "form.get('privacy_accepted') === 'on'" not in page.text
+    assert "form.get('service_terms_accepted') === 'on'" not in page.text
+    assert "form.get('guardian_confirmed') === 'on'" not in page.text

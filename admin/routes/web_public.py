@@ -794,6 +794,12 @@ def _render_checkout_page(service_version: str) -> str:
         "standard": "99元 完整志愿方案",
         "premium": "199元 深度辅导版",
     }[service_version]
+    province_options = [
+        "", "北京", "上海", "天津", "重庆", "河北", "河南", "山东", "山西", "陕西", "辽宁", "吉林", "黑龙江", "江苏", "浙江", "安徽", "福建", "江西", "湖北", "湖南", "广东", "广西", "海南", "四川", "贵州", "云南", "甘肃", "青海", "宁夏", "新疆", "内蒙古", "西藏",
+    ]
+    province_html = "".join(
+        f"<option value=\"{escape(p)}\">{escape(p) or '后续补充'}</option>" for p in province_options
+    )
     return f"""<!doctype html>
 <html lang=\"zh-CN\">
   <head>
@@ -804,7 +810,13 @@ def _render_checkout_page(service_version: str) -> str:
       body {{ font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; background:#f4f7fb; color:#172033; margin:0; }}
       .wrap {{ max-width:760px; margin:0 auto; padding:32px 20px; }}
       .panel {{ background:#fff; border:1px solid #dbe3f0; border-radius:18px; padding:22px; }}
-      input, textarea {{ width:100%; padding:12px; border-radius:10px; border:1px solid #cfd7e6; margin-top:8px; margin-bottom:14px; }}
+      .grid {{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }}
+      .field {{ display:flex; flex-direction:column; gap:6px; margin-bottom:14px; }}
+      .field label {{ font-size:14px; color:#334155; font-weight:600; }}
+      .required {{ color:#dc2626; margin-left:4px; }}
+      input, textarea, select {{ width:100%; padding:12px; border-radius:10px; border:1px solid #cfd7e6; font-size:14px; background:#fff; }}
+      .hint {{ color:#64748b; font-size:12px; margin-top:4px; }}
+      .error {{ color:#b42318; font-size:12px; min-height:18px; }}
       button {{ border:none; border-radius:12px; background:#1f6feb; color:#fff; font-weight:700; padding:12px 18px; cursor:pointer; }}
     </style>
   </head>
@@ -812,14 +824,41 @@ def _render_checkout_page(service_version: str) -> str:
     <main class=\"wrap\">
       <section class=\"panel\">
         <h1>{escape(service_label)}</h1>
-        <p>提交后会自动创建订单并跳转到支付页。</p>
+        <p>先完成最小下单：只要求考生姓名与手机号；其余信息可在支付后补充。</p>
         <form id=\"checkout-form\">
-          <label>家长称呼<input name=\"customer_name\" required /></label>
-          <label>手机号<input name=\"customer_phone\" required /></label>
-          <label>邮箱（用于接收邮件通知）<input name=\"customer_email\" type=\"email\" /></label>
-          <label>考生姓名<input name=\"candidate_name\" /></label>
-          <label>省份<input name=\"candidate_province\" value=\"湖南\" required /></label>
-          <label>备注<textarea name=\"notes\"></textarea></label>
+          <div class=\"grid\">
+            <div class=\"field\">
+              <label>考生姓名<span class=\"required\">*</span></label>
+              <input name=\"candidate_name\" required maxlength=\"32\" placeholder=\"请输入考生姓名\" />
+              <div class=\"error\" data-error=\"candidate_name\"></div>
+            </div>
+            <div class=\"field\">
+              <label>手机号<span class=\"required\">*</span></label>
+              <input name=\"customer_phone\" required inputmode=\"tel\" maxlength=\"20\" placeholder=\"请输入手机号\" />
+              <div class=\"error\" data-error=\"customer_phone\"></div>
+            </div>
+          </div>
+          <div class=\"grid\">
+            <div class=\"field\">
+              <label>家长称呼</label>
+              <input name=\"customer_name\" maxlength=\"32\" placeholder=\"可选，例如：张家长\" />
+            </div>
+            <div class=\"field\">
+              <label>邮箱（接收通知）</label>
+              <input name=\"customer_email\" type=\"email\" maxlength=\"120\" placeholder=\"可选\" />
+            </div>
+          </div>
+          <div class=\"grid\">
+            <div class=\"field\">
+              <label>考试省份</label>
+              <select name=\"candidate_province\">{province_html}</select>
+              <div class=\"hint\">可选；支付后在资料向导中补全</div>
+            </div>
+            <div class=\"field\">
+              <label>备注</label>
+              <textarea name=\"notes\" maxlength=\"500\" placeholder=\"可选\"></textarea>
+            </div>
+          </div>
           <button type=\"submit\">创建订单并去支付（¥{amount / 100:.0f}）</button>
         </form>
         <p id=\"result\"></p>
@@ -827,18 +866,36 @@ def _render_checkout_page(service_version: str) -> str:
       </section>
     </main>
     <script>
+      function validateCheckout(form) {{
+        const errors = {{ candidate_name: '', customer_phone: '' }};
+        const name = String(form.get('candidate_name') || '').trim();
+        const phone = String(form.get('customer_phone') || '').trim();
+        if (!name) errors.candidate_name = '请填写考生姓名';
+        if (!phone) errors.customer_phone = '请填写手机号';
+        if (phone && !/^1[3-9]\d{{9}}$/.test(phone)) errors.customer_phone = '手机号格式不正确';
+        for (const [key, msg] of Object.entries(errors)) {{
+          const node = document.querySelector(`[data-error="${{key}}"]`);
+          if (node) node.textContent = msg;
+        }}
+        return !errors.candidate_name && !errors.customer_phone;
+      }}
+      document.getElementById('checkout-form').addEventListener('input', function (event) {{
+        const form = new FormData(event.currentTarget);
+        validateCheckout(form);
+      }});
       document.getElementById('checkout-form').addEventListener('submit', async function (event) {{
         event.preventDefault();
         const form = new FormData(event.target);
+        if (!validateCheckout(form)) return;
         const payload = {{
           service_version: '{service_version}',
           amount_cents: {amount},
-          customer_name: form.get('customer_name'),
+          customer_name: form.get('customer_name') || null,
           customer_phone: form.get('customer_phone'),
           customer_email: form.get('customer_email') || null,
           candidate_name: form.get('candidate_name'),
-          candidate_province: form.get('candidate_province'),
-          notes: form.get('notes'),
+          candidate_province: form.get('candidate_province') || null,
+          notes: form.get('notes') || null,
         }};
         const resp = await fetch('/api/public/orders', {{
           method: 'POST',
@@ -1031,13 +1088,13 @@ def _render_info_page(
           <h2>Step 3 / 已有方案与附件</h2>
           <label>已有方案说明<textarea name=\"existing_plan_summary\">{escape(str(payload.get("existing_plan_summary") or ""))}</textarea></label><br/>
           <label>家长备注<textarea name=\"guardian_notes\">{escape(str(payload.get("guardian_notes") or ""))}</textarea></label><br/>
-          <section style=\"margin-top:16px;padding:12px;border:1px solid #dbe3f0;border-radius:12px;\">
+          <section style="margin-top:16px;padding:12px;border:1px solid #dbe3f0;border-radius:12px;">
             <h3>已上传附件</h3>
             <ul>{attachments_html}</ul>
-            <form id=\"attachment-form\">
-              <input type=\"file\" name=\"files\" multiple />
-              <button type=\"button\" onclick=\"uploadAttachment()\">上传 AI 方案 / 资料附件</button>
-            </form>
+            <div id="attachment-panel">
+              <input type="file" name="files" multiple />
+              <button type="button" onclick="uploadAttachment()">上传 AI 方案 / 资料附件</button>
+            </div>
           </section>
         </section>
         <section data-step=\"4\" style=\"display:none;\">
@@ -1085,9 +1142,9 @@ def _render_info_page(
           guardian_notes: form.get('guardian_notes') || null,
           consent_version: form.get('consent_version') || null,
           consent_scope: form.get('consent_scope') || null,
-          privacy_accepted: form.get('privacy_accepted') === 'on',
-          service_terms_accepted: form.get('service_terms_accepted') === 'on',
-          guardian_confirmed: form.get('guardian_confirmed') === 'on',
+          privacy_accepted: !!document.querySelector('input[name="privacy_accepted"]')?.checked,
+          service_terms_accepted: !!document.querySelector('input[name="service_terms_accepted"]')?.checked,
+          guardian_confirmed: !!document.querySelector('input[name="guardian_confirmed"]')?.checked,
         }};
       }}
 
@@ -1134,7 +1191,7 @@ def _render_info_page(
       }}
 
       async function uploadAttachment() {{
-        const input = document.querySelector('#attachment-form input[name="files"]');
+        const input = document.querySelector('#attachment-panel input[name="files"]');
         if (!input || !input.files || input.files.length === 0) {{
           document.getElementById('result').textContent = '请先选择至少一个附件';
           return;

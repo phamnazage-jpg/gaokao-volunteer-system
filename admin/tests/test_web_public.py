@@ -39,7 +39,6 @@ def test_public_create_order_endpoint(client):
         json={
             "service_version": "standard",
             "amount_cents": 9900,
-            "customer_name": "张家长",
             "customer_phone": "13800138000",
             "customer_email": "parent@example.com",
             "candidate_name": "张三",
@@ -59,9 +58,10 @@ def test_public_create_order_endpoint(client):
     with OrdersDAO.connect(client.app.state.settings.orders_db_path) as dao:
         created = dao.get(body["order_id"])
     assert created.customer_email == "parent@example.com"
+    assert created.candidate_name == "张三"
 
 
-def test_public_create_order_rejects_missing_contact(client):
+def test_public_create_order_rejects_missing_minimal_fields(client):
     resp = client.post(
         "/api/public/orders",
         json={
@@ -74,9 +74,9 @@ def test_public_create_order_rejects_missing_contact(client):
     assert resp.status_code == 422
     body = resp.json()
     assert body["message"] == "请求数据未通过校验"
-    assert (
-        body["detail"]["fields"][0]["reason"]
-        == "Value error, customer_phone / customer_wechat 至少填写一个"
+    assert any(
+        field["field"] in {"body.customer_phone", "body.candidate_name"}
+        for field in body["detail"]["fields"]
     )
 
 
@@ -89,6 +89,7 @@ def test_public_create_order_rejects_price_tampering(client):
             "customer_name": "张家长",
             "customer_phone": "13800138000",
             "customer_email": "parent@example.com",
+            "candidate_name": "张三",
             "candidate_province": "湖南",
         },
     )
@@ -110,6 +111,7 @@ def test_mock_payment_complete_rejects_wrong_portal_token(client):
             "customer_name": "张家长",
             "customer_phone": "13800138000",
             "customer_email": "parent@example.com",
+            "candidate_name": "张三",
             "candidate_province": "湖南",
         },
     )
@@ -130,6 +132,7 @@ def test_payment_return_redirects_to_portal_status(client):
             "customer_name": "张家长",
             "customer_phone": "13800138000",
             "customer_email": "parent@example.com",
+            "candidate_name": "张三",
             "candidate_province": "湖南",
         },
     )
@@ -207,6 +210,7 @@ def test_public_create_order_returns_503_without_creating_orphan_order_when_prov
                 "amount_cents": 9900,
                 "customer_name": "张家长",
                 "customer_phone": "13800138000",
+                "candidate_name": "张三",
                 "candidate_province": "湖南",
             },
         )
@@ -262,6 +266,7 @@ def test_public_create_order_returns_503_without_creating_orphan_order_when_chec
                 "amount_cents": 9900,
                 "customer_name": "张家长",
                 "customer_phone": "13800138000",
+                "candidate_name": "张三",
                 "candidate_province": "湖南",
             },
         )
