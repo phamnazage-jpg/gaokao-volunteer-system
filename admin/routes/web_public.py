@@ -741,6 +741,9 @@ def _render_landing_page() -> str:
       .btn-primary:hover {{ background: var(--primary-dark); }}
       .btn-secondary {{ background: rgba(255,255,255,.08); color: #fff; border: 1px solid rgba(255,255,255,.18); }}
       .btn-secondary:hover {{ background: rgba(255,255,255,.14); }}
+      .hero-trust {{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; margin-top:18px; }}
+      .hero-trust-item {{ padding:12px 14px; border-radius:14px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12); color:#d9e7ff; font-size:13px; line-height:1.5; }}
+      .hero-trust-item strong {{ display:block; color:#fff; margin-bottom:4px; font-size:14px; }}
       .hero-points {{ display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 12px; margin-top: 24px; }}
       .point {{ padding: 14px; border-radius: 16px; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.12); }}
       .point strong {{ display: block; color: #fff; margin-bottom: 6px; font-size: 15px; }}
@@ -760,9 +763,10 @@ def _render_landing_page() -> str:
       .card .tag {{ display: inline-flex; margin-bottom: 12px; padding: 6px 10px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); font-size: 12px; font-weight: 700; }}
       .card h3 {{ margin: 0 0 8px; font-size: 20px; }}
       .card p, .card li {{ color: var(--muted); line-height: 1.7; }}
-      .flow {{ display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }}
-      .flow-step {{ padding: 20px; border-radius: 20px; background: linear-gradient(180deg,#f9fbff,#eef5ff); border: 1px solid var(--border); }}
-      .flow-step strong {{ display: block; margin-bottom: 10px; color: var(--primary); font-size: 13px; letter-spacing: .05em; text-transform: uppercase; }}
+      .flow {{ position:relative; display:grid; grid-template-columns:repeat(4, minmax(0, 1fr)); gap:18px; margin-top:6px; }}
+      .flow::before {{ content:''; position:absolute; left:6%; right:6%; top:42px; height:2px; background:linear-gradient(90deg,#c7d7ef,#dfe9f8); z-index:0; }}
+      .flow-step {{ position:relative; z-index:1; padding: 22px 18px 18px; border-radius: 20px; background: linear-gradient(180deg,#f9fbff,#eef5ff); border: 1px solid var(--border); }}
+      .flow-step strong {{ display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px; margin-bottom: 12px; border-radius:999px; background:#1f6feb; color:#fff; font-size:13px; letter-spacing: .02em; text-transform: none; }}
       .flow-step h3 {{ margin: 0 0 8px; font-size: 18px; }}
       .flow-step p {{ margin: 0; color: var(--muted); line-height: 1.7; }}
       .trust {{ display:grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 16px; }}
@@ -781,42 +785,48 @@ def _render_landing_page() -> str:
     <main class=\"wrap\">
       <section class=\"hero\">
         <div class=\"hero-copy\">
-          <div class=\"eyebrow\">湖南新高考志愿填报 · 家长决策支持</div>
+          <div class=\"eyebrow\">新高考志愿填报 · 志愿决策支持</div>
           <h1>高考志愿填报智能规划服务</h1>
-          <p class=\"sub\">把分数、位次、选科、意向城市和专业偏好整理成可执行的志愿方案。先完成线上下单，再进入资料向导补充详细信息，后续可在站内查看报告与交付进度。</p>
+          <p class=\"sub\">先审计现有志愿方案，再判断是否踩线、扎堆或梯度失衡，再决定要不要进入完整规划。先完成线上下单，再进入资料向导补充详细信息，后续可在站内查看报告与交付进度。</p>
           <div class=\"hero-actions\">
             <a class=\"btn btn-primary\" href=\"/pricing\">查看服务套餐</a>
             <a class=\"btn btn-secondary\" href=\"#service-flow\">了解服务流程</a>
           </div>
+          <div class=\"hero-trust\">
+            <article class=\"hero-trust-item\"><strong>先审计后规划</strong><span>先判断现有方案有没有明显风险，再决定要不要进入完整规划。</span></article>
+            <article class=\"hero-trust-item\"><strong>风险重点可解释</strong><span>重点识别踩线、扎堆、梯度失衡和结构异常，不只给结果。</span></article>
+            <article class=\"hero-trust-item\"><strong>进度站内可查</strong><span>资料、通知、报告、下载入口都能在站内持续追踪。</span></article>
+            <article class=\"hero-trust-item\"><strong>隐私与删除入口可见</strong><span>隐私政策、服务说明与删除申请入口全程可访问。</span></article>
+          </div>
           <div class=\"hero-points\">
-            <article class=\"point\"><strong>适配湖南志愿规则</strong><span>围绕本科批 / 专业组 / 风险梯度做信息整理与方案表达。</span></article>
-            <article class=\"point\"><strong>先下单后补资料</strong><span>先确认家长联系方式与考生基础信息，支付后进入 5 步资料向导。</span></article>
+            <article class=\"point\"><strong>志愿方案审计更聚焦</strong><span>重点帮你识别方案是否踩线、是否扎堆、梯度是否失衡，以及哪些风险需要进一步人工确认。</span></article>
+            <article class=\"point\"><strong>先下单后补资料</strong><span>先确认联系方式与考生基础信息，支付后进入 4 步资料向导。</span></article>
             <article class=\"point\"><strong>站内可追踪交付</strong><span>支持资料进度、通知记录、报告在线查看与 PDF 下载入口。</span></article>
           </div>
         </div>
         <aside class=\"hero-panel\">
-          <h2>我们先帮你把决策顺序理清</h2>
-          <p>不让家长在海量院校、专业、城市与预算之间盲目来回切换，先明确选择边界，再进入方案产出。</p>
+          <h2>我们先把现有方案看明白</h2>
+          <p>不让你在海量院校、专业、城市与预算之间盲目来回切换，先审计现有方案的风险与结构，再决定是否进入更完整的志愿规划。</p>
           <div class=\"metric-list\">
             <div class=\"metric\"><strong>资料采集更克制</strong><span>首屏只收真正影响下单的最小信息，详细资料支付后分步完成。</span></div>
-            <div class=\"metric\"><strong>方案表达更可读</strong><span>优先解释为什么这样选，而不是堆给家长一页难消化的数据。</span></div>
+            <div class=\"metric\"><strong>方案表达更可读</strong><span>优先解释为什么这样选，而不是堆给用户一页难消化的数据。</span></div>
             <div class=\"metric\"><strong>交付链路更透明</strong><span>资料、通知、报告、下载入口都放在同一条可追踪用户路径里。</span></div>
           </div>
         </aside>
       </section>
 
       <section class=\"section\">
-        <h2>为什么家长选择我们</h2>
-        <p class=\"section-intro\">高考志愿填报不是只看一个分数，而是要在时间、信息、风险和沟通成本之间做平衡。页面设计先把这些关键决策点讲清楚，再引导进入下单。</p>
+        <h2>为什么选择我们</h2>
+        <p class=\"section-intro\">高考志愿填报不是只看一个分数，而是要在时间、信息、风险和沟通成本之间做平衡。我们的特点不是只“生成方案”，而是先帮你审计现有方案、识别扎堆和踩线风险，再决定是否进入更完整的规划与交付。</p>
         <div class=\"grid-3\">
           <article class=\"card\">
-            <span class=\"tag\">信息整理</span>
-            <h3>先收敛决策范围</h3>
-            <p>先明确分数位次、城市偏好、专业倾向和预算，再决定应该看哪些院校与专业组。</p>
+          <span class=\"tag\">方案审计</span>
+          <h3>先判断现有方案值不值得继续</h3>
+          <p>如果你已经拿到老师、机构或 AI 给出的方案，我们会先审计是否踩线、是否扎堆、是否存在明显结构风险，再决定下一步。</p>
           </article>
           <article class=\"card\">
             <span class=\"tag\">风险沟通</span>
-            <h3>把风险解释给家长听懂</h3>
+            <h3>把风险解释清楚</h3>
             <p>不只输出结果，还会说明冲稳保梯度、可能踩线的位置，以及需要重点确认的选择风险。</p>
           </article>
           <article class=\"card\">
@@ -829,12 +839,12 @@ def _render_landing_page() -> str:
 
       <section id=\"service-flow\" class=\"section\">
         <h2>服务流程</h2>
-        <p class=\"section-intro\">让家长知道每一步会发生什么，比空泛地说“智能系统已接入”更重要。</p>
+        <p class=\"section-intro\">让用户知道每一步会发生什么，比空泛地说“智能系统已接入”更重要。</p>
         <div class=\"flow\">
-          <article class=\"flow-step\"><strong>Step 1</strong><h3>选择套餐</h3><p>按需要的服务深度选择审核版、完整方案版或深度辅导版。</p></article>
-          <article class=\"flow-step\"><strong>Step 2</strong><h3>确认下单</h3><p>先填写考生姓名、手机号等最小信息，避免在支付前被长表单劝退。</p></article>
-          <article class=\"flow-step\"><strong>Step 3</strong><h3>补充资料</h3><p>支付成功后进入资料向导，分步提交分数、位次、偏好与已有方案附件。</p></article>
-          <article class=\"flow-step\"><strong>Step 4</strong><h3>查看交付</h3><p>在站内追踪状态、查看通知，并在交付就绪后在线阅读或下载 PDF。</p></article>
+          <article class=\"flow-step\"><strong>01</strong><h3>选择服务深度</h3><p>先判断你需要的是方案审核、完整方案，还是更重人工沟通的深度辅导。</p></article>
+          <article class=\"flow-step\"><strong>02</strong><h3>确认下单</h3><p>先填写考生姓名、手机号等最小信息，避免在支付前被长表单劝退。</p></article>
+          <article class=\"flow-step\"><strong>03</strong><h3>补充资料</h3><p>支付成功后进入资料向导，分步提交分数、位次、偏好与已有方案附件。</p></article>
+          <article class=\"flow-step\"><strong>04</strong><h3>查看交付</h3><p>在站内追踪状态、查看通知，并在交付就绪后在线阅读或下载 PDF。</p></article>
         </div>
       </section>
 
@@ -900,26 +910,34 @@ def _render_pricing_page() -> str:
       .summary ul {{ margin: 0; padding-left: 18px; color: var(--muted); line-height: 1.75; }}
       .pricing-grid {{ display:grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 18px; margin-top: 24px; }}
       .card {{ position: relative; display:flex; flex-direction:column; gap: 14px; background: var(--surface); border: 1px solid var(--border); border-radius: 24px; padding: 24px; box-shadow: var(--shadow); }}
-      .card.recommended {{ border: 2px solid var(--primary); transform: translateY(-6px); }}
-      .badge {{ position:absolute; top:18px; right:18px; display:inline-flex; padding:6px 10px; border-radius:999px; background: var(--accent-soft); color: var(--accent); font-size:12px; font-weight:700; }}
+      .card.recommended {{ border: 2px solid var(--primary); transform: translateY(-8px); background: linear-gradient(180deg,#f8fbff,#eef5ff); box-shadow: 0 24px 52px rgba(31,111,235,.16); }}
+      .card.recommended::before {{ content:''; position:absolute; left:0; right:0; top:0; height:6px; border-radius:24px 24px 0 0; background:linear-gradient(90deg,#1f6feb,#38bdf8); }}
+      .badge {{ position:absolute; top:14px; left:50%; transform:translateX(-50%); display:inline-flex; padding:7px 12px; border-radius:999px; background: var(--primary); color: #fff; font-size:12px; font-weight:700; box-shadow:0 10px 20px rgba(31,111,235,.22); }}
       .eyebrow {{ font-size: 13px; font-weight: 700; color: var(--primary); letter-spacing: .04em; text-transform: uppercase; }}
       .price {{ font-size: 40px; font-weight: 800; letter-spacing: -0.04em; }}
       .price small {{ font-size: 15px; font-weight: 600; color: var(--muted); margin-left: 4px; }}
       .desc {{ color: var(--muted); line-height: 1.75; min-height: 72px; }}
       .feature-list {{ margin: 0; padding-left: 18px; color: var(--muted); line-height: 1.75; display:grid; gap:6px; }}
-      .button {{ display:inline-flex; align-items:center; justify-content:center; min-height:46px; border-radius:14px; background: var(--primary); color:#fff; text-decoration:none; font-weight:700; }}
+      .button {{ display:inline-flex; align-items:center; justify-content:center; min-height:46px; border-radius:14px; background: var(--primary); color:#fff; text-decoration:none; font-weight:700; box-shadow:0 14px 28px rgba(31,111,235,.2); }}
       .button:hover {{ background: var(--primary-dark); }}
-      .button.secondary {{ background:#edf3ff; color:var(--primary-dark); }}
+      .button.secondary {{ background:transparent; color:var(--primary-dark); border:1px solid #c7d7ef; box-shadow:none; }}
+      .button.secondary:hover {{ background:#eef5ff; }}
+      .button.recommended-cta {{ background:#0f4fd6; box-shadow:0 18px 34px rgba(15,79,214,.28); }}
+      .button.recommended-cta:hover {{ background:#0b43ba; }}
       .trust-band {{ display:grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 14px; margin-top: 24px; }}
       .trust-item {{ padding: 18px 20px; border-radius: 18px; background: #fff; border:1px solid var(--border); }}
       .trust-item strong {{ display:block; margin-bottom:8px; }}
+      .trust-proof {{ display:grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 12px; margin-top: 22px; }}
+      .trust-proof-item {{ padding:14px 16px; border-radius:16px; background:linear-gradient(180deg,#f8fbff,#eef5ff); border:1px solid var(--border); }}
+      .trust-proof-item strong {{ display:block; margin-bottom:4px; font-size:15px; }}
+      .trust-proof-item span {{ color:var(--muted); font-size:13px; line-height:1.6; }}
       .faq {{ margin-top: 24px; display:grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 16px; }}
       .faq-item {{ padding: 20px; border-radius: 20px; background: #fff; border:1px solid var(--border); }}
       .faq-item h3 {{ margin:0 0 8px; font-size:18px; }}
       .faq-item p {{ margin:0; color:var(--muted); line-height:1.7; }}
       .notice {{ margin-top:26px; padding:16px 18px; border-radius:16px; background:var(--warning-soft); color:var(--warning-text); border:1px solid #f4d39b; line-height:1.7; }}
       @media (max-width: 980px) {{
-        .hero, .pricing-grid, .trust-band, .faq {{ grid-template-columns: 1fr; }}
+        .hero, .pricing-grid, .trust-band, .faq, .trust-proof {{ grid-template-columns: 1fr; }}
         .card.recommended {{ transform: none; }}
       }}
     </style>
@@ -929,7 +947,13 @@ def _render_pricing_page() -> str:
       <section class=\"hero\">
         <div class=\"panel\">
           <h1>服务套餐</h1>
-          <p class=\"lead\">先按服务深度选择适合自己的方案：如果你已经拿到其他方案，先做审核；如果希望一次拿到完整建议，优先看完整志愿方案；如果家庭需要反复沟通和多轮修订，再选择深度辅导版。</p>
+          <p class=\"lead\">先按服务深度选择适合自己的方案：如果你已经拿到其他方案，先做审核；如果希望一次拿到完整建议，优先看完整志愿方案；如果需要更多人工沟通和多轮修订，再选择深度辅导版。</p>
+          <div class=\"trust-proof\">
+            <article class=\"trust-proof-item\"><strong>先审计再决定</strong><span>先看现有方案是否值得继续，而不是一上来重做。</span></article>
+            <article class=\"trust-proof-item\"><strong>主推档更清晰</strong><span>99 元方案覆盖大多数用户最关心的完整线上交付路径。</span></article>
+            <article class=\"trust-proof-item\"><strong>进度站内可查</strong><span>资料、通知与报告状态都能在站内持续追踪。</span></article>
+            <article class=\"trust-proof-item\"><strong>隐私与删除入口可见</strong><span>隐私政策、服务说明和删除申请入口始终保留。</span></article>
+          </div>
         </div>
         <aside class=\"panel summary\">
           <h2>下单前你会看到什么</h2>
@@ -949,11 +973,11 @@ def _render_pricing_page() -> str:
           <div class=\"price\">¥49<small>/ 次</small></div>
           <p class=\"desc\">适合已经拿到其他 AI 志愿方案，想先判断方案是否踩线、是否扎堆、是否存在明显风险的家庭。</p>
           <ul class=\"feature-list\">
-            <li>适合已有初版方案的家长</li>
+            <li>适合已有初版方案的用户</li>
             <li>聚焦风险点、冲稳保结构与明显异常</li>
             <li>给出是否值得继续深做的判断</li>
           </ul>
-          <a class=\"button secondary\" href=\"/checkout/audit\">立即下单</a>
+          <a class=\"button secondary\" href=\"/checkout/audit\">先做快速审核</a>
         </article>
 
         <article class=\"card recommended\" data-package=\"standard\">
@@ -963,11 +987,11 @@ def _render_pricing_page() -> str:
           <div class=\"price\">¥99<small>/ 单</small></div>
           <p class=\"desc\">适合大多数希望一次拿到完整志愿建议的家庭：先完成线上下单，再在资料向导里补充分数、位次、偏好与已有方案信息。</p>
           <ul class=\"feature-list\">
-            <li>适合首次系统化做志愿规划的家长</li>
+            <li>适合首次系统化做志愿规划的用户</li>
             <li>站内追踪资料、通知与交付状态</li>
             <li>支持在线查看报告与 PDF 下载</li>
           </ul>
-          <a class=\"button\" href=\"/checkout/standard\">立即下单</a>
+          <a class=\"button recommended-cta\" href=\"/checkout/standard\">立即开始完整规划</a>
         </article>
 
         <article class=\"card\" data-package=\"premium\">
@@ -980,7 +1004,7 @@ def _render_pricing_page() -> str:
             <li>留出多轮沟通与补充说明空间</li>
             <li>更强调过程解释与决策支持</li>
           </ul>
-          <a class=\"button secondary\" href=\"/checkout/premium\">立即下单</a>
+          <a class=\"button secondary\" href=\"/checkout/premium\">了解深度辅导</a>
         </article>
       </section>
 
@@ -991,11 +1015,13 @@ def _render_pricing_page() -> str:
       </section>
 
       <section class=\"faq\">
-        <article class=\"faq-item\"><h3>为什么推荐 99 元完整志愿方案？</h3><p>它覆盖大多数家庭最关心的完整资料收集、站内进度追踪与报告交付，是当前最适合线上自助下单的标准路径。</p></article>
-        <article class=\"faq-item\"><h3>支付后还要补哪些信息？</h3><p>主要是分数、位次、选科、目标城市/专业、已有方案说明与附件。支付前不让家长一次填太长的表单。</p></article>
+        <article class=\"faq-item\"><h3>为什么推荐 99 元完整志愿方案？</h3><p>它覆盖大多数用户最关心的完整资料收集、站内进度追踪与报告交付，是当前最适合线上自助下单的标准路径。</p></article>
+        <article class=\"faq-item\"><h3>支付后还要补哪些信息？</h3><p>主要是分数、位次、选科、目标城市/专业、已有方案说明与附件。支付前不让用户一次填太长的表单。</p></article>
+        <article class=\"faq-item\"><h3>下单前需要准备什么？</h3><p>准备好考生姓名、手机号即可先完成下单；详细资料和现有方案可在支付后再补充。</p></article>
+        <article class=\"faq-item\"><h3>我已经有一版志愿方案怎么办？</h3><p>可以先走 49 元审核版看风险；如果已经确定要直接拿完整线上建议，再进入 99 元完整方案。</p></article>
       </section>
 
-      <div class=\"notice\">如你当前只想先快速判断现有方案是否有明显问题，可先选择 49 元审核版；若希望直接拿到完整线上方案，优先进入 99 元完整志愿方案。</div>
+      <div class=\"notice\">如果你已经有一版志愿方案，建议先从 49 元审核版判断风险；如果希望直接进入完整线上规划，优先选择 99 元完整志愿方案。</div>
       {_render_footer_links()}
     </main>
   </body>
@@ -1080,8 +1106,15 @@ def _render_checkout_page(service_version: str) -> str:
       button[disabled] {{ opacity:.6; cursor:not-allowed; }}
       #result {{ margin-top:14px; min-height:24px; color:var(--muted); line-height:1.7; }}
       .service-note {{ margin-top: 18px; padding: 16px 18px; border-radius: 16px; background:#fff7e6; border:1px solid #f4d39b; color:#8a5a00; line-height:1.7; }}
+      .form-proof {{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin: 0 0 18px; }}
+      .form-proof-item {{ padding:14px 16px; border-radius:16px; background:linear-gradient(180deg,#f8fbff,#eef5ff); border:1px solid var(--border); }}
+      .form-proof-item strong {{ display:block; margin-bottom:4px; font-size:14px; }}
+      .form-proof-item span {{ color:var(--muted); font-size:13px; line-height:1.6; }}
+      .summary-badges {{ display:grid; gap:10px; margin-bottom:16px; }}
+      .summary-badge {{ padding:12px 14px; border-radius:14px; background:#fff; border:1px solid var(--border); color:var(--muted); line-height:1.6; }}
+      .summary-badge strong {{ display:block; margin-bottom:4px; color:var(--text); }}
       @media (max-width: 980px) {{
-        .layout, .grid, .trust-strip {{ grid-template-columns: 1fr; }}
+        .layout, .grid, .trust-strip, .form-proof {{ grid-template-columns: 1fr; }}
         .summary {{ position: static; }}
       }}
     </style>
@@ -1098,6 +1131,11 @@ def _render_checkout_page(service_version: str) -> str:
         <section class=\"panel form-panel\">
           <h2>填写下单信息</h2>
           <p class=\"helper\">当前这一步只收会影响下单与后续联系的必要信息，不要求你一次性填完整个长表单。</p>
+          <div class=\"form-proof\">
+            <article class=\"form-proof-item\"><strong>先下单再补资料</strong><span>先把关键联系信息确认下来，再进入资料向导补充分数、位次和偏好。</span></article>
+            <article class=\"form-proof-item\"><strong>状态站内可追踪</strong><span>支付、通知、交付状态都能在站内持续查看，不必反复追问进度。</span></article>
+            <article class=\"form-proof-item\"><strong>隐私入口始终可见</strong><span>隐私政策、服务说明与删除申请入口在这条链路上持续可访问。</span></article>
+          </div>
           <div class=\"trust-strip\">
             <article class=\"trust-card\"><strong>步骤更短</strong><span>先支付，再补详细资料。</span></article>
             <article class=\"trust-card\"><strong>进度可追踪</strong><span>资料、通知和交付状态都可站内查看。</span></article>
@@ -1118,8 +1156,8 @@ def _render_checkout_page(service_version: str) -> str:
             </div>
             <div class=\"grid\">
               <div class=\"field\">
-                <label>家长称呼</label>
-                <input name=\"customer_name\" maxlength=\"32\" placeholder=\"可选，例如：张家长\" />
+                <label>称呼</label>
+                <input name=\"customer_name\" maxlength=\"32\" placeholder=\"可选，例如：张同学 / 张家长\" />
               </div>
               <div class=\"field\">
                 <label>邮箱（接收通知）</label>
@@ -1150,6 +1188,10 @@ def _render_checkout_page(service_version: str) -> str:
         <aside class=\"panel summary\">
           <h2>订单摘要</h2>
           <p>你当前选择的是 <strong>{escape(service_label)}</strong>。这一步先确认下单人与考生基础信息，支付成功后再继续补完整资料。</p>
+          <div class=\"summary-badges\">
+            <div class=\"summary-badge\"><strong>当前建议</strong><span>如果你已经有现成方案，49 元审核版适合先判断风险；99 元适合直接进入完整线上规划。</span></div>
+            <div class=\"summary-badge\"><strong>交付方式</strong><span>站内资料向导、通知状态、在线报告与 PDF 下载入口。</span></div>
+          </div>
           <div class=\"summary-list\">
             <div class=\"summary-item\"><strong>适合谁</strong><span>{escape(service_desc)}</span></div>
             <div class=\"summary-item\"><strong>你会得到什么</strong><span>站内资料向导、通知状态、报告在线查看和 PDF 下载入口。</span></div>
@@ -1160,7 +1202,7 @@ def _render_checkout_page(service_version: str) -> str:
               <div class=\"label\">当前应付</div>
               <div class=\"amount\">¥{amount / 100:.0f}</div>
             </div>
-            <div class=\"label\">在线下单后可继续补详细资料</div>
+            <div class=\"label\">完成支付后即可继续补完整资料</div>
           </div>
         </aside>
       </section>
@@ -1413,7 +1455,7 @@ def _render_info_page(
       .wizard-head {{ margin-top:20px; padding:18px 20px; border-radius:18px; background:var(--surface-soft); border:1px solid var(--border); }}
       .wizard-head h2 {{ margin:0 0 8px; font-size:22px; }}
       .wizard-head p {{ margin:0; color:var(--muted); line-height:1.7; }}
-      .wizard-steps {{ display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:10px; list-style:none; padding:0; margin:18px 0 0; }}
+      .wizard-steps {{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; list-style:none; padding:0; margin:18px 0 0; }}
       .wizard-steps li {{ padding:10px 12px; border-radius:999px; background:#e8eef8; color:#334155; text-align:center; font-size:13px; font-weight:700; }}
       .step-panel {{ margin-top:18px; padding:20px; border-radius:20px; background:#fff; border:1px solid var(--border); }}
       .step-panel h3 {{ margin:0 0 8px; font-size:20px; }}
@@ -1434,6 +1476,9 @@ def _render_info_page(
       .check-list input {{ width:auto; margin-top:2px; }}
       .actions {{ display:flex; gap:10px; flex-wrap:wrap; margin-top:18px; }}
       button {{ border:none; border-radius:14px; background:var(--primary); color:#fff; font-weight:700; padding:13px 18px; cursor:pointer; min-height:46px; }}
+      .wizard-actions {{ position: sticky; bottom: 0; z-index: 5; padding: 14px 0 0; margin-top: 20px; background: linear-gradient(180deg, rgba(243,247,251,0), var(--bg) 32%); }}
+      .wizard-actions .actions {{ background:#fff; border:1px solid var(--border); border-radius:18px; box-shadow:var(--shadow); padding:12px; }}
+      .wizard-actions button {{ flex:1 1 180px; }}
       button:hover {{ background:#194fb6; }}
       button[disabled] {{ opacity:.55; cursor:not-allowed; }}
       #prev-step, .ghost {{ background:#edf3ff; color:#194fb6; }}
@@ -1442,6 +1487,15 @@ def _render_info_page(
       .footer-link {{ margin-top:18px; }}
       @media (max-width: 980px) {{
         .hero, .field-grid, .wizard-steps {{ grid-template-columns:1fr; }}
+        .wizard-actions .actions {{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }}
+        .wizard-actions button {{ width:100%; min-height:52px; }}
+        #submit-step {{ grid-column: 1 / -1; }}
+      }}
+      @media (max-width: 640px) {{
+        .wrap {{ padding:20px 14px 88px; }}
+        .panel {{ padding:18px; border-radius:20px; }}
+        .wizard-actions {{ left: 0; right: 0; }}
+        .wizard-actions .actions {{ grid-template-columns:1fr; }}
       }}
     </style>
   </head>
@@ -1454,14 +1508,13 @@ def _render_info_page(
           <p class=\"lead\">支付完成后，请按向导逐步补充分数、位次、偏好与已有方案信息。我们会把这份资料作为后续方案分析与交付的基础。</p>
 
           <section class=\"wizard-head\">
-            <h2>五步资料向导</h2>
-            <p>你不需要一次性完成所有内容。可以先保存草稿，再回来继续补充；提交成功后，状态页会更新为下一阶段。</p>
+            <h2>四步资料向导</h2>
+            <p>你不需要一次性完成所有内容。可以先保存草稿，再回来继续补充；最后一步同时完成协议确认与提交。</p>
             <ol class=\"wizard-steps\">
               <li data-step-badge=\"1\">基础信息</li>
               <li data-step-badge=\"2\">偏好与目标</li>
               <li data-step-badge=\"3\">已有方案与附件</li>
-              <li data-step-badge=\"4\">协议确认</li>
-              <li data-step-badge=\"5\">提交确认</li>
+              <li data-step-badge=\"4\">确认并提交</li>
             </ol>
           </section>
 
@@ -1491,7 +1544,7 @@ def _render_info_page(
               <h3>已有方案与附件</h3>
               <p>如果你已经拿到其他平台、老师或 AI 生成的方案，可以在这里上传并说明担心点。</p>
               <div class=\"field\"><label>已有方案说明</label><textarea name=\"existing_plan_summary\">{escape(str(payload.get("existing_plan_summary") or ""))}</textarea></div>
-              <div class=\"field\"><label>家长备注</label><textarea name=\"guardian_notes\">{escape(str(payload.get("guardian_notes") or ""))}</textarea></div>
+              <div class=\"field\"><label>备注</label><textarea name=\"guardian_notes\">{escape(str(payload.get("guardian_notes") or ""))}</textarea></div>
               <section class=\"upload-box\">
                 <h4 style=\"margin:0 0 10px; font-size:18px;\">当前资料状态</h4>
                 <p class=\"helper\" style=\"margin:0 0 12px;\">支持继续补充方案附件、成绩截图或其他参考资料。</p>
@@ -1506,8 +1559,8 @@ def _render_info_page(
             </section>
 
             <section class=\"step-panel\" data-step=\"4\" style=\"display:none;\">
-              <h3>协议确认</h3>
-              <p>请确认监护人已知情并同意将资料用于志愿填报服务。</p>
+              <h3>确认并提交</h3>
+              <p>请确认监护人已知情并同意将资料用于志愿填报服务，并在下方快速复核关键信息后提交。</p>
               <input type=\"hidden\" name=\"consent_version\" value=\"{escape(consent_version)}\" />
               <input type=\"hidden\" name=\"consent_scope\" value=\"{escape(consent_scope)}\" />
               <div class=\"check-list\">
@@ -1516,19 +1569,16 @@ def _render_info_page(
                 <label><input type=\"checkbox\" name=\"guardian_confirmed\" {guardian_checked} /> <span>我确认监护人已知情并同意提交资料</span></label>
               </div>
               <div class=\"compliance-note\">当前资料状态会随提交结果同步更新；未勾选必要同意项时，系统不会进入正式处理阶段。</div>
-            </section>
-
-            <section class=\"step-panel\" data-step=\"5\" style=\"display:none;\">
-              <h3>提交确认</h3>
-              <p>请在提交前再快速浏览一次关键信息。提交成功后，系统会进入后续处理阶段。</p>
               <div id=\"confirm-summary\" class=\"summary-box\"></div>
             </section>
 
-            <div class=\"actions\">
-              <button type=\"button\" id=\"prev-step\" onclick=\"moveStep(-1)\" disabled>上一步</button>
-              <button type=\"button\" id=\"next-step\" onclick=\"moveStep(1)\">下一步</button>
-              <button type=\"button\" class=\"ghost\" onclick=\"submitIntake('draft')\">保存草稿</button>
-              <button type=\"button\" id=\"submit-step\" style=\"display:none;\" onclick=\"submitIntake('submit')\">提交资料</button>
+            <div class=\"wizard-actions\">
+              <div class=\"actions\">
+                <button type=\"button\" id=\"prev-step\" onclick=\"moveStep(-1)\" disabled>上一步</button>
+                <button type=\"button\" id=\"next-step\" onclick=\"moveStep(1)\">下一步</button>
+                <button type=\"button\" class=\"ghost\" onclick=\"submitIntake('draft')\">保存草稿</button>
+                <button type=\"button\" id=\"submit-step\" style=\"display:none;\" onclick=\"submitIntake('submit')\">确认并提交资料</button>
+              </div>
             </div>
           </form>
           <div class=\"footer-link\"><a href=\"/portal/{escape(token)}/status\">返回订单状态页</a></div>
@@ -1551,7 +1601,7 @@ def _render_info_page(
     </main>
     <script>
       let currentStep = 1;
-      const totalSteps = 5;
+      const totalSteps = 4;
 
       function collectPayload(mode) {{
         const form = new FormData(document.getElementById('intake-form'));
@@ -1579,7 +1629,17 @@ def _render_info_page(
 
       function renderConfirmSummary() {{
         const payload = collectPayload('draft');
-        document.getElementById('confirm-summary').textContent = JSON.stringify(payload, null, 2);
+        const list = [
+          ['高考分数', payload.candidate_score ?? '待补充'],
+          ['位次', payload.candidate_rank ?? '待补充'],
+          ['选科', (payload.candidate_subjects || []).join('、') || '待补充'],
+          ['兴趣方向', payload.candidate_interests || '待补充'],
+          ['目标城市', (payload.target_cities || []).join('、') || '待补充'],
+          ['目标专业', (payload.target_majors || []).join('、') || '待补充'],
+          ['院校偏好', payload.university_preferences || '待补充'],
+          ['已有方案说明', payload.existing_plan_summary || '待补充'],
+        ];
+        document.getElementById('confirm-summary').innerHTML = list.map(([label, value]) => `<div style="padding:8px 0;border-bottom:1px solid #e5edf7;"><strong>${{label}}：</strong><span>${{String(value)}}</span></div>`).join('');
       }}
 
       function updateWizard() {{

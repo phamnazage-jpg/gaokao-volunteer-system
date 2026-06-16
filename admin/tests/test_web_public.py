@@ -13,10 +13,24 @@ def test_public_landing_page_served(client):
     assert "text/html" in resp.headers["content-type"]
     body = resp.text
     assert "高考志愿填报智能规划服务" in body
-    assert "为什么家长选择我们" in body
+    assert "新高考志愿填报 · 志愿决策支持" in body
+    assert "湖南新高考志愿填报" not in body
+    assert "为什么选择我们" in body
     assert 'href="/pricing"' in body
     assert "服务流程" in body
-    assert "进入运营后台" not in body
+    assert "志愿方案审计更聚焦" in body
+    assert "先判断现有方案值不值得继续" in body
+    assert "把风险解释清楚" in body
+    assert "先审计后规划" in body
+    assert "风险重点可解释" in body
+    assert "进度站内可查" in body
+    assert "隐私与删除入口可见" in body
+    assert "01" in body
+    assert "04" in body
+    assert "家长决策支持" not in body
+    assert "家长联系方式" not in body
+    assert "把风险解释给家长听懂" not in body
+
     assert '/static/portal-ui.css' in body
 
 
@@ -34,6 +48,10 @@ def test_public_pricing_page_served(client):
     assert 'data-package="premium"' in body
     assert "推荐方案" in body
     assert "支付接入建设中" not in body
+    assert "先做快速审核" in body
+    assert "立即开始完整规划" in body
+    assert "了解深度辅导" in body
+    assert "先审计再决定" in body
     assert '/static/portal-ui.css' in body
 
 
@@ -46,6 +64,9 @@ def test_public_checkout_page_served(client):
     assert "订单摘要" in body
     assert "服务保障" in body
     assert "立即支付" in body
+    assert "状态站内可追踪" in body
+    assert "当前建议" in body
+    assert "交付方式" in body
     assert "最小下单" not in body
     assert '/static/portal-ui.css' in body
 

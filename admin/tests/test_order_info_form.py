@@ -46,7 +46,7 @@ def test_order_info_form_accepts_draft_and_submit(client, settings):
     page = client.get(f"/portal/{token}/info")
     assert page.status_code == 200, page.text
     assert "资料填写向导" in page.text
-    assert "五步资料向导" in page.text
+    assert "四步资料向导" in page.text
     assert "当前资料状态" in page.text
     assert '/static/portal-ui.css' in page.text
     assert "目标城市" in page.text
@@ -55,11 +55,12 @@ def test_order_info_form_accepts_draft_and_submit(client, settings):
     assert "基础信息" in page.text
     assert "偏好与目标" in page.text
     assert "已有方案与附件" in page.text
-    assert "协议确认" in page.text
-    assert "提交确认" in page.text
+    assert "确认并提交" in page.text
+    assert "提交确认" not in page.text
 
     assert page.text.count("<form") == 1
     assert 'id="attachment-form"' not in page.text
+    assert "wizard-actions" in page.text
 
     draft = client.post(
         f"/portal/{token}/info",
