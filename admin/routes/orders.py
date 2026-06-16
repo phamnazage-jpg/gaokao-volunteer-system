@@ -36,6 +36,7 @@ from data.orders.state_machine import InvalidStateTransition, next_states
 
 
 router = APIRouter(prefix="/api/orders", tags=["orders"])
+admin_router = APIRouter(prefix="/api/admin/orders", tags=["orders"])
 
 OrderSource = Literal["xianyu", "wechat", "web", "school"]
 ServiceVersion = Literal["audit", "basic", "standard", "premium"]
@@ -250,6 +251,11 @@ def _transition_error(order_id: str, to_status: str, exc: Exception) -> Business
     response_model=list[OrderSummaryResponse],
     summary="订单列表（T6.4）",
 )
+@admin_router.get(
+    "",
+    response_model=list[OrderSummaryResponse],
+    summary="订单列表（T6.4）",
+)
 def list_orders(
     limit: int = Query(50, ge=1, le=200),
     offset: int = Query(0, ge=0),
@@ -273,6 +279,10 @@ def list_orders(
 
 
 @router.get(
+    "/export",
+    summary="订单导出（CSV，默认脱敏）",
+)
+@admin_router.get(
     "/export",
     summary="订单导出（CSV，默认脱敏）",
 )
@@ -305,6 +315,11 @@ def export_orders_csv(
     response_model=OrderDetailPayload,
     summary="订单详情（T6.4）",
 )
+@admin_router.get(
+    "/{order_id}",
+    response_model=OrderDetailPayload,
+    summary="订单详情（T6.4）",
+)
 def get_order(
     order_id: str = Path(..., min_length=1),
     settings: Settings = Depends(get_settings_dep),
@@ -324,6 +339,12 @@ def get_order(
 
 
 @router.post(
+    "",
+    response_model=OrderMutationResponse,
+    status_code=status.HTTP_201_CREATED,
+    summary="手工录入订单（T6.4）",
+)
+@admin_router.post(
     "",
     response_model=OrderMutationResponse,
     status_code=status.HTTP_201_CREATED,
@@ -374,6 +395,11 @@ def create_order(
 
 
 @router.patch(
+    "/{order_id}",
+    response_model=OrderMutationResponse,
+    summary="订单更新 / 状态流转 / 退款（T6.4）",
+)
+@admin_router.patch(
     "/{order_id}",
     response_model=OrderMutationResponse,
     summary="订单更新 / 状态流转 / 退款（T6.4）",
@@ -460,6 +486,11 @@ def patch_order(
 
 
 @router.delete(
+    "/{order_id}",
+    response_model=OrderDeletionResponse,
+    summary="订单删除 / 匿名化（T12/A-4）",
+)
+@admin_router.delete(
     "/{order_id}",
     response_model=OrderDeletionResponse,
     summary="订单删除 / 匿名化（T12/A-4）",

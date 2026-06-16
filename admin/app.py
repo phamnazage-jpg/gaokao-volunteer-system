@@ -38,6 +38,9 @@ from admin.logging_utils import (
     configure_logging,
 )
 from admin.routes import (
+    admin_cases_router,
+    admin_orders_router,
+    admin_stats_router,
     auth_router,
     cases_router,
     health_router,
@@ -164,8 +167,11 @@ def create_app(settings: Optional[Settings] = None) -> FastAPI:
     app.include_router(health_router)
     app.include_router(auth_router)
     app.include_router(cases_router)
+    app.include_router(admin_cases_router)
     app.include_router(orders_router)
+    app.include_router(admin_orders_router)
     app.include_router(stats_router)
+    app.include_router(admin_stats_router)
     app.include_router(ui_router)
     app.include_router(meta_router)
     app.include_router(users_router)

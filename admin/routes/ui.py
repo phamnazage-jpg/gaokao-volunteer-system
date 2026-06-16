@@ -24,6 +24,7 @@ _DASHBOARD_HTML = _STATIC_DIR / "dashboard.html"
 
 
 @router.get("/dashboard", include_in_schema=False)
+@router.get("/admin/dashboard", include_in_schema=False)
 def dashboard_page() -> FileResponse:
     """返回最小仪表盘页面壳。"""
     return FileResponse(_DASHBOARD_HTML)

@@ -26,6 +26,7 @@ from admin.stats import (
 
 
 router = APIRouter(prefix="/api/stats", tags=["stats"])
+admin_router = APIRouter(prefix="/api/admin/stats", tags=["stats"])
 
 
 class DashboardResponse(BaseModel):
@@ -59,6 +60,16 @@ class OrderStatsResponse(BaseModel):
         "来源分布 + 服务版本分布 + 今日/7d/30d 趋势序列 (日粒度, 0 填充)。"
     ),
 )
+@admin_router.get(
+    "/dashboard",
+    response_model=DashboardResponse,
+    summary="仪表盘统计（T6.2）",
+    description=(
+        "返回管理后台仪表盘完整 payload: "
+        "summary(订单/用户/收入 + 今日/7d/30d 切片) + 6 态分布 + "
+        "来源分布 + 服务版本分布 + 今日/7d/30d 趋势序列 (日粒度, 0 填充)。"
+    ),
+)
 def get_dashboard(
     request: Request,
     settings: Settings = Depends(get_settings_dep),
@@ -81,6 +92,15 @@ def get_dashboard(
 
 
 @router.get(
+    "/orders",
+    response_model=OrderStatsResponse,
+    summary="订单维度统计（T6.2 真实聚合）",
+    description=(
+        "订单维度统计:T6.1 阶段为占位,T6.2 接入真实 SQL 聚合。"
+        "字段名保持 T6.1 stub 阶段不变,前端旧契约不破。"
+    ),
+)
+@admin_router.get(
     "/orders",
     response_model=OrderStatsResponse,
     summary="订单维度统计（T6.2 真实聚合）",

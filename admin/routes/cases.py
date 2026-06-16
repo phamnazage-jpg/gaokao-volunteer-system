@@ -17,6 +17,7 @@ from data.cases.dao import CaseNotFound, CasesDAO
 from data.cases.models import CaseRecord
 
 router = APIRouter(prefix="/api/cases", tags=["cases"])
+admin_router = APIRouter(prefix="/api/admin/cases", tags=["cases"])
 
 CaseCategory = Literal["success", "typical", "warning"]
 CaseReviewStatus = Literal["pending", "approved", "rejected"]
@@ -64,6 +65,7 @@ def _to_payload(record: CaseRecord) -> dict[str, Any]:
 
 
 @router.get("", response_model=CaseListResponse, summary="案例列表（T6.5）")
+@admin_router.get("", response_model=CaseListResponse, summary="案例列表（T6.5）")
 def list_cases(
     limit: int = Query(50, ge=1, le=200),
     offset: int = Query(0, ge=0),
@@ -93,6 +95,12 @@ def list_cases(
     status_code=status.HTTP_201_CREATED,
     summary="创建案例（T6.5）",
 )
+@admin_router.post(
+    "",
+    response_model=CaseDetailResponse,
+    status_code=status.HTTP_201_CREATED,
+    summary="创建案例（T6.5）",
+)
 def create_case(
     payload: CaseBasePayload,
     settings: Settings = Depends(get_settings_dep),
@@ -116,6 +124,11 @@ def create_case(
     response_model=CaseDetailResponse,
     summary="案例详情（T6.5）",
 )
+@admin_router.get(
+    "/{case_id}",
+    response_model=CaseDetailResponse,
+    summary="案例详情（T6.5）",
+)
 def get_case(
     case_id: int = Path(..., ge=1),
     settings: Settings = Depends(get_settings_dep),
@@ -130,6 +143,11 @@ def get_case(
 
 
 @router.patch(
+    "/{case_id}",
+    response_model=CaseDetailResponse,
+    summary="更新案例（T6.5）",
+)
+@admin_router.patch(
     "/{case_id}",
     response_model=CaseDetailResponse,
     summary="更新案例（T6.5）",
@@ -162,6 +180,11 @@ def update_case(
     response_model=CaseDetailResponse,
     summary="审核案例（T6.5）",
 )
+@admin_router.post(
+    "/{case_id}/review",
+    response_model=CaseDetailResponse,
+    summary="审核案例（T6.5）",
+)
 def review_case(
     payload: ReviewCaseRequest,
     case_id: int = Path(..., ge=1),
@@ -185,6 +208,12 @@ def review_case(
 
 
 @router.delete(
+    "/{case_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    summary="删除案例（T6.5）",
+    response_class=Response,
+)
+@admin_router.delete(
     "/{case_id}",
     status_code=status.HTTP_204_NO_CONTENT,
     summary="删除案例（T6.5）",
