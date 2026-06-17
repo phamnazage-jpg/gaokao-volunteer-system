@@ -45,6 +45,11 @@ def test_public_landing_page_served(client):
     assert "直接看套餐</a>" not in body
     assert "先看套餐，再决定是否立即下单" not in body
     assert "先审计后规划" not in body
+    # 咨询表单隐私说明 (输入仅用于判断, 不留底)
+    assert "不会留底" in body
+    assert "不会用于生成方案" in body
+    assert "不会发邮件推销" in body
+    assert "不会收到营销短信" in body
     # 还保留的核心元素
     assert "为什么选择我们" in body
     assert "了解服务流程" in body
@@ -80,10 +85,25 @@ def test_public_pricing_page_served(client):
     assert "推荐方案" in body
     assert "你可以先从 99 元完整志愿方案开始" in body
     assert "支付接入建设中" not in body
-    assert "先做快速审核" in body
-    assert "立即开始完整规划" in body
-    assert "了解深度辅导" in body
-    assert "先审计再决定" in body
+    # 业务铁律: 套餐页口径与首页一致 — 复核免费 / 方案付费
+    assert "复核现有方案本身免费" in body
+    assert "复核免费 / 方案付费" in body
+    # 套餐页应有 1 处明确引导回首页做免费复核
+    assert 'href="/#consult-box"' in body
+    assert "先做一次免费复核" in body
+    # 49/99/199 三档文案
+    assert "先做付费审核" in body  # 49 元档 CTA
+    assert "支付并启动方案生成" in body  # 99 元档 CTA
+    assert "了解深度辅导" in body  # 199 元档 CTA
+    # 旧 CTA/文案已替换
+    assert "先做快速审核" not in body
+    assert "立即开始完整规划" not in body
+    assert "先审计再决定" not in body
+    assert "快速校验" not in body
+    # FAQ 加了"复核是免费的吗"
+    assert "复核是免费的吗？包含什么？" in body
+    # notice 提示明确引导免费复核
+    assert "还没决定" in body
     assert '/static/portal-ui.css' in body
 
 

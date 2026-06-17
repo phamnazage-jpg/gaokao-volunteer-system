@@ -790,6 +790,9 @@ def _render_landing_page(request: Request) -> str:
       .consult-field input, .consult-field textarea {{ width:100%; padding:11px 12px; border-radius:12px; border:1px solid rgba(255,255,255,.18); background: rgba(255,255,255,.96); color:#142235; font-size:14px; }}
       .consult-field textarea {{ min-height:74px; resize:vertical; }}
       .consult-actions {{ display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }}
+      .consult-privacy {{ margin: 10px 0 0; padding: 10px 12px; border-radius: 12px; background: rgba(223,247,241,.10); border: 1px solid rgba(223,247,241,.30); color: #d9e7ff; font-size: 12.5px; line-height: 1.65; }}
+      .consult-privacy strong {{ color: #c9fff3; font-weight: 700; }}
+      .consult-privacy-tail {{ margin: 10px 0 0; color: #8fb0df; font-size: 12px; line-height: 1.6; }}
       .btn {{ display: inline-flex; align-items: center; justify-content: center; min-height: 46px; padding: 0 18px; border-radius: 14px; text-decoration: none; font-weight: 700; transition: .18s ease; }}
       .btn-primary {{ min-height: 54px; padding: 0 28px; font-size: 17px; background: linear-gradient(135deg,#2d7cff,#0f4fd6); color: #fff; box-shadow: 0 22px 40px rgba(31,111,235,.42), inset 0 1px 0 rgba(255,255,255,.18); letter-spacing: .01em; }}
       .btn-primary:hover {{ background: linear-gradient(135deg,#276fe7,#0d45bf); transform: translateY(-1px); }}
@@ -858,6 +861,7 @@ def _render_landing_page(request: Request) -> str:
           <div class="consult-card" id="consult-box">
             <h2>告诉我们你的基本情况</h2>
             <p class="hero-note" style="margin-top:0;">我们先判断你的现有方案是否需要复核，并说明后续可走的步骤。复核本身免费；新方案生成与深度辅导在支付后启动。</p>
+            <p class="consult-privacy" aria-label="隐私说明">🔒 这些输入只用于判断要不要复核你的方案，<strong>不会留底、不会用于生成方案、不会发邮件推销</strong>。如果你决定不进入付费方案，提交的资料不会保存到我们的数据库。</p>
             <form action="/pricing" method="get">
               <div class="consult-grid">
                 <div class="consult-field"><label>考试省份</label><input name="province" value="{consult_province}" placeholder="例如：湖南" /></div>
@@ -870,6 +874,7 @@ def _render_landing_page(request: Request) -> str:
                 <a class="btn btn-secondary" href="/pricing">直接看付费套餐</a>
               </div>
             </form>
+            <p class="consult-privacy-tail">不会收到营销短信，提交后你也可以随时要求删除已填资料。</p>
           </div>
           <div class="hero-trust">
             <article class="hero-trust-item"><strong>复核免费 / 方案付费</strong><span>免费帮你审现有方案的风险；新方案生成和深度辅导在支付后启动。</span></article>
@@ -1033,6 +1038,10 @@ def _render_pricing_page(request: Request) -> str:
       .consult-summary {{ margin-top:18px; padding:18px 20px; border-radius:18px; background:linear-gradient(180deg,#f8fbff,#eef5ff); border:1px solid var(--border); }}
       .consult-summary h2 {{ margin:0 0 8px; font-size:20px; }}
       .consult-summary p {{ margin:0; color:var(--muted); line-height:1.75; }}
+      .consult-reassure {{ margin-top: 10px !important; padding: 10px 12px; border-radius: 12px; background: var(--success-soft); color: var(--accent); border: 1px solid #b9e7dd; font-size: 14px; }}
+      .consult-reassure a {{ color: var(--accent); font-weight: 700; }}
+      .summary-reassure {{ margin-top: 14px; padding: 10px 12px; border-radius: 12px; background: var(--success-soft); color: var(--accent); border: 1px solid #b9e7dd; font-size: 13px; line-height: 1.6; }}
+      .summary-reassure a {{ color: var(--accent); font-weight: 700; }}
       @media (max-width: 980px) {{
         .hero, .pricing-grid, .trust-band, .faq, .trust-proof {{ grid-template-columns: 1fr; }}
         .card.recommended {{ transform: none; }}
@@ -1041,22 +1050,23 @@ def _render_pricing_page(request: Request) -> str:
   </head>
   <body>
     <main class=\"wrap\">
-      <section class=\"hero\">
-        <div class=\"panel\">
+      <section class="hero">
+        <div class="panel">
           <h1>服务套餐</h1>
-          <p class=\"lead\">先按服务深度选择适合自己的方案：如果你已经拿到其他方案，先做审核；如果希望一次拿到完整建议，优先看完整志愿方案；如果需要更多人工沟通和多轮修订，再选择深度辅导版。</p>
-          <div class=\"consult-summary\">
+          <p class="lead">先按服务深度选择适合自己的方案：<strong>复核现有方案本身免费</strong>；如果你已经拿到其他方案，先做复核判断风险；如果希望一次拿到完整建议，优先看 99 元完整志愿方案；如果需要更多人工沟通和多轮修订，再选择 199 元深度辅导版。</p>
+          <div class="consult-summary">
             <h2>{escape(recommendation_title)}</h2>
             <p>{escape(recommendation_body)}{" 当前输入：" if (province or score or goal) else ""}{escape(" ".join(filter(None, [province, score, goal])))}</p>
+            <p class="consult-reassure">💡 如果你还没决定，<a href="/#consult-box">先做一次免费复核</a>，再决定要不要进入付费方案。</p>
           </div>
-          <div class=\"trust-proof\">
-            <article class=\"trust-proof-item\"><strong>先审计再决定</strong><span>先看现有方案是否值得继续，而不是一上来重做。</span></article>
-            <article class=\"trust-proof-item\"><strong>主推档更清晰</strong><span>99 元方案覆盖大多数用户最关心的完整线上交付路径。</span></article>
-            <article class=\"trust-proof-item\"><strong>进度站内可查</strong><span>资料、通知与报告状态都能在站内持续追踪。</span></article>
-            <article class=\"trust-proof-item\"><strong>隐私与删除入口可见</strong><span>隐私政策、服务说明和删除申请入口始终保留。</span></article>
+          <div class="trust-proof">
+            <article class="trust-proof-item"><strong>复核免费 / 方案付费</strong><span>免费帮你审现有方案的风险；新方案生成和深度辅导在支付后启动。</span></article>
+            <article class="trust-proof-item"><strong>主推档更清晰</strong><span>99 元方案覆盖大多数用户最关心的完整线上交付路径。</span></article>
+            <article class="trust-proof-item"><strong>进度站内可查</strong><span>资料、通知与报告状态都能在站内持续追踪。</span></article>
+            <article class="trust-proof-item"><strong>隐私与删除入口可见</strong><span>隐私政策、服务说明和删除申请入口始终保留。</span></article>
           </div>
         </div>
-        <aside class=\"panel summary\">
+        <aside class="panel summary">
           <h2>下单前你会看到什么</h2>
           <ul>
             <li>套餐说明与适用场景</li>
@@ -1064,65 +1074,69 @@ def _render_pricing_page(request: Request) -> str:
             <li>交付形式：站内查看 + PDF 下载</li>
             <li>隐私政策、服务说明与删除申请入口</li>
           </ul>
+          <p class="summary-reassure">🔒 还没下单前，<a href="/#consult-box">提交的基本情况</a>仅用于判断是否需要复核，不会留底。</p>
         </aside>
       </section>
 
-      <section class=\"pricing-grid\">
-        <article class=\"card\" data-package=\"audit\">
-          <div class=\"eyebrow\">快速校验</div>
+      <section class="pricing-grid">
+        <article class="card" data-package="audit">
+          <div class="eyebrow">复核 / 风险</div>
           <h2>49元 AI方案审核</h2>
-          <div class=\"price\">¥49<small>/ 次</small></div>
-          <p class=\"desc\">适合已经拿到其他 AI 志愿方案，想先判断方案是否踩线、是否扎堆、是否存在明显风险的家庭。</p>
-          <ul class=\"feature-list\">
-            <li>适合已有初版方案的用户</li>
+          <div class="price">¥49<small>/ 次</small></div>
+          <p class="desc">适合已经拿到其他 AI 志愿方案，想先判断方案是否踩线、是否扎堆、是否存在明显风险的家庭。审核只针对你提供的现有方案，不会重新生成志愿表。</p>
+          <ul class="feature-list">
+            <li>针对你提供的现有方案做风险复核</li>
             <li>聚焦风险点、冲稳保结构与明显异常</li>
             <li>给出是否值得继续深做的判断</li>
+            <li>不重新生成志愿表（生成需选 99 元）</li>
           </ul>
-          <a class=\"button secondary\" href=\"/checkout/audit\">先做快速审核</a>
+          <a class="button secondary" href="/checkout/audit">先做付费审核</a>
         </article>
 
-        <article class=\"card recommended\" data-package=\"standard\">
-          <span class=\"badge\">推荐方案</span>
-          <div class=\"eyebrow\">完整规划</div>
+        <article class="card recommended" data-package="standard">
+          <span class="badge">推荐方案</span>
+          <div class="eyebrow">生成 / 完整</div>
           <h2>99元 完整志愿方案</h2>
-          <div class=\"price\">¥99<small>/ 单</small></div>
-          <p class=\"desc\">适合大多数希望一次拿到完整志愿建议的家庭：先完成线上下单，再在资料向导里补充分数、位次、偏好与已有方案信息。</p>
-          <ul class=\"feature-list\">
+          <div class="price">¥99<small>/ 单</small></div>
+          <p class="desc">适合大多数希望一次拿到完整志愿建议的家庭：先完成线上下单，再在资料向导里补充分数、位次、偏好与已有方案信息。方案生成与详细报告在支付后启动。</p>
+          <ul class="feature-list">
             <li>适合首次系统化做志愿规划的用户</li>
+            <li>支付后启动方案生成与报告交付</li>
             <li>站内追踪资料、通知与交付状态</li>
             <li>支持在线查看报告与 PDF 下载</li>
           </ul>
-          <a class=\"button recommended-cta\" href=\"/checkout/standard\">立即开始完整规划</a>
+          <a class="button recommended-cta" href="/checkout/standard">支付并启动方案生成</a>
         </article>
 
-        <article class=\"card\" data-package=\"premium\">
-          <div class=\"eyebrow\">深度辅导</div>
+        <article class="card" data-package="premium">
+          <div class="eyebrow">生成 / 深度</div>
           <h2>199元 深度辅导版</h2>
-          <div class=\"price\">¥199<small>/ 单</small></div>
-          <p class=\"desc\">适合志愿范围复杂、目标城市/专业冲突较大，或需要更多人工沟通、反复修订和深度解释的家庭。</p>
-          <ul class=\"feature-list\">
+          <div class="price">¥199<small>/ 单</small></div>
+          <p class="desc">适合志愿范围复杂、目标城市/专业冲突较大，或需要更多人工沟通、反复修订和深度解释的家庭。在 99 元完整方案基础上提供多轮修订和深度解释。</p>
+          <ul class="feature-list">
             <li>适合目标复杂或分歧较大的家庭</li>
+            <li>包含 99 元完整方案的所有交付</li>
             <li>留出多轮沟通与补充说明空间</li>
             <li>更强调过程解释与决策支持</li>
           </ul>
-          <a class=\"button secondary\" href=\"/checkout/premium\">了解深度辅导</a>
+          <a class="button secondary" href="/checkout/premium">了解深度辅导</a>
         </article>
       </section>
 
-      <section class=\"trust-band\">
-        <article class=\"trust-item\"><strong>站内可追踪</strong><span>下单后可以查看资料提交、通知记录和交付状态，不需要反复追问进度。</span></article>
-        <article class=\"trust-item\"><strong>资料入口清晰</strong><span>支付前只收必要下单信息，详细资料在支付后通过资料向导分步补充。</span></article>
-        <article class=\"trust-item\"><strong>合规入口可见</strong><span>隐私政策、服务说明与删除申请入口始终保留在页面底部。</span></article>
+      <section class="trust-band">
+        <article class="trust-item"><strong>站内可追踪</strong><span>下单后可以查看资料提交、通知记录和交付状态，不需要反复追问进度。</span></article>
+        <article class="trust-item"><strong>资料入口清晰</strong><span>支付前只收必要下单信息，详细资料在支付后通过资料向导分步补充。</span></article>
+        <article class="trust-item"><strong>复核免费 / 方案付费</strong><span>还没决定？回到首页 <a href="/#consult-box">先做一次免费复核</a>，再决定要不要进入付费方案。</span></article>
       </section>
 
-      <section class=\"faq\">
-        <article class=\"faq-item\"><h3>为什么推荐 99 元完整志愿方案？</h3><p>它覆盖大多数用户最关心的完整资料收集、站内进度追踪与报告交付，是当前最适合线上自助下单的标准路径。</p></article>
-        <article class=\"faq-item\"><h3>支付后还要补哪些信息？</h3><p>主要是分数、位次、选科、目标城市/专业、已有方案说明与附件。支付前不让用户一次填太长的表单。</p></article>
-        <article class=\"faq-item\"><h3>下单前需要准备什么？</h3><p>准备好考生姓名、手机号即可先完成下单；详细资料和现有方案可在支付后再补充。</p></article>
-        <article class=\"faq-item\"><h3>我已经有一版志愿方案怎么办？</h3><p>可以先走 49 元审核版看风险；如果已经确定要直接拿完整线上建议，再进入 99 元完整方案。</p></article>
+      <section class="faq">
+        <article class="faq-item"><h3>复核是免费的吗？包含什么？</h3><p>提交基本情况后我们免费帮你判断你的现有方案是否需要复核，并说明后续可走的步骤。复核本身免费；如需正式 AI 方案审核报告（49 元）或重新生成完整方案（99 元起）才需要支付。</p></article>
+        <article class="faq-item"><h3>为什么推荐 99 元完整志愿方案？</h3><p>它覆盖大多数用户最关心的完整资料收集、站内进度追踪与报告交付，是当前最适合线上自助下单的标准路径。99 元是 <em>生成</em> 一份完整方案的价格，不是 <em>查看</em> 价格。</p></article>
+        <article class="faq-item"><h3>支付后还要补哪些信息？</h3><p>主要是分数、位次、选科、目标城市/专业、已有方案说明与附件。支付前不让用户一次填太长的表单。</p></article>
+        <article class="faq-item"><h3>我已经有一版志愿方案怎么办？</h3><p>先 <a href="/#consult-box">免费复核</a> 看是否值得继续；如需正式审核报告再选 49 元版本；如已决定要重做或生成完整方案，再进入 99 元完整方案。</p></article>
       </section>
 
-      <div class=\"notice\">如果你已经有一版志愿方案，建议先从 49 元审核版判断风险；如果希望直接进入完整线上规划，优先选择 99 元完整志愿方案。</div>
+      <div class="notice">还没决定？<a href="/#consult-box">先做一次免费复核</a>，再决定要不要进入付费方案。如果你已经拿到一版方案，49 元审核版会给出明确风险判断；如果已经决定要做完整方案，优先选择 99 元完整志愿方案。</div>
       {_render_footer_links()}
     </main>
   </body>
