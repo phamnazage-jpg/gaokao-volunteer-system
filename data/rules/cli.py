@@ -109,16 +109,30 @@ def _emit(payload: dict[str, object], json_output: bool) -> int:
 
 
 def main(argv: list[str] | None = None) -> int:
-    # `order` is a pure delegation marker. Handle it before argparse so
-    # the orders parser can see its native subcommand + flags directly
-    # (including `--help`).
+    # `order` and `share` are pure delegation markers. Handle them before
+    # argparse so the legacy parsers can see their native subcommands
+    # and flags directly (including `--help`).
     tokens = list(sys.argv[1:]) if argv is None else list(argv)
-    if tokens and tokens[0] == "order":
+    if tokens and tokens[0] in ("order", "share", "payment"):
+        marker = tokens[0]
         from data.orders.cli import main as orders_main
+        from data.cli_compat_gaokao_shortlink import main as shortlink_main
 
-        # data.orders.cli.main expects subcommands without the `order`
-        # prefix (its parser exposes `create` / `list` / `show` / ...).
-        return orders_main(tokens[1:])
+        if marker == "order":
+            # data.orders.cli.main expects subcommands without the `order`
+            # prefix (its parser exposes `create` / `list` / `show` / ...).
+            return orders_main(tokens[1:])
+        if marker == "share":
+            # gaokao-shortlink exposes `create` / `list` / `resolve` / ...
+            return shortlink_main(tokens[1:])
+        if marker == "payment":
+            # `gaokao-cli payment doctor` delegates to
+            # scripts/payment_provider_doctor.py.
+            from data.cli_compat_payment_doctor import (
+                main as payment_doctor_main,
+            )
+
+            return payment_doctor_main(tokens[1:])
 
     parser = _build_parser()
     args = parser.parse_args(tokens)

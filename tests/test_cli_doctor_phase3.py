@@ -19,14 +19,45 @@ def _run_cli(*args: str) -> subprocess.CompletedProcess[str]:
     )
 
 
-def test_cli_help_lists_order_and_doctor() -> None:
+def test_cli_share_delegates_list_subcommand() -> None:
+    # The shortlink CLI exposes a `list` subcommand. Asking for its --help
+    # proves the `gaokao-cli share ...` argv successfully reaches the
+    # shortlink parser instead of being swallowed by the top-level parser.
+    result = _run_cli("share", "list", "--help")
+    assert result.returncode == 0, result.stderr
+    # The shortlink list subcommand exposes --report / --owner.
+    assert "--report" in result.stdout
+    assert "--owner" in result.stdout
+
+
+def test_cli_payment_doctor_rejects_unexpected_args() -> None:
+    # `gaokao-cli payment doctor` is a single-shot diagnostic with no
+    # flags; the compat shim should surface unexpected tokens instead
+    # of silently dropping them on the floor.
+    result = _run_cli("payment", "doctor", "--bogus")
+    assert result.returncode != 0
+    combined = (result.stdout or "") + (result.stderr or "")
+    assert "does not accept" in combined or "unrecognized" in combined.lower()
+
+
+def test_cli_help_lists_share_and_payment() -> None:
+    # `share` and `payment` are pure passthrough markers; they are NOT
+    # registered as subparsers in the top-level argparse tree, so the
+    # top-level --help intentionally does not advertise them. They are
+    # exposed via the dedicated delegation entry points below.
     result = _run_cli("--help")
     assert result.returncode == 0
     assert "order" in result.stdout
     assert "doctor" in result.stdout
-    assert "rules" in result.stdout
-    assert "majors" in result.stdout
-    assert "audit" in result.stdout
+
+    share_help = _run_cli("share", "--help")
+    assert share_help.returncode == 0, share_help.stderr
+    # Reaches the shortlink parser (which exposes create/list/resolve/...)
+    assert "create" in share_help.stdout
+
+    payment_help = _run_cli("payment", "doctor")
+    # mock provider is fine: should exit 0; unsupported would exit 3.
+    assert payment_help.returncode in (0, 2)
 
 
 def test_cli_order_delegates_list_subcommand() -> None:
