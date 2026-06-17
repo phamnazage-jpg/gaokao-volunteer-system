@@ -17,3 +17,8 @@ def test_dashboard_exposes_admin_quick_links(client):
     assert "/admin/orders/new" in resp.text
     assert "/admin/notifications" in resp.text
     assert "/admin/ops-alerts" in resp.text
+    assert 'id="dashboard-title"' in resp.text
+    assert 'id="dev-seed-panel"' in resp.text
+    assert 'id="dev-seed-overdue-btn"' in resp.text
+    assert 'id="dev-seed-clean-btn"' in resp.text
+    assert '?seed-tools=1' in resp.text

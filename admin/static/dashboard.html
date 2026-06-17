@@ -308,6 +308,35 @@
       .message.success { background: var(--success-soft); color: #065f46; border-color: #a7f3d0; }
       .message.error { background: var(--danger-soft); color: #7f1d1d; border-color: #fecaca; }
       .message.loading { background: var(--primary-soft); color: var(--primary-dark); border-color: #c7d9ff; }
+      .dev-tools {
+        display: grid;
+        gap: 12px;
+        margin-bottom: 16px;
+        border: 1px dashed #cbd5e1;
+        background: linear-gradient(180deg, #fffaf0, #fff7ed);
+      }
+      .dev-tools-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+      .dev-tools-copy {
+        display: grid;
+        gap: 4px;
+      }
+      .dev-tools-copy strong { font-size: 14px; }
+      .dev-tools-copy span { color: var(--muted); font-size: 12px; }
+      .dev-tools-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .dev-tools-hint {
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .title h1 { cursor: default; }
       .error-line { color: var(--danger); font-size: 13px; min-height: 18px; margin-bottom: 8px; }
       .hidden { display: none !important; }
       @media (max-width: 1024px) {
@@ -328,7 +357,7 @@
     <div class="page">
       <section class="header panel" aria-label="页面标题与系统状态">
         <div class="title">
-          <h1>运营总览</h1>
+          <h1 id="dashboard-title">运营总览</h1>
           <p>聚合查看订单、收入、用户与主要结构指标，帮助后台快速判断当前经营状态。</p>
           <div class="quick-links" id="quick-links">
             <a class="quick-link" href="/admin/orders/new">手动添加订单 →</a>
@@ -370,6 +399,21 @@
           <button id="login-btn" type="button">登录并加载</button>
           <button id="refresh-btn" class="secondary" type="button">仅刷新数据</button>
         </div>
+      </section>
+
+      <section class="panel dev-tools hidden" id="dev-seed-panel" aria-label="隐藏测试造数工具">
+        <div class="dev-tools-head">
+          <div class="dev-tools-copy">
+            <strong>隐藏测试造数工具</strong>
+            <span>仅本地开发/演示使用。会调用受保护的后台接口写入带标签的演示订单。</span>
+          </div>
+          <button class="secondary" id="dev-seed-close-btn" type="button">收起</button>
+        </div>
+        <div class="dev-tools-actions">
+          <button id="dev-seed-overdue-btn" type="button">补 1 笔超时待办</button>
+          <button class="secondary" id="dev-seed-clean-btn" type="button">清理演示造数</button>
+        </div>
+        <div class="dev-tools-hint">打开方式：标题连点 5 次，或在 URL 后加 ?seed-tools=1。</div>
       </section>
 
       <div id="message" class="message">请先登录，或粘贴已有登录令牌后加载数据。</div>

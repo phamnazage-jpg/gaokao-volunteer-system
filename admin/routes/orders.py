@@ -11,6 +11,7 @@
 from __future__ import annotations
 
 import csv
+import json
 from dataclasses import asdict
 from io import StringIO
 from typing import Any, Literal, Optional, cast
@@ -43,6 +44,10 @@ ServiceVersion = Literal["audit", "basic", "standard", "premium"]
 OrderStatus = Literal[
     "pending", "paid", "serving", "delivered", "completed", "refunded"
 ]
+DevSeedScenario = Literal["overdue_pending_once", "cleanup_demo_seed"]
+
+_DEMO_SEED_TAG = "__demo_seed__"
+_DEMO_SEED_SOURCE = "dashboard_hidden_tools"
 
 _SUMMARY_FIELDS = (
     "id",
@@ -180,6 +185,17 @@ class UpdateOrderRequest(BaseModel):
     reason: Optional[str] = None
 
 
+class DevSeedRequest(BaseModel):
+    scenario: DevSeedScenario
+
+
+class DevSeedResponse(BaseModel):
+    action: str
+    created_ids: list[str] = Field(default_factory=list)
+    deleted_ids: list[str] = Field(default_factory=list)
+    detail: dict[str, Any] = Field(default_factory=dict)
+
+
 def _mask_order(order: Order) -> dict[str, Any]:
     masked = order.to_dict(decrypt_sensitive="mask")
     masked.pop("customer_phone_hash", None)
@@ -237,6 +253,78 @@ def _normalize_updates(updates: Optional[dict[str, Any]]) -> dict[str, Any]:
 
 def _business_error_for_lookup(order_id: str) -> BusinessError:
     return BusinessError(BIZ_ORDER_NOT_FOUND, detail={"order_id": order_id})
+
+
+def _ensure_non_prod_seed_env(settings: Settings) -> None:
+    if settings.env == "prod":
+        raise BusinessError(
+            DATA_VALIDATION_FAILED,
+            detail={"reason": "生产环境禁用隐藏测试造数入口"},
+        )
+
+
+def _list_demo_seed_order_ids(dao: OrdersDAO) -> list[str]:
+    rows = dao.conn.execute(
+        "SELECT id, tags FROM orders ORDER BY created_at DESC LIMIT 500"
+    ).fetchall()
+    ids: list[str] = []
+    for row in rows:
+        raw_tags = row["tags"] if hasattr(row, "keys") else row[1]
+        try:
+            tags = json.loads(raw_tags) if raw_tags else []
+        except (TypeError, json.JSONDecodeError):
+            tags = []
+        if _DEMO_SEED_TAG in tags:
+            ids.append(row["id"] if hasattr(row, "keys") else row[0])
+    return ids
+
+
+def _create_overdue_pending_seed(
+    settings: Settings, current_user: AdminUser
+) -> tuple[list[str], dict[str, Any]]:
+    from datetime import datetime, timedelta, timezone
+
+    now = datetime.now(timezone.utc).replace(microsecond=0)
+    created_at = (now - timedelta(days=2)).isoformat()
+    order = Order(
+        id=generate_order_id(),
+        source="web",
+        external_id=f"demo-seed-{generate_order_id()}",
+        service_version="standard",
+        amount_cents=9900,
+        status="pending",
+        status_updated_at=created_at,
+        customer_name="演示造数-超时待办",
+        candidate_name="演示考生",
+        candidate_province="湖南",
+        notes="隐藏入口补造：超时待办演示单",
+        tags=[_DEMO_SEED_TAG, _DEMO_SEED_SOURCE, "overdue_pending_once"],
+        created_at=created_at,
+    )
+    with OrdersDAO.connect(settings.orders_db_path) as dao:
+        created = dao.create(order, actor=current_user.username, reason="admin_hidden_seed")
+    intake_store = IntakeStore.for_db(settings.orders_db_path)
+    try:
+        intake_store.save(
+            order_id=created.id,
+            payload={
+                "mode": "draft",
+                "existing_plan_summary": "隐藏入口补造的超时待办演示单",
+            },
+            submit=False,
+        )
+    finally:
+        intake_store.close()
+    return [created.id], {"scenario": "overdue_pending_once", "created_at": created_at}
+
+
+def _cleanup_demo_seed_orders(settings: Settings) -> tuple[list[str], dict[str, Any]]:
+    deleted_ids: list[str] = []
+    with OrdersDAO.connect(settings.orders_db_path) as dao:
+        for order_id in _list_demo_seed_order_ids(dao):
+            if dao.delete(order_id):
+                deleted_ids.append(order_id)
+    return deleted_ids, {"scenario": "cleanup_demo_seed", "deleted_count": len(deleted_ids)}
 
 
 def _transition_error(order_id: str, to_status: str, exc: Exception) -> BusinessError:
@@ -392,6 +480,39 @@ def create_order(
         except Exception as exc:  # pragma: no cover - 持久层兜底
             raise BusinessError(DATA_PERSIST_FAILED) from exc
         return {"action": "created", **_detail_payload(dao, created)}
+
+
+@router.post(
+    "/dev-seed",
+    response_model=DevSeedResponse,
+    include_in_schema=False,
+)
+@admin_router.post(
+    "/dev-seed",
+    response_model=DevSeedResponse,
+    include_in_schema=False,
+)
+def create_dev_seed_order(
+    payload: DevSeedRequest,
+    settings: Settings = Depends(get_settings_dep),
+    current_user: AdminUser = Depends(get_current_user),
+) -> dict[str, Any]:
+    _ensure_non_prod_seed_env(settings)
+    if payload.scenario == "overdue_pending_once":
+        created_ids, detail = _create_overdue_pending_seed(settings, current_user)
+        return {
+            "action": "created",
+            "created_ids": created_ids,
+            "deleted_ids": [],
+            "detail": detail,
+        }
+    deleted_ids, detail = _cleanup_demo_seed_orders(settings)
+    return {
+        "action": "cleaned",
+        "created_ids": [],
+        "deleted_ids": deleted_ids,
+        "detail": detail,
+    }
 
 
 @router.patch(

@@ -108,6 +108,47 @@ def test_order_detail_requires_auth(client):
     assert resp.status_code == 401
 
 
+def test_dev_seed_requires_auth(client):
+    resp = client.post("/api/admin/orders/dev-seed", json={"scenario": "overdue_pending_once"})
+    assert resp.status_code == 401
+
+
+def test_dev_seed_create_and_cleanup(client, auth_headers):
+    create = client.post(
+        "/api/admin/orders/dev-seed",
+        headers=auth_headers,
+        json={"scenario": "overdue_pending_once"},
+    )
+    assert create.status_code == 200, create.text
+    created = create.json()
+    assert created["action"] == "created"
+    assert len(created["created_ids"]) == 1
+
+    dashboard = client.get("/api/stats/dashboard", headers=auth_headers)
+    assert dashboard.status_code == 200, dashboard.text
+    summary = dashboard.json()["summary"]
+    assert summary["pending_orders"] == 1
+    assert summary["pending_overdue_24h"] == 1
+    assert summary["pending_missing_intake"] == 1
+
+    cleanup = client.post(
+        "/api/admin/orders/dev-seed",
+        headers=auth_headers,
+        json={"scenario": "cleanup_demo_seed"},
+    )
+    assert cleanup.status_code == 200, cleanup.text
+    cleaned = cleanup.json()
+    assert cleaned["action"] == "cleaned"
+    assert cleaned["detail"]["deleted_count"] == 1
+
+    dashboard_after = client.get("/api/stats/dashboard", headers=auth_headers)
+    assert dashboard_after.status_code == 200, dashboard_after.text
+    summary_after = dashboard_after.json()["summary"]
+    assert summary_after["pending_orders"] == 0
+    assert summary_after["pending_overdue_24h"] == 0
+    assert summary_after["pending_missing_intake"] == 0
+
+
 # ---------------- stats ----------------
 
 

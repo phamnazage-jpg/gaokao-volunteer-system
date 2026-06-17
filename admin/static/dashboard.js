@@ -5,6 +5,8 @@ const state = {
   payload: null,
   range: "7d",
   loading: false,
+  titleTapCount: 0,
+  titleTapTimer: null,
 };
 
 function resolveApiBase() {
@@ -273,6 +275,34 @@ async function fetchDashboard(token) {
   return resp.json();
 }
 
+function setDevSeedPanelVisible(visible) {
+  const panel = document.getElementById("dev-seed-panel");
+  if (!panel) return;
+  panel.classList.toggle("hidden", !visible);
+}
+
+async function postDevSeed(scenario) {
+  const token = getToken() || window.sessionStorage.getItem(TOKEN_KEY) || "";
+  if (!token) {
+    throw new Error("请先登录后台，再使用隐藏测试造数工具。");
+  }
+  const resp = await fetch(`${resolveApiBase()}/api/admin/orders/dev-seed`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ scenario }),
+  });
+  const body = await resp.json();
+  if (!resp.ok) {
+    throw new Error(
+      body?.message || body?.detail?.reason || `造数失败：HTTP ${resp.status}`,
+    );
+  }
+  return body;
+}
+
 function renderDashboard(payload) {
   state.payload = payload;
   clearCardEmptyStates();
@@ -353,6 +383,11 @@ function bootstrap() {
     setToken(cachedToken);
   }
 
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("seed-tools") === "1") {
+    setDevSeedPanelVisible(true);
+  }
+
   window.addEventListener("resize", () => {
     Object.values(state.charts).forEach((chart) => chart && chart.resize());
   });
@@ -369,6 +404,61 @@ function bootstrap() {
   document.getElementById("quick-logout-btn").addEventListener("click", logout);
   bindRangeButton("range-7d", "7d");
   bindRangeButton("range-30d", "30d");
+
+  const title = document.getElementById("dashboard-title");
+  title?.addEventListener("click", () => {
+    state.titleTapCount += 1;
+    if (state.titleTapTimer) {
+      window.clearTimeout(state.titleTapTimer);
+    }
+    state.titleTapTimer = window.setTimeout(() => {
+      state.titleTapCount = 0;
+    }, 1200);
+    if (state.titleTapCount >= 5) {
+      state.titleTapCount = 0;
+      setDevSeedPanelVisible(true);
+      setMessage("隐藏测试造数工具已展开。", "success");
+    }
+  });
+
+  document
+    .getElementById("dev-seed-close-btn")
+    ?.addEventListener("click", () => {
+      setDevSeedPanelVisible(false);
+    });
+  document
+    .getElementById("dev-seed-overdue-btn")
+    ?.addEventListener("click", async () => {
+      try {
+        setMessage("正在补造 1 笔超时待办…", "loading");
+        const body = await postDevSeed("overdue_pending_once");
+        setMessage(
+          `已补造超时待办：${(body.created_ids || []).join(", ") || "1 笔"}`,
+          "success",
+        );
+        await loadDashboard({ loginFirst: false });
+      } catch (error) {
+        setError(error.message || String(error));
+        setMessage("隐藏测试造数失败。", "error");
+      }
+    });
+  document
+    .getElementById("dev-seed-clean-btn")
+    ?.addEventListener("click", async () => {
+      try {
+        setMessage("正在清理演示造数…", "loading");
+        const body = await postDevSeed("cleanup_demo_seed");
+        setMessage(
+          `已清理演示造数：${body.detail?.deleted_count ?? (body.deleted_ids || []).length} 笔`,
+          "success",
+        );
+        await loadDashboard({ loginFirst: false });
+      } catch (error) {
+        setError(error.message || String(error));
+        setMessage("清理演示造数失败。", "error");
+      }
+    });
+
   updateRangeButtons();
   setStatus("loading", "尚未连接", "登录后查看核心经营指标");
 }

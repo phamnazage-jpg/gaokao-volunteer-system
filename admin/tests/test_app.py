@@ -92,6 +92,10 @@ def test_dashboard_page_served(client):
     assert 'id="status-title"' in body
     assert 'id="quick-refresh-btn"' in body
     assert 'id="quick-logout-btn"' in body
+    assert 'id="dev-seed-panel"' in body
+    assert 'id="dev-seed-overdue-btn"' in body
+    assert 'id="dev-seed-clean-btn"' in body
+    assert 'id="dashboard-title"' in body
     assert 'id="login-form"' in body
     assert 'id="quick-links"' in body
     assert 'class="card empty"' in body
@@ -137,6 +141,9 @@ def test_dashboard_static_js_served(client):
     assert "pending-missing-intake" in body
     assert "setChartEmpty" in body
     assert "pending-breakdown" in body
+    assert "postDevSeed" in body
+    assert "dev-seed-panel" in body
+    assert "/api/admin/orders/dev-seed" in body
 
 def test_bootstrap_admin_only_once(client, settings):
     """lifespan 已 bootstrap 后,再次调用应报告已存在,不再创建。"""
