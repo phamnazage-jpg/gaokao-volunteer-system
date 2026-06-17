@@ -850,11 +850,11 @@ def _render_landing_page(request: Request) -> str:
           <h1>高考志愿填报智能规划服务</h1>
           <p class=\"sub\">先审计现有志愿方案，再判断是否踩线、扎堆或梯度失衡，再决定要不要进入完整规划。先完成线上下单，再进入资料向导补充详细信息，后续可在站内查看报告与交付进度。</p>
           <div class="hero-actions">
-            <a class="btn btn-secondary" href="#consult-box">立即咨询</a>
-            <a class="btn btn-primary" href="/pricing">先做快速审核</a>
+            <a class="btn btn-primary" href="#consult-box">立即咨询</a>
+            <a class="btn btn-primary" href="/pricing">查看套餐</a>
             <a class="btn btn-text" href="#service-flow">了解服务流程 →</a>
           </div>
-          <p class="hero-note">适合已经拿到一版志愿方案、想先判断有没有明显风险的人。</p>
+          <p class="hero-note">先告诉我们你的基本情况，再决定是否进入完整方案。咨询本身免费，不必先付款。</p>
           <div class="consult-card" id="consult-box">
             <h2>先告诉我们你的基本情况</h2>
             <p class="hero-note" style="margin-top:0;">输入省份、分数和当前目标，我们先帮你判断更适合审核、完整规划，还是深度辅导。</p>
@@ -1680,8 +1680,9 @@ def _render_info_page(
       .check-list input {{ width:auto; margin-top:2px; }}
       .actions {{ display:flex; gap:10px; flex-wrap:wrap; margin-top:18px; }}
       button {{ border:none; border-radius:14px; background:var(--primary); color:#fff; font-weight:700; padding:13px 18px; cursor:pointer; min-height:46px; }}
-      .wizard-actions {{ position: sticky; bottom: 0; z-index: 5; padding: 14px 0 0; margin-top: 20px; background: linear-gradient(180deg, rgba(243,247,251,0), var(--bg) 32%); }}
-      .wizard-actions .actions {{ background:#fff; border:1px solid var(--border); border-radius:18px; box-shadow:var(--shadow); padding:12px; }}
+      .wizard-actions {{ position: sticky; bottom: 0; z-index: 5; margin-top: 20px; padding: 12px 0 calc(12px + env(safe-area-inset-bottom, 0px)); background: var(--bg); }}
+      .wizard-actions::before {{ content: ""; position: absolute; left: 0; right: 0; top: -16px; height: 16px; background: linear-gradient(180deg, rgba(243,247,251,0), var(--bg)); pointer-events: none; }}
+      .wizard-actions .actions {{ background:#fff; border:1px solid var(--border); border-radius:18px; box-shadow:var(--shadow); padding:12px; margin-top:0; }}
       .wizard-actions button {{ flex:1 1 180px; }}
       button:hover {{ background:#194fb6; }}
       button[disabled] {{ opacity:.55; cursor:not-allowed; }}
@@ -1690,16 +1691,20 @@ def _render_info_page(
       .summary-box {{ background:#f8fafc; border:1px solid var(--border); border-radius:16px; padding:14px 16px; white-space:pre-wrap; font-size:13px; line-height:1.7; color:var(--muted); }}
       .progress-box {{ margin-top:14px; padding:14px 16px; border-radius:16px; background:#fff7e6; border:1px solid #f4d39b; color:#8a5a00; line-height:1.7; }}
       .footer-link {{ margin-top:18px; }}
+      .main-panel {{ position: relative; }}
+      /* 移动端关键操作按钮固定在视口底部, 滚动时持续可达 */
       @media (max-width: 980px) {{
         .hero, .field-grid, .wizard-steps {{ grid-template-columns:1fr; }}
-        .wizard-actions .actions {{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }}
+        .wizard-actions {{ position: fixed; left: 0; right: 0; bottom: 0; padding: 12px 14px calc(12px + env(safe-area-inset-bottom, 0px)); margin-top: 0; background: rgba(243,247,251,.92); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); box-shadow: 0 -8px 24px rgba(20,34,53,.08); }}
+        .wizard-actions .actions {{ display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:10px; }}
         .wizard-actions button {{ width:100%; min-height:52px; }}
         #submit-step {{ grid-column: 1 / -1; }}
+        /* 主面板底部留出空间, 防止按钮遮挡最后内容 */
+        .main-panel {{ padding-bottom: 168px; }}
       }}
       @media (max-width: 640px) {{
         .wrap {{ padding:20px 14px 88px; }}
         .panel {{ padding:18px; border-radius:20px; }}
-        .wizard-actions {{ left: 0; right: 0; }}
         .wizard-actions .actions {{ grid-template-columns:1fr; }}
       }}
     </style>
@@ -1778,17 +1783,16 @@ def _render_info_page(
               <div class=\"compliance-note\">当前资料状态会随提交结果同步更新；未勾选必要同意项时，系统不会进入正式处理阶段。</div>
               <div id=\"confirm-summary\" class=\"summary-box\"></div>
             </section>
-
-            <div class=\"wizard-actions\">
-              <div class=\"actions\">
-                <button type=\"button\" id=\"prev-step\" onclick=\"moveStep(-1)\" disabled>上一步</button>
-                <button type=\"button\" id=\"next-step\" onclick=\"moveStep(1)\">下一步</button>
-                <button type=\"button\" class=\"ghost\" onclick=\"submitIntake('draft')\">保存草稿</button>
-                <button type=\"button\" id=\"submit-step\" style=\"display:none;\" onclick=\"submitIntake('submit')\">确认并提交资料</button>
-              </div>
-            </div>
           </form>
-          <div class=\"footer-link\"><a href=\"/portal/{escape(token)}/status\">返回订单状态页</a></div>
+          <div class="wizard-actions">
+            <div class="actions">
+              <button type="button" id="prev-step" onclick="moveStep(-1)" disabled>上一步</button>
+              <button type="button" id="next-step" onclick="moveStep(1)">下一步</button>
+              <button type="button" class="ghost" onclick="submitIntake('draft')">保存草稿</button>
+              <button type="button" id="submit-step" style="display:none;" onclick="submitIntake('submit')">确认并提交资料</button>
+            </div>
+          </div>
+          <div class="footer-link"><a href="/portal/{escape(token)}/status">返回订单状态页</a></div>
           {_render_footer_links(token)}
           <div id=\"result\"></div>
         </section>

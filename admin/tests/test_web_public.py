@@ -17,8 +17,15 @@ def test_public_landing_page_served(client):
     assert "湖南新高考志愿填报" not in body
     assert "为什么选择我们" in body
     assert 'href="/pricing"' in body
-    assert "先做快速审核" in body
+    # Plan B: hero CTAs 改成 "立即咨询 / 查看套餐" 两个主 CTA
+    assert "先做快速审核" not in body
     assert "立即咨询" in body
+    assert "查看套餐" in body
+    # 两个主 CTA 都是 btn-primary
+    assert 'btn-primary" href="#consult-box"' in body
+    assert 'btn-primary" href="/pricing"' in body
+    # 旧的"适合已经拿到一版方案"那行已替换为咨询引导文案
+    assert "咨询本身免费" in body
     assert "获取推荐路径" in body
     assert "先告诉我们你的基本情况" in body
     assert "了解服务流程" in body
@@ -411,4 +418,43 @@ def test_public_pricing_page_shows_consult_recommendation(client):
     assert resp.status_code == 200, resp.text
     assert "更适合先做 49 元方案审核" in resp.text
     assert "湖南 578 先审核" in resp.text
+
+
+def test_info_page_wizard_actions_outside_form_for_sticky_bottom(client, settings):
+    """资料页移动端关键操作按钮必须放在 form 之外, 才能让
+    `position: sticky; bottom: 0` 跨越整个表单区域在视口持续可见。"""
+    from data.orders.dao import OrdersDAO
+    from data.orders.public_flow import PublicOrderCreate, create_public_order
+    from data.customer_portal.token import issue_portal_token
+
+    with OrdersDAO.connect(settings.orders_db_path) as dao:
+        order = create_public_order(
+            dao,
+            PublicOrderCreate(
+                service_version="standard",
+                amount_cents=9900,
+                customer_name="Sticky 用户",
+                customer_phone="13800138000",
+                candidate_name="Sticky-User",
+                candidate_province="湖南",
+            ),
+        )
+    token = issue_portal_token(order.id, settings.portal_token_secret)
+    resp = client.get(f"/portal/{token}/info")
+    assert resp.status_code == 200, resp.text
+    body = resp.text
+    # 关键断言: wizard-actions 必须出现在 </form> 之后
+    form_end = body.find("</form>")
+    wizard_start = body.find('<div class="wizard-actions">')
+    assert form_end > 0, "should have </form> closing tag"
+    assert wizard_start > 0, "should have wizard-actions div"
+    assert wizard_start > form_end, (
+        "wizard-actions must be a sibling of <form>, not nested inside it "
+        "(so position: sticky works across all step-panels)"
+    )
+    # 同时确认主操作按钮文案都还在
+    for label in ["保存草稿", "下一步", "上一步", "确认并提交资料"]:
+        assert label in body, f"missing wizard button label: {label}"
+    # 移动端 safe-area 适配
+    assert "safe-area-inset-bottom" in body, "should reserve safe-area for notched devices"
 
