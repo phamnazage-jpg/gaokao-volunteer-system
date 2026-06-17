@@ -1,5 +1,9 @@
 # Phase2 专业目录真相源 Implementation Plan
 
+> **状态**：**已收口（历史快照）**。三个 Batch 全部完成，三仓同步至 `edc5b11`。
+> 实际执行进度见 `docs/ACTIVE_EXECUTION_BOARD_2026-06-17.md` §1.2-§1.4 与 `docs/CURRENT_STATE.md` §0。
+> 本文件保留作为 2026-06-17 制定计划时的原始目标范围，不再作为当前待办清单。
+
 > **For Hermes:** Use subagent-driven-development skill to implement this plan task-by-task when tasks become independent enough; for the first batch, controller can implement directly because the repo currently has zero `data/majors*` code and the architecture needs one coherent landing.
 
 **Goal:** 为 gaokao-volunteer-system 落地“2026 官方专业目录”最小可用真相源，使系统首次具备国家级专业目录的结构化读取、查询、校验与 CLI 能力，并为后续 school offering / audit integration 铺路。

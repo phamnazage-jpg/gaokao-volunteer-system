@@ -1,24 +1,41 @@
 # CURRENT_STATE
 
 最后更新: 2026-06-17
-状态词: 本地验证完成（Phase2 major_validation 已接入 + 目录/审核闭环已收口）
+状态词: 本地验证完成（执行 Phase 1 规则真相源化 + Phase 1.5 verify 收口 + Phase 2 专业目录三 Batch 全部收口 + 下一阶段 = 执行 Phase 3 统一 CLI 命令面，未启动）
+
 真相源优先级:
 
 1. 本文件
-2. `docs/plans/2026-06-17-phase2-majors-catalog-implementation-plan.md`（当前 Phase2 专业目录执行计划）
-3. `docs/DESIGN_RULES_TRUSTED_CLI_2026-06-16.md`（专业目录/CLI 总设计，当前被 Phase2 计划补充）
-4. `docs/PROJECT_PLANNING_REALIGNMENT_2026-06-16.md`（规划/实现漂移审计）
-5. `docs/RULES_SOURCE_OF_TRUTH.md`（规则真相源索引）
-6. `docs/MAJOR_DATA_SOURCE_OF_TRUTH.md`（专业目录真相源索引）
-7. `docs/CLI_API_MAPPING.md`（CLI/API 映射索引）
+2. `docs/ACTIVE_EXECUTION_BOARD_2026-06-17.md`（6/17 当前执行板，docs-only 收口任务之一）
+3. `docs/plans/2026-06-17-phase2-majors-catalog-implementation-plan.md`（Phase 2 已收口快照）
+4. `docs/DESIGN_RULES_TRUSTED_CLI_2026-06-16.md`（设计快照；Phase 编号需与执行口径消歧）
+5. `docs/PROJECT_PLANNING_REALIGNMENT_2026-06-16.md`（历史规划/实现漂移审计）
+6. `docs/RULES_SOURCE_OF_TRUTH.md`（规则真相源索引；待补建）
+7. `docs/MAJOR_DATA_SOURCE_OF_TRUTH.md`（专业目录真相源索引）
+8. `docs/CLI_API_MAPPING.md`（CLI/API 映射索引）
+9. `docs/P0_P1_P2_REMEDIATION_PLAN_2026-06-14.md`（历史整改板；§4 卡片以 §2.1 状态归一为准）
+10. `docs/FRONTEND_UI_AUDIT_2026-06-16.md` / `docs/FRONTEND_UI_EXECUTION_BOARD_2026-06-16.md`
+11. `docs/ACTIVE_REMEDIATION_2026-06-13.md`
+12. `product/PRD.md` / `product/ROADMAP.md` / `docs/IMPLEMENTATION_PLAN_v2.md`
+13. `docs/PRODUCTION_DEPLOYMENT_CHECKLIST_2026-06-15.md`
+14. `reports/PRODUCT_PLANNING_TECH_ALIGNMENT_REVIEW_2026-06-13.md`（历史评审快照）
 
-8. docs/P0_P1_P2_REMEDIATION_PLAN_2026-06-14.md（当前整改板；2026-06-15 已做状态归一）
-9. docs/FRONTEND_UI_AUDIT_2026-06-16.md
-10. docs/FRONTEND_UI_EXECUTION_BOARD_2026-06-16.md
-11. docs/ACTIVE_REMEDIATION_2026-06-13.md
-12. product/PRD.md / product/ROADMAP.md / docs/IMPLEMENTATION_PLAN_v2.md
-13. docs/PRODUCTION_DEPLOYMENT_CHECKLIST_2026-06-15.md
-14. reports/PRODUCT_PLANNING_TECH_ALIGNMENT_REVIEW_2026-06-13.md（历史评审快照）
+---
+
+## 0. 单一执行口径（2026-06-17）
+
+为消除设计 Phase 编号与执行 Phase 编号漂移，本节是当前唯一口径：
+
+| 设计层 Phase（DESIGN_RULES_TRUSTED_CLI_2026-06-16.md） | 执行层 Phase（当前真相）                   | 状态                                           |
+| ------------------------------------------------------ | ------------------------------------------ | ---------------------------------------------- |
+| Phase 1 规则真相源化                                   | 执行 Phase 1                               | ✅ 已收口（`ae4835e` + `8a61b8f`，三仓同步）   |
+| Phase 2 统一审计引擎最小可用                           | 执行 Phase 1.5（verify + 旧 checker 迁移） | ✅ 已收口（同上）                              |
+| Phase 3 专业目录接入 MVP                               | 执行 Phase 2                               | ✅ 已收口（`36ad58a` + `6b1157f` + `edc5b11`） |
+| Phase 4 统一 CLI 命令面                                | 执行 Phase 3                               | ❌ 未启动 → 下一阶段                           |
+| Phase 5 智能体调度 + admin 整合                        | 执行 Phase 4                               | ❌ 未启动 → 等 Phase 3 收口                    |
+| Phase 6 文档/真相源索引收口                            | 长期维护                                   | ⚠ 进行中（docs-only 收口本轮同步）             |
+
+> 设计层 Phase ≠ 执行层 Phase。状态查询一律以本表 + 6/17 执行板为准。
 
 ---
 

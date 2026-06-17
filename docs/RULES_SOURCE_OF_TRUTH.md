@@ -1,122 +1,129 @@
 # RULES_SOURCE_OF_TRUTH
 
-最后更新: 2026-06-16
+最后更新: 2026-06-17
 真相源: 本文件是"规则"维度的入口索引。
-审计上下文: `docs/PROJECT_PLANNING_REALIGNMENT_2026-06-16.md`
 设计上下文: `docs/DESIGN_RULES_TRUSTED_CLI_2026-06-16.md` §2
+执行上下文: `docs/ACTIVE_EXECUTION_BOARD_2026-06-17.md` §1.1
 
 ---
 
 ## 1. 范围
 
-本文件收敛以下三类信息:
+本文件收敛以下四类信息:
 
-- 各省高考 2026 规则
-- 全国通用规则
-- 错误模式库
-
----
-
-## 2. 当前真相源路径(Phase 1 之后)
-
-| 类别         | 路径                                | 格式      | 写入方式                           |
-| ------------ | ----------------------------------- | --------- | ---------------------------------- |
-| 全国通用规则 | `rules/_truth/national.yaml`        | YAML      | 人工 PR + 自动校验                 |
-| 省级规则     | `rules/_truth/province/<prov>.yaml` | YAML      | 人工 PR + 自动校验                 |
-| 规则证据原文 | `rules/_evidence/<prov>/<file>`     | 抓取/摘录 | 人工收录                           |
-| 错误模式库   | `rules/errors/ERRORS.md`            | Markdown  | 人工维护(短期保留)                 |
-| 跨省索引     | `rules/provinces.md`                | Markdown  | 由 `data/rules/loader.py` 自动生成 |
+- 国家级规则
+- 省级规则
+- 规则证据链
+- 统一审计入口
 
 ---
 
-## 3. 数据模型最小契约
+## 2. 当前真相源路径
+
+| 类别       | 路径                                       | 格式     | 写入方式                        |
+| ---------- | ------------------------------------------ | -------- | ------------------------------- |
+| 国家级规则 | `rules/_truth/national.yaml`               | YAML     | 人工摘录 + 官方文件校对         |
+| 省级规则   | `rules/_truth/province/<slug>.yaml`        | YAML     | 人工摘录 + 招生考试院校对       |
+| 规则证据层 | `rules/_evidence/<prov>/<year>-<topic>.md` | Markdown | 待补建（设计层 Phase 1.5 要求） |
+| 旧规则字典 | `scripts/gaokao-checker` `PROVINCE_RULES`  | Python   | 过渡期镜像，已迁移到 \_truth    |
+| 错误码字典 | `rules/errors/ERRORS.md`                   | Markdown | 人工维护                        |
+
+### 2.1 当前已落地范围（2026-06-17）
+
+- 已落地 `rules/_truth/national.yaml`（国家级）
+- 已落地 `rules/_truth/province/<slug>.yaml`（27 省，2026 版）
+- 已落地 `data/rules/loader.py` `RuleLoader.from_truth_root`
+- 已落地 `data/rules/audit_engine.py` `AuditEngine`
+- 已落地 `data/rules/cli.py` `rules {status,verify}`
+- 已落地 `scripts/migrate_province_rules_to_truth.py`（从 `PROVINCE_RULES` 一次性迁移）
+- 已落地 `tests/test_rules_truth_phase1.py` + `tests/test_rules_cli_phase1.py`（部分）
+
+### 2.2 尚未落地
+
+- `rules/_evidence/<prov>/<year>-<topic>.md`（证据层）— 设计层 Phase 1.5 要求；当前**未建**
+- 逐省证据链审计报告 — 本轮 docs-only 收口后，下一阶段再启动
+- 规则"最近验证时间 > 90 天"自动告警（设计层 §2.5）
+
+---
+
+## 3. 数据模型
+
+### 3.1 Rule（`data/rules/models.py`）
 
 ```python
 Rule:
-  rule_id: str                  # e.g. HUNAN.max_volunteers
+  rule_id: str             # e.g. "HUNAN.max_volunteers"
   scope: "national" | "province"
-  province: str | None
-  year: int
+  province: str | None     # 当 scope=province 时
+  year: int                # 2026
   title: str
   description: str
   severity: "fatal" | "critical" | "warning" | "info"
-  value: dict                   # 机读字段,如 {"max_volunteers": 45}
-  source_evidence_id: str       # 指向 rules/_evidence/<id>.md
+  value: dict              # 规则可机读形式
+  source_evidence_id: str  # 证据链引用
   effective_date: date
   last_verified_at: datetime
-  version: str
+  version: str             # "2026.1"
   status: "active" | "draft" | "deprecated"
 ```
 
----
+### 3.2 AuditIssue（`data/rules/models.py`）
 
-## 4. 当前覆盖矩阵(写入本文件时为准)
-
-| 省份   | 模式       | 文档宣称        | checker 实际   | 备注                           |
-| ------ | ---------- | --------------- | -------------- | ------------------------------ |
-| 湖南   | 院校专业组 | ✅              | ✅             | 详细规则见 province/hunan.yaml |
-| 广东   | 院校专业组 | ✅              | ✅             |                                |
-| 湖北   | 院校专业组 | ✅              | ✅             |                                |
-| 安徽   | 院校专业组 | ✅              | ✅             |                                |
-| 江西   | 院校专业组 | ✅              | ✅             |                                |
-| 甘肃   | 院校专业组 | ✅              | ✅             |                                |
-| 黑龙江 | 院校专业组 | ✅              | ✅             |                                |
-| 江苏   | 院校专业组 | ✅              | ✅             |                                |
-| 福建   | 院校专业组 | ✅              | ✅             |                                |
-| 广西   | 院校专业组 | ✅              | ✅             |                                |
-| 北京   | 院校专业组 | ✅              | ✅             |                                |
-| 上海   | 院校专业组 | ✅              | ✅             |                                |
-| 天津   | 院校专业组 | ✅              | ✅             |                                |
-| 海南   | 院校专业组 | ✅              | ✅             |                                |
-| 浙江   | 专业+学校  | ✅              | ✅             |                                |
-| 山东   | 专业+学校  | ✅              | ✅             |                                |
-| 河北   | 专业+学校  | ✅              | ✅             |                                |
-| 重庆   | 专业+学校  | ✅              | ✅             |                                |
-| 辽宁   | 专业+学校  | ✅              | ✅             |                                |
-| 贵州   | 专业+学校  | ✅              | ✅             |                                |
-| 青海   | 专业+学校  | ✅              | ✅             |                                |
-| 吉林   | 专业+学校  | ✅              | ✅             |                                |
-| 新疆   | 传统       | ✅              | ✅             |                                |
-| 西藏   | 传统       | ✅              | ✅             |                                |
-| 河南   | 传统       | ✅              | ✅             |                                |
-| 四川   | 传统       | ✅              | ✅             |                                |
-| 云南   | 传统       | ✅              | ✅             |                                |
-| 山西   | —          | ❌(SKILL.md 漏) | ❌(checker 无) | SKILL.md frontmatter 漂移待修  |
-| 陕西   | —          | ❌(SKILL.md 含) | ❌(checker 无) | SKILL.md / checker 漂移待修    |
-
----
-
-## 5. 文档漂移清单(已识别)
-
-- D1: `rules/provinces.md` 与 `scripts/gaokao-checker` 口径一致为 27 省
-- D2: `skills/gaokao-spec-checker/SKILL.md` frontmatter 与实际 checker 省份集仍有漂移
-- D3: 传统模式数 provinces.md 写 5,SKILL.md 写 6
-- D4: 文档与代码都没有 source_evidence_id 链
-
----
-
-## 6. Phase 1 必须收口
-
-- 27 省全部有 `province/<prov>.yaml`
-- 至少 1 条全国通用规则有 `national.yaml`
-- 1-2 个规则有真实 `source_evidence_id` 链路(湖南优先)
-- `gaokao-cli rules status` 可用
-
----
-
-## 7. 验证脚本
-
-```bash
-# 规则台账
-gaokao-cli rules status
-
-# 单条规则解释
-gaokao-cli rules explain --province 湖南 --rule-id HUNAN.max_volunteers
-
-# 一致性自检
-python3 -m data.rules.cli verify
+```python
+AuditIssue:
+  rule_id: str
+  severity: RuleSeverity
+  title: str
+  message: str
+  evidence_quote: str | None
+  suggestion: str | None
 ```
 
 ---
 
-**下一阶段**: Phase 1 实施,见 `docs/DESIGN_RULES_TRUSTED_CLI_2026-06-16.md` §11
+## 4. 接入策略
+
+### 4.1 国家级
+
+- **首选源**: 教育部 / 教育考试院公开规则文件
+- **覆盖范围**: 平行志愿、一次投档、退档机制、体检要求等
+- **接入节奏**: 年度全量 + 差异更新
+
+### 4.2 省级
+
+- **首选源**: 各省招生考试院/教育考试院 2026 招生工作通知
+- **覆盖范围**: 27 省（与 `PROVINCE_RULES` 对齐）
+- **接入节奏**: 月度差异更新
+
+### 4.3 证据层
+
+- **首选源**: 上述官方文件原文
+- **存储格式**: Markdown 摘录 + 官方文件 URL
+- **校验**: 每条规则必须能引用至少一个证据条目
+
+---
+
+## 5. 统一审计入口
+
+- `gaokao-cli rules status --json` — 27 省 + national 状态摘要
+- `gaokao-cli rules verify --json` — `national.yaml` + `province/` 完整性
+- `gaokao-cli audit run --province <p> --plan <json> --truth-root <path> --catalog-root <path> --json` — 完整审计
+
+---
+
+## 6. 下一阶段（执行 Phase 1 收口后的 Batch 候选清单）
+
+> 已在 Phase 1 / 1.5 中**完成**的事项不再列入"必须收口"清单。
+
+- `rules/_evidence/<prov>/<year>-<topic>.md` 证据层补建 — **Batch 4 候选**
+- 逐省证据链审计报告 — **Batch 4 候选**
+- `gaokao-cli rules explain <rule_id>` 命令 — **Batch 4 候选**
+- "最近验证时间 > 90 天"自动告警 — **Batch 4 候选**
+
+---
+
+## 7. 风险
+
+- 证据层未建导致规则可信度依赖 yaml 自描述
+- 旧 `PROVINCE_RULES` 字典与新 `_truth` 字典需要保持同步过渡
+- 月度刷新流程目前依赖人工 cron，未与 `gaokao-cli rules status` 联动

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from pathlib import Path
 
 from data.majors_catalog.cli import (
@@ -87,6 +88,15 @@ def _build_parser() -> argparse.ArgumentParser:
     audit_run.add_argument("--catalog-root", default=str(DEFAULT_CATALOG_ROOT))
     audit_run.add_argument("--json", action="store_true")
 
+    subparsers.add_parser("order", help="delegate to data.orders.cli (orders commands)")
+
+    doctor_parser = subparsers.add_parser(
+        "doctor", help="self-check rules/majors/audit/catalog wiring"
+    )
+    doctor_parser.add_argument("--truth-root", default=str(DEFAULT_RULES_TRUTH_ROOT))
+    doctor_parser.add_argument("--catalog-root", default=str(DEFAULT_CATALOG_ROOT))
+    doctor_parser.add_argument("--json", action="store_true")
+
     return parser
 
 
@@ -99,8 +109,19 @@ def _emit(payload: dict[str, object], json_output: bool) -> int:
 
 
 def main(argv: list[str] | None = None) -> int:
+    # `order` is a pure delegation marker. Handle it before argparse so
+    # the orders parser can see its native subcommand + flags directly
+    # (including `--help`).
+    tokens = list(sys.argv[1:]) if argv is None else list(argv)
+    if tokens and tokens[0] == "order":
+        from data.orders.cli import main as orders_main
+
+        # data.orders.cli.main expects subcommands without the `order`
+        # prefix (its parser exposes `create` / `list` / `show` / ...).
+        return orders_main(tokens[1:])
+
     parser = _build_parser()
-    args = parser.parse_args(argv)
+    args = parser.parse_args(tokens)
 
     if args.command == "rules" and args.rules_command == "status":
         loader = RuleLoader.from_truth_root(Path(args.truth_root))
@@ -165,6 +186,48 @@ def main(argv: list[str] | None = None) -> int:
         payload = AuditEngine(truth_loader, majors_loader=majors_loader).audit_plan(
             args.province, plan
         )
+        return _emit(payload, args.json)
+
+    if args.command == "doctor":
+        truth_root = Path(args.truth_root)
+        catalog_root = Path(args.catalog_root)
+        rules_section: dict[str, object]
+        rules_ok: bool
+        try:
+            rule_status = RuleLoader.from_truth_root(truth_root).build_status()
+            rules_section = {
+                "province_count": rule_status.province_count,
+                "national_rule_count": rule_status.national_rule_count,
+            }
+            rules_ok = rule_status.province_count > 0
+        except (FileNotFoundError, KeyError, ValueError) as exc:
+            rules_section = {"error": f"{type(exc).__name__}: {exc}"}
+            rules_ok = False
+
+        def _safe_build(builder: object, root: Path) -> tuple[dict[str, object], bool]:
+            try:
+                payload = builder(root)  # type: ignore[operator]
+                return dict(payload), bool(payload.get("ok", True))  # type: ignore[union-attr]
+            except (FileNotFoundError, KeyError, ValueError) as exc:
+                return (
+                    {"ok": False, "error": f"{type(exc).__name__}: {exc}"},
+                    False,
+                )
+
+        majors_status, majors_status_ok = _safe_build(
+            build_majors_status_payload, catalog_root
+        )
+        majors_verify, majors_verify_ok = _safe_build(
+            build_majors_verify_payload, catalog_root
+        )
+        majors_ok = majors_status_ok and majors_verify_ok
+        overall_ok = rules_ok and majors_ok
+        payload = {
+            "ok": overall_ok,
+            "rules": rules_section,
+            "majors": majors_status,
+            "majors_verify": majors_verify,
+        }
         return _emit(payload, args.json)
 
     parser.error("unsupported command")

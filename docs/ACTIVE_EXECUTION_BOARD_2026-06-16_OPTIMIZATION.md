@@ -1,5 +1,8 @@
 # Batch 1 审计收敛执行板（2026-06-16）
 
+> **状态**：**已收口（历史快照）**。当前执行真相请看 `docs/ACTIVE_EXECUTION_BOARD_2026-06-17.md` + `docs/CURRENT_STATE.md` §0。
+> 本文件仅作历史审计记录保留，不再作为当前执行口径源。
+
 真相源输入：
 
 1. `docs/plans/2026-06-16-optimization-program.md`
