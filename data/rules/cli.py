@@ -13,6 +13,8 @@ from data.majors_catalog.cli import (
     build_status_payload as build_majors_status_payload,
     build_verify_payload as build_majors_verify_payload,
 )
+from data.majors_catalog.loader import MajorsCatalogLoader
+from data.rules.audit_engine import AuditEngine
 from data.rules.loader import RuleLoader
 
 
@@ -76,6 +78,15 @@ def _build_parser() -> argparse.ArgumentParser:
     school_verify.add_argument("--year", required=True, type=int)
     school_verify.add_argument("--json", action="store_true")
 
+    audit_parser = subparsers.add_parser("audit", help="structured audit commands")
+    audit_sub = audit_parser.add_subparsers(dest="audit_command", required=True)
+    audit_run = audit_sub.add_parser("run", help="run structured audit on JSON plan")
+    audit_run.add_argument("--province", required=True)
+    audit_run.add_argument("--plan", required=True)
+    audit_run.add_argument("--truth-root", default=str(DEFAULT_RULES_TRUTH_ROOT))
+    audit_run.add_argument("--catalog-root", default=str(DEFAULT_CATALOG_ROOT))
+    audit_run.add_argument("--json", action="store_true")
+
     return parser
 
 
@@ -84,7 +95,7 @@ def _emit(payload: dict[str, object], json_output: bool) -> int:
         print(json.dumps(payload, ensure_ascii=False))
     else:
         print(payload)
-    return 0 if bool(payload.get("ok", True)) else 1
+    return 0 if bool(payload.get("ok", payload.get("overall_pass", True))) else 1
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -145,6 +156,15 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "majors" and args.majors_command == "school-verify":
         payload = build_school_verify_payload(Path(args.catalog_root), args.year)
+        return _emit(payload, args.json)
+
+    if args.command == "audit" and args.audit_command == "run":
+        truth_loader = RuleLoader.from_truth_root(Path(args.truth_root))
+        majors_loader = MajorsCatalogLoader.from_catalog_root(Path(args.catalog_root))
+        plan = json.loads(Path(args.plan).read_text(encoding="utf-8"))
+        payload = AuditEngine(truth_loader, majors_loader=majors_loader).audit_plan(
+            args.province, plan
+        )
         return _emit(payload, args.json)
 
     parser.error("unsupported command")

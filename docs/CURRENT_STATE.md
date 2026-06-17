@@ -1,24 +1,24 @@
 # CURRENT_STATE
 
 最后更新: 2026-06-17
-状态词: 本地验证完成（v2.1 已交付增强 + Phase1 已完成 + Phase2 专业目录 MVP Batch1 已本地闭环）
+状态词: 本地验证完成（Phase2 major_validation 已接入 + 目录/审核闭环已收口）
 真相源优先级:
 
 1. 本文件
-2. docs/plans/2026-06-17-phase2-majors-catalog-implementation-plan.md（当前 Phase2 专业目录执行计划）
-3. docs/PROJECT_PLANNING_REALIGNMENT_2026-06-16.md（本轮新增的规划/实现漂移审计）
-4. docs/DESIGN_RULES_TRUSTED_CLI_2026-06-16.md（本轮新增的下一阶段设计：规则可信化 + CLI 能力层）
-5. docs/RULES_SOURCE_OF_TRUTH.md（本轮新增的规则真相源索引）
-6. docs/MAJOR_DATA_SOURCE_OF_TRUTH.md（本轮新增的专业目录真相源索引）
-7. docs/CLI_API_MAPPING.md（本轮新增的 CLI/API 映射索引）
-8. docs/FINAL_COMPLETION_REPORT_2026-06-13.md
-9. docs/P0_P1_P2_REMEDIATION_PLAN_2026-06-14.md（当前整改板；2026-06-15 已做状态归一）
-10. docs/FRONTEND_UI_AUDIT_2026-06-16.md
-11. docs/FRONTEND_UI_EXECUTION_BOARD_2026-06-16.md
-12. docs/ACTIVE_REMEDIATION_2026-06-13.md
-13. product/PRD.md / product/ROADMAP.md / docs/IMPLEMENTATION_PLAN_v2.md
-14. docs/PRODUCTION_DEPLOYMENT_CHECKLIST_2026-06-15.md
-15. reports/PRODUCT_PLANNING_TECH_ALIGNMENT_REVIEW_2026-06-13.md（历史评审快照）
+2. `docs/plans/2026-06-17-phase2-majors-catalog-implementation-plan.md`（当前 Phase2 专业目录执行计划）
+3. `docs/DESIGN_RULES_TRUSTED_CLI_2026-06-16.md`（专业目录/CLI 总设计，当前被 Phase2 计划补充）
+4. `docs/PROJECT_PLANNING_REALIGNMENT_2026-06-16.md`（规划/实现漂移审计）
+5. `docs/RULES_SOURCE_OF_TRUTH.md`（规则真相源索引）
+6. `docs/MAJOR_DATA_SOURCE_OF_TRUTH.md`（专业目录真相源索引）
+7. `docs/CLI_API_MAPPING.md`（CLI/API 映射索引）
+
+8. docs/P0_P1_P2_REMEDIATION_PLAN_2026-06-14.md（当前整改板；2026-06-15 已做状态归一）
+9. docs/FRONTEND_UI_AUDIT_2026-06-16.md
+10. docs/FRONTEND_UI_EXECUTION_BOARD_2026-06-16.md
+11. docs/ACTIVE_REMEDIATION_2026-06-13.md
+12. product/PRD.md / product/ROADMAP.md / docs/IMPLEMENTATION_PLAN_v2.md
+13. docs/PRODUCTION_DEPLOYMENT_CHECKLIST_2026-06-15.md
+14. reports/PRODUCT_PLANNING_TECH_ALIGNMENT_REVIEW_2026-06-13.md（历史评审快照）
 
 ---
 
@@ -28,9 +28,13 @@
 
 - 已完成: 人工服务运营增强系统（闲鱼 / 微信 / 学校渠道）
 - 已完成: 管理后台、订单、分享、渠道同步、AI 审核、CI/CD、性能与安全加固
-- 未完成: 用户端 Web 自助支付 / 资料填写 / 站内交付的完整商业闭环（T12 进行中）
-- 已完成且已本地验证: `mock` / `alipay_sim` / `alipay` 三层支付代码链与 notify/return 路由；退款状态闭环、portal token secret 分离、payment webhook fail-closed、删除/匿名化扩围、分享 allowlist、channel_sync DB 隔离与 DAO 真相收敛
-- 未完成且仍阻塞线上验收: 真实支付宝商户凭据、公网 notify_url、备案域名、真实支付 acceptance
+- 已完成/已验证:
+  - `Phase2 major_validation` 已接入 `AuditEngine`
+  - `gaokao-cli audit run --json` 已可基于专业目录做 major 校验
+  - 规则/专业目录/CLI 三层都已具备可回归验证入口
+- 当前仍在推进:
+  - 已完成且已本地验证: `mock` / `alipay_sim` / `alipay` 三层支付代码链与 notify/return 路由；退款状态闭环、portal token secret 分离、payment webhook fail-closed、删除/匿名化扩围、分享 allowlist、channel_sync DB 隔离与 DAO 真相收敛
+  - 未完成且仍阻塞线上验收: 真实支付宝商户凭据、公网 notify_url、备案域名、真实支付 acceptance
 
 一句话：
 
