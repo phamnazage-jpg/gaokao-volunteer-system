@@ -109,30 +109,69 @@ def _emit(payload: dict[str, object], json_output: bool) -> int:
 
 
 def main(argv: list[str] | None = None) -> int:
-    # `order` and `share` are pure delegation markers. Handle them before
-    # argparse so the legacy parsers can see their native subcommands
-    # and flags directly (including `--help`).
+    # `order` / `share` / `payment` / `channel` / `delivery` / `retention`
+    # / `backup` are pure delegation markers. Handle them before argparse
+    # so the legacy parsers can see their native subcommands and flags
+    # directly (including `--help`).
     tokens = list(sys.argv[1:]) if argv is None else list(argv)
-    if tokens and tokens[0] in ("order", "share", "payment"):
+    if tokens and tokens[0] in (
+        "order",
+        "share",
+        "payment",
+        "channel",
+        "delivery",
+        "retention",
+        "backup",
+    ):
         marker = tokens[0]
-        from data.orders.cli import main as orders_main
-        from data.cli_compat_gaokao_shortlink import main as shortlink_main
-
         if marker == "order":
+            from data.orders.cli import main as orders_main
+
             # data.orders.cli.main expects subcommands without the `order`
             # prefix (its parser exposes `create` / `list` / `show` / ...).
             return orders_main(tokens[1:])
         if marker == "share":
-            # gaokao-shortlink exposes `create` / `list` / `resolve` / ...
+            from data.cli_compat_gaokao_shortlink import main as shortlink_main
+
             return shortlink_main(tokens[1:])
         if marker == "payment":
-            # `gaokao-cli payment doctor` delegates to
-            # scripts/payment_provider_doctor.py.
             from data.cli_compat_payment_doctor import (
                 main as payment_doctor_main,
             )
 
             return payment_doctor_main(tokens[1:])
+        if marker == "channel":
+            from data.cli_compat_channel_fallback import (
+                main as channel_main,
+            )
+
+            return channel_main(tokens[1:])
+        if marker == "delivery":
+            from data.cli_compat_delivery_dispatch import (
+                main as delivery_dispatch_main,
+            )
+            from data.cli_compat_delivery_watchdog import (
+                main as delivery_watchdog_main,
+            )
+
+            sub = tokens[1] if len(tokens) > 1 else ""
+            if sub == "dispatch":
+                return delivery_dispatch_main(tokens[2:])
+            if sub == "watchdog":
+                return delivery_watchdog_main(tokens[2:])
+            raise SystemExit(
+                f"gaokao-cli delivery expects one of [dispatch, watchdog]; got: {sub!r}"
+            )
+        if marker == "retention":
+            from data.cli_compat_retention_cleanup import (
+                main as retention_main,
+            )
+
+            return retention_main(tokens[1:])
+        if marker == "backup":
+            from data.cli_compat_backup import main as backup_main
+
+            return backup_main(tokens[1:])
 
     parser = _build_parser()
     args = parser.parse_args(tokens)

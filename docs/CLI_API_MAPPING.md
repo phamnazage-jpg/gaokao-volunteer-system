@@ -60,18 +60,20 @@
 
 当前 `gaokao-cli` 真实可用的子命令：
 
-| 顶层命令  | 子命令                                                                | 落点                                                             |
-| --------- | --------------------------------------------------------------------- | ---------------------------------------------------------------- |
-| `rules`   | `status` / `verify`                                                   | `data/rules/cli.py` `RuleLoader`                                 |
-| `majors`  | `status` / `lookup <name>` / `verify` / `changes`                     | `data/majors_catalog/cli.py` `MajorsCatalogLoader`               |
-| `majors`  | `school-status --year <y>` / `school-verify --year <y>`               | `data/majors_catalog/cli.py`                                     |
-| `audit`   | `run --province <p> --plan <json>`                                    | `data/rules/audit_engine.py` `AuditEngine`                       |
-| `order`   | 委派到 `data/orders/cli.py` 子命令（`create/list/show/...`）          | 复用 `data/orders/cli.py`                                        |
-| `share`   | 委派到 `scripts/gaokao-shortlink` 子命令（`create/list/resolve/...`） | 复用 `data/cli_compat_gaokao_shortlink.py`                       |
-| `payment` | `doctor`（委派到 `scripts/payment_provider_doctor.py`）               | 复用 `data/cli_compat_payment_doctor.py`                         |
-| `doctor`  | `--json` 自检 rules / majors / majors_verify                          | `data/rules/cli.py`（复用 `RuleLoader` + `MajorsCatalogLoader`） |
-
-**未启动（占位）**：`delivery` / `retention` / `backup` / `channel` 暂不并入 `gaokao-cli`，保留各自独立 `scripts/gaokao-*` 入口。
+| 顶层命令    | 子命令                                                                | 落点                                                             |
+| ----------- | --------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| `rules`     | `status` / `verify`                                                   | `data/rules/cli.py` `RuleLoader`                                 |
+| `majors`    | `status` / `lookup <name>` / `verify` / `changes`                     | `data/majors_catalog/cli.py` `MajorsCatalogLoader`               |
+| `majors`    | `school-status --year <y>` / `school-verify --year <y>`               | `data/majors_catalog/cli.py`                                     |
+| `audit`     | `run --province <p> --plan <json>`                                    | `data/rules/audit_engine.py` `AuditEngine`                       |
+| `order`     | 委派到 `data/orders/cli.py` 子命令（`create/list/show/...`）          | 复用 `data/orders/cli.py`                                        |
+| `share`     | 委派到 `scripts/gaokao-shortlink` 子命令（`create/list/resolve/...`） | 复用 `data/cli_compat_gaokao_shortlink.py`                       |
+| `payment`   | `doctor`（委派到 `scripts/payment_provider_doctor.py`）               | 复用 `data/cli_compat_payment_doctor.py`                         |
+| `channel`   | `check [--flags]` / `manual-template [--flags]`                       | 复用 `data/channel_sync/monitor.py`                              |
+| `delivery`  | `dispatch [--channel --limit]` / `watchdog [--channel --limit]`       | 复用 `scripts/gaokao-delivery-{dispatch,watchdog}.py`            |
+| `retention` | `cleanup [--flags]`（无子命令，flags 由脚本内部解析）                 | 复用 `data/orders/retention_cleanup.py`                          |
+| `backup`    | `snapshot` / `verify`（调用 `scripts/backup_*.sh`）                   | 复用 `scripts/backup_*.sh`                                       |
+| `doctor`    | `--json` 自检 rules / majors / majors_verify                          | `data/rules/cli.py`（复用 `RuleLoader` + `MajorsCatalogLoader`） |
 
 ---
 

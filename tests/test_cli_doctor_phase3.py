@@ -114,3 +114,53 @@ def test_cli_doctor_fails_on_empty_truth_root(tmp_path: Path) -> None:
     # province_count key is populated, so a structured error key replaces
     # the missing province_count.
     assert "error" in payload["rules"] or payload["rules"].get("province_count", 0) == 0
+
+
+def test_cli_channel_check_delegates_to_monitor() -> None:
+    # `gaokao-cli channel --help` should reach the channel_sync monitor
+    # parser, which exposes {check, manual-template}.
+    result = _run_cli("channel", "--help")
+    assert result.returncode == 0, result.stderr
+    assert "check" in result.stdout
+    assert "manual-template" in result.stdout
+
+
+def test_cli_delivery_dispatch_help_reaches_parser() -> None:
+    result = _run_cli("delivery", "dispatch", "--help")
+    assert result.returncode == 0, result.stderr
+    assert "--channel" in result.stdout
+    assert "--limit" in result.stdout
+
+
+def test_cli_delivery_unknown_subcommand_errors_cleanly() -> None:
+    result = _run_cli("delivery", "unknown")
+    assert result.returncode != 0
+    # The dispatch shim surfaces the expected subcommand set, not a raw
+    # argparse traceback, so callers can rely on the message.
+    combined = (result.stdout or "") + (result.stderr or "")
+    assert "dispatch" in combined and "watchdog" in combined
+
+
+def test_cli_retention_help_reaches_parser() -> None:
+    result = _run_cli("retention", "--help")
+    # The retention parser exits 2 on --help with no subcommand; we
+    # only assert that we reached the retention script (not Python
+    # traceback and not a top-level argparse error).
+    combined = (result.stdout or "") + (result.stderr or "")
+    assert "Traceback" not in combined
+    assert result.returncode != 0 or "retention" in combined.lower()
+
+
+def test_cli_backup_snapshot_help_reaches_shell() -> None:
+    result = _run_cli("backup", "snapshot", "--help")
+    # The shell script may exit 0 or non-zero if no --help is wired;
+    # we only assert the routing reached bash (no Python traceback).
+    combined = (result.stdout or "") + (result.stderr or "")
+    assert "Traceback" not in combined
+
+
+def test_cli_backup_unknown_subcommand_errors_cleanly() -> None:
+    result = _run_cli("backup", "unknown")
+    assert result.returncode != 0
+    combined = (result.stdout or "") + (result.stderr or "")
+    assert "snapshot" in combined and "verify" in combined
