@@ -24,6 +24,7 @@ _DASHBOARD_HTML = _STATIC_DIR / "dashboard.html"
 
 
 @router.get("/dashboard", include_in_schema=False)
+@router.get("/admin/dashboard", include_in_schema=False)
 def dashboard_page() -> FileResponse:
     """返回最小仪表盘页面壳。"""
     return FileResponse(_DASHBOARD_HTML)
@@ -73,10 +74,40 @@ def _resolve_report_loader(
 
 def _render_admin_new_order_page() -> str:
     province_options = [
-        "北京", "上海", "天津", "重庆", "河北", "河南", "山东", "山西", "陕西", "辽宁", "吉林", "黑龙江", "江苏", "浙江", "安徽", "福建", "江西", "湖北", "湖南", "广东", "广西", "海南", "四川", "贵州", "云南", "甘肃", "青海", "宁夏", "新疆", "内蒙古", "西藏",
+        "北京",
+        "上海",
+        "天津",
+        "重庆",
+        "河北",
+        "河南",
+        "山东",
+        "山西",
+        "陕西",
+        "辽宁",
+        "吉林",
+        "黑龙江",
+        "江苏",
+        "浙江",
+        "安徽",
+        "福建",
+        "江西",
+        "湖北",
+        "湖南",
+        "广东",
+        "广西",
+        "海南",
+        "四川",
+        "贵州",
+        "云南",
+        "甘肃",
+        "青海",
+        "宁夏",
+        "新疆",
+        "内蒙古",
+        "西藏",
     ]
     province_html = "".join(
-        f"<option value=\"{p}\">{p}</option>" for p in province_options
+        f'<option value="{p}">{p}</option>' for p in province_options
     )
     return f"""<!doctype html>
 <html lang='zh-CN'><head><meta charset='utf-8' /><meta name='viewport' content='width=device-width, initial-scale=1' /><title>后台手动添加订单</title>

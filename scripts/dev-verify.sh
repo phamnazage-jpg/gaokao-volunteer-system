@@ -36,6 +36,13 @@ ensure_venv() {
   fi
   # shellcheck disable=SC1091
   source "${VENV_DIR}/bin/activate"
+  if ! python -m pip --version >/dev/null 2>&1; then
+    log "venv missing pip, recreating ${VENV_DIR}"
+    rm -rf "${VENV_DIR}"
+    "${PYTHON_BIN}" -m venv "${VENV_DIR}"
+    # shellcheck disable=SC1091
+    source "${VENV_DIR}/bin/activate"
+  fi
   python -m pip install --upgrade pip >/dev/null
 }
 
@@ -117,4 +124,6 @@ EOF
   log "all checks passed"
 }
 
-main "$@"
+if [[ "${GAOKAO_SOURCE_ONLY:-0}" != "1" ]]; then
+  main "$@"
+fi

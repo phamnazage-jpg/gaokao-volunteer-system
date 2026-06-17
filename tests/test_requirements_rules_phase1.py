@@ -14,3 +14,9 @@ def test_yaml_runtime_dependency_is_declared_for_rules_truth_phase() -> None:
     combined = admin + "\n" + dev
 
     assert "PyYAML" in combined or "pyyaml" in combined
+
+
+def test_yaml_type_stubs_are_declared_for_mypy_gate() -> None:
+    dev = REQUIREMENTS_DEV.read_text(encoding="utf-8")
+
+    assert "types-PyYAML" in dev

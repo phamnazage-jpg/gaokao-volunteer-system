@@ -27,7 +27,7 @@ class PublicOrderCreate(BaseModel):
     service_version: ServiceVersion
     amount_cents: int = Field(ge=0)
     customer_name: Optional[str] = None
-    customer_phone: str = Field(min_length=1)
+    customer_phone: Optional[str] = Field(default=None, min_length=1)
     customer_wechat: Optional[str] = None
     customer_email: Optional[str] = None
     candidate_name: str = Field(min_length=1)
@@ -39,6 +39,8 @@ class PublicOrderCreate(BaseModel):
         expected_amount = service_price_for(self.service_version)
         if self.amount_cents != expected_amount:
             raise ValueError("amount_cents 与套餐价格不一致")
+        if not self.customer_phone and not self.customer_wechat:
+            raise ValueError("customer_phone / customer_wechat 至少填写一个")
         return self
 
 

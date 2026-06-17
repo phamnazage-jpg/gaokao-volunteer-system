@@ -38,6 +38,7 @@ def test_create_public_order_requires_contact_channel(tmp_path):
                     service_version="audit",
                     amount_cents=4900,
                     customer_name="李家长",
+                    candidate_name="李同学",
                     candidate_province="广东",
                 ),
             )

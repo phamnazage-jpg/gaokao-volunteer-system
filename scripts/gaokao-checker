@@ -9,365 +9,53 @@ import sys
 from datetime import datetime
 
 
-# 各省规则库
-PROVINCE_RULES = {
-    # 院校专业组模式
-    "湖南": {
-        "mode": "院校专业组",
-        "batch": "本科批",
-        "max_volunteers": 45,
-        "max_majors_per_group": 6,
-        "has_adjustment": True,
-        "adjustment_scope": "组内专业",
-        "retrieval_rule": "分数优先、遵循志愿、一次投档",
-        "collection_count": 2,  # 征集志愿次数
-        "subject_mode": "3+1+2",
-        "official_url": "http://jyt.hunan.gov.cn/jyt/sjyt/hnsjyksy/",
-        "exam_subject_total": 750,
-    },
-    "广东": {
-        "mode": "院校专业组",
-        "batch": "本科批",
-        "max_volunteers": 45,
-        "max_majors_per_group": 6,
-        "has_adjustment": True,
-        "adjustment_scope": "组内专业",
-        "retrieval_rule": "分数优先、遵循志愿、一次投档",
-        "collection_count": 2,
-        "subject_mode": "3+1+2",
-        "official_url": "http://eea.gd.gov.cn/",
-        "exam_subject_total": 750,
-    },
-    "湖北": {
-        "mode": "院校专业组",
-        "batch": "本科批",
-        "max_volunteers": 45,
-        "max_majors_per_group": 6,
-        "has_adjustment": True,
-        "adjustment_scope": "组内专业",
-        "retrieval_rule": "分数优先、遵循志愿、一次投档",
-        "collection_count": 2,
-        "subject_mode": "3+1+2",
-        "official_url": "http://www.hbea.edu.cn/",
-        "exam_subject_total": 750,
-    },
-    "江苏": {
-        "mode": "院校专业组",
-        "batch": "本科批",
-        "max_volunteers": 40,
-        "max_majors_per_group": 6,
-        "has_adjustment": True,
-        "adjustment_scope": "组内专业",
-        "retrieval_rule": "分数优先、遵循志愿、一次投档",
-        "collection_count": 1,
-        "subject_mode": "3+1+2",
-        "official_url": "http://www.jseea.cn/",
-        "exam_subject_total": 750,
-    },
-    "福建": {
-        "mode": "院校专业组",
-        "batch": "本科批",
-        "max_volunteers": 40,
-        "max_majors_per_group": 6,
-        "has_adjustment": True,
-        "adjustment_scope": "组内专业",
-        "retrieval_rule": "分数优先、遵循志愿、一次投档",
-        "collection_count": 1,
-        "subject_mode": "3+1+2",
-        "official_url": "https://www.eeafj.cn/",
-        "exam_subject_total": 750,
-    },
-    "安徽": {
-        "mode": "院校专业组",
-        "batch": "本科批",
-        "max_volunteers": 45,
-        "max_majors_per_group": 6,
-        "has_adjustment": True,
-        "adjustment_scope": "组内专业",
-        "retrieval_rule": "分数优先、遵循志愿、一次投档",
-        "collection_count": 2,
-        "subject_mode": "3+1+2",
-        "official_url": "https://www.ahzsks.cn/",
-        "exam_subject_total": 750,
-    },
-    "江西": {
-        "mode": "院校专业组",
-        "batch": "本科批",
-        "max_volunteers": 45,
-        "max_majors_per_group": 6,
-        "has_adjustment": True,
-        "adjustment_scope": "组内专业",
-        "retrieval_rule": "分数优先、遵循志愿、一次投档",
-        "collection_count": 2,
-        "subject_mode": "3+1+2",
-        "official_url": "http://www.jxeea.cn/",
-        "exam_subject_total": 750,
-    },
-    "甘肃": {
-        "mode": "院校专业组",
-        "batch": "本科批",
-        "max_volunteers": 45,
-        "max_majors_per_group": 6,
-        "has_adjustment": True,
-        "adjustment_scope": "组内专业",
-        "retrieval_rule": "分数优先、遵循志愿、一次投档",
-        "collection_count": 2,
-        "subject_mode": "3+1+2",
-        "official_url": "https://www.ganseea.cn/",
-        "exam_subject_total": 750,
-    },
-    "黑龙江": {
-        "mode": "院校专业组",
-        "batch": "本科批",
-        "max_volunteers": 45,
-        "max_majors_per_group": 6,
-        "has_adjustment": True,
-        "adjustment_scope": "组内专业",
-        "retrieval_rule": "分数优先、遵循志愿、一次投档",
-        "collection_count": 2,
-        "subject_mode": "3+1+2",
-        "official_url": "https://www.lzk.hl.cn/",
-        "exam_subject_total": 750,
-    },
-    "广西": {
-        "mode": "院校专业组",
-        "batch": "本科批",
-        "max_volunteers": 40,
-        "max_majors_per_group": 6,
-        "has_adjustment": True,
-        "adjustment_scope": "组内专业",
-        "retrieval_rule": "分数优先、遵循志愿、一次投档",
-        "collection_count": 2,
-        "subject_mode": "3+1+2",
-        "official_url": "https://www.gxeea.cn/",
-        "exam_subject_total": 750,
-    },
-    "北京": {
-        "mode": "院校专业组",
-        "batch": "本科批",
-        "max_volunteers": 30,
-        "max_majors_per_group": 6,
-        "has_adjustment": True,
-        "adjustment_scope": "组内专业",
-        "retrieval_rule": "分数优先、遵循志愿、一次投档",
-        "collection_count": 1,
-        "subject_mode": "3+3",
-        "official_url": "https://www.bjeea.cn/",
-        "exam_subject_total": 750,
-    },
-    "上海": {
-        "mode": "院校专业组",
-        "batch": "本科批",
-        "max_volunteers": 24,
-        "max_majors_per_group": 4,
-        "has_adjustment": True,
-        "adjustment_scope": "组内专业",
-        "retrieval_rule": "分数优先、遵循志愿、一次投档",
-        "collection_count": 1,
-        "subject_mode": "3+3",
-        "official_url": "https://www.shmeea.edu.cn/",
-        "exam_subject_total": 660,
-    },
-    "天津": {
-        "mode": "院校专业组",
-        "batch": "本科批",
-        "max_volunteers": 50,
-        "max_majors_per_group": 6,
-        "has_adjustment": True,
-        "adjustment_scope": "组内专业",
-        "retrieval_rule": "分数优先、遵循志愿、一次投档",
-        "collection_count": 1,
-        "subject_mode": "3+3",
-        "official_url": "http://www.zhaoban.tjzhaokao.com/",
-        "exam_subject_total": 750,
-    },
-    "海南": {
-        "mode": "院校专业组",
-        "batch": "本科批",
-        "max_volunteers": 24,
-        "max_majors_per_group": 6,
-        "has_adjustment": True,
-        "adjustment_scope": "组内专业",
-        "retrieval_rule": "分数优先、遵循志愿、一次投档",
-        "collection_count": 1,
-        "subject_mode": "3+3",
-        "official_url": "https://ea.hainan.gov.cn/",
-        "exam_subject_total": 900,
-    },
-    
-    # 专业+学校模式
-    "浙江": {
-        "mode": "专业+学校",
-        "batch": "普通批",
-        "max_volunteers": 80,
-        "max_majors_per_group": 1,  # 每个志愿只填1个专业
-        "has_adjustment": False,    # 无调剂
-        "adjustment_scope": "无",
-        "retrieval_rule": "分数优先、遵循志愿、一次投档",
-        "collection_count": 1,
-        "subject_mode": "3+3",
-        "official_url": "https://www.zjzs.net/",
-        "exam_subject_total": 750,
-    },
-    "山东": {
-        "mode": "专业+学校",
-        "batch": "普通批",
-        "max_volunteers": 96,
-        "max_majors_per_group": 1,
-        "has_adjustment": False,
-        "adjustment_scope": "无",
-        "retrieval_rule": "分数优先、遵循志愿、一次投档",
-        "collection_count": 1,
-        "subject_mode": "3+3",
-        "official_url": "https://www.sdzk.cn/",
-        "exam_subject_total": 750,
-    },
-    "河北": {
-        "mode": "专业+学校",
-        "batch": "普通批",
-        "max_volunteers": 96,
-        "max_majors_per_group": 1,
-        "has_adjustment": False,
-        "adjustment_scope": "无",
-        "retrieval_rule": "分数优先、遵循志愿、一次投档",
-        "collection_count": 1,
-        "subject_mode": "3+1+2",
-        "official_url": "https://www.hebeea.edu.cn/",
-        "exam_subject_total": 750,
-    },
-    "重庆": {
-        "mode": "专业+学校",
-        "batch": "普通批",
-        "max_volunteers": 96,
-        "max_majors_per_group": 1,
-        "has_adjustment": False,
-        "adjustment_scope": "无",
-        "retrieval_rule": "分数优先、遵循志愿、一次投档",
-        "collection_count": 1,
-        "subject_mode": "3+1+2",
-        "official_url": "https://www.cqksy.cn/",
-        "exam_subject_total": 750,
-    },
-    "辽宁": {
-        "mode": "专业+学校",
-        "batch": "普通批",
-        "max_volunteers": 112,
-        "max_majors_per_group": 1,
-        "has_adjustment": False,
-        "adjustment_scope": "无",
-        "retrieval_rule": "分数优先、遵循志愿、一次投档",
-        "collection_count": 1,
-        "subject_mode": "3+1+2",
-        "official_url": "https://www.lnzsks.com/",
-        "exam_subject_total": 750,
-    },
-    "贵州": {
-        "mode": "专业+学校",
-        "batch": "普通批",
-        "max_volunteers": 96,
-        "max_majors_per_group": 1,
-        "has_adjustment": False,
-        "adjustment_scope": "无",
-        "retrieval_rule": "分数优先、遵循志愿、一次投档",
-        "collection_count": 1,
-        "subject_mode": "3+1+2",
-        "official_url": "https://zsksy.guizhou.gov.cn/",
-        "exam_subject_total": 750,
-    },
-    "青海": {
-        "mode": "专业+学校",
-        "batch": "普通批",
-        "max_volunteers": 96,
-        "max_majors_per_group": 1,
-        "has_adjustment": False,
-        "adjustment_scope": "无",
-        "retrieval_rule": "分数优先、遵循志愿、一次投档",
-        "collection_count": 1,
-        "subject_mode": "3+1+2",
-        "official_url": "http://www.qhzk.com/",
-        "exam_subject_total": 750,
-    },
-    "吉林": {
-        "mode": "专业+学校",
-        "batch": "普通批",
-        "max_volunteers": 50,
-        "max_majors_per_group": 1,
-        "has_adjustment": False,
-        "adjustment_scope": "无",
-        "retrieval_rule": "分数优先、遵循志愿、一次投档",
-        "collection_count": 1,
-        "subject_mode": "3+1+2",
-        "official_url": "https://www.jleea.com.cn/",
-        "exam_subject_total": 750,
-    },
-    
-    # 传统模式
-    "河南": {
-        "mode": "传统",
-        "batch": "本科一批",
-        "max_volunteers": 6,
-        "max_majors_per_group": 5,
-        "has_adjustment": True,
-        "adjustment_scope": "全部专业",
-        "retrieval_rule": "分数优先、遵循志愿、一次投档",
-        "collection_count": 1,
-        "subject_mode": "传统",
-        "official_url": "https://www.haeea.cn/",
-        "exam_subject_total": 750,
-    },
-    "四川": {
-        "mode": "传统",
-        "batch": "本科一批",
-        "max_volunteers": 9,
-        "max_majors_per_group": 6,
-        "has_adjustment": True,
-        "adjustment_scope": "全部专业",
-        "retrieval_rule": "分数优先、遵循志愿、一次投档",
-        "collection_count": 1,
-        "subject_mode": "传统",
-        "official_url": "https://www.sceea.cn/",
-        "exam_subject_total": 750,
-    },
-    "新疆": {
-        "mode": "传统",
-        "batch": "本科一批",
-        "max_volunteers": 9,
-        "max_majors_per_group": 6,
-        "has_adjustment": True,
-        "adjustment_scope": "全部专业",
-        "retrieval_rule": "志愿优先、遵循志愿",
-        "collection_count": 1,
-        "subject_mode": "传统",
-        "official_url": "http://www.xjzk.gov.cn/",
-        "exam_subject_total": 750,
-    },
-    "云南": {
-        "mode": "传统",
-        "batch": "本科一批",
-        "max_volunteers": 5,
-        "max_majors_per_group": 5,
-        "has_adjustment": True,
-        "adjustment_scope": "全部专业",
-        "retrieval_rule": "分数优先、遵循志愿",
-        "collection_count": 1,
-        "subject_mode": "传统",
-        "official_url": "https://www.ynzs.cn/",
-        "exam_subject_total": 750,
-    },
-    "西藏": {
-        "mode": "传统",
-        "batch": "本科二批",
-        "max_volunteers": 10,
-        "max_majors_per_group": 4,
-        "has_adjustment": True,
-        "adjustment_scope": "全部专业",
-        "retrieval_rule": "分数优先、遵循志愿",
-        "collection_count": 1,
-        "subject_mode": "传统",
-        "official_url": "http://zsks.edu.xizang.gov.cn/",
-        "exam_subject_total": 750,
-    },
-}
+# 各省规则库（Phase 1.5: 委托 truth loader，保留 legacy 接口）
+from pathlib import Path
+import os
+
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
+from data.rules.loader import RuleLoader
+
+TRUTH_ROOT = Path(os.environ.get("GAOKAO_RULES_TRUTH_ROOT", str(PROJECT_ROOT / "rules" / "_truth")))
+LEGACY_RULE_KEYS = (
+    "mode",
+    "batch",
+    "max_volunteers",
+    "max_majors_per_group",
+    "has_adjustment",
+    "adjustment_scope",
+    "retrieval_rule",
+    "collection_count",
+    "subject_mode",
+    "official_url",
+    "exam_subject_total",
+)
+
+
+def _scalar_from_loaded_value(value_dict, key):
+    return value_dict.get(key)
+
+
+def _build_legacy_rule_map(truth_root):
+    loader = RuleLoader.from_truth_root(truth_root)
+    province_rules = {}
+    for province in loader.active_provinces():
+        loaded_rules = {
+            rule.rule_id.split(".", 1)[1]: rule.value
+            for rule in loader.list_province_rules(province)
+        }
+        province_rules[province] = {
+            key: _scalar_from_loaded_value(loaded_rules[key], key)
+            for key in LEGACY_RULE_KEYS
+            if key in loaded_rules
+        }
+    return province_rules
+
+
+PROVINCE_RULES = _build_legacy_rule_map(TRUTH_ROOT)
 
 
 # 省份别名
@@ -407,21 +95,25 @@ PROVINCE_ALIASES = {
 
 def detect_province(text):
     """
-    从文本中自动检测省份
+    从文本中自动检测省份。
+    优先返回文本中最早出现的省份线索，避免被后面的院校名误导。
     """
-    # 1. 优先匹配全称
+    matches = []
+
+    # 1. 支持规则库中的省份全称
     for prov in PROVINCE_RULES.keys():
-        if prov in text:
-            return prov
-    
+        idx = text.find(prov)
+        if idx != -1:
+            matches.append((idx, prov))
+
     # 2. 匹配简称
     for alias, prov in PROVINCE_ALIASES.items():
-        # 排除"其他"等含简称的词
         pattern = f"({alias}[省市区]?)|(省{alias})"
-        if re.search(pattern, text):
-            return prov
-    
-    # 3. 匹配省份全称
+        found = re.search(pattern, text)
+        if found:
+            matches.append((found.start(), prov))
+
+    # 3. 匹配更广义的省份全称，但仅在 truth 规则库支持时返回
     prov_full_names = {
         "北京": "北京",
         "天津": "天津",
@@ -455,12 +147,17 @@ def detect_province(text):
         "宁夏": "宁夏",
         "新疆": "新疆",
     }
-    
+
     for full_name in prov_full_names.keys():
-        if full_name in text:
-            return full_name if full_name in PROVINCE_RULES else None
-    
-    return None
+        idx = text.find(full_name)
+        if idx != -1 and full_name in PROVINCE_RULES:
+            matches.append((idx, full_name))
+
+    if not matches:
+        return None
+
+    matches.sort(key=lambda item: item[0])
+    return matches[0][1]
 
 
 class GaokaoSpecCheckerV2:

@@ -11,6 +11,15 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 LEGACY_CHECKER_PATH = PROJECT_ROOT / "scripts" / "gaokao-checker"
 
 
+def _load_python_module(name: str, path: Path):
+    loader = SourceFileLoader(name, str(path))
+    spec = importlib.util.spec_from_loader(loader.name, loader)
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
 def _load_legacy_checker_module():
     loader = SourceFileLoader("legacy_gaokao_checker", str(LEGACY_CHECKER_PATH))
     spec = importlib.util.spec_from_loader(loader.name, loader)
@@ -25,9 +34,12 @@ def test_migrate_province_rules_to_truth_exports_all_legacy_provinces(
 ) -> None:
     legacy = _load_legacy_checker_module()
 
-    from scripts.migrate_province_rules_to_truth import migrate_legacy_rules_to_truth
+    migrate = _load_python_module(
+        'migrate_province_rules_to_truth',
+        PROJECT_ROOT / 'scripts' / 'migrate_province_rules_to_truth.py',
+    )
 
-    summary = migrate_legacy_rules_to_truth(output_root=tmp_path)
+    summary = migrate.migrate_legacy_rules_to_truth(output_root=tmp_path)
 
     province_dir = tmp_path / "province"
     province_files = sorted(province_dir.glob("*.yaml"))
@@ -116,10 +128,13 @@ def test_rule_loader_reads_national_and_province_truth_tree(tmp_path: Path) -> N
 def test_migrated_truth_set_matches_legacy_checker_provinces(tmp_path: Path) -> None:
     legacy = _load_legacy_checker_module()
 
-    from scripts.migrate_province_rules_to_truth import migrate_legacy_rules_to_truth
+    migrate = _load_python_module(
+        'migrate_province_rules_to_truth',
+        PROJECT_ROOT / 'scripts' / 'migrate_province_rules_to_truth.py',
+    )
     from data.rules.loader import RuleLoader
 
-    migrate_legacy_rules_to_truth(output_root=tmp_path)
+    migrate.migrate_legacy_rules_to_truth(output_root=tmp_path)
     loader = RuleLoader.from_truth_root(tmp_path)
 
     assert set(loader.active_provinces()) == set(legacy.PROVINCE_RULES.keys())
@@ -128,9 +143,12 @@ def test_migrated_truth_set_matches_legacy_checker_provinces(tmp_path: Path) -> 
 def test_audit_engine_exposes_province_snapshot_from_truth(tmp_path: Path) -> None:
     from data.rules.audit_engine import AuditEngine
     from data.rules.loader import RuleLoader
-    from scripts.migrate_province_rules_to_truth import migrate_legacy_rules_to_truth
+    migrate = _load_python_module(
+        'migrate_province_rules_to_truth',
+        PROJECT_ROOT / 'scripts' / 'migrate_province_rules_to_truth.py',
+    )
 
-    migrate_legacy_rules_to_truth(output_root=tmp_path)
+    migrate.migrate_legacy_rules_to_truth(output_root=tmp_path)
     loader = RuleLoader.from_truth_root(tmp_path)
     engine = AuditEngine(loader)
 

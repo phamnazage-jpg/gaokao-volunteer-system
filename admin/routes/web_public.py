@@ -315,11 +315,25 @@ def _sanitize_upload_filename(name: str) -> str:
     return raw.replace("/", "_").replace("\\", "_")
 
 
-def _validate_upload(file_name: str, content_type: str | None, payload: bytes, settings: Settings) -> None:
+def _validate_upload(
+    file_name: str, content_type: str | None, payload: bytes, settings: Settings
+) -> None:
     suffix = Path(file_name).suffix.lower()
-    allowed_suffixes = {".pdf", ".txt", ".md", ".json", ".png", ".jpg", ".jpeg", ".webp"}
+    allowed_suffixes = {
+        ".pdf",
+        ".txt",
+        ".md",
+        ".json",
+        ".png",
+        ".jpg",
+        ".jpeg",
+        ".webp",
+    }
     if suffix not in allowed_suffixes:
-        raise HTTPException(status_code=415, detail=f"unsupported attachment type: {suffix or 'unknown'}")
+        raise HTTPException(
+            status_code=415,
+            detail=f"unsupported attachment type: {suffix or 'unknown'}",
+        )
     if len(payload) > settings.portal_upload_max_bytes:
         raise HTTPException(status_code=413, detail="attachment too large")
     if not payload:
@@ -327,7 +341,12 @@ def _validate_upload(file_name: str, content_type: str | None, payload: bytes, s
 
 
 def _store_portal_attachment(
-    *, order_id: str, upload_name: str, content_type: str | None, payload: bytes, settings: Settings
+    *,
+    order_id: str,
+    upload_name: str,
+    content_type: str | None,
+    payload: bytes,
+    settings: Settings,
 ) -> dict[str, Any]:
     safe_name = _sanitize_upload_filename(upload_name)
     _validate_upload(safe_name, content_type, payload, settings)
@@ -601,7 +620,9 @@ def _build_portal_context(order: Order, settings: Settings) -> dict[str, Any]:
     attachment_items: list[dict[str, Any]] = []
     if intake is not None:
         attachment_items = [
-            item for item in list((intake.payload or {}).get("attachments") or []) if isinstance(item, dict)
+            item
+            for item in list((intake.payload or {}).get("attachments") or [])
+            if isinstance(item, dict)
         ]
         attachment_count = len(attachment_items)
         intake_summary = {
@@ -665,7 +686,7 @@ def privacy_page(token: str | None = None) -> HTMLResponse:
         "<meta name='viewport' content='width=device-width, initial-scale=1' />"
         "<title>隐私政策</title>"
         "<link rel='stylesheet' href='/static/portal-ui.css' />"
-        "<style>body{font-family:-apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif;background:#f4f7fb;padding:32px 20px;color:#172033;margin:0}.wrap{max-width:920px;margin:0 auto;display:grid;gap:18px}.panel{background:#fff;border:1px solid #dbe3f0;border-radius:20px;padding:24px;box-shadow:0 18px 42px rgba(20,34,53,.08)}.eyebrow{display:inline-flex;padding:6px 10px;border-radius:999px;background:#dff7f1;color:#0f766e;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}.lead{color:#5b6b88;line-height:1.8}.checklist{margin:0;padding-left:18px;color:#5b6b88;line-height:1.8}</style></head>"
+        '<style>body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f4f7fb;padding:32px 20px;color:#172033;margin:0}.wrap{max-width:920px;margin:0 auto;display:grid;gap:18px}.panel{background:#fff;border:1px solid #dbe3f0;border-radius:20px;padding:24px;box-shadow:0 18px 42px rgba(20,34,53,.08)}.eyebrow{display:inline-flex;padding:6px 10px;border-radius:999px;background:#dff7f1;color:#0f766e;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}.lead{color:#5b6b88;line-height:1.8}.checklist{margin:0;padding-left:18px;color:#5b6b88;line-height:1.8}</style></head>'
         "<body><main class='wrap'>"
         "<section class='panel'><span class='eyebrow'>隐私说明</span><h1>隐私政策</h1>"
         "<p class='lead'>我们只收集下单、资料填写、支付与交付所需的最小信息，用于志愿服务流程，不用于营销出售或无关用途。</p></section>"
@@ -683,7 +704,7 @@ def service_terms_page(token: str | None = None) -> HTMLResponse:
         "<meta name='viewport' content='width=device-width, initial-scale=1' />"
         "<title>服务说明与免责声明</title>"
         "<link rel='stylesheet' href='/static/portal-ui.css' />"
-        "<style>body{font-family:-apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif;background:#f4f7fb;padding:32px 20px;color:#172033;margin:0}.wrap{max-width:920px;margin:0 auto;display:grid;gap:18px}.panel{background:#fff;border:1px solid #dbe3f0;border-radius:20px;padding:24px;box-shadow:0 18px 42px rgba(20,34,53,.08)}.eyebrow{display:inline-flex;padding:6px 10px;border-radius:999px;background:#eef5ff;color:#1f6feb;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}.lead{color:#5b6b88;line-height:1.8}.checklist{margin:0;padding-left:18px;color:#5b6b88;line-height:1.8}</style></head>"
+        '<style>body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f4f7fb;padding:32px 20px;color:#172033;margin:0}.wrap{max-width:920px;margin:0 auto;display:grid;gap:18px}.panel{background:#fff;border:1px solid #dbe3f0;border-radius:20px;padding:24px;box-shadow:0 18px 42px rgba(20,34,53,.08)}.eyebrow{display:inline-flex;padding:6px 10px;border-radius:999px;background:#eef5ff;color:#1f6feb;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}.lead{color:#5b6b88;line-height:1.8}.checklist{margin:0;padding-left:18px;color:#5b6b88;line-height:1.8}</style></head>'
         "<body><main class='wrap'>"
         "<section class='panel'><span class='eyebrow'>服务边界</span><h1>服务说明与免责声明</h1>"
         "<p class='lead'>本服务提供志愿填报辅助建议、方案审计与交付支持，不承诺录取结果；提交资料前请确认监护人与考生已知情。</p></section>"
@@ -701,7 +722,7 @@ def deletion_policy_page() -> HTMLResponse:
         "<meta name='viewport' content='width=device-width, initial-scale=1' />"
         "<title>删除申请 / 数据删除说明</title>"
         "<link rel='stylesheet' href='/static/portal-ui.css' />"
-        "<style>body{font-family:-apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif;background:#f4f7fb;padding:32px 20px;color:#172033;margin:0}.wrap{max-width:920px;margin:0 auto;display:grid;gap:18px}.panel{background:#fff;border:1px solid #dbe3f0;border-radius:20px;padding:24px;box-shadow:0 18px 42px rgba(20,34,53,.08)}.eyebrow{display:inline-flex;padding:6px 10px;border-radius:999px;background:#fff7e6;color:#8a5a00;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}.lead{color:#5b6b88;line-height:1.8}.checklist{margin:0;padding-left:18px;color:#5b6b88;line-height:1.8}</style></head>"
+        '<style>body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f4f7fb;padding:32px 20px;color:#172033;margin:0}.wrap{max-width:920px;margin:0 auto;display:grid;gap:18px}.panel{background:#fff;border:1px solid #dbe3f0;border-radius:20px;padding:24px;box-shadow:0 18px 42px rgba(20,34,53,.08)}.eyebrow{display:inline-flex;padding:6px 10px;border-radius:999px;background:#fff7e6;color:#8a5a00;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}.lead{color:#5b6b88;line-height:1.8}.checklist{margin:0;padding-left:18px;color:#5b6b88;line-height:1.8}</style></head>'
         "<body><main class='wrap'>"
         "<section class='panel'><span class='eyebrow'>数据删除</span><h1>删除申请 / 数据删除说明</h1>"
         "<p class='lead'>如需申请删除订单资料、附件或交付物，可在支付后的 Portal 中提交删除申请；系统会保留必要的审计记录，并由人工核验后处理。</p></section>"
@@ -1048,6 +1069,8 @@ def _render_pricing_page() -> str:
   </body>
 </html>
 """
+
+
 def _render_checkout_page(service_version: str) -> str:
     amount = _SERVICE_PRICES[service_version]
     service_label = {
@@ -1063,10 +1086,42 @@ def _render_checkout_page(service_version: str) -> str:
         "premium": "适合需要更多沟通、补充说明与深度修订支持的家庭。",
     }[service_version]
     province_options = [
-        "", "北京", "上海", "天津", "重庆", "河北", "河南", "山东", "山西", "陕西", "辽宁", "吉林", "黑龙江", "江苏", "浙江", "安徽", "福建", "江西", "湖北", "湖南", "广东", "广西", "海南", "四川", "贵州", "云南", "甘肃", "青海", "宁夏", "新疆", "内蒙古", "西藏",
+        "",
+        "北京",
+        "上海",
+        "天津",
+        "重庆",
+        "河北",
+        "河南",
+        "山东",
+        "山西",
+        "陕西",
+        "辽宁",
+        "吉林",
+        "黑龙江",
+        "江苏",
+        "浙江",
+        "安徽",
+        "福建",
+        "江西",
+        "湖北",
+        "湖南",
+        "广东",
+        "广西",
+        "海南",
+        "四川",
+        "贵州",
+        "云南",
+        "甘肃",
+        "青海",
+        "宁夏",
+        "新疆",
+        "内蒙古",
+        "西藏",
     ]
     province_html = "".join(
-        f"<option value=\"{escape(p)}\">{escape(p) or '请选择考试省份（可稍后补充）'}</option>" for p in province_options
+        f'<option value="{escape(p)}">{escape(p) or "请选择考试省份（可稍后补充）"}</option>'
+        for p in province_options
     )
     return f"""<!doctype html>
 <html lang=\"zh-CN\">
@@ -1439,7 +1494,7 @@ def _render_info_page(
   <head>
     <meta charset=\"utf-8\" />
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />
-    <title>资料填写向导</title>
+    <title>考生资料填写</title>
     <link rel=\"stylesheet\" href=\"/static/portal-ui.css\" />
     <style>
       :root {{
@@ -1525,7 +1580,8 @@ def _render_info_page(
       <section class=\"hero\">
         <section class=\"panel main-panel\">
           <span class=\"eyebrow\">资料填写向导</span>
-          <h1>填写并提交资料</h1>
+          <h1>考生资料填写</h1>
+          <p class=\"helper\" style=\"margin:8px 0 0;\">资料填写向导</p>
           <p class=\"lead\">支付完成后，请按向导逐步补充分数、位次、偏好与已有方案信息。我们会把这份资料作为后续方案分析与交付的基础。</p>
 
           <section class=\"wizard-head\">
@@ -1567,7 +1623,7 @@ def _render_info_page(
               <div class=\"field\"><label>已有方案说明</label><textarea name=\"existing_plan_summary\">{escape(str(payload.get("existing_plan_summary") or ""))}</textarea></div>
               <div class=\"field\"><label>备注</label><textarea name=\"guardian_notes\">{escape(str(payload.get("guardian_notes") or ""))}</textarea></div>
               <section class=\"upload-box\">
-                <h4 style=\"margin:0 0 10px; font-size:18px;\">当前资料状态</h4>
+                <h4 style=\"margin:0 0 10px; font-size:18px;\">已上传附件</h4>
                 <p class=\"helper\" style=\"margin:0 0 12px;\">支持继续补充方案附件、成绩截图或其他参考资料。</p>
                 <div id=\"attachment-panel\">
                   <input type=\"file\" name=\"files\" multiple />
@@ -1766,7 +1822,7 @@ def _render_status_page(token: str, context: dict[str, Any]) -> str:
     intake_summary = context.get("intake_summary") or {}
     attachment_count = int(context.get("attachment_count") or 0)
     attachments = context.get("attachments") or []
-    if intake_summary:
+    if intake_summary or attachments:
         summary_items = [
             f"<li>分数：{escape(str(intake_summary.get('candidate_score') or '-'))}</li>",
             f"<li>位次：{escape(str(intake_summary.get('candidate_rank') or '-'))}</li>",
@@ -1790,7 +1846,7 @@ def _render_status_page(token: str, context: dict[str, Any]) -> str:
         summary_html = f"""
       <section class=\"panel\">
         <h2>当前资料摘要</h2>
-        <ul class=\"summary-list\">{''.join(summary_items)}</ul>
+        <ul class=\"summary-list\">{"".join(summary_items)}</ul>
         <h3>已上传附件</h3>
         <ul class=\"attachment-list\">{attachment_html}</ul>
       </section>"""
@@ -1800,10 +1856,10 @@ def _render_status_page(token: str, context: dict[str, Any]) -> str:
         <h2>支付与交付状态</h2>
         <div class=\"status-grid\">
           <div class=\"status-item\"><strong>支付状态</strong><span>{payment_status}</span></div>
-          <div class=\"status-item\"><strong>资料状态</strong><span>{escape(context['stage_title'])}</span></div>
-          <div class=\"status-item\"><strong>HTML 报告</strong><span>{'已就绪' if context['report_html_ready'] else '未就绪'}</span></div>
-          <div class=\"status-item\"><strong>PDF 报告</strong><span>{'已就绪' if context['report_pdf_ready'] else '未就绪'}</span></div>
-          <div class=\"status-item\"><strong>交付阶段</strong><span>{escape(context['stage'])}</span></div>
+          <div class=\"status-item\"><strong>资料状态</strong><span>{escape(context["stage_title"])}</span></div>
+          <div class=\"status-item\"><strong>HTML 报告</strong><span>{"已就绪" if context["report_html_ready"] else "未就绪"}</span></div>
+          <div class=\"status-item\"><strong>PDF 报告</strong><span>{"已就绪" if context["report_pdf_ready"] else "未就绪"}</span></div>
+          <div class=\"status-item\"><strong>交付阶段</strong><span>{escape(context["stage"])}</span></div>
         </div>
       </section>"""
     return f"""<!doctype html>
@@ -1860,9 +1916,9 @@ def _render_status_page(token: str, context: dict[str, Any]) -> str:
       <section class=\"hero\">
         <section class=\"panel\">
           <span class=\"eyebrow\">订单进度总览</span>
-          <h1>{escape(context['stage_title'])}</h1>
-          <p class=\"lead\">{escape(context['stage_subtitle'])}</p>
-          <span class=\"stage-pill\">当前阶段：{escape(context['stage'])}</span>
+          <h1>{escape(context["stage_title"])}</h1>
+          <p class=\"lead\">{escape(context["stage_subtitle"])}</p>
+          <span class=\"stage-pill\">当前阶段：{escape(context["stage"])}</span>
           <div class=\"hero-meta\">
             <div class=\"hero-meta-item\"><strong>订单号</strong><span>{escape(order.id)}</span></div>
             <div class=\"hero-meta-item\"><strong>服务版本</strong><span>{escape(order.service_version)}</span></div>
@@ -1874,7 +1930,7 @@ def _render_status_page(token: str, context: dict[str, Any]) -> str:
           <ul class=\"action-list\">
             <li>如资料还未完善，可返回资料页继续补充。</li>
             <li>如报告尚未就绪，请以后续通知与状态页更新为准。</li>
-            <li>如交付已完成，可优先查看在线报告与 PDF 下载入口。</li>
+            <li>如交付已完成，可优先查看报告与 PDF 下载入口。</li>
           </ul>
         </aside>
       </section>
