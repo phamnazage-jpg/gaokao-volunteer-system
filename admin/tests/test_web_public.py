@@ -21,20 +21,38 @@ def test_public_landing_page_served(client):
     assert "先做快速审核" not in body
     assert "立即咨询" in body
     assert "查看套餐" in body
-    # 两个主 CTA 都是 btn-primary
     assert 'btn-primary" href="#consult-box"' in body
     assert 'btn-primary" href="/pricing"' in body
-    # 旧的"适合已经拿到一版方案"那行已替换为咨询引导文案
-    assert "咨询本身免费" in body
-    assert "获取推荐路径" in body
-    assert "先告诉我们你的基本情况" in body
+    # 业务铁律: 复核免费 / 方案付费 — 旧"咨询本身免费"已被替换
+    assert "咨询本身免费" not in body
+    assert "咨询入口" not in body  # 不应再承诺"咨询免费"
+    assert "复核现有方案本身免费" in body
+    assert "新方案生成与深度辅导在支付后启动" in body
+    # hero-trust 1 号卡片: 复核免费 / 方案付费
+    assert "复核免费 / 方案付费" in body
+    # 复核/付费套餐按钮
+    assert "获取复核与推荐" in body
+    assert "直接看付费套餐" in body
+    # 服务流程 01 步: 明确标注复核免费 / 方案付费
+    assert "方案复核（免费）" in body
+    assert "深度辅导（付费）" in body
+    # 底部 CTA: 区分复核路径与付费路径
+    assert "已有方案？先免费复核" in body
+    assert "先告诉我们你的基本情况" not in body  # 旧标题已替换
+    assert "告诉我们你的基本情况" in body  # 新标题存在
+    # 旧 CTA/按钮文案不应再出现
+    assert "获取推荐路径" not in body
+    assert "直接看套餐</a>" not in body
+    assert "先看套餐，再决定是否立即下单" not in body
+    assert "先审计后规划" not in body
+    # 还保留的核心元素
+    assert "为什么选择我们" in body
     assert "了解服务流程" in body
     assert "最常见的不是“不会选”，而是先选错方向" in body
     assert "先把方案看清，再决定要不要重做" in body
     assert "我们先把现有方案看明白" in body
     assert "服务流程" in body
     assert "把风险解释清楚" in body
-    assert "先审计后规划" in body
     assert "风险重点可解释" in body
     assert "进度站内可查" in body
     assert "隐私与删除入口可见" in body

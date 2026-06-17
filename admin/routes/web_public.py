@@ -854,32 +854,32 @@ def _render_landing_page(request: Request) -> str:
             <a class="btn btn-primary" href="/pricing">查看套餐</a>
             <a class="btn btn-text" href="#service-flow">了解服务流程 →</a>
           </div>
-          <p class="hero-note">先告诉我们你的基本情况，再决定是否进入完整方案。咨询本身免费，不必先付款。</p>
+          <p class="hero-note">提交省份、分数、目标后，我们先判断你的方案是否需要复核。复核现有方案本身免费；新方案生成与深度辅导在支付后启动。</p>
           <div class="consult-card" id="consult-box">
-            <h2>先告诉我们你的基本情况</h2>
-            <p class="hero-note" style="margin-top:0;">输入省份、分数和当前目标，我们先帮你判断更适合审核、完整规划，还是深度辅导。</p>
+            <h2>告诉我们你的基本情况</h2>
+            <p class="hero-note" style="margin-top:0;">我们先判断你的现有方案是否需要复核，并说明后续可走的步骤。复核本身免费；新方案生成与深度辅导在支付后启动。</p>
             <form action="/pricing" method="get">
               <div class="consult-grid">
                 <div class="consult-field"><label>考试省份</label><input name="province" value="{consult_province}" placeholder="例如：湖南" /></div>
                 <div class="consult-field"><label>分数 / 位次</label><input name="score" value="{consult_score}" placeholder="例如：578 / 12034" /></div>
               </div>
-              <div class="consult-field" style="margin-top:10px;"><label>当前目标</label><input name="goal" value="{consult_goal}" placeholder="例如：先审计现有方案" /></div>
-              <div class="consult-field" style="margin-top:10px;"><label>补充说明</label><textarea name="consult" placeholder="例如：已有一版方案，想先看风险">{consult_text}</textarea></div>
+              <div class="consult-field" style="margin-top:10px;"><label>当前目标</label><input name="goal" value="{consult_goal}" placeholder="例如：先复核现有方案" /></div>
+              <div class="consult-field" style="margin-top:10px;"><label>补充说明</label><textarea name="consult" placeholder="例如：已有一版方案，想先看有没有明显风险">{consult_text}</textarea></div>
               <div class="consult-actions">
-                <button class="btn btn-primary" type="submit">获取推荐路径</button>
-                <a class="btn btn-secondary" href="/pricing">直接看套餐</a>
+                <button class="btn btn-primary" type="submit">获取复核与推荐</button>
+                <a class="btn btn-secondary" href="/pricing">直接看付费套餐</a>
               </div>
             </form>
           </div>
           <div class="hero-trust">
-            <article class="hero-trust-item"><strong>先审计后规划</strong><span>先判断现有方案有没有明显风险，再决定要不要进入完整规划。</span></article>
+            <article class="hero-trust-item"><strong>复核免费 / 方案付费</strong><span>免费帮你审现有方案的风险；新方案生成和深度辅导在支付后启动。</span></article>
             <article class="hero-trust-item"><strong>风险重点可解释</strong><span>重点识别踩线、扎堆、梯度失衡和结构异常，不只给结果。</span></article>
             <article class="hero-trust-item"><strong>进度站内可查</strong><span>资料、通知、报告、下载入口都能在站内持续追踪。</span></article>
             <article class="hero-trust-item"><strong>隐私与删除入口可见</strong><span>隐私政策、服务说明与删除申请入口全程可访问。</span></article>
           </div>
           <div class="hero-divider"></div>
           <div class="hero-points">
-            <article class="point lead"><strong>先把方案看清，再决定要不要重做</strong><span>如果你已经拿到一版方案，先做审核看是否踩线、扎堆、梯度失衡，再决定是否进入完整规划。</span></article>
+            <article class="point lead"><strong>先把方案看清，再决定要不要重做</strong><span>如果你已经拿到一版方案，先做免费复核看是否踩线、扎堆、梯度失衡，再决定是否进入付费的完整规划。</span></article>
             <article class="point"><strong>重点可解释</strong><span>不只给一份结论，更说明为什么这样选、需要确认什么。</span></article>
             <article class="point"><strong>资料、通知、报告都在站内</strong><span>支付后只需按提示补充资料，状态、通知、报告、下载入口全部站内可查。</span></article>
           </div>
@@ -918,14 +918,14 @@ def _render_landing_page(request: Request) -> str:
         </div>
       </section>
 
-      <section id=\"service-flow\" class=\"section\">
+      <section id="service-flow" class="section">
         <h2>服务流程</h2>
-        <p class=\"section-intro\">让用户知道每一步会发生什么，比空泛地说“智能系统已接入”更重要。</p>
-        <div class=\"flow\">
-          <article class=\"flow-step\"><strong>01</strong><h3>选择服务深度</h3><p>先判断你需要的是方案审核、完整方案，还是更重人工沟通的深度辅导。</p></article>
-          <article class=\"flow-step\"><strong>02</strong><h3>确认下单</h3><p>先填写考生姓名、手机号等最小信息，避免在支付前被长表单劝退。</p></article>
-          <article class=\"flow-step\"><strong>03</strong><h3>补充资料</h3><p>支付成功后进入资料向导，分步提交分数、位次、偏好与已有方案附件。</p></article>
-          <article class=\"flow-step\"><strong>04</strong><h3>查看交付</h3><p>在站内追踪状态、查看通知，并在交付就绪后在线阅读或下载 PDF。</p></article>
+        <p class="section-intro">让用户知道每一步会发生什么，比空泛地说“智能系统已接入”更重要。复核免费，方案生成和深度辅导需付费。</p>
+        <div class="flow">
+          <article class="flow-step"><strong>01</strong><h3>先判断入口</h3><p>判断你需要的是方案复核（免费）还是完整方案 / 深度辅导（付费）。</p></article>
+          <article class="flow-step"><strong>02</strong><h3>确认下单</h3><p>选完整方案或深度辅导时，先填写考生姓名、手机号等最小信息后再支付。</p></article>
+          <article class="flow-step"><strong>03</strong><h3>补充资料</h3><p>支付成功后进入资料向导，分步提交分数、位次、偏好与已有方案附件。</p></article>
+          <article class="flow-step"><strong>04</strong><h3>查看交付</h3><p>在站内追踪状态、查看通知，并在交付就绪后在线阅读或下载 PDF。</p></article>
         </div>
       </section>
 
@@ -938,14 +938,14 @@ def _render_landing_page(request: Request) -> str:
         </div>
       </section>
 
-      <section class=\"section cta-band\">
+      <section class="section cta-band">
         <div>
-          <h2 style=\"margin:0 0 8px;font-size:28px;\">先看套餐，再决定是否立即下单</h2>
-          <p>如果你已经明确要做完整方案，可以直接进入 99 元方案页查看内容和下单说明。</p>
+          <h2 style="margin:0 0 8px;font-size:28px;">已有方案？先免费复核；明确要做？看付费套餐</h2>
+          <p>如果已经拿到一版方案，可先做一次免费复核；明确要完整方案或深度辅导，可直接进入套餐页查看内容和下单说明。</p>
         </div>
-        <div class=\"hero-actions\" style=\"margin-top:0;\">
-          <a class=\"btn btn-primary\" href=\"/pricing\">进入套餐页</a>
-          <a class=\"btn btn-secondary\" href=\"/service-terms\">查看服务说明</a>
+        <div class="hero-actions" style="margin-top:0;">
+          <a class="btn btn-primary" href="/pricing">进入套餐页</a>
+          <a class="btn btn-secondary" href="/service-terms">查看服务说明</a>
         </div>
       </section>
       {_render_footer_links()}
