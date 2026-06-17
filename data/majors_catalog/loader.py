@@ -4,7 +4,12 @@ import json
 from pathlib import Path
 from typing import Any
 
-from .models import MajorCatalogStatus, NationalMajor
+from .models import (
+    MajorCatalogStatus,
+    NationalMajor,
+    SchoolCatalogStatus,
+    SchoolMajorOffering,
+)
 
 
 class MajorsCatalogLoader:
@@ -44,6 +49,48 @@ class MajorsCatalogLoader:
             last_verified_at=str(self._latest_doc["last_verified_at"]),
         )
 
+    def list_school_offerings(
+        self, year: int, school_code: str
+    ) -> list[SchoolMajorOffering]:
+        school_doc = self._read_json(
+            self._catalog_root / "schools" / str(year) / f"{school_code}.json"
+        )
+        return [
+            self._school_offering_from_payload(item)
+            for item in school_doc.get("offerings", [])
+        ]
+
+    def build_school_status(self, year: int) -> SchoolCatalogStatus:
+        year_dir = self._catalog_root / "schools" / str(year)
+        school_codes = sorted(path.stem for path in year_dir.glob("*.json"))
+        offering_count = 0
+        for school_code in school_codes:
+            offering_count += len(self.list_school_offerings(year, school_code))
+        return SchoolCatalogStatus(
+            year=year,
+            school_count=len(school_codes),
+            offering_count=offering_count,
+            school_codes=school_codes,
+        )
+
+    def verify_school_catalog(self, year: int) -> dict[str, object]:
+        year_dir = self._catalog_root / "schools" / str(year)
+        if not year_dir.is_dir():
+            return {
+                "ok": False,
+                "missing_required_files": [f"schools/{year}/"],
+                "school_count": 0,
+                "offering_count": 0,
+            }
+        status = self.build_school_status(year)
+        return {
+            "ok": True,
+            "missing_required_files": [],
+            "school_count": status.school_count,
+            "offering_count": status.offering_count,
+            "school_codes": status.school_codes,
+        }
+
     @staticmethod
     def _read_json(path: Path) -> dict[str, Any]:
         return json.loads(path.read_text(encoding="utf-8"))
@@ -69,4 +116,24 @@ class MajorsCatalogLoader:
             last_verified_at=str(
                 payload.get("last_verified_at") or root_doc["last_verified_at"]
             ),
+        )
+
+    @staticmethod
+    def _school_offering_from_payload(payload: dict[str, Any]) -> SchoolMajorOffering:
+        return SchoolMajorOffering(
+            school_code=str(payload["school_code"]),
+            school_name=str(payload["school_name"]),
+            major_code=str(payload["major_code"]),
+            major_name=str(payload["major_name"]),
+            admission_year=int(payload["admission_year"]),
+            province=str(payload["province"]),
+            duration_years=int(payload["duration_years"]),
+            tuition_cny=int(payload["tuition_cny"])
+            if payload.get("tuition_cny") is not None
+            else None,
+            study_mode=str(payload["study_mode"]),
+            is_new=bool(payload["is_new"]),
+            is_discontinued=bool(payload["is_discontinued"]),
+            source=str(payload["source"]),
+            last_verified_at=str(payload["last_verified_at"]),
         )

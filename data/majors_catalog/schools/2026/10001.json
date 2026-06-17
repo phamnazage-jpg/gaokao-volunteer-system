@@ -1,0 +1,41 @@
+{
+  "school_code": "10001",
+  "school_name": "北京大学",
+  "admission_year": 2026,
+  "province": "北京",
+  "source": "学校招生章程人工摘录",
+  "source_url": "https://www.pku.edu.cn/",
+  "last_verified_at": "2026-06-17",
+  "offerings": [
+    {
+      "school_code": "10001",
+      "school_name": "北京大学",
+      "major_code": "080901",
+      "major_name": "计算机科学与技术",
+      "admission_year": 2026,
+      "province": "北京",
+      "duration_years": 4,
+      "tuition_cny": 5000,
+      "study_mode": "全日制",
+      "is_new": false,
+      "is_discontinued": false,
+      "source": "学校招生章程人工摘录",
+      "last_verified_at": "2026-06-17"
+    },
+    {
+      "school_code": "10001",
+      "school_name": "北京大学",
+      "major_code": "020101",
+      "major_name": "经济学",
+      "admission_year": 2026,
+      "province": "北京",
+      "duration_years": 4,
+      "tuition_cny": 5000,
+      "study_mode": "全日制",
+      "is_new": false,
+      "is_discontinued": false,
+      "source": "学校招生章程人工摘录",
+      "last_verified_at": "2026-06-17"
+    }
+  ]
+}

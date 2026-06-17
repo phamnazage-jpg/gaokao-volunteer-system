@@ -13,6 +13,7 @@
 
 - `national/2024.json`
 - `national/latest.json`
+- `schools/2026/10001.json`（北京大学示例骨架）
 
 ## coverage_mode
 

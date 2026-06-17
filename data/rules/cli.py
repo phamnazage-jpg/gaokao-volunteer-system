@@ -8,6 +8,8 @@ from data.majors_catalog.cli import (
     DEFAULT_CATALOG_ROOT,
     build_changes_payload,
     build_lookup_payload,
+    build_school_status_payload,
+    build_school_verify_payload,
     build_status_payload as build_majors_status_payload,
     build_verify_payload as build_majors_verify_payload,
 )
@@ -54,9 +56,25 @@ def _build_parser() -> argparse.ArgumentParser:
     majors_verify.add_argument("--catalog-root", default=str(DEFAULT_CATALOG_ROOT))
     majors_verify.add_argument("--json", action="store_true")
 
-    majors_changes = majors_sub.add_parser("changes", help="list non-active majors")
+    majors_changes = majors_sub.add_parser(
+        "changes", help="list non-active major records"
+    )
     majors_changes.add_argument("--catalog-root", default=str(DEFAULT_CATALOG_ROOT))
     majors_changes.add_argument("--json", action="store_true")
+
+    school_status = majors_sub.add_parser(
+        "school-status", help="show school catalog summary for a year"
+    )
+    school_status.add_argument("--catalog-root", default=str(DEFAULT_CATALOG_ROOT))
+    school_status.add_argument("--year", required=True, type=int)
+    school_status.add_argument("--json", action="store_true")
+
+    school_verify = majors_sub.add_parser(
+        "school-verify", help="verify school catalog structure for a year"
+    )
+    school_verify.add_argument("--catalog-root", default=str(DEFAULT_CATALOG_ROOT))
+    school_verify.add_argument("--year", required=True, type=int)
+    school_verify.add_argument("--json", action="store_true")
 
     return parser
 
@@ -119,6 +137,14 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "majors" and args.majors_command == "changes":
         payload = build_changes_payload(Path(args.catalog_root))
+        return _emit(payload, args.json)
+
+    if args.command == "majors" and args.majors_command == "school-status":
+        payload = build_school_status_payload(Path(args.catalog_root), args.year)
+        return _emit(payload, args.json)
+
+    if args.command == "majors" and args.majors_command == "school-verify":
+        payload = build_school_verify_payload(Path(args.catalog_root), args.year)
         return _emit(payload, args.json)
 
     parser.error("unsupported command")

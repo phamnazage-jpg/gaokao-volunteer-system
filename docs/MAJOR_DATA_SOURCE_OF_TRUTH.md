@@ -36,8 +36,10 @@
   - `python scripts/gaokao-cli majors status --json`
   - `python scripts/gaokao-cli majors lookup 经济学 --json`
   - `python scripts/gaokao-cli majors verify --json`
+- 已新增：
+  - `schools/2026/10001.json` 校级招生目录骨架样本
 - 尚未落地：
-  - `schools/<year>/` 校级招生目录
+  - 更多学校 `schools/<year>/` 批量目录
   - `changes/2024-2026.md`
   - `major_validation` 接入 `audit_engine`
 

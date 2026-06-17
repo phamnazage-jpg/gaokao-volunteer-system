@@ -75,3 +75,22 @@ def build_changes_payload(catalog_root: Path) -> dict[str, object]:
         "changes": changes,
         "change_count": len(changes),
     }
+
+
+def build_school_status_payload(catalog_root: Path, year: int) -> dict[str, object]:
+    loader = MajorsCatalogLoader.from_catalog_root(catalog_root)
+    status = loader.build_school_status(year)
+    return {
+        "ok": True,
+        "year": status.year,
+        "school_count": status.school_count,
+        "offering_count": status.offering_count,
+        "school_codes": status.school_codes,
+    }
+
+
+def build_school_verify_payload(catalog_root: Path, year: int) -> dict[str, object]:
+    loader = MajorsCatalogLoader.from_catalog_root(catalog_root)
+    payload = loader.verify_school_catalog(year)
+    payload["year"] = year
+    return payload
