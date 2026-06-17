@@ -18,6 +18,9 @@ def test_public_landing_page_served(client):
     assert "为什么选择我们" in body
     assert 'href="/pricing"' in body
     assert "先做快速审核" in body
+    assert "立即咨询" in body
+    assert "获取推荐路径" in body
+    assert "先告诉我们你的基本情况" in body
     assert "了解服务流程" in body
     assert "最常见的不是“不会选”，而是先选错方向" in body
     assert "先把方案看清，再决定要不要重做" in body
@@ -50,6 +53,7 @@ def test_public_pricing_page_served(client):
     assert 'data-package="standard"' in body
     assert 'data-package="premium"' in body
     assert "推荐方案" in body
+    assert "你可以先从 99 元完整志愿方案开始" in body
     assert "支付接入建设中" not in body
     assert "先做快速审核" in body
     assert "立即开始完整规划" in body
@@ -210,7 +214,7 @@ def test_mock_payment_complete_rejects_wrong_portal_token(client):
     assert resp.status_code == 401 or resp.status_code == 403
 
 
-def test_payment_return_redirects_to_portal_status(client):
+def test_payment_return_redirects_to_payment_success_page(client):
     create_resp = client.post(
         "/api/public/orders",
         json={
@@ -229,7 +233,38 @@ def test_payment_return_redirects_to_portal_status(client):
 
     resp = client.get(f"/portal/payment-return?token={token}", follow_redirects=False)
     assert resp.status_code == 303, resp.text
-    assert resp.headers["location"] == f"/portal/{token}/status"
+    assert resp.headers["location"] == f"/portal/{token}/payment-success"
+
+
+def test_payment_success_page_served_after_paid_order(client, settings):
+    create_resp = client.post(
+        "/api/public/orders",
+        json={
+            "service_version": "standard",
+            "amount_cents": 9900,
+            "customer_name": "张家长",
+            "customer_phone": "13800138000",
+            "customer_email": "parent@example.com",
+            "candidate_name": "张三",
+            "candidate_province": "湖南",
+        },
+    )
+    assert create_resp.status_code == 201, create_resp.text
+    body = create_resp.json()
+    payment_id = body["checkout_url"].split("/pay/mock/")[1].split("?")[0]
+    token = body["portal_status_url"].split("/portal/")[1].split("/status")[0]
+
+    complete = client.post(
+        f"/pay/mock/{payment_id}/complete?token={token}", follow_redirects=False
+    )
+    assert complete.status_code == 303, complete.text
+    assert complete.headers["location"] == f"/portal/{token}/payment-success"
+
+    page = client.get(f"/portal/{token}/payment-success")
+    assert page.status_code == 200, page.text
+    assert "支付成功" in page.text
+    assert "订单已创建，下一步继续补资料" in page.text
+    assert "立即补充资料" in page.text
 
 
 def test_public_pages_include_privacy_and_deletion_links(client):
@@ -369,3 +404,11 @@ def test_public_create_order_returns_503_without_creating_orphan_order_when_chec
     assert "payment checkout unavailable" in resp.text
     with OrdersDAO.connect(settings.orders_db_path) as dao:
         assert dao.count() == 0
+def test_public_pricing_page_shows_consult_recommendation(client):
+    resp = client.get(
+        "/pricing?province=%E6%B9%96%E5%8D%97&score=578&goal=%E5%85%88%E5%AE%A1%E6%A0%B8&consult=%E5%B7%B2%E6%9C%89%E4%B8%80%E7%89%88%E6%96%B9%E6%A1%88"
+    )
+    assert resp.status_code == 200, resp.text
+    assert "更适合先做 49 元方案审核" in resp.text
+    assert "湖南 578 先审核" in resp.text
+

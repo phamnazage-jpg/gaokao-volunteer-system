@@ -57,6 +57,9 @@ def test_order_info_form_accepts_draft_and_submit(client, settings):
     assert "已有方案与附件" in page.text
     assert "确认并提交" in page.text
     assert "提交确认" not in page.text
+    assert "当前还需要补充" in page.text
+    assert "分数" in page.text
+    assert "位次" in page.text
 
     assert page.text.count("<form") == 1
     assert 'id="attachment-form"' not in page.text

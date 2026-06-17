@@ -129,18 +129,27 @@ def _log_deletion_request(
 
 
 @router.get("/", include_in_schema=False)
-def landing_page() -> HTMLResponse:
-    return HTMLResponse(_render_landing_page())
+def landing_page(request: Request) -> HTMLResponse:
+    return HTMLResponse(_render_landing_page(request))
 
 
 @router.get("/pricing", include_in_schema=False)
-def pricing_page() -> HTMLResponse:
-    return HTMLResponse(_render_pricing_page())
+def pricing_page(request: Request) -> HTMLResponse:
+    return HTMLResponse(_render_pricing_page(request))
 
 
 @router.get("/checkout/{service_version}", include_in_schema=False)
 def checkout_page(service_version: ServiceVersion) -> HTMLResponse:
     return HTMLResponse(_render_checkout_page(service_version))
+
+
+@router.get("/portal/{token}/payment-success", include_in_schema=False)
+def payment_success_page(
+    token: str, settings: Settings = Depends(get_settings_dep)
+) -> HTMLResponse:
+    order = _resolve_order_from_token(token, settings)
+    context = _build_portal_context(order, settings)
+    return HTMLResponse(_render_payment_success_page(token, context))
 
 
 @router.post("/api/public/orders", response_model=PublicOrderCreated, status_code=201)
@@ -275,7 +284,7 @@ def payment_return_page(
     token: str, settings: Settings = Depends(get_settings_dep)
 ) -> RedirectResponse:
     _resolve_order_from_token(token, settings)
-    return RedirectResponse(url=f"/portal/{token}/status", status_code=303)
+    return RedirectResponse(url=f"/portal/{token}/payment-success", status_code=303)
 
 
 @router.get("/portal/{token}/info", include_in_schema=False)
@@ -733,7 +742,12 @@ def deletion_policy_page() -> HTMLResponse:
     return HTMLResponse(body)
 
 
-def _render_landing_page() -> str:
+def _render_landing_page(request: Request) -> str:
+    query = dict(request.query_params)
+    consult_text = escape(str(query.get("consult") or ""))
+    consult_province = escape(str(query.get("province") or ""))
+    consult_score = escape(str(query.get("score") or ""))
+    consult_goal = escape(str(query.get("goal") or ""))
     return f"""<!doctype html>
 <html lang=\"zh-CN\">
   <head>
@@ -768,6 +782,14 @@ def _render_landing_page() -> str:
       h1 {{ margin: 18px 0 14px; max-width: 760px; font-size: clamp(36px, 6vw, 56px); line-height: 1.04; letter-spacing: -0.04em; }}
       .sub {{ margin: 0; max-width: 700px; color: #b8c8e4; line-height: 1.82; font-size: 17px; }}
       .hero-actions {{ display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; align-items: center; }}
+      .consult-card {{ margin-top: 18px; padding: 18px; border-radius: 18px; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.14); }}
+      .consult-card h2 {{ margin: 0 0 8px; font-size: 18px; color: #fff; }}
+      .consult-grid {{ display:grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap:10px; }}
+      .consult-field {{ display:flex; flex-direction:column; gap:6px; }}
+      .consult-field label {{ color:#d9e7ff; font-size:12px; font-weight:600; }}
+      .consult-field input, .consult-field textarea {{ width:100%; padding:11px 12px; border-radius:12px; border:1px solid rgba(255,255,255,.18); background: rgba(255,255,255,.96); color:#142235; font-size:14px; }}
+      .consult-field textarea {{ min-height:74px; resize:vertical; }}
+      .consult-actions {{ display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }}
       .btn {{ display: inline-flex; align-items: center; justify-content: center; min-height: 46px; padding: 0 18px; border-radius: 14px; text-decoration: none; font-weight: 700; transition: .18s ease; }}
       .btn-primary {{ min-height: 54px; padding: 0 28px; font-size: 17px; background: linear-gradient(135deg,#2d7cff,#0f4fd6); color: #fff; box-shadow: 0 22px 40px rgba(31,111,235,.42), inset 0 1px 0 rgba(255,255,255,.18); letter-spacing: .01em; }}
       .btn-primary:hover {{ background: linear-gradient(135deg,#276fe7,#0d45bf); transform: translateY(-1px); }}
@@ -828,10 +850,27 @@ def _render_landing_page() -> str:
           <h1>高考志愿填报智能规划服务</h1>
           <p class=\"sub\">先审计现有志愿方案，再判断是否踩线、扎堆或梯度失衡，再决定要不要进入完整规划。先完成线上下单，再进入资料向导补充详细信息，后续可在站内查看报告与交付进度。</p>
           <div class="hero-actions">
+            <a class="btn btn-secondary" href="#consult-box">立即咨询</a>
             <a class="btn btn-primary" href="/pricing">先做快速审核</a>
             <a class="btn btn-text" href="#service-flow">了解服务流程 →</a>
           </div>
           <p class="hero-note">适合已经拿到一版志愿方案、想先判断有没有明显风险的人。</p>
+          <div class="consult-card" id="consult-box">
+            <h2>先告诉我们你的基本情况</h2>
+            <p class="hero-note" style="margin-top:0;">输入省份、分数和当前目标，我们先帮你判断更适合审核、完整规划，还是深度辅导。</p>
+            <form action="/pricing" method="get">
+              <div class="consult-grid">
+                <div class="consult-field"><label>考试省份</label><input name="province" value="{consult_province}" placeholder="例如：湖南" /></div>
+                <div class="consult-field"><label>分数 / 位次</label><input name="score" value="{consult_score}" placeholder="例如：578 / 12034" /></div>
+              </div>
+              <div class="consult-field" style="margin-top:10px;"><label>当前目标</label><input name="goal" value="{consult_goal}" placeholder="例如：先审计现有方案" /></div>
+              <div class="consult-field" style="margin-top:10px;"><label>补充说明</label><textarea name="consult" placeholder="例如：已有一版方案，想先看风险">{consult_text}</textarea></div>
+              <div class="consult-actions">
+                <button class="btn btn-primary" type="submit">获取推荐路径</button>
+                <a class="btn btn-secondary" href="/pricing">直接看套餐</a>
+              </div>
+            </form>
+          </div>
           <div class="hero-trust">
             <article class="hero-trust-item"><strong>先审计后规划</strong><span>先判断现有方案有没有明显风险，再决定要不要进入完整规划。</span></article>
             <article class="hero-trust-item"><strong>风险重点可解释</strong><span>重点识别踩线、扎堆、梯度失衡和结构异常，不只给结果。</span></article>
@@ -916,7 +955,20 @@ def _render_landing_page() -> str:
 """
 
 
-def _render_pricing_page() -> str:
+def _render_pricing_page(request: Request) -> str:
+    query = dict(request.query_params)
+    consult_text = str(query.get("consult") or "").strip()
+    province = str(query.get("province") or "").strip()
+    score = str(query.get("score") or "").strip()
+    goal = str(query.get("goal") or "").strip()
+    recommendation_title = "你可以先从 99 元完整志愿方案开始"
+    recommendation_body = "如果你没有现成方案，直接进入完整规划最省时间；如果已有方案，再先审计。"
+    if consult_text or "审计" in goal or "审核" in goal:
+        recommendation_title = "更适合先做 49 元方案审核"
+        recommendation_body = "你提到已有方案或需要先判断风险，先做审核更符合当前目标。"
+    elif "深度" in goal or "沟通" in goal:
+        recommendation_title = "更适合 199 元深度辅导版"
+        recommendation_body = "如果你需要多轮解释或目标冲突较大，深度辅导更合适。"
     return f"""<!doctype html>
 <html lang=\"zh-CN\">
   <head>
@@ -978,6 +1030,9 @@ def _render_pricing_page() -> str:
       .faq-item h3 {{ margin:0 0 8px; font-size:18px; }}
       .faq-item p {{ margin:0; color:var(--muted); line-height:1.7; }}
       .notice {{ margin-top:26px; padding:16px 18px; border-radius:16px; background:var(--warning-soft); color:var(--warning-text); border:1px solid #f4d39b; line-height:1.7; }}
+      .consult-summary {{ margin-top:18px; padding:18px 20px; border-radius:18px; background:linear-gradient(180deg,#f8fbff,#eef5ff); border:1px solid var(--border); }}
+      .consult-summary h2 {{ margin:0 0 8px; font-size:20px; }}
+      .consult-summary p {{ margin:0; color:var(--muted); line-height:1.75; }}
       @media (max-width: 980px) {{
         .hero, .pricing-grid, .trust-band, .faq, .trust-proof {{ grid-template-columns: 1fr; }}
         .card.recommended {{ transform: none; }}
@@ -990,6 +1045,10 @@ def _render_pricing_page() -> str:
         <div class=\"panel\">
           <h1>服务套餐</h1>
           <p class=\"lead\">先按服务深度选择适合自己的方案：如果你已经拿到其他方案，先做审核；如果希望一次拿到完整建议，优先看完整志愿方案；如果需要更多人工沟通和多轮修订，再选择深度辅导版。</p>
+          <div class=\"consult-summary\">
+            <h2>{escape(recommendation_title)}</h2>
+            <p>{escape(recommendation_body)}{" 当前输入：" if (province or score or goal) else ""}{escape(" ".join(filter(None, [province, score, goal])))}</p>
+          </div>
           <div class=\"trust-proof\">
             <article class=\"trust-proof-item\"><strong>先审计再决定</strong><span>先看现有方案是否值得继续，而不是一上来重做。</span></article>
             <article class=\"trust-proof-item\"><strong>主推档更清晰</strong><span>99 元方案覆盖大多数用户最关心的完整线上交付路径。</span></article>
@@ -1351,6 +1410,66 @@ def _render_checkout_page(service_version: str) -> str:
 """
 
 
+def _render_payment_success_page(token: str, context: dict[str, Any]) -> str:
+    stage = str(context.get("stage") or "")
+    next_action = "立即补充资料"
+    next_href = f"/portal/{escape(token)}/info"
+    if stage in {"processing", "report_ready", "completed"}:
+        next_action = "查看订单状态"
+        next_href = f"/portal/{escape(token)}/status"
+    payment_status = escape(str(context.get("payment_status") or "pending"))
+    next_hint = "当前最重要的是补充分数、位次、选科和目标信息，提交后系统会继续推进。"
+    if stage in {"processing", "report_ready", "completed"}:
+        next_hint = "订单已进入后续处理阶段，可以直接查看进度和交付结果。"
+    return f"""<!doctype html>
+<html lang=\"zh-CN\">
+  <head>
+    <meta charset=\"utf-8\" />
+    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />
+    <title>支付成功</title>
+    <link rel=\"stylesheet\" href=\"/static/portal-ui.css\" />
+    <style>
+      body {{ margin:0; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; background:#f3f7fb; color:#142235; }}
+      .wrap {{ max-width:980px; margin:0 auto; padding:32px 20px 72px; display:grid; gap:16px; }}
+      .panel {{ background:#fff; border:1px solid #d7e3f1; border-radius:24px; box-shadow:0 18px 42px rgba(20,34,53,.08); padding:24px; }}
+      .eyebrow {{ display:inline-flex; padding:6px 10px; border-radius:999px; background:#dff7f1; color:#0f766e; font-size:12px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; }}
+      h1 {{ margin:14px 0 10px; font-size:clamp(30px,5vw,42px); letter-spacing:-0.03em; }}
+      .lead {{ margin:0; color:#5b6b88; line-height:1.8; }}
+      .hero-actions {{ display:flex; gap:12px; flex-wrap:wrap; margin-top:20px; }}
+      .btn {{ display:inline-flex; align-items:center; justify-content:center; min-height:48px; padding:0 18px; border-radius:14px; text-decoration:none; font-weight:700; }}
+      .btn-primary {{ background:#1f6feb; color:#fff; }}
+      .btn-secondary {{ background:#edf3ff; color:#194fb6; }}
+      .grid {{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }}
+      .item {{ padding:14px 16px; border-radius:16px; background:#f8fbff; border:1px solid #d7e3f1; }}
+      .item strong {{ display:block; margin-bottom:6px; font-size:14px; }}
+      .meta {{ color:#5b6b88; line-height:1.7; font-size:14px; }}
+      @media (max-width: 860px) {{ .grid {{ grid-template-columns:1fr; }} }}
+    </style>
+  </head>
+  <body>
+    <main class=\"wrap\">
+      <section class=\"panel\">
+        <span class=\"eyebrow\">支付成功</span>
+        <h1>订单已创建，下一步继续补资料</h1>
+        <p class=\"lead\">支付状态：{payment_status}。{escape(next_hint)}</p>
+        <div class=\"hero-actions\">
+          <a class=\"btn btn-primary\" href=\"{next_href}\">{escape(next_action)}</a>
+          <a class=\"btn btn-secondary\" href=\"/portal/{escape(token)}/status\">查看订单进度</a>
+        </div>
+      </section>
+      <section class=\"panel\">
+        <h2 style=\"margin:0 0 10px;\">你现在要做什么</h2>
+        <div class=\"grid\">
+          <div class=\"item\"><strong>补充基础信息</strong><span class=\"meta\">先填分数、位次、选科。</span></div>
+          <div class=\"item\"><strong>填写偏好目标</strong><span class=\"meta\">补充城市、专业或院校偏好。</span></div>
+          <div class=\"item\"><strong>持续查看进度</strong><span class=\"meta\">资料提交后可继续查看状态、通知和报告。</span></div>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>"""
+
+
 def _render_mock_payment_page(payment_id: str, amount_cents: int, token: str) -> str:
     return _render_simulated_payment_html(
         title="支付确认页",
@@ -1467,7 +1586,7 @@ def _complete_simulated_payment(
             status_code=404, detail="unsupported simulated payment completion"
         )
     service.handle_webhook(payload, signature)
-    return RedirectResponse(url=f"/portal/{token}/status", status_code=303)
+    return RedirectResponse(url=f"/portal/{token}/payment-success", status_code=303)
 
 
 def _render_info_page(
@@ -1479,6 +1598,15 @@ def _render_info_page(
     service_terms_checked = "checked" if payload.get("service_terms_accepted") else ""
     guardian_checked = "checked" if payload.get("guardian_confirmed") else ""
     attachments = payload.get("attachments") or []
+    missing_items: list[str] = []
+    if not payload.get("candidate_score"):
+        missing_items.append("分数")
+    if not payload.get("candidate_rank"):
+        missing_items.append("位次")
+    if not payload.get("candidate_subjects"):
+        missing_items.append("选科")
+    if not payload.get("target_cities") and not payload.get("target_majors") and not payload.get("university_preferences"):
+        missing_items.append("至少一个偏好目标")
     attachment_items = []
     for item in attachments:
         if not isinstance(item, dict):
@@ -1560,6 +1688,7 @@ def _render_info_page(
       #prev-step, .ghost {{ background:#edf3ff; color:#194fb6; }}
       #result {{ margin-top:16px; min-height:24px; color:var(--muted); line-height:1.7; white-space:pre-wrap; }}
       .summary-box {{ background:#f8fafc; border:1px solid var(--border); border-radius:16px; padding:14px 16px; white-space:pre-wrap; font-size:13px; line-height:1.7; color:var(--muted); }}
+      .progress-box {{ margin-top:14px; padding:14px 16px; border-radius:16px; background:#fff7e6; border:1px solid #f4d39b; color:#8a5a00; line-height:1.7; }}
       .footer-link {{ margin-top:18px; }}
       @media (max-width: 980px) {{
         .hero, .field-grid, .wizard-steps {{ grid-template-columns:1fr; }}
@@ -1583,6 +1712,7 @@ def _render_info_page(
           <h1>考生资料填写</h1>
           <p class=\"helper\" style=\"margin:8px 0 0;\">资料填写向导</p>
           <p class=\"lead\">支付完成后，请按向导逐步补充分数、位次、偏好与已有方案信息。我们会把这份资料作为后续方案分析与交付的基础。</p>
+          <section class=\"progress-box\"><strong>当前还需要补充：</strong><span>{escape("、".join(missing_items) or "资料已基本完整，可以继续提交")}</span></section>
 
           <section class=\"wizard-head\">
             <h2>四步资料向导</h2>
@@ -1787,8 +1917,21 @@ def _render_info_page(
 
 def _render_status_page(token: str, context: dict[str, Any]) -> str:
     order = context["order"]
+    stage = str(context["stage"])
+    primary_action_label = "继续补充资料"
+    primary_action_href = f"/portal/{escape(token)}/info"
+    if stage in {"processing", "info_submitted"}:
+        primary_action_label = "查看当前进度"
+        primary_action_href = f"/portal/{escape(token)}/status#delivery-status"
+    elif stage in {"report_ready", "completed"}:
+        if context["report_html_ready"]:
+            primary_action_label = "查看报告"
+            primary_action_href = f"/portal/{escape(token)}/report"
+        else:
+            primary_action_label = "下载 PDF"
+            primary_action_href = f"/portal/{escape(token)}/report.pdf"
     report_links = ""
-    can_access_delivery = context["stage"] in {"report_ready", "completed"}
+    can_access_delivery = stage in {"report_ready", "completed"}
     if can_access_delivery and context["report_html_ready"]:
         report_links += (
             f'<li><a href="/portal/{escape(token)}/report">查看在线报告</a></li>'
@@ -1893,6 +2036,10 @@ def _render_status_page(token: str, context: dict[str, Any]) -> str:
       h1 {{ margin:14px 0 10px; font-size:clamp(30px,5vw,42px); letter-spacing:-0.03em; }}
       .lead {{ margin:0; color:var(--muted); line-height:1.8; }}
       .stage-pill {{ display:inline-flex; margin-top:16px; padding:10px 14px; border-radius:999px; background:var(--primary); color:#fff; font-weight:700; }}
+      .hero-actions {{ display:flex; gap:12px; flex-wrap:wrap; margin-top:18px; }}
+      .hero-btn {{ display:inline-flex; align-items:center; justify-content:center; min-height:48px; padding:0 18px; border-radius:14px; text-decoration:none; font-weight:700; }}
+      .hero-btn-primary {{ background:var(--primary); color:#fff; }}
+      .hero-btn-secondary {{ background:#edf3ff; color:#194fb6; }}
       .hero-meta {{ display:grid; gap:12px; margin-top:18px; }}
       .hero-meta-item {{ padding:14px 16px; border-radius:16px; background:var(--surface-soft); border:1px solid var(--border); }}
       .hero-meta-item strong {{ display:block; margin-bottom:6px; font-size:14px; }}
@@ -1919,6 +2066,10 @@ def _render_status_page(token: str, context: dict[str, Any]) -> str:
           <h1>{escape(context["stage_title"])}</h1>
           <p class=\"lead\">{escape(context["stage_subtitle"])}</p>
           <span class=\"stage-pill\">当前阶段：{escape(context["stage"])}</span>
+          <div class=\"hero-actions\">
+            <a class=\"hero-btn hero-btn-primary\" href=\"{primary_action_href}\">{escape(primary_action_label)}</a>
+            <a class=\"hero-btn hero-btn-secondary\" href=\"/portal/{escape(token)}/info\">填写 / 更新资料</a>
+          </div>
           <div class=\"hero-meta\">
             <div class=\"hero-meta-item\"><strong>订单号</strong><span>{escape(order.id)}</span></div>
             <div class=\"hero-meta-item\"><strong>服务版本</strong><span>{escape(order.service_version)}</span></div>
@@ -1937,13 +2088,13 @@ def _render_status_page(token: str, context: dict[str, Any]) -> str:
 
       <section class=\"sections\">
         {summary_html}
-        {delivery_html}
+        <div id=\"delivery-status\">{delivery_html}</div>
         {station_notice_html}
         <section class=\"panel\">
           <h2>下一步操作</h2>
           <ul class=\"action-list\">
             <li><a href=\"/portal/{escape(token)}/info\">填写 / 更新资料</a></li>
-            <li><a href=\"/portal/{escape(token)}/notifications\">查看通知审计</a></li>
+            <li><a href=\"/portal/{escape(token)}/notifications\">查看通知记录</a></li>
             {report_links}
           </ul>
         </section>

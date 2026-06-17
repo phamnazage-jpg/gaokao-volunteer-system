@@ -66,7 +66,15 @@ def test_alipay_sim_public_user_e2e_flow(tmp_path, monkeypatch):
             follow_redirects=False,
         )
         assert pay_resp.status_code == 303, pay_resp.text
-        assert pay_resp.headers["location"].endswith(f"/portal/{token}/status")
+        # After successful payment, the gateway now lands users on an
+        # intermediate "payment-success" page that explains next steps
+        # before they continue to the live status view. Verify the
+        # intermediate page renders, then the E2E flow continues into
+        # the status page below.
+        assert pay_resp.headers["location"].endswith(f"/portal/{token}/payment-success")
+        success_page = client.get(f"/portal/{token}/payment-success")
+        assert success_page.status_code == 200, success_page.text
+        assert "支付成功" in success_page.text
 
         after_pay_status = client.get(portal_status_url)
         assert after_pay_status.status_code == 200, after_pay_status.text

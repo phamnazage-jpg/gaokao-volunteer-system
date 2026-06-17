@@ -79,6 +79,7 @@ def test_order_status_page_and_report_download(client, settings, tmp_path: Path)
     status_page = client.get(f"/portal/{token}/status")
     assert status_page.status_code == 200, status_page.text
     assert "报告已就绪" in status_page.text
+    assert "查看报告" in status_page.text
 
     report_page = client.get(f"/portal/{token}/report")
     assert report_page.status_code == 200, report_page.text
@@ -161,8 +162,20 @@ def test_delivered_without_artifacts_stays_processing_on_status_page(client, set
     status_page = client.get(f"/portal/{token}/status")
     assert status_page.status_code == 200, status_page.text
     assert "处理中" in status_page.text
+    assert "查看当前进度" in status_page.text
     assert "报告已就绪" not in status_page.text
     assert "报告生成中" in status_page.text
+
+
+def test_info_required_status_page_emphasizes_continue_intake(client, settings):
+    order = _seed_order(settings.orders_db_path, order_id="GKO-20260614-STATUS-INFO")
+    _mark_paid(settings, order)
+    token = issue_portal_token(order.id, settings.portal_token_secret)
+
+    status_page = client.get(f"/portal/{token}/status")
+    assert status_page.status_code == 200, status_page.text
+    assert "待填写资料" in status_page.text
+    assert "继续补充资料" in status_page.text
 
     report_page = client.get(f"/portal/{token}/report")
     assert report_page.status_code == 409
