@@ -21,10 +21,25 @@
 | 类别            | 路径                                                    | 格式     | 写入方式                  |
 | --------------- | ------------------------------------------------------- | -------- | ------------------------- |
 | 国家级专业目录  | `data/majors_catalog/national/<year>.json`              | JSON     | 半自动抓取 + 人工校对     |
-| 国家级当前      | `data/majors_catalog/national/latest.json`              | JSON     | 软链或生成时锁定          |
+| 国家级当前      | `data/majors_catalog/national/latest.json`              | JSON     | 当前先用同内容副本锁定    |
 | 校级招生专业    | `data/majors_catalog/schools/<year>/<school_code>.json` | JSON     | 人工为主,来源高校招生章程 |
 | 元数据          | `data/majors_catalog/METADATA.md`                       | Markdown | 人工维护                  |
 | 已撤销/新设清单 | `data/majors_catalog/changes/2024-2026.md`              | Markdown | 人工维护                  |
+
+### 2.1 当前已落地范围（2026-06-17）
+
+- 已落地 `data/majors_catalog/` 包与 national loader/CLI
+- 已落地 `national/2024.json` + `national/latest.json`
+- 当前 `coverage_mode = mvp_subset`
+- 当前 curated subset = 13 个国家级本科专业样本
+- 已可通过：
+  - `python scripts/gaokao-cli majors status --json`
+  - `python scripts/gaokao-cli majors lookup 经济学 --json`
+  - `python scripts/gaokao-cli majors verify --json`
+- 尚未落地：
+  - `schools/<year>/` 校级招生目录
+  - `changes/2024-2026.md`
+  - `major_validation` 接入 `audit_engine`
 
 ---
 

@@ -4,7 +4,17 @@ import argparse
 import json
 from pathlib import Path
 
+from data.majors_catalog.cli import (
+    DEFAULT_CATALOG_ROOT,
+    build_changes_payload,
+    build_lookup_payload,
+    build_status_payload as build_majors_status_payload,
+    build_verify_payload as build_majors_verify_payload,
+)
 from data.rules.loader import RuleLoader
+
+
+DEFAULT_RULES_TRUTH_ROOT = Path(__file__).resolve().parents[2] / "rules" / "_truth"
 
 
 def _build_parser() -> argparse.ArgumentParser:
@@ -15,22 +25,48 @@ def _build_parser() -> argparse.ArgumentParser:
     rules_sub = rules_parser.add_subparsers(dest="rules_command", required=True)
 
     status_parser = rules_sub.add_parser("status", help="show rules truth status")
-    status_parser.add_argument("--truth-root", required=True)
+    status_parser.add_argument("--truth-root", default=str(DEFAULT_RULES_TRUTH_ROOT))
     status_parser.add_argument("--json", action="store_true")
 
     verify_parser = rules_sub.add_parser("verify", help="verify rules truth tree")
-    verify_parser.add_argument("--truth-root", required=True)
+    verify_parser.add_argument("--truth-root", default=str(DEFAULT_RULES_TRUTH_ROOT))
     verify_parser.add_argument("--json", action="store_true")
+
+    majors_parser = subparsers.add_parser(
+        "majors", help="national majors catalog commands"
+    )
+    majors_sub = majors_parser.add_subparsers(dest="majors_command", required=True)
+
+    majors_status = majors_sub.add_parser("status", help="show majors catalog status")
+    majors_status.add_argument("--catalog-root", default=str(DEFAULT_CATALOG_ROOT))
+    majors_status.add_argument("--json", action="store_true")
+
+    majors_lookup = majors_sub.add_parser(
+        "lookup", help="lookup a major by code or name"
+    )
+    majors_lookup.add_argument("name_or_code")
+    majors_lookup.add_argument("--catalog-root", default=str(DEFAULT_CATALOG_ROOT))
+    majors_lookup.add_argument("--json", action="store_true")
+
+    majors_verify = majors_sub.add_parser(
+        "verify", help="verify majors catalog structure"
+    )
+    majors_verify.add_argument("--catalog-root", default=str(DEFAULT_CATALOG_ROOT))
+    majors_verify.add_argument("--json", action="store_true")
+
+    majors_changes = majors_sub.add_parser("changes", help="list non-active majors")
+    majors_changes.add_argument("--catalog-root", default=str(DEFAULT_CATALOG_ROOT))
+    majors_changes.add_argument("--json", action="store_true")
 
     return parser
 
 
-def _emit(payload: dict, json_output: bool) -> int:
+def _emit(payload: dict[str, object], json_output: bool) -> int:
     if json_output:
         print(json.dumps(payload, ensure_ascii=False))
     else:
         print(payload)
-    return 0 if payload.get("ok", True) else 1
+    return 0 if bool(payload.get("ok", True)) else 1
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -54,9 +90,10 @@ def main(argv: list[str] | None = None) -> int:
         loader = RuleLoader.from_truth_root(Path(args.truth_root))
         status = loader.build_status()
         missing_required_files: list[str] = []
-        if not (Path(args.truth_root) / "national.yaml").is_file():
+        truth_root = Path(args.truth_root)
+        if not (truth_root / "national.yaml").is_file():
             missing_required_files.append("national.yaml")
-        if not (Path(args.truth_root) / "province").is_dir():
+        if not (truth_root / "province").is_dir():
             missing_required_files.append("province/")
         return _emit(
             {
@@ -67,6 +104,22 @@ def main(argv: list[str] | None = None) -> int:
             },
             args.json,
         )
+
+    if args.command == "majors" and args.majors_command == "status":
+        payload = build_majors_status_payload(Path(args.catalog_root))
+        return _emit(payload, args.json)
+
+    if args.command == "majors" and args.majors_command == "lookup":
+        payload = build_lookup_payload(Path(args.catalog_root), args.name_or_code)
+        return _emit(payload, args.json)
+
+    if args.command == "majors" and args.majors_command == "verify":
+        payload = build_majors_verify_payload(Path(args.catalog_root))
+        return _emit(payload, args.json)
+
+    if args.command == "majors" and args.majors_command == "changes":
+        payload = build_changes_payload(Path(args.catalog_root))
+        return _emit(payload, args.json)
 
     parser.error("unsupported command")
     return 2

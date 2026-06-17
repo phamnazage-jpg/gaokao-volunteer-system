@@ -1,23 +1,24 @@
 # CURRENT_STATE
 
-最后更新: 2026-06-15
-状态词: 本地验证完成（v2.1 已交付增强 + T12 本地修复闭环已收口）
+最后更新: 2026-06-17
+状态词: 本地验证完成（v2.1 已交付增强 + Phase1 已完成 + Phase2 专业目录 MVP Batch1 已本地闭环）
 真相源优先级:
 
 1. 本文件
-2. docs/PROJECT_PLANNING_REALIGNMENT_2026-06-16.md（本轮新增的规划/实现漂移审计）
-3. docs/DESIGN_RULES_TRUSTED_CLI_2026-06-16.md（本轮新增的下一阶段设计：规则可信化 + CLI 能力层）
-4. docs/RULES_SOURCE_OF_TRUTH.md（本轮新增的规则真相源索引）
-5. docs/MAJOR_DATA_SOURCE_OF_TRUTH.md（本轮新增的专业目录真相源索引）
-6. docs/CLI_API_MAPPING.md（本轮新增的 CLI/API 映射索引）
-7. docs/FINAL_COMPLETION_REPORT_2026-06-13.md
-8. docs/P0_P1_P2_REMEDIATION_PLAN_2026-06-14.md（当前整改板；2026-06-15 已做状态归一）
-9. docs/FRONTEND_UI_AUDIT_2026-06-16.md
-10. docs/FRONTEND_UI_EXECUTION_BOARD_2026-06-16.md
-11. docs/ACTIVE_REMEDIATION_2026-06-13.md
-12. product/PRD.md / product/ROADMAP.md / docs/IMPLEMENTATION_PLAN_v2.md
-13. docs/PRODUCTION_DEPLOYMENT_CHECKLIST_2026-06-15.md
-14. reports/PRODUCT_PLANNING_TECH_ALIGNMENT_REVIEW_2026-06-13.md（历史评审快照）
+2. docs/plans/2026-06-17-phase2-majors-catalog-implementation-plan.md（当前 Phase2 专业目录执行计划）
+3. docs/PROJECT_PLANNING_REALIGNMENT_2026-06-16.md（本轮新增的规划/实现漂移审计）
+4. docs/DESIGN_RULES_TRUSTED_CLI_2026-06-16.md（本轮新增的下一阶段设计：规则可信化 + CLI 能力层）
+5. docs/RULES_SOURCE_OF_TRUTH.md（本轮新增的规则真相源索引）
+6. docs/MAJOR_DATA_SOURCE_OF_TRUTH.md（本轮新增的专业目录真相源索引）
+7. docs/CLI_API_MAPPING.md（本轮新增的 CLI/API 映射索引）
+8. docs/FINAL_COMPLETION_REPORT_2026-06-13.md
+9. docs/P0_P1_P2_REMEDIATION_PLAN_2026-06-14.md（当前整改板；2026-06-15 已做状态归一）
+10. docs/FRONTEND_UI_AUDIT_2026-06-16.md
+11. docs/FRONTEND_UI_EXECUTION_BOARD_2026-06-16.md
+12. docs/ACTIVE_REMEDIATION_2026-06-13.md
+13. product/PRD.md / product/ROADMAP.md / docs/IMPLEMENTATION_PLAN_v2.md
+14. docs/PRODUCTION_DEPLOYMENT_CHECKLIST_2026-06-15.md
+15. reports/PRODUCT_PLANNING_TECH_ALIGNMENT_REVIEW_2026-06-13.md（历史评审快照）
 
 ---
 
