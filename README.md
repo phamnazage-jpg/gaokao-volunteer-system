@@ -124,12 +124,17 @@ python3 ~/.local/bin/gaokao-quick-3min.py
 管理后台代码位于 `admin/`。当前已落地：服务启动、JWT 登录/鉴权、Swagger/OpenAPI、T6.2 仪表盘、T6.3 用户管理，以及 T6.4 订单管理（手工录单 / 状态流转 / CSV 导出 / 退款）。当前更准确的项目标签是“运营后台 + 人工服务增强链路”，不是完整用户端 Web 自助产品。
 
 ```bash
-# 安装管理后台依赖（与测试依赖分离）
-pip install -r requirements-admin.txt -r requirements-dev.txt
+# 先创建并激活项目虚拟环境
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+
+# 安装管理后台依赖（统一受 constraints.txt 锁定）
+pip install -c constraints.txt -r requirements-admin.txt -r requirements-dev.txt
 
 # 启动服务
-export GAOKAO_JWT_SECRET="$(python3 -c 'import secrets; print(secrets.token_hex(32))')"
-python3 -m admin.app --port 8000
+export GAOKAO_JWT_SECRET="$(python -c 'import secrets; print(secrets.token_hex(32))')"
+python -m admin.app --port 8000
 
 # 验证 Swagger / OpenAPI
 curl http://127.0.0.1:8000/health
@@ -144,7 +149,8 @@ xdg-open http://127.0.0.1:8000/docs
 仓库已提供 `scripts/dev-verify.sh`，用于统一执行：
 
 - 创建/复用 `.venv`
-- 安装 `requirements-admin.txt` + `requirements-dev.txt`
+- 检查 `.venv/bin/python` 与 `PYTHON_BIN` 是否漂移
+- 按 `constraints.txt` 安装 `requirements-admin.txt` + `requirements-dev.txt`
 - 运行 `pytest` + coverage gate
 - 运行 `ruff` / `mypy`
 

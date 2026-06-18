@@ -22,11 +22,31 @@ log() {
   printf '[dev-verify] %s\n' "$1"
 }
 
+python_version_of() {
+  "$1" --version 2>&1 | tr -d '\r'
+}
+
+ensure_python_bin_matches_venv() {
+  if [[ ! -x "${VENV_DIR}/bin/python" ]]; then
+    return
+  fi
+  local venv_version
+  local target_version
+  venv_version="$(python_version_of "${VENV_DIR}/bin/python")"
+  target_version="$(python_version_of "${PYTHON_BIN}")"
+  if [[ "${venv_version}" != "${target_version}" ]]; then
+    log "python bin drift detected: venv=${venv_version} target=${target_version}"
+    log "remove ${VENV_DIR} and rerun, or point PYTHON_BIN at a matching interpreter"
+    return 1
+  fi
+}
+
 ensure_venv() {
   if [[ ! -d "${VENV_DIR}" ]]; then
     log "creating venv at ${VENV_DIR}"
     "${PYTHON_BIN}" -m venv "${VENV_DIR}"
   fi
+  ensure_python_bin_matches_venv
   # shellcheck disable=SC1091
   source "${VENV_DIR}/bin/activate"
   if ! python -m pip --version >/dev/null 2>&1; then
@@ -47,7 +67,7 @@ install_requirements() {
     return
   fi
   log "installing requirements"
-  pip install -r "${ROOT_DIR}/requirements-admin.txt" -r "${ROOT_DIR}/requirements-dev.txt"
+  pip install -c "${ROOT_DIR}/constraints.txt" -r "${ROOT_DIR}/requirements-admin.txt" -r "${ROOT_DIR}/requirements-dev.txt"
 }
 
 run_checks() {

@@ -37,7 +37,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/pip
-          key: pip-${{ runner.os }}-py${{ matrix.python-version }}-${{ hashFiles('requirements-dev.txt') }}
+          key: pip-${{ runner.os }}-py${{ matrix.python-version }}-${{ hashFiles('requirements-admin.txt', 'requirements-dev.txt', 'constraints.txt') }}
           restore-keys: |
             pip-${{ runner.os }}-py${{ matrix.python-version }}-
             pip-${{ runner.os }}-
@@ -47,13 +47,13 @@ jobs:
           python -m pip install --upgrade pip
           # clean env 必须同时安装测试依赖 + admin 运行依赖，避免本地环境污染掩盖导入问题
           if [ -f requirements-dev.txt ]; then
-            pip install -r requirements-dev.txt
+            pip install -c constraints.txt -r requirements-dev.txt
           else
             echo "::warning::requirements-dev.txt not found, installing test deps directly"
-            pip install pytest pytest-cov
+            pip install -c constraints.txt pytest pytest-cov
           fi
           if [ -f requirements-admin.txt ]; then
-            pip install -r requirements-admin.txt
+            pip install -c constraints.txt -r requirements-admin.txt
           fi
 
       - name: Verify Python and pytest versions

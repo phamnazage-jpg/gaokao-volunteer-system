@@ -31,7 +31,7 @@ services:
       GAOKAO_PAYMENT_ALIPAY_PUBLIC_KEY_PATH: ${GAOKAO_PAYMENT_ALIPAY_PUBLIC_KEY_PATH:-}
       GAOKAO_OPS_ALERT_LOG: ${GAOKAO_OPS_ALERT_LOG:-/var/lib/gaokao/ops-alerts.jsonl}
     ports:
-      - "${GAOKAO_ADMIN_BIND:-127.0.0.1}:${GAOKAO_ADMIN_PORT:-8000}:8000"
+      - "${GAOKAO_ADMIN_BIND:-127.0.0.1}:${GAOKAO_ADMIN_PORT:-8000}:${GAOKAO_ADMIN_PORT:-8000}"
     volumes:
       - gaokao_admin_data:/var/lib/gaokao
     healthcheck:

@@ -55,31 +55,32 @@ chmod +x ~/.local/bin/gaokao-checker
 
 ## 🐍 Python依赖安装
 
-### 安装必要包
+### 创建并激活项目虚拟环境
 
 ```bash
-# 基础依赖
-pip3 install --user --break-system-packages \
-    weasyprint \
-    jinja2 \
-    markdown
+cd /home/long/project/gaokao-volunteer-system
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+```
 
-# 可选依赖（用于开发和测试）
-pip3 install --user --break-system-packages \
-    pytest \
-    black \
-    flake8
+### 按锁定约束安装依赖
+
+```bash
+python -m pip install -c constraints.txt \
+    -r requirements-admin.txt \
+    -r requirements-dev.txt
 ```
 
 ### 验证安装
 
 ```bash
 # 检查Python版本
-python3 --version
+python --version
 
 # 检查必要包
-python3 -c "import weasyprint; print('weasyprint OK')"
-python3 -c "import jinja2; print('jinja2 OK')"
+python -c "import weasyprint; print('weasyprint OK')"
+python -c "import jinja2; print('jinja2 OK')"
 
 # 检查脚本
 which gaokao-checker
@@ -134,7 +135,7 @@ sudo apt-get install wkhtmltopdf
 cd /home/long/project/gaokao-volunteer-system
 
 # 运行自动化测试
-python3 tests/test_all.py
+python -m pytest -q
 
 # 预期输出：所有测试通过
 ```
@@ -143,13 +144,13 @@ python3 tests/test_all.py
 
 ```bash
 # 测试规范检查器
-python3 ~/.local/bin/gaokao-checker tests/cases/hunan-578.md
+python ~/.local/bin/gaokao-checker tests/cases/hunan-578.md
 
 # 测试可视化报告
-python3 ~/.local/bin/gaokao-visual-report-v2.py
+python ~/.local/bin/gaokao-visual-report-v2.py
 
 # 测试问卷
-python3 ~/.local/bin/gaokao-quick-3min.py
+python ~/.local/bin/gaokao-quick-3min.py
 ```
 
 ---
@@ -171,20 +172,19 @@ source ~/.bashrc
 which gaokao-checker
 ```
 
-### Q2: `pip3 install` 失败
+### Q2: 依赖安装失败
 
-**原因**: 权限问题或系统包限制
+**原因**: 未激活项目 `.venv`、系统包限制，或未使用锁定约束
 
 **解决**:
 
 ```bash
-# 使用 --user 参数
-pip3 install --user weasyprint jinja2 markdown
-
-# 或使用虚拟环境
-python3 -m venv venv
-source venv/bin/activate
-pip3 install -r requirements.txt
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -c constraints.txt \
+    -r requirements-admin.txt \
+    -r requirements-dev.txt
 ```
 
 ### Q3: Skills 在 Hermes 中不显示
@@ -281,7 +281,7 @@ pip3 uninstall weasyprint jinja2 markdown
 
 - **文档**: [TUTORIAL.md](docs/TUTORIAL.md)
 - **开发**: [DEVELOPMENT.md](docs/DEVELOPMENT.md)
-- **测试**: `python3 tests/test_all.py`
+- **测试**: `python -m pytest -q`
 - **FAQ**: [FAQ.md](FAQ.md)
 
 ---

@@ -172,3 +172,45 @@ printf '%s\n' "${{PRE_EXISTING_IGNORES[@]}}"
     assert ignores == [
         "tests/test_t5_performance.py::test_admin_locust_10_concurrency_success_rate_above_95"
     ]
+
+
+def test_dev_verify_detects_python_bin_drift(tmp_path: Path):
+    venv_dir = tmp_path / ".venv"
+    subprocess.run(
+        ["python3", "-m", "venv", str(venv_dir)],
+        check=True,
+        text=True,
+        capture_output=True,
+    )
+    fake_python = tmp_path / "python-fake"
+    fake_python.write_text(
+        """#!/usr/bin/env bash
+set -euo pipefail
+if [[ \"${1:-}\" == \"--version\" ]]; then
+  echo \"Python 9.9.9\"
+  exit 0
+fi
+exec /usr/bin/python3 \"$@\"
+""",
+        encoding="utf-8",
+    )
+    fake_python.chmod(0o755)
+
+    probe = f"""
+set -euo pipefail
+export GAOKAO_SOURCE_ONLY=1
+source {SCRIPT}
+VENV_DIR={venv_dir}
+PYTHON_BIN={fake_python}
+ensure_venv
+"""
+    proc = subprocess.run(
+        [BASH, "-lc", probe],
+        cwd=REPO_ROOT,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    combined = proc.stdout + proc.stderr
+    assert proc.returncode != 0
+    assert "python bin drift" in combined

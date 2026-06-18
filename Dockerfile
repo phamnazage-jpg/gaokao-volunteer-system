@@ -13,13 +13,18 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
-COPY requirements-admin.txt /tmp/requirements-admin.txt
+COPY constraints.txt requirements-admin.txt /tmp/
 
 RUN python -m pip install --upgrade pip \
-    && python -m pip install -r /tmp/requirements-admin.txt
+    && python -m pip install -c /tmp/constraints.txt -r /tmp/requirements-admin.txt
 
 COPY . /app
 
+ARG GAOKAO_ADMIN_BIND=0.0.0.0
+ARG GAOKAO_ADMIN_PORT=8000
+ENV GAOKAO_ADMIN_BIND=${GAOKAO_ADMIN_BIND} \
+    GAOKAO_ADMIN_PORT=${GAOKAO_ADMIN_PORT}
+
 EXPOSE 8000
 
-CMD ["python", "-m", "admin.app", "--host", "0.0.0.0", "--port", "8000", "--log-format", "json"]
+CMD ["sh", "-c", "python -m admin.app --host ${GAOKAO_ADMIN_BIND} --port ${GAOKAO_ADMIN_PORT} --log-format json"]

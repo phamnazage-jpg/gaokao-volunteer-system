@@ -1,0 +1,22 @@
+# Single source of truth for reproducible local/CI/container installs.
+# Update with care; scripts/dev-verify.sh, CI, and Dockerfile all consume this file.
+fastapi==0.133.1
+uvicorn==0.41.0
+PyJWT==2.10.1
+pydantic==2.13.4
+cryptography==45.0.7
+Jinja2==3.1.6
+weasyprint==66.0
+cairocffi==1.7.1
+python-multipart==0.0.32
+PyYAML==6.0.3
+pytest==9.1.0
+pytest-benchmark==5.2.3
+pytest-cov==7.1.0
+pytest-timeout==2.4.0
+pytest-xdist==3.8.0
+httpx==0.28.1
+locust==2.44.3
+ruff==0.15.17
+mypy==2.1.0
+types-PyYAML==6.0.12.20260518
