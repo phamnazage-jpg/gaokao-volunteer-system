@@ -31,12 +31,15 @@ codecov:
     ignore:
       - "docs/**"
       - "tests/**"
+      - "admin/tests/**"
       - "data/examples/**"
       - "rules/**" # 规则数据，非代码
       - "scripts/gaokao-shortlink" # 已废弃的链接脚本
       - "**/__pycache__/**"
       - "**/tests.py"
       - "**/test_*.py"
+      - "**/fixtures/**"
+      - "**/docs/plans/**"
 
 # PR 评论与徽章展示策略
 comment:

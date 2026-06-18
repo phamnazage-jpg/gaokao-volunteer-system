@@ -20,10 +20,46 @@ CORE_FILES = (
     "skills/gaokao-spec-checker/scripts/spec_checker_v2.py",
     "skills/gaokao-college-advisor/scripts/gaokao_visual_report.py",
 )
+CORE_FILE_KEYS = tuple(
+    path.removeprefix("skills/")
+    for path in CORE_FILES
+)
+IGNORED_PATH_PREFIXES = (
+    "tests/",
+    "admin/tests/",
+    "docs/",
+)
+IGNORED_PATH_PARTS = (
+    "/tests/",
+    "/docs/plans/",
+    "/fixtures/",
+)
+PATH_PREFIXES_TO_TRIM = (
+    "skills/",
+)
+
+
+def _normalize_path(filename: str) -> str:
+    normalized = filename.replace("\\", "/")
+    for prefix in PATH_PREFIXES_TO_TRIM:
+        if normalized.startswith(prefix):
+            return normalized[len(prefix) :]
+    return normalized
 
 
 def _format_percent(value: float) -> str:
     return f"{value * 100:.2f}%"
+
+
+def _should_ignore(filename: str) -> bool:
+    normalized = _normalize_path(filename)
+    if normalized.startswith(IGNORED_PATH_PREFIXES):
+        return True
+    return any(part in normalized for part in IGNORED_PATH_PARTS)
+
+
+def _line_count(cls: ET.Element) -> int:
+    return len(cls.findall("./lines/line"))
 
 
 def main(argv: list[str]) -> int:
@@ -33,33 +69,45 @@ def main(argv: list[str]) -> int:
         return 2
 
     root = ET.parse(coverage_path).getroot()
-    overall = float(root.attrib["line-rate"])
-
     classes = root.findall(".//class")
+    application_classes = [
+        cls for cls in classes if not _should_ignore(cls.attrib.get("filename", ""))
+    ]
+    if not application_classes:
+        print("coverage gate failed: no application coverage entries", file=sys.stderr)
+        return 2
+
     class_by_filename = {
-        cls.attrib.get("filename", ""): float(cls.attrib["line-rate"])
-        for cls in classes
+        _normalize_path(cls.attrib.get("filename", "")): float(cls.attrib["line-rate"])
+        for cls in application_classes
     }
     lines_by_filename = {
-        cls.attrib.get("filename", ""): len(cls.findall("./lines/line"))
-        for cls in classes
+        _normalize_path(cls.attrib.get("filename", "")): _line_count(cls)
+        for cls in application_classes
     }
 
-    missing = [name for name in CORE_FILES if name not in class_by_filename]
+    total_lines = sum(lines_by_filename.values())
+    covered_lines = sum(
+        class_by_filename[name] * lines_by_filename[name]
+        for name in class_by_filename
+    )
+    overall = covered_lines / total_lines if total_lines else 0.0
+
+    missing = [name for name in CORE_FILE_KEYS if name not in class_by_filename]
     if missing:
         print("coverage gate failed: missing core coverage entries:", file=sys.stderr)
         for name in missing:
             print(f"  - {name}", file=sys.stderr)
         return 2
 
-    covered_lines = 0.0
-    total_lines = 0
-    for name in CORE_FILES:
+    core_lines = 0
+    core_covered_lines = 0.0
+    for name in CORE_FILE_KEYS:
         line_count = lines_by_filename[name]
-        total_lines += line_count
-        covered_lines += class_by_filename[name] * line_count
+        core_lines += line_count
+        core_covered_lines += class_by_filename[name] * line_count
 
-    core = covered_lines / total_lines if total_lines else 0.0
+    core = core_covered_lines / core_lines if core_lines else 0.0
 
     failures: list[str] = []
     if overall < OVERALL_MIN:

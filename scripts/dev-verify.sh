@@ -63,7 +63,9 @@ run_checks() {
   python -m pytest admin/tests tests data \
     --ignore=.venv \
     --ignore=.worktrees \
-    --cov=. \
+    --cov=admin \
+    --cov=data \
+    --cov=skills \
     --cov-report=term-missing \
     --cov-report=xml \
     --cov-fail-under=80 \

@@ -245,6 +245,16 @@ def test_coverage_gate_script_owns_overall_and_core_thresholds():
     assert module.CORE_MIN == 1.00
     assert "skills/gaokao-spec-checker/scripts/spec_checker_v2.py" in module.CORE_FILES
     assert "skills/gaokao-college-advisor/scripts/gaokao_visual_report.py" in module.CORE_FILES
+    assert module.CORE_FILE_KEYS == (
+        "gaokao-spec-checker/scripts/spec_checker_v2.py",
+        "gaokao-college-advisor/scripts/gaokao_visual_report.py",
+    )
+    assert module._normalize_path("skills/gaokao-spec-checker/scripts/spec_checker_v2.py") == (
+        "gaokao-spec-checker/scripts/spec_checker_v2.py"
+    )
+    assert module._normalize_path("gaokao-college-advisor/scripts/gaokao_visual_report.py") == (
+        "gaokao-college-advisor/scripts/gaokao_visual_report.py"
+    )
     # Single-source note must be present so future readers know where to look.
     assert "Single source of truth" in text
 

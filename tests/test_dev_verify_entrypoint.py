@@ -61,6 +61,15 @@ def test_dev_verify_skip_pre_existing_is_a_real_flag():
     assert "--skip-install" in combined
 
 
+def test_dev_verify_excludes_test_packages_from_coverage_args():
+    script = SCRIPT.read_text(encoding="utf-8")
+    assert "--cov=." not in script
+    assert "--cov=tests" not in script
+    assert "--cov=admin/tests" not in script
+    assert "--cov=admin" in script
+    assert "--cov=data" in script
+
+
 def test_dev_verify_ensure_venv_recovers_when_venv_exists_without_pip(tmp_path: Path):
     broken_venv = tmp_path / ".venv"
     subprocess.run(
