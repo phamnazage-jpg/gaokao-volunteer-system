@@ -50,6 +50,7 @@
   - 可校验 live staging 或已有快照
   - 校验 SQLite 可读性
   - 校验 `manifest.json` 哈希完整性
+  - live staging 时对 SQLite 使用 `sqlite3.backup()` 生成 staging 副本，不再裸复制 `.db`
   - live staging 时同步复制 `portal_uploads` 与订单挂载交付物
   - 调用 restore smoke
 - `scripts/backup_restore_smoke.py`
@@ -127,7 +128,8 @@ bash scripts/backup_verify.sh --from-backup /tmp/gaokao-backups/backup-<UTC_TIME
 bash scripts/backup_verify.sh
 ```
 
-该命令会把当前 live DB / 文件复制到临时目录后执行同样的校验链。
+该命令会把当前 live DB / 文件 staging 到临时目录后执行同样的校验链。
+其中 live SQLite 会通过 `sqlite3.backup()` 生成一致性副本；`--from-backup` 模式则直接校验已有快照内容。
 
 ## 7. 定时接入口径
 

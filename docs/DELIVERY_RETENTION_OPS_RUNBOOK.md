@@ -19,6 +19,15 @@
 - dispatcher 每次会处理 `ready` 与 `validated` 事件；如果缺少 HTML/PDF，会把事件记为 `failed`，并递增 `attempt_count`。
 - watchdog 复用同一 dispatch 路径，但只要本轮出现失败事件就返回 exit code `2`，适合接宿主机监控或外部告警。
 
+### backup verify / restore smoke
+
+当前灾备验证链路的事实：
+
+- `bash scripts/backup_verify.sh`：从 live 数据做一次本地 staging + restore smoke
+- `bash scripts/backup_verify.sh --from-backup <snapshot_dir>`：直接对已有快照做 restore smoke
+- live staging 下的 SQLite 不再裸复制 `.db`，而是通过 `sqlite3.backup()` 生成一致性副本，避免 WAL 模式下出现空库 / 缺表误判
+- `live-smoke` 与 `snapshot-verify` 共用同一 restore smoke，但前者验证“当前运行中数据能否被一致性抽样复制”，后者验证“已有快照是否可恢复”
+
 ### retention cleanup
 
 当前已落仓并可接定时任务的事实：

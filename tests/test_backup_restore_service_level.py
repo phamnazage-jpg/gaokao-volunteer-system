@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import os
 import shutil
+import sqlite3
 import subprocess
 from pathlib import Path
 
@@ -87,6 +88,54 @@ def test_backup_verify_uses_venv_python_for_service_level_restore(tmp_path):
     # motivated this regression lock.
     assert "ModuleNotFoundError" not in proc.stderr
     assert "ModuleNotFoundError" not in proc.stdout
+
+
+def test_backup_verify_live_mode_uses_sqlite_backup_for_db_files(tmp_path):
+    admin_db = tmp_path / "admin.db"
+    verify_dir = tmp_path / "verify"
+    live_conn = sqlite3.connect(admin_db)
+    try:
+        journal_mode = live_conn.execute("PRAGMA journal_mode=WAL").fetchone()
+        assert journal_mode is not None
+        assert str(journal_mode[0]).lower() == "wal"
+        live_conn.execute("PRAGMA wal_autocheckpoint = 0")
+        live_conn.execute(
+            "CREATE TABLE restore_checks (id INTEGER PRIMARY KEY, value TEXT NOT NULL)"
+        )
+        live_conn.execute(
+            "INSERT INTO restore_checks(value) VALUES (?)", ("present",)
+        )
+        live_conn.commit()
+
+        proc = subprocess.run(
+            ["bash", str(SCRIPTS_DIR / "backup_verify.sh"), str(verify_dir), "--skip-smoke"],
+            cwd=REPO_ROOT,
+            env={
+                **os.environ,
+                "GAOKAO_DB_PATH": str(admin_db),
+            },
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+    finally:
+        live_conn.close()
+
+    assert proc.returncode == 0, proc.stderr
+    staged_admin_db = verify_dir / "db" / "admin.db"
+    conn = sqlite3.connect(staged_admin_db)
+    try:
+        tables = {
+            row[0]
+            for row in conn.execute(
+                "SELECT name FROM sqlite_master WHERE type='table'"
+            ).fetchall()
+        }
+        assert "restore_checks" in tables
+        row = conn.execute("SELECT COUNT(*) FROM restore_checks").fetchone()
+        assert row == (1,)
+    finally:
+        conn.close()
 
 
 def test_backup_restore_smoke_fails_fast_when_admin_db_missing(tmp_path):

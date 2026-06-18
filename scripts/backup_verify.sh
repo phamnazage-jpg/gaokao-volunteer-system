@@ -42,6 +42,35 @@ copy_if_exists() {
   fi
 }
 
+copy_sqlite_to() {
+  local src="$1"
+  local dest_dir="$2"
+  if [[ -f "$src" ]]; then
+    mkdir -p "$dest_dir"
+    local dest_path="$dest_dir/$(basename "$src")"
+    python3 - "$src" "$dest_path" <<'PY'
+from __future__ import annotations
+
+import sqlite3
+import sys
+from pathlib import Path
+
+src_path = Path(sys.argv[1]).resolve()
+dest_path = Path(sys.argv[2]).resolve()
+if dest_path.exists():
+    dest_path.unlink()
+
+with sqlite3.connect(f"{src_path.as_uri()}?mode=ro", uri=True) as source_conn:
+    with sqlite3.connect(dest_path) as dest_conn:
+        source_conn.backup(dest_conn)
+        dest_conn.commit()
+PY
+    log "copied sqlite snapshot: $src -> $dest_path"
+  else
+    log "skip missing sqlite file: $src"
+  fi
+}
+
 copy_dir_if_exists() {
   local src="$1"
   local dest_dir="$2"
@@ -67,15 +96,25 @@ copy_order_artifacts_if_possible() {
   log "copied order artifacts: $summary"
 }
 
-stage_live_sources() {
-  log "verify dir: $VERIFY_DIR"
-  copy_if_exists "$ADMIN_DB" "$VERIFY_DIR/db"
-  copy_if_exists "$ORDERS_DB" "$VERIFY_DIR/db"
-  copy_if_exists "$SHARE_DB" "$VERIFY_DIR/db"
+stage_live_db_sources() {
+  log "staging live sqlite files into: $VERIFY_DIR/db"
+  copy_sqlite_to "$ADMIN_DB" "$VERIFY_DIR/db"
+  copy_sqlite_to "$ORDERS_DB" "$VERIFY_DIR/db"
+  copy_sqlite_to "$SHARE_DB" "$VERIFY_DIR/db"
+}
+
+stage_live_file_sources() {
+  log "staging live artifact files into: $VERIFY_DIR/files"
   copy_dir_if_exists "$SHARE_REPORT_DIR" "$VERIFY_DIR/files/reports"
   copy_dir_if_exists "$EXAMPLE_REPORT_DIR" "$VERIFY_DIR/files/examples"
   copy_dir_if_exists "$PORTAL_UPLOAD_DIR" "$VERIFY_DIR/files/portal_uploads"
   copy_order_artifacts_if_possible "$ORDERS_DB" "$VERIFY_DIR/files/order_artifacts"
+}
+
+stage_live_sources() {
+  log "verify dir: $VERIFY_DIR"
+  stage_live_db_sources
+  stage_live_file_sources
 }
 
 stage_existing_backup() {

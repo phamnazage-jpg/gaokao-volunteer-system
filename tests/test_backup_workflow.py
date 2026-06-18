@@ -188,6 +188,47 @@ def test_backup_snapshot_preserves_admin_db_contents_under_wal(tmp_path):
     assert _count_rows(snapshot_admin_db, "admin_users") == 1
 
 
+def test_backup_verify_live_copy_handles_wal_sqlite(tmp_path):
+    admin_db = tmp_path / "admin.db"
+    verify_dir = tmp_path / "verify"
+    live_conn = sqlite3.connect(admin_db)
+    try:
+        journal_mode = live_conn.execute("PRAGMA journal_mode=WAL").fetchone()
+        assert journal_mode is not None
+        assert str(journal_mode[0]).lower() == "wal"
+        live_conn.execute("PRAGMA wal_autocheckpoint = 0")
+        live_conn.execute(
+            "CREATE TABLE admin_users (id INTEGER PRIMARY KEY, username TEXT NOT NULL)"
+        )
+        live_conn.execute(
+            "INSERT INTO admin_users(username) VALUES (?)", ("verify-admin",)
+        )
+        live_conn.commit()
+
+        wal_path = admin_db.with_name(f"{admin_db.name}-wal")
+        assert wal_path.exists()
+
+        proc = subprocess.run(
+            ["bash", "scripts/backup_verify.sh", str(verify_dir), "--skip-smoke"],
+            cwd=PROJECT_ROOT,
+            text=True,
+            capture_output=True,
+            env={
+                **os.environ,
+                "GAOKAO_DB_PATH": str(admin_db),
+            },
+            check=False,
+        )
+    finally:
+        live_conn.close()
+
+    assert proc.returncode == 0, proc.stderr
+    staged_admin_db = verify_dir / "db" / "admin.db"
+    assert staged_admin_db.is_file()
+    assert "admin_users" in _list_tables(staged_admin_db)
+    assert _count_rows(staged_admin_db, "admin_users") == 1
+
+
 def test_backup_verify_runs_restore_smoke_on_snapshot(settings, tmp_path):
     env = {
         **os.environ,
