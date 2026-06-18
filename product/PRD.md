@@ -22,8 +22,8 @@
 
 - [市场调研报告](MARKET_RESEARCH.md)
 - [产品路线图](ROADMAP.md)
-- [技术架构](docs/ARCHITECTURE.md)
-- [API文档](docs/API.md)
+- [技术架构](../docs/ARCHITECTURE.md)
+- [API文档](../docs/API.md)
 
 ---
 
@@ -94,7 +94,7 @@
 ┌─────────────────────────────────────────────────────────────┐
 │                    用户交互层                                │
 │  ┌──────────────────────────────────────────────────────┐  │
-│  │ Hermes对话  │  命令行  │  Web界面(未来)  │  API(未来) │  │
+│  │ Hermes对话  │  命令行  │  Web端(目标态)  │  API(目标态) │ │
 │  └──────────────────────────────────────────────────────┘  │
 └─────────────────────────────────────────────────────────────┘
                               │
@@ -579,8 +579,8 @@ $ gaokao-checker plan.txt
 
 - [市场调研报告](MARKET_RESEARCH.md)
 - [产品路线图](ROADMAP.md)
-- [技术架构](docs/ARCHITECTURE.md)
-- [API文档](docs/API.md)
+- [技术架构](../docs/ARCHITECTURE.md)
+- [API文档](../docs/API.md)
 
 ---
 

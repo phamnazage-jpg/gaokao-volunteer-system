@@ -81,3 +81,23 @@ def test_product_docs_keep_current_vs_target_boundary():
     assert "目标态 Web 自助闭环" in roadmap
     assert "`ready` 与 `validated`" in runbook
     assert "`ready -> validated`" in readme
+
+
+def test_prd_and_architecture_do_not_present_web_saas_as_current_state():
+    prd = (REPO_ROOT / "product" / "PRD.md").read_text(encoding="utf-8")
+    arch = (DOCS_DIR / "TECH_ARCHITECTURE.md").read_text(encoding="utf-8")
+
+    assert "当前项目定位" in prd
+    assert "Web系统流程（目标态）" in prd
+    assert "当前项目定位：人工服务运营增强系统" in arch
+    assert "Current：当前已落地" in arch
+    assert "Target：尚未落地" in arch
+    assert "不应把 Target 能力误读为当前已上线能力" in arch
+
+
+def test_tech_architecture_only_references_existing_current_paths():
+    arch = (DOCS_DIR / "TECH_ARCHITECTURE.md").read_text(encoding="utf-8")
+
+    assert "docs/IMPLEMENTATION_PLAN.md" not in arch
+    assert "查看 [实施计划](IMPLEMENTATION_PLAN.md)" not in arch
+    assert "IMPLEMENTATION_PLAN_v2.md" in arch
