@@ -63,11 +63,6 @@ _EDIT_VISIBLE_FIELDS = {
     "rank",
     "year",
     "province",
-    "candidate_phone",
-    "customer_phone",
-    "customer_email",
-    "customer_wechat",
-    "candidate_id_card",
     "candidate_subjects",
     "candidate_interests",
     "candidate_strong_subjects",
@@ -75,9 +70,6 @@ _EDIT_VISIBLE_FIELDS = {
     "candidate_family",
     "assigned_consultant",
     "service_version",
-    "plan_file",
-    "audit_report",
-    "pdf_path",
     "notes",
     "tags",
 }
@@ -169,6 +161,14 @@ _ALWAYS_HIDDEN_FIELDS = frozenset(
         "note",
         "debug_info",
         "raw_payload",
+        "candidate_id_card",
+        "candidate_phone",
+        "customer_phone",
+        "customer_email",
+        "customer_wechat",
+        "plan_file",
+        "audit_report",
+        "pdf_path",
     }
 )
 

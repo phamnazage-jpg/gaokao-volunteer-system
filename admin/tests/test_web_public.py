@@ -625,3 +625,29 @@ def test_info_page_wizard_actions_outside_form_for_sticky_bottom(route_client, s
         assert label in body, f"missing wizard button label: {label}"
     # 移动端 safe-area 适配
     assert "safe-area-inset-bottom" in body, "should reserve safe-area for notched devices"
+
+
+def test_confirm_summary_does_not_use_innerhtml_for_user_fields(route_client, settings):
+    from data.orders.dao import OrdersDAO
+    from data.orders.public_flow import PublicOrderCreate, create_public_order
+    from data.customer_portal.token import issue_portal_token
+
+    with OrdersDAO.connect(settings.orders_db_path) as dao:
+        order = create_public_order(
+            dao,
+            PublicOrderCreate(
+                service_version="standard",
+                amount_cents=9900,
+                customer_name="Summary 用户",
+                customer_phone="13800138000",
+                candidate_name="Summary-User",
+                candidate_province="湖南",
+            ),
+        )
+    token = issue_portal_token(order.id, settings.portal_token_secret)
+    resp = route_client.get(f"/portal/{token}/info")
+    assert resp.status_code == 200, resp.text
+    body = resp.text
+    assert "confirm-summary').innerHTML" not in body
+    assert "replaceChildren" in body
+    assert "createElement('div')" in body

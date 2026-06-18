@@ -186,7 +186,7 @@ def test_allows_field_for_read():
 def test_allows_field_for_edit():
     p = PermissionPolicy.for_permission("edit")
     _eq(p.allows_field("recommendations"), True, "edit allows recommendations")
-    _eq(p.allows_field("candidate_phone"), True, "edit allows phone")
+    _eq(p.allows_field("candidate_phone"), False, "edit no longer exposes phone")
     _eq(
         p.allows_field("password_hash"),
         False,
@@ -293,10 +293,9 @@ def test_render_edit_payload():
     out = render_report_payload("edit", _SAMPLE_REPORT)
     payload = out["payload"]
     _eq(out["policy"]["mask_name"], False, "edit: no mask")
-    # edit 默认通过业务字段，但内部敏感字段仍不可外暴
     _has(payload, "candidate_name", "edit: candidate_name visible")
-    _has(payload, "candidate_phone", "edit: phone visible")
-    _has(payload, "candidate_id_card", "edit: id_card visible")
+    _eq("candidate_phone" in payload, False, "edit: phone hidden")
+    _eq("candidate_id_card" in payload, False, "edit: id_card hidden")
     _eq("password_hash" in payload, False, "edit: password_hash hidden")
     _eq("internal_note" in payload, False, "edit: internal_note hidden")
     _eq(payload["candidate_name"], "李明", "edit: name intact")
@@ -528,6 +527,35 @@ def test_edit_still_hides_internal_fields():
             False,
             f"{perm}: raw_payload 仍必须被拦截",
         )
+
+
+def test_share_edit_scope_excludes_id_card_and_internal_paths():
+    out = render_report_payload(
+        "edit",
+        {
+            "candidate_name": "张三",
+            "candidate_id_card": "430102200501011234",
+            "customer_phone": "13800138000",
+            "customer_email": "parent@example.com",
+            "customer_wechat": "wx-parent",
+            "audit_report": "/var/lib/gaokao/report.html",
+            "pdf_path": "/var/lib/gaokao/report.pdf",
+            "plan_file": "/var/lib/gaokao/plan.md",
+            "title": "报告标题",
+        },
+    )
+    payload = out["payload"]
+    _eq(payload.get("title"), "报告标题", "title still visible")
+    for key in (
+        "candidate_id_card",
+        "customer_phone",
+        "customer_email",
+        "customer_wechat",
+        "audit_report",
+        "pdf_path",
+        "plan_file",
+    ):
+        _eq(key in payload, False, f"edit must hide {key}")
 
 
 def test_edit_allowlist_superset_of_comment():

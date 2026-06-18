@@ -1875,7 +1875,16 @@ def _render_info_page(
           ['院校偏好', payload.university_preferences || '待补充'],
           ['已有方案说明', payload.existing_plan_summary || '待补充'],
         ];
-        document.getElementById('confirm-summary').innerHTML = list.map(([label, value]) => `<div style="padding:8px 0;border-bottom:1px solid #e5edf7;"><strong>${{label}}：</strong><span>${{String(value)}}</span></div>`).join('');
+        document.getElementById('confirm-summary').replaceChildren(...list.map(([label, value]) => {{
+          const row = document.createElement('div');
+          row.style.cssText = 'padding:8px 0;border-bottom:1px solid #e5edf7;';
+          const strong = document.createElement('strong');
+          strong.textContent = `${{label}}：`;
+          const span = document.createElement('span');
+          span.textContent = String(value);
+          row.append(strong, span);
+          return row;
+        }}));
       }}
 
       function updateWizard() {{

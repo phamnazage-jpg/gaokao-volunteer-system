@@ -20,9 +20,7 @@ def test_create_app_runs_lifespan(client):
     resp = client.get("/health")
     assert resp.status_code == 200
     body = resp.json()
-    assert body["status"] == "ok"
-    assert body["service"] == "gaokao-admin"
-    assert body["env"] == "dev"
+    assert body == {"status": "ok"}
 
 
 def test_openapi_json_exposes_all_routes(client):
@@ -218,10 +216,14 @@ def test_create_app_bootstraps_orders_schema(tmp_path, monkeypatch):
         }
 
     with sqlite3.connect(orders_db_path) as conn:
-        row = conn.execute(
+        orders_row = conn.execute(
             "SELECT name FROM sqlite_master WHERE type='table' AND name='orders'"
         ).fetchone()
-    assert row is not None
+        intake_row = conn.execute(
+            "SELECT name FROM sqlite_master WHERE type='table' AND name='order_intakes'"
+        ).fetchone()
+    assert orders_row is not None
+    assert intake_row is not None
 
 
 def test_prod_rejects_default_admin_password(tmp_path, monkeypatch):

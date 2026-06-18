@@ -19,10 +19,7 @@ def test_health_public(client):
     resp = client.get("/health")
     assert resp.status_code == 200
     body = resp.json()
-    assert body["status"] == "ok"
-    assert body["env"] == "dev"
-    assert body["service"] == "gaokao-admin"
-    assert body["version"]
+    assert body == {"status": "ok"}
 
 
 # ---------------- auth ----------------
