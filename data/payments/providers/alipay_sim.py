@@ -22,7 +22,7 @@ class AlipaySimProvider:
         amount_cents: int | None = None,
         subject: str | None = None,
     ) -> str:
-        return f"/pay/alipay-sim/{payment_id}?token={portal_token}"
+        return f"/pay/alipay-sim/{payment_id}"
 
     def build_webhook_request(
         self,

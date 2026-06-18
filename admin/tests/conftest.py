@@ -182,7 +182,7 @@ class RouteClient:
             if route_path == "/portal/payment-return":
                 query = dict(parse_qsl(split.query, keep_blank_values=True))
                 return self._redirect_response(
-                    payment_return_page(query["token"], settings)
+                    payment_return_page(query["payment_id"], settings)
                 )
             if route_path.startswith("/portal/") and route_path.endswith("/payment-success"):
                 token = route_path.split("/portal/", 1)[1].rsplit("/payment-success", 1)[0]
@@ -241,8 +241,7 @@ class RouteClient:
                 return self._json_response(created.model_dump(), status_code=201)
             if route_path.startswith("/pay/mock/") and route_path.endswith("/complete"):
                 payment_id = route_path.split("/pay/mock/", 1)[1].rsplit("/complete", 1)[0]
-                query = dict(parse_qsl(split.query, keep_blank_values=True))
-                redirect = complete_mock_payment(payment_id, query["token"], settings)
+                redirect = complete_mock_payment(payment_id, settings)
                 return self._redirect_response(redirect)
             if route_path == "/api/public/payments/mock/webhook":
                 request = self._request(path, method="POST", headers=headers)

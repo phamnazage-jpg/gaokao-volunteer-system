@@ -63,7 +63,7 @@ def test_alipay_checkout_url_contains_signed_gateway_params(tmp_path):
         "https://example.com/api/public/payments/alipay/notify"
     ]
     assert query["return_url"] == [
-        "https://example.com/portal/payment-return?token=portal-token"
+        "https://example.com/portal/payment-return?payment_id=pay_123"
     ]
     biz_content = unquote(query["biz_content"][0])
     assert '"out_trade_no":"pay_123"' in biz_content

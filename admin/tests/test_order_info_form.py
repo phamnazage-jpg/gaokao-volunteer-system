@@ -221,8 +221,8 @@ def test_order_info_page_exposes_policy_and_deletion_links(client, settings):
 
     page = client.get(f"/portal/{token}/info")
     assert page.status_code == 200, page.text
-    assert f'/privacy?token={token}' in page.text
-    assert f'/service-terms?token={token}' in page.text
+    assert 'href="/privacy"' in page.text
+    assert 'href="/service-terms"' in page.text
     assert f'/portal/{token}/deletion-request' in page.text
 
 

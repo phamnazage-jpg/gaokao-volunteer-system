@@ -239,7 +239,7 @@ def test_public_create_order_rejects_price_tampering(route_client):
     )
 
 
-def test_mock_payment_complete_rejects_wrong_portal_token(route_client):
+def test_checkout_url_does_not_expose_portal_token_in_query(route_client):
     create_resp = route_client.post(
         "/api/public/orders",
         json={
@@ -254,10 +254,8 @@ def test_mock_payment_complete_rejects_wrong_portal_token(route_client):
     )
     assert create_resp.status_code == 201, create_resp.text
     body = create_resp.json()
-    payment_id = body["checkout_url"].split("/pay/mock/")[1].split("?")[0]
 
-    resp = route_client.post(f"/pay/mock/{payment_id}/complete?token=wrong-token")
-    assert resp.status_code == 401 or resp.status_code == 403
+    assert "token=" not in body["checkout_url"]
 
 
 def test_payment_return_redirects_to_payment_success_page(route_client):
@@ -275,13 +273,15 @@ def test_payment_return_redirects_to_payment_success_page(route_client):
     )
     assert create_resp.status_code == 201, create_resp.text
     body = create_resp.json()
-    token = body["portal_status_url"].split("/portal/")[1].split("/status")[0]
+    payment_id = body["checkout_url"].split("/pay/mock/")[1].split("?")[0]
 
+    route_client.post(f"/pay/mock/{payment_id}/complete", follow_redirects=False)
     resp = route_client.get(
-        f"/portal/payment-return?token={token}", follow_redirects=False
+        f"/portal/payment-return?payment_id={payment_id}", follow_redirects=False
     )
     assert resp.status_code == 303, resp.text
-    assert resp.headers["location"] == f"/portal/{token}/payment-success"
+    assert resp.headers["location"].startswith("/portal/")
+    assert resp.headers["location"].endswith("/payment-success")
 
 
 def test_payment_success_page_served_after_paid_order(route_client, settings):
@@ -303,7 +303,7 @@ def test_payment_success_page_served_after_paid_order(route_client, settings):
     token = body["portal_status_url"].split("/portal/")[1].split("/status")[0]
 
     complete = route_client.post(
-        f"/pay/mock/{payment_id}/complete?token={token}", follow_redirects=False
+        f"/pay/mock/{payment_id}/complete", follow_redirects=False
     )
     assert complete.status_code == 303, complete.text
     assert complete.headers["location"] == f"/portal/{token}/payment-success"
@@ -370,7 +370,7 @@ def test_portal_status_page_does_not_fall_back_to_pending_after_paid_order(
     order_id = body["order_id"]
 
     complete = route_client.post(
-        f"/pay/mock/{payment_id}/complete?token={token}", follow_redirects=False
+        f"/pay/mock/{payment_id}/complete", follow_redirects=False
     )
     assert complete.status_code == 303, complete.text
 
@@ -379,7 +379,7 @@ def test_portal_status_page_does_not_fall_back_to_pending_after_paid_order(
         base_url=settings.payment_base_url,
         webhook_secret=settings.payment_webhook_secret,
     )
-    redundant = service.create_checkout(order_id, portal_token=token)
+    redundant = service.create_checkout(order_id)
     assert redundant.payment_id == payment_id
 
     page = route_client.get(f"/portal/{token}/status")
@@ -431,10 +431,10 @@ def test_prod_hides_simulated_payment_entrypoints(tmp_path, monkeypatch):
     )
 
     for route_call in (
-        lambda: mock_payment_page("pay_123", "test-token", settings),
-        lambda: complete_mock_payment("pay_123", "test-token", settings),
-        lambda: alipay_sim_payment_page("pay_123", "test-token", settings),
-        lambda: complete_alipay_sim_payment("pay_123", "test-token", settings),
+        lambda: mock_payment_page("pay_123", settings),
+        lambda: complete_mock_payment("pay_123", settings),
+        lambda: alipay_sim_payment_page("pay_123", settings),
+        lambda: complete_alipay_sim_payment("pay_123", settings),
         lambda: mock_payment_webhook({}, request, settings),
     ):
         with pytest.raises(HTTPException) as exc_info:
@@ -553,7 +553,7 @@ def test_public_create_order_returns_503_without_creating_orphan_order_when_chec
 
     original = PaymentService.create_checkout
 
-    def _boom(self, order_id: str, *, portal_token: str):
+    def _boom(self, order_id: str, *, portal_token: str | None = None):
         raise PaymentError("checkout transport failed")
 
     monkeypatch.setattr(PaymentService, "create_checkout", _boom)

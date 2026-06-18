@@ -62,7 +62,7 @@ def test_alipay_sim_public_user_e2e_flow(tmp_path, monkeypatch):
         assert "待支付" in before_pay_status.text
 
         pay_resp = client.post(
-            f"/pay/alipay-sim/{payment_id}/complete?token={token}",
+            f"/pay/alipay-sim/{payment_id}/complete",
             follow_redirects=False,
         )
         assert pay_resp.status_code == 303, pay_resp.text
@@ -105,8 +105,8 @@ def test_alipay_sim_public_user_e2e_flow(tmp_path, monkeypatch):
 
         with OrdersDAO.connect(settings.orders_db_path) as dao:
             order = dao.get(created["order_id"])
-            report_path = tmp_path / "report.html"
-            pdf_path = tmp_path / "report.pdf"
+            report_path = share_reports / "report.html"
+            pdf_path = share_reports / "report.pdf"
             report_path.write_text(
                 "<h1>志愿方案报告</h1><p>已生成。</p>", encoding="utf-8"
             )

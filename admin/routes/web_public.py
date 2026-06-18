@@ -184,7 +184,7 @@ def create_public_order_endpoint(
 
     portal_token = issue_portal_token(order.id, settings.portal_token_secret)
     try:
-        checkout = payment_service.create_checkout(order.id, portal_token=portal_token)
+        checkout = payment_service.create_checkout(order.id)
     except PaymentError as exc:
         with OrdersDAO.connect(settings.orders_db_path) as dao:
             dao.delete(order.id)
@@ -245,57 +245,51 @@ async def alipay_notify_webhook(
 @router.get("/pay/mock/{payment_id}", include_in_schema=False)
 def mock_payment_page(
     payment_id: str,
-    token: str,
     settings: Settings = Depends(get_settings_dep),
 ) -> HTMLResponse:
     _assert_simulated_payment_routes_allowed(settings)
-    return _render_simulated_payment_page(
-        payment_id, token, settings, provider_slug="mock"
-    )
+    return _render_simulated_payment_page(payment_id, settings, provider_slug="mock")
 
 
 @router.post("/pay/mock/{payment_id}/complete", include_in_schema=False)
 def complete_mock_payment(
     payment_id: str,
-    token: str,
     settings: Settings = Depends(get_settings_dep),
 ) -> RedirectResponse:
     _assert_simulated_payment_routes_allowed(settings)
-    return _complete_simulated_payment(
-        payment_id, token, settings, provider_slug="mock"
-    )
+    return _complete_simulated_payment(payment_id, settings, provider_slug="mock")
 
 
 @router.get("/pay/alipay-sim/{payment_id}", include_in_schema=False)
 def alipay_sim_payment_page(
     payment_id: str,
-    token: str,
     settings: Settings = Depends(get_settings_dep),
 ) -> HTMLResponse:
     _assert_simulated_payment_routes_allowed(settings)
-    return _render_simulated_payment_page(
-        payment_id, token, settings, provider_slug="alipay-sim"
-    )
+    return _render_simulated_payment_page(payment_id, settings, provider_slug="alipay-sim")
 
 
 @router.post("/pay/alipay-sim/{payment_id}/complete", include_in_schema=False)
 def complete_alipay_sim_payment(
     payment_id: str,
-    token: str,
     settings: Settings = Depends(get_settings_dep),
 ) -> RedirectResponse:
     _assert_simulated_payment_routes_allowed(settings)
-    return _complete_simulated_payment(
-        payment_id, token, settings, provider_slug="alipay-sim"
-    )
+    return _complete_simulated_payment(payment_id, settings, provider_slug="alipay-sim")
 
 
 @router.get("/portal/payment-return", include_in_schema=False)
 def payment_return_page(
-    token: str, settings: Settings = Depends(get_settings_dep)
+    payment_id: str, settings: Settings = Depends(get_settings_dep)
 ) -> RedirectResponse:
-    _resolve_order_from_token(token, settings)
-    return RedirectResponse(url=f"/portal/{token}/payment-success", status_code=303)
+    service = _payment_service(settings)
+    payment = service.get_payment(payment_id)
+    if payment is None:
+        raise HTTPException(status_code=404, detail="payment not found")
+    portal_token = issue_portal_token(payment.order_id, settings.portal_token_secret)
+    return RedirectResponse(
+        url=f"/portal/{portal_token}/payment-success", status_code=303
+    )
 
 
 @router.get("/portal/{token}/info", include_in_schema=False)
@@ -709,8 +703,8 @@ def _render_footer_links(token: str | None = None) -> str:
     privacy_href = "/privacy"
     terms_href = "/service-terms"
     if token:
-        privacy_href = f"/privacy?token={escape(token)}"
-        terms_href = f"/service-terms?token={escape(token)}"
+        privacy_href = "/privacy"
+        terms_href = "/service-terms"
         deletion_href = f"/portal/{escape(token)}/deletion-request"
     else:
         deletion_href = "/deletion-policy"
@@ -1519,26 +1513,22 @@ def _render_payment_success_page(token: str, context: dict[str, Any]) -> str:
 </html>"""
 
 
-def _render_mock_payment_page(payment_id: str, amount_cents: int, token: str) -> str:
+def _render_mock_payment_page(payment_id: str, amount_cents: int) -> str:
     return _render_simulated_payment_html(
         title="支付确认页",
         provider_slug="mock",
         payment_id=payment_id,
         amount_cents=amount_cents,
-        token=token,
         submit_label="确认支付并返回订单页",
     )
 
 
-def _render_alipay_sim_payment_page(
-    payment_id: str, amount_cents: int, token: str
-) -> str:
+def _render_alipay_sim_payment_page(payment_id: str, amount_cents: int) -> str:
     return _render_simulated_payment_html(
         title="支付宝模拟收银台",
         provider_slug="alipay-sim",
         payment_id=payment_id,
         amount_cents=amount_cents,
-        token=token,
         submit_label="模拟支付宝支付成功并返回订单页",
     )
 
@@ -1549,7 +1539,6 @@ def _render_simulated_payment_html(
     provider_slug: str,
     payment_id: str,
     amount_cents: int,
-    token: str,
     submit_label: str,
 ) -> str:
     return f"""<!doctype html>
@@ -1560,7 +1549,7 @@ def _render_simulated_payment_html(
       <h1>{escape(title)}</h1>
       <p>订单支付单号：{escape(payment_id)}</p>
       <p>支付金额：¥{amount_cents / 100:.2f}</p>
-      <form method=\"post\" action=\"/pay/{escape(provider_slug)}/{escape(payment_id)}/complete?token={escape(token)}\">
+      <form method=\"post\" action=\"/pay/{escape(provider_slug)}/{escape(payment_id)}/complete\">
         <button type=\"submit\" style=\"border:none;border-radius:12px;background:#1f6feb;color:#fff;font-weight:700;padding:12px 18px;cursor:pointer;\">{escape(submit_label)}</button>
       </form>
     </main>
@@ -1571,7 +1560,6 @@ def _render_simulated_payment_html(
 
 def _render_simulated_payment_page(
     payment_id: str,
-    token: str,
     settings: Settings,
     *,
     provider_slug: str,
@@ -1586,9 +1574,9 @@ def _render_simulated_payment_page(
     if payment is None:
         raise HTTPException(status_code=404, detail="payment not found")
     if provider_slug == "mock":
-        body = _render_mock_payment_page(payment_id, payment.amount_cents, token)
+        body = _render_mock_payment_page(payment_id, payment.amount_cents)
     elif provider_slug == "alipay-sim":
-        body = _render_alipay_sim_payment_page(payment_id, payment.amount_cents, token)
+        body = _render_alipay_sim_payment_page(payment_id, payment.amount_cents)
     else:
         raise HTTPException(
             status_code=404, detail="unsupported simulated payment page"
@@ -1598,7 +1586,6 @@ def _render_simulated_payment_page(
 
 def _complete_simulated_payment(
     payment_id: str,
-    token: str,
     settings: Settings,
     *,
     provider_slug: str,
@@ -1612,15 +1599,6 @@ def _complete_simulated_payment(
     payment = service.get_payment(payment_id)
     if payment is None:
         raise HTTPException(status_code=404, detail="payment not found")
-    try:
-        portal_payload = verify_portal_token(token, settings.portal_token_secret)
-    except PortalTokenError as exc:
-        raise HTTPException(status_code=401, detail=str(exc)) from exc
-    if (
-        str(portal_payload["order_id"]) != payment.order_id
-        or payment.checkout_token != token
-    ):
-        raise HTTPException(status_code=403, detail="payment token mismatch")
     payload, headers = service.provider.build_webhook_request(
         payment_id=payment.id,
         amount_cents=payment.amount_cents,
@@ -1635,7 +1613,8 @@ def _complete_simulated_payment(
             status_code=404, detail="unsupported simulated payment completion"
         )
     service.handle_webhook(payload, signature)
-    return RedirectResponse(url=f"/portal/{token}/payment-success", status_code=303)
+    portal_token = issue_portal_token(payment.order_id, settings.portal_token_secret)
+    return RedirectResponse(url=f"/portal/{portal_token}/payment-success", status_code=303)
 
 
 def _render_info_page(

@@ -39,9 +39,7 @@ def test_create_checkout_is_idempotent_for_pending_payment(settings):
 
     assert first.payment_id == second.payment_id
     assert first.provider == "mock"
-    assert first.checkout_url.endswith(
-        f"/pay/mock/{first.payment_id}?token=portal-token"
-    )
+    assert first.checkout_url == f"/pay/mock/{first.payment_id}"
 
     payment = service.get_payment_by_order(order.id)
     assert payment is not None
@@ -78,6 +76,21 @@ def test_create_checkout_returns_same_payment_for_paid_order(settings):
     finally:
         payments.close()
     assert [item.id for item in all_payments] == [first.payment_id]
+
+
+def test_payment_does_not_persist_plain_portal_token(settings):
+    order = _seed_order(settings.orders_db_path, order_id="GKO-20260618-TOKEN-STORAGE")
+    service = PaymentService.for_db(
+        settings.orders_db_path,
+        base_url=settings.payment_base_url,
+        webhook_secret=settings.payment_webhook_secret,
+    )
+
+    service.create_checkout(order.id, portal_token="portal-token")
+
+    payment = service.get_payment_by_order(order.id)
+    assert payment is not None
+    assert payment.checkout_token != "portal-token"
 
 
 def test_create_checkout_is_serialized_to_single_pending_payment(

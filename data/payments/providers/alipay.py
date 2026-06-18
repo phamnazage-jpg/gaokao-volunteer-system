@@ -65,7 +65,7 @@ class AlipayProvider:
             "version": "1.0",
             "notify_url": self.notify_url,
             "return_url": self._append_query_param(
-                self.return_url, "token", portal_token
+                self.return_url, "payment_id", payment_id
             ),
             "biz_content": json.dumps(
                 {

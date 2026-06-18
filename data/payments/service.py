@@ -134,7 +134,7 @@ class PaymentService:
             alipay_public_key_path=alipay_public_key_path,
         )
 
-    def create_checkout(self, order_id: str, *, portal_token: str) -> PaymentCheckout:
+    def create_checkout(self, order_id: str, *, portal_token: str | None = None) -> PaymentCheckout:
         with OrdersDAO.connect(self.db_path) as orders_dao:
             payments = PaymentDAO.from_connection(orders_dao.conn)
             with orders_dao.transaction(begin_mode="immediate"):
@@ -150,7 +150,7 @@ class PaymentService:
                         provider=existing.provider,
                         checkout_url=self.provider.build_checkout_url(
                             existing.id,
-                            portal_token,
+                            existing.checkout_token or existing.id,
                             amount_cents=existing.amount_cents,
                             subject=f"高考志愿服务-{order.service_version}",
                         ),
@@ -162,7 +162,7 @@ class PaymentService:
                         order_id=order.id,
                         provider=self.provider.name,
                         amount_cents=order.amount_cents,
-                        checkout_token=portal_token,
+                        checkout_token=secrets.token_urlsafe(24),
                     )
                 )
                 return PaymentCheckout(
@@ -170,7 +170,7 @@ class PaymentService:
                     provider=payment.provider,
                     checkout_url=self.provider.build_checkout_url(
                         payment.id,
-                        portal_token,
+                        payment.checkout_token or payment.id,
                         amount_cents=payment.amount_cents,
                         subject=f"高考志愿服务-{order.service_version}",
                     ),

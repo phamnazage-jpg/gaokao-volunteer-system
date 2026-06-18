@@ -15,7 +15,7 @@ class PaymentRecord:
     currency: str = "CNY"
     status: str = "pending"
     provider_trade_no: Optional[str] = None
-    checkout_token: Optional[str] = None
+    checkout_token: Optional[str] = None  # payment-bound return key, never portal token
     callback_payload: Optional[str] = None
     refund_reason: Optional[str] = None
     created_at: str = ""

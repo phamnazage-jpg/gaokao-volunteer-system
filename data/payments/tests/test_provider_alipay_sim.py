@@ -35,9 +35,7 @@ def test_alipay_sim_provider_checkout_shape_and_idempotency(settings):
 
     assert first.payment_id == second.payment_id
     assert first.provider == "alipay_sim"
-    assert first.checkout_url.endswith(
-        f"/pay/alipay-sim/{first.payment_id}?token=portal-token"
-    )
+    assert first.checkout_url == f"/pay/alipay-sim/{first.payment_id}"
 
 
 def test_alipay_sim_webhook_marks_order_paid(settings):
