@@ -39,6 +39,10 @@ git show --name-only --pretty=format: 246f21c 2252157 | sed '/^$/d' | sort -u | 
 - 417 个文件已经全部完成“保留 / 归档”决策，不存在“还没判断”的剩余项。
 - 真正需要落地变更的只有重复副本与过时入口页，其他大多数文件已经在项目里承担运行、验证、真相源或历史追溯职责，不应为了表面整洁继续移动。
 
+按目录展开的细表见：
+
+- `docs/archive/2026-06-18-rules-cleanup/417-file-inventory-by-directory.md`
+
 ## 已归档
 
 - `skills-gaokao-spec-checker-rules-provinces.md`
