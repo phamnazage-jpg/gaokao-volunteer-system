@@ -315,6 +315,37 @@ def test_payment_success_page_served_after_paid_order(route_client, settings):
     assert "立即补充资料" in page.text
 
 
+def test_portal_report_rejects_untrusted_report_path(route_client, settings):
+    from data.orders.dao import OrdersDAO
+    from data.orders.models import Order
+    from data.customer_portal.token import issue_portal_token
+
+    order = Order(
+        id="GKO-20260614-TRUST",
+        source="web",
+        service_version="standard",
+        amount_cents=9900,
+        status="pending",
+        customer_name="张家长",
+        customer_phone="13800138000",
+        candidate_name="张三",
+        candidate_province="湖南",
+        audit_report="/etc/hosts",
+        pdf_path="/etc/hosts",
+    )
+    with OrdersDAO.connect(settings.orders_db_path) as dao:
+        dao.create(order, actor="test", reason="seed")
+    token = issue_portal_token(order.id, settings.portal_token_secret)
+
+    report_page = route_client.get(f"/portal/{token}/report")
+    assert report_page.status_code == 409
+    assert "report not ready" in report_page.text
+
+    pdf_resp = route_client.get(f"/portal/{token}/report.pdf")
+    assert pdf_resp.status_code == 409
+    assert "report not ready" in pdf_resp.text
+
+
 def test_portal_status_page_does_not_fall_back_to_pending_after_paid_order(
     route_client, settings
 ):

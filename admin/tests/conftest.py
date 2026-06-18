@@ -156,6 +156,8 @@ class RouteClient:
             payment_success_page,
             pricing_page,
             privacy_page,
+            report_pdf_download,
+            report_view_page,
             service_terms_page,
         )
 
@@ -191,6 +193,17 @@ class RouteClient:
             if route_path.startswith("/portal/") and route_path.endswith("/info"):
                 token = route_path.split("/portal/", 1)[1].rsplit("/info", 1)[0]
                 return self._html_response(order_info_page(token, settings))
+            if route_path.startswith("/portal/") and route_path.endswith("/report.pdf"):
+                token = route_path.split("/portal/", 1)[1].rsplit("/report.pdf", 1)[0]
+                response = report_pdf_download(token, settings)
+                return RouteResponse(
+                    status_code=response.status_code,
+                    headers=dict(response.headers),
+                    text="",
+                )
+            if route_path.startswith("/portal/") and route_path.endswith("/report"):
+                token = route_path.split("/portal/", 1)[1].rsplit("/report", 1)[0]
+                return self._html_response(report_view_page(token, settings))
             if route_path == "/privacy":
                 query = dict(parse_qsl(split.query, keep_blank_values=True))
                 return self._html_response(privacy_page(query.get("token")))

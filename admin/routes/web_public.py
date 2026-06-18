@@ -541,7 +541,7 @@ def report_view_page(
     context = _build_portal_context(order, settings)
     if context["stage"] not in {"report_ready", "completed"}:
         raise HTTPException(status_code=409, detail="report not ready")
-    return HTMLResponse(_render_report_page(order))
+    return HTMLResponse(_render_report_page(order, settings))
 
 
 @router.get("/portal/{token}/report.pdf", include_in_schema=False)
@@ -552,7 +552,11 @@ def report_pdf_download(
     context = _build_portal_context(order, settings)
     if context["stage"] not in {"report_ready", "completed"}:
         raise HTTPException(status_code=409, detail="report not ready")
-    if not order.pdf_path or not Path(order.pdf_path).is_file():
+    if (
+        not order.pdf_path
+        or not _is_trusted_report_path(order.pdf_path, settings)
+        or not Path(order.pdf_path).is_file()
+    ):
         raise HTTPException(status_code=404, detail="pdf not found")
     return FileResponse(
         order.pdf_path, media_type="application/pdf", filename=Path(order.pdf_path).name
@@ -586,6 +590,18 @@ def _resolve_order_from_token(token: str, settings: Settings) -> Order:
             raise HTTPException(status_code=404, detail="order not found") from exc
 
 
+def _is_trusted_report_path(path: str | None, settings: Settings) -> bool:
+    if not path:
+        return False
+    candidate = Path(path).resolve()
+    trusted_roots = (
+        Path(settings.share_report_dir).resolve(),
+        (Path(settings.portal_upload_dir).resolve().parent / "order_artifacts").resolve(),
+        Path("data/examples").resolve(),
+    )
+    return any(root == candidate or root in candidate.parents for root in trusted_roots)
+
+
 def _build_portal_context(order: Order, settings: Settings) -> dict[str, Any]:
     payment_service = _payment_service(settings)
     payment = payment_service.get_payment_by_order(order.id)
@@ -611,8 +627,16 @@ def _build_portal_context(order: Order, settings: Settings) -> dict[str, Any]:
         notification_service.close()
 
     stage = "pending_payment"
-    report_html_ready = bool(order.audit_report and Path(order.audit_report).is_file())
-    report_pdf_ready = bool(order.pdf_path and Path(order.pdf_path).is_file())
+    report_html_ready = bool(
+        order.audit_report
+        and _is_trusted_report_path(order.audit_report, settings)
+        and Path(order.audit_report).is_file()
+    )
+    report_pdf_ready = bool(
+        order.pdf_path
+        and _is_trusted_report_path(order.pdf_path, settings)
+        and Path(order.pdf_path).is_file()
+    )
     report_artifacts_ready = report_html_ready and report_pdf_ready
     if order.status == "refunded" or (
         payment is not None and payment.status == "refunded"
@@ -2173,8 +2197,12 @@ def _render_notification_audit_page(token: str, order: Order, events: list[Any])
 """
 
 
-def _render_report_page(order: Order) -> str:
-    if order.audit_report and Path(order.audit_report).is_file():
+def _render_report_page(order: Order, settings: Settings) -> str:
+    if (
+        order.audit_report
+        and _is_trusted_report_path(order.audit_report, settings)
+        and Path(order.audit_report).is_file()
+    ):
         path = Path(order.audit_report)
         content = path.read_text(encoding="utf-8")
         if path.suffix.lower() == ".html":
@@ -2183,7 +2211,11 @@ def _render_report_page(order: Order) -> str:
             pretty = json.dumps(json.loads(content), ensure_ascii=False, indent=2)
             return f"<html><body><h1>志愿方案报告</h1><pre>{escape(pretty)}</pre></body></html>"
         return f"<html><body><h1>志愿方案报告</h1><pre>{escape(content)}</pre></body></html>"
-    if order.plan_file and Path(order.plan_file).is_file():
+    if (
+        order.plan_file
+        and _is_trusted_report_path(order.plan_file, settings)
+        and Path(order.plan_file).is_file()
+    ):
         content = Path(order.plan_file).read_text(encoding="utf-8")
         return f"<html><body><h1>志愿方案报告</h1><pre>{escape(content)}</pre></body></html>"
     raise HTTPException(status_code=404, detail="report not found")

@@ -13,10 +13,11 @@ from __future__ import annotations
 import csv
 import json
 from dataclasses import asdict
+from pathlib import Path
 from io import StringIO
 from typing import Any, Literal, Optional, cast
 
-from fastapi import APIRouter, Depends, Path, Query, Response, status
+from fastapi import APIRouter, Depends, Path as ApiPath, Query, Response, status
 from pydantic import BaseModel, Field
 
 from admin.auth import get_current_user
@@ -239,7 +240,7 @@ def _detail_payload(
     }
 
 
-def _normalize_updates(updates: Optional[dict[str, Any]]) -> dict[str, Any]:
+def _normalize_updates(updates: Optional[dict[str, Any]], settings: Settings) -> dict[str, Any]:
     if not updates:
         return {}
     bad = sorted(set(updates) - _ALLOWED_UPDATE_FIELDS)
@@ -248,11 +249,58 @@ def _normalize_updates(updates: Optional[dict[str, Any]]) -> dict[str, Any]:
             DATA_VALIDATION_FAILED,
             detail={"invalid_update_fields": bad},
         )
-    return dict(updates)
+    normalized = dict(updates)
+    if "audit_report" in normalized:
+        normalized["audit_report"] = _validate_report_artifact_path(
+            normalized["audit_report"], settings
+        )
+    if "pdf_path" in normalized:
+        normalized["pdf_path"] = _validate_report_artifact_path(
+            normalized["pdf_path"], settings
+        )
+    if "plan_file" in normalized:
+        normalized["plan_file"] = _validate_report_artifact_path(
+            normalized["plan_file"], settings
+        )
+    return normalized
 
 
 def _business_error_for_lookup(order_id: str) -> BusinessError:
     return BusinessError(BIZ_ORDER_NOT_FOUND, detail={"order_id": order_id})
+
+
+_REPORT_ARTIFACT_SUFFIXES = {".html", ".json", ".md", ".pdf"}
+
+
+def _trusted_report_roots(settings: Settings) -> tuple[Path, ...]:
+    return (
+        Path(settings.share_report_dir).resolve(),
+        (Path(settings.portal_upload_dir).resolve().parent / "order_artifacts").resolve(),
+        Path("data/examples").resolve(),
+    )
+
+
+def _validate_report_artifact_path(raw_path: Any, settings: Settings) -> str | None:
+    if raw_path is None or raw_path == "":
+        return None
+    if not isinstance(raw_path, str):
+        raise BusinessError(
+            DATA_VALIDATION_FAILED,
+            detail={"reason": "artifact path must be a string"},
+        )
+    path = Path(raw_path).expanduser().resolve()
+    if path.suffix.lower() not in _REPORT_ARTIFACT_SUFFIXES:
+        raise BusinessError(
+            DATA_VALIDATION_FAILED,
+            detail={"reason": f"untrusted artifact suffix: {raw_path}"},
+        )
+    trusted_roots = _trusted_report_roots(settings)
+    if not any(root == path or root in path.parents for root in trusted_roots):
+        raise BusinessError(
+            DATA_VALIDATION_FAILED,
+            detail={"reason": f"untrusted artifact path: {raw_path}"},
+        )
+    return str(path)
 
 
 def _ensure_non_prod_seed_env(settings: Settings) -> None:
@@ -409,7 +457,7 @@ def export_orders_csv(
     summary="订单详情（T6.4）",
 )
 def get_order(
-    order_id: str = Path(..., min_length=1),
+    order_id: str = ApiPath(..., min_length=1),
     settings: Settings = Depends(get_settings_dep),
     _: AdminUser = Depends(get_current_user),
 ) -> dict[str, Any]:
@@ -527,11 +575,11 @@ def create_dev_seed_order(
 )
 def patch_order(
     payload: UpdateOrderRequest,
-    order_id: str = Path(..., min_length=1),
+    order_id: str = ApiPath(..., min_length=1),
     settings: Settings = Depends(get_settings_dep),
     current_user: AdminUser = Depends(get_current_user),
 ) -> dict[str, Any]:
-    updates = _normalize_updates(payload.updates)
+    updates = _normalize_updates(payload.updates, settings)
     if not updates and payload.to_status is None:
         raise BusinessError(
             DATA_VALIDATION_FAILED,
@@ -617,7 +665,7 @@ def patch_order(
     summary="订单删除 / 匿名化（T12/A-4）",
 )
 def delete_or_anonymize_order(
-    order_id: str = Path(..., min_length=1),
+    order_id: str = ApiPath(..., min_length=1),
     mode: Literal["delete", "anonymize"] = Query("delete"),
     reason: str = Query(..., min_length=1),
     settings: Settings = Depends(get_settings_dep),

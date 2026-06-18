@@ -244,6 +244,46 @@ def test_patch_paid_to_serving_requires_submitted_intake(
     assert allowed_body["order"]["intake_status"] == "submitted"
 
 
+def test_patch_order_rejects_audit_report_outside_allowed_report_dir(
+    client, auth_headers, settings
+):
+    created = _seed_order(settings, id="GKO-20260612-UNTRUSTED-HTML")
+
+    resp = client.patch(
+        f"/api/orders/{created.id}",
+        headers=auth_headers,
+        json={
+            "updates": {"audit_report": "/etc/hosts"},
+            "reason": "attach_report",
+        },
+    )
+
+    assert resp.status_code == 422
+    body = resp.json()
+    assert body["code"] == "E03001"
+    assert "untrusted artifact" in body["detail"]["reason"]
+
+
+def test_patch_order_rejects_pdf_path_outside_allowed_report_dir(
+    client, auth_headers, settings
+):
+    created = _seed_order(settings, id="GKO-20260612-UNTRUSTED-PDF")
+
+    resp = client.patch(
+        f"/api/orders/{created.id}",
+        headers=auth_headers,
+        json={
+            "updates": {"pdf_path": "/etc/hosts"},
+            "reason": "attach_report",
+        },
+    )
+
+    assert resp.status_code == 422
+    body = resp.json()
+    assert body["code"] == "E03001"
+    assert "untrusted artifact" in body["detail"]["reason"]
+
+
 def test_export_orders_csv_returns_masked_rows(client, auth_headers, settings):
     _seed_order(
         settings,
