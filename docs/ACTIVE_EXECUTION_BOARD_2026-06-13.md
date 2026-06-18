@@ -246,8 +246,8 @@ Owner: docs / PM
 交付物:
 
 - 补丁更新以下文档头部说明：
-  - `docs/AUDIT_REPORT_2026-06-11.md`
-  - `docs/REMEDIATION_TASK_BOARD_2026-06-11.md`
+  - `docs/archive/2026-06-historical-snapshots/AUDIT_REPORT_2026-06-11.md`
+  - `docs/archive/2026-06-historical-snapshots/REMEDIATION_TASK_BOARD_2026-06-11.md`
   - `reports/PROJECT_SYSTEM_REVIEW_2026-06-13.md`
 
 完成标准:

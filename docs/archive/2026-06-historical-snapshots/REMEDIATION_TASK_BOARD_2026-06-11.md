@@ -377,9 +377,9 @@ T1.x → T2.x → T3.x → T4.x → T5.x → T6.x → T7.x（v2.2）
 | 文档     | 链接                                                     | 关系   |
 | -------- | -------------------------------------------------------- | ------ |
 | 审核报告 | [AUDIT_REPORT_2026-06-11.md](AUDIT_REPORT_2026-06-11.md) | 上游   |
-| 实施计划 | [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md)         | 待修订 |
-| PRD      | [../product/PRD.md](../product/PRD.md)                   | 待修订 |
-| 技术架构 | [TECH_ARCHITECTURE.md](TECH_ARCHITECTURE.md)             | 参考   |
+| 实施计划 | [IMPLEMENTATION_PLAN.md](../../IMPLEMENTATION_PLAN.md)   | 待修订 |
+| PRD      | [PRD.md](../../../product/PRD.md)                        | 待修订 |
+| 技术架构 | [TECH_ARCHITECTURE.md](../../TECH_ARCHITECTURE.md)       | 参考   |
 
 ---
 

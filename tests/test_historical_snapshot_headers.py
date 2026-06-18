@@ -16,6 +16,7 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DOCS_DIR = REPO_ROOT / "docs"
 REPORTS_DIR = REPO_ROOT / "reports"
+ARCHIVE_2026_06_DIR = DOCS_DIR / "archive" / "2026-06-historical-snapshots"
 
 
 # 每个“历史快照”文档必须满足:
@@ -54,7 +55,7 @@ def _missing_pointers(head: str) -> list[str]:
 
 
 def test_historical_audit_reports_have_snapshot_header():
-    target = DOCS_DIR / "AUDIT_REPORT_2026-06-11.md"
+    target = ARCHIVE_2026_06_DIR / "AUDIT_REPORT_2026-06-11.md"
     assert target.exists(), target
     head = target.read_text(encoding="utf-8")
     assert "历史快照" in head
@@ -65,7 +66,18 @@ def test_historical_audit_reports_have_snapshot_header():
 
 
 def test_historical_remediation_boards_have_snapshot_header():
-    target = DOCS_DIR / "REMEDIATION_TASK_BOARD_2026-06-11.md"
+    target = ARCHIVE_2026_06_DIR / "REMEDIATION_TASK_BOARD_2026-06-11.md"
+    assert target.exists(), target
+    head = target.read_text(encoding="utf-8")
+    assert "历史快照" in head
+    missing = _missing_pointers(head)
+    assert not missing, (
+        f"{target.name} 缺少真相源指针: {missing}"
+    )
+
+
+def test_historical_final_completion_report_has_snapshot_header():
+    target = ARCHIVE_2026_06_DIR / "FINAL_COMPLETION_REPORT_2026-06-13.md"
     assert target.exists(), target
     head = target.read_text(encoding="utf-8")
     assert "历史快照" in head
@@ -104,7 +116,6 @@ def test_any_new_2026_snapshot_doc_with_historical_marker_carries_pointers():
         "CURRENT_STATE.md",
         "ACTIVE_REMEDIATION_2026-06-13.md",
         "ACTIVE_EXECUTION_BOARD_2026-06-13.md",
-        "FINAL_COMPLETION_REPORT_2026-06-13.md",
         "P0_P1_P2_REMEDIATION_PLAN_2026-06-14.md",
     }
     for path in DOCS_DIR.glob("*.md"):

@@ -34,8 +34,8 @@
 
 ### 关联文档
 
-- [AUDIT_REPORT_2026-06-11.md](../AUDIT_REPORT_2026-06-11.md)
-- [REMEDIATION_TASK_BOARD_2026-06-11.md](../REMEDIATION_TASK_BOARD_2026-06-11.md)
+- [AUDIT_REPORT_2026-06-11.md](archive/2026-06-historical-snapshots/AUDIT_REPORT_2026-06-11.md)
+- [REMEDIATION_TASK_BOARD_2026-06-11.md](archive/2026-06-historical-snapshots/REMEDIATION_TASK_BOARD_2026-06-11.md)
 
 ---
 
@@ -424,8 +424,8 @@ jobs:
 
 ## 相关文档
 
-- [AUDIT_REPORT](../AUDIT_REPORT_2026-06-11.md) - 审核报告
-- [REMEDIATION_TASK_BOARD](../REMEDIATION_TASK_BOARD_2026-06-11.md) - 任务板
+- [AUDIT_REPORT](archive/2026-06-historical-snapshots/AUDIT_REPORT_2026-06-11.md) - 审核报告
+- [REMEDIATION_TASK_BOARD](archive/2026-06-historical-snapshots/REMEDIATION_TASK_BOARD_2026-06-11.md) - 任务板
 - [TECH_ARCHITECTURE](../TECH_ARCHITECTURE.md) - 技术架构
 - [PRD](../../product/PRD.md) - 产品需求
 

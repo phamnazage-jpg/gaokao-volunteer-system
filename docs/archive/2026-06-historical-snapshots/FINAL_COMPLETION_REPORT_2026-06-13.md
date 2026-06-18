@@ -1,4 +1,6 @@
-# v2.1 最终完成报告
+# v2.1 最终完成报告（历史快照）
+
+> 该文档保留 2026-06-13 当时的结项口径，不再代表当前真实状态。当前真相源请优先阅读：`docs/CURRENT_STATE.md` → `docs/ACTIVE_EXECUTION_BOARD_2026-06-17.md` → `docs/ACTIVE_REMEDIATION_2026-06-13.md`。
 
 生成时间: 2026-06-13
 项目: /home/long/project/gaokao-volunteer-system

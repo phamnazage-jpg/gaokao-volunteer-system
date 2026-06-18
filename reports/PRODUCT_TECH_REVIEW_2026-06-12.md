@@ -47,7 +47,7 @@
 - `docs/BUSINESS_SCENE.md`
 - `docs/TECH_ARCHITECTURE.md`
 - `docs/IMPLEMENTATION_PLAN_v2.md`
-- `docs/AUDIT_REPORT_2026-06-11.md`
+- `docs/archive/2026-06-historical-snapshots/AUDIT_REPORT_2026-06-11.md`
 
 ### 2.2 代码与运行时证据
 

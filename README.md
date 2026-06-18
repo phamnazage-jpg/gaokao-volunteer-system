@@ -7,7 +7,7 @@
 > 一套面向人工服务运营的高考志愿填报系统：管理后台、订单/分享/渠道同步、AI 审核链路已成形；用户端 Web 自助闭环仍在推进中。
 >
 > 当前真相源：`docs/CURRENT_STATE.md` → `docs/ACTIVE_EXECUTION_BOARD_2026-06-17.md`
-> 历史归档报告：`docs/FINAL_COMPLETION_REPORT_2026-06-13.md`
+> 历史归档报告：`docs/archive/2026-06-historical-snapshots/FINAL_COMPLETION_REPORT_2026-06-13.md`
 >
 > 当前项目定位：人工服务运营增强系统；用户端 Web 自助闭环仅为本地 MVP/目标态，不是完整用户端 Web 自助产品。
 

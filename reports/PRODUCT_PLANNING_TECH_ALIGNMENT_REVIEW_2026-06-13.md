@@ -383,7 +383,7 @@ PRD 中仍有一些表述需要更严谨：
 - 2026-06-15 至 2026-07-25。
 - 第 1 周、第 2 周、第 3 周等未来时间表。
 
-但当前代码已经包含 T1-T11 大量成果，且 `docs/FINAL_COMPLETION_REPORT_2026-06-13.md` 声称 T1-T11 Goal 执行闭环条件完成。  
+但当前代码已经包含 T1-T11 大量成果，且 `docs/archive/2026-06-historical-snapshots/FINAL_COMPLETION_REPORT_2026-06-13.md` 声称 T1-T11 Goal 执行闭环条件完成。
 这会造成计划文档和实际状态冲突。
 
 #### I-2: 顶层状态与子项状态仍不完全一致
@@ -402,7 +402,7 @@ PRD 中仍有一些表述需要更严谨：
 - `docker-compose.yml`
 - `tests/test_t5_e2e_workflows.py`
 - `tests/test_t5_performance.py`
-- `docs/FINAL_COMPLETION_REPORT_2026-06-13.md`
+- `docs/archive/2026-06-historical-snapshots/FINAL_COMPLETION_REPORT_2026-06-13.md`
 
 说明实际状态比计划文档更靠前。建议将实施计划转为“计划 vs 实际”格式，不再只保留原始排期。
 

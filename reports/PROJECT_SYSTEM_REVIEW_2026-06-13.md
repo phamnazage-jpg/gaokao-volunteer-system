@@ -60,7 +60,7 @@ pytest -q admin/tests
    - 当前 pytest / ruff / mypy / bandit / coverage 输出
 2. **README + CHANGELOG（部分可信）**
 3. **IMPLEMENTATION_PLAN_v2 / CHANNEL_INTEGRATION（部分过时，需结合代码）**
-4. **PRODUCT_TECH_REVIEW_2026-06-12 / AUDIT_REPORT_2026-06-11 / REMEDIATION_TASK_BOARD_2026-06-11（历史快照，不能直接继承为当前结论）**
+4. **PRODUCT_TECH_REVIEW_2026-06-12 / archive/AUDIT_REPORT_2026-06-11 / archive/REMEDIATION_TASK_BOARD_2026-06-11（历史快照，不能直接继承为当前结论）**
 
 ---
 
@@ -119,8 +119,8 @@ pytest -q admin/tests
 
 | 文档                                        | 当前判断                           |
 | ------------------------------------------- | ---------------------------------- |
-| `docs/AUDIT_REPORT_2026-06-11.md`           | **严重过时**                       |
-| `docs/REMEDIATION_TASK_BOARD_2026-06-11.md` | **严重过时**                       |
+| `docs/archive/2026-06-historical-snapshots/AUDIT_REPORT_2026-06-11.md`           | **严重过时**                       |
+| `docs/archive/2026-06-historical-snapshots/REMEDIATION_TASK_BOARD_2026-06-11.md` | **严重过时**                       |
 | `reports/PRODUCT_TECH_REVIEW_2026-06-12.md` | **部分仍有效，但若直接继承会失真** |
 
 仍有效的旧判断：
@@ -320,5 +320,5 @@ pytest -q admin/tests
 ## 10. 本报告与旧报告的关系
 
 - 本报告是 **2026-06-13 的新鲜实跑结论**
-- `docs/AUDIT_REPORT_2026-06-11.md`、`docs/REMEDIATION_TASK_BOARD_2026-06-11.md`、`reports/PRODUCT_TECH_REVIEW_2026-06-12.md` 仅保留历史参考价值
+- `docs/archive/2026-06-historical-snapshots/AUDIT_REPORT_2026-06-11.md`、`docs/archive/2026-06-historical-snapshots/REMEDIATION_TASK_BOARD_2026-06-11.md`、`reports/PRODUCT_TECH_REVIEW_2026-06-12.md` 仅保留历史参考价值
 - 之后若继续推进，应以本报告与新的整改任务板作为当前真相源

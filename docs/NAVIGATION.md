@@ -64,9 +64,6 @@
 | [PRODUCTION_DEPLOYMENT_CHECKLIST_2026-06-15.md](PRODUCTION_DEPLOYMENT_CHECKLIST_2026-06-15.md) | 线上部署与真实配置注入清单 🆕  |
 | [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md)                                               | v2.1实施计划 v1.0              |
 | [IMPLEMENTATION_PLAN_v2.md](IMPLEMENTATION_PLAN_v2.md)                                         | v2.1实施计划 v2.0（修订版）🆕  |
-| [AUDIT_REPORT_2026-06-11.md](AUDIT_REPORT_2026-06-11.md)                                       | 历史审核报告（6/11快照）       |
-| [REMEDIATION_TASK_BOARD_2026-06-11.md](REMEDIATION_TASK_BOARD_2026-06-11.md)                   | 历史修复任务板（6/11快照）     |
-| [FINAL_COMPLETION_REPORT_2026-06-13.md](FINAL_COMPLETION_REPORT_2026-06-13.md)                 | 历史完成报告（6/13口径）       |
 | [plans/](plans/)                                                                               | 详细任务计划 🆕                |
 
 ### 🗃️ 历史归档（docs/archive/）
@@ -75,6 +72,9 @@
 | ------------------------------------------------------------ | ---------------------------- |
 | [archive/README.md](archive/README.md)                       | 历史归档总索引               |
 | [archive/2026-06-historical-snapshots/README.md](archive/2026-06-historical-snapshots/README.md) | 6 月历史快照索引             |
+| [archive/2026-06-historical-snapshots/AUDIT_REPORT_2026-06-11.md](archive/2026-06-historical-snapshots/AUDIT_REPORT_2026-06-11.md) | 历史审核报告（6/11快照）     |
+| [archive/2026-06-historical-snapshots/REMEDIATION_TASK_BOARD_2026-06-11.md](archive/2026-06-historical-snapshots/REMEDIATION_TASK_BOARD_2026-06-11.md) | 历史修复任务板（6/11快照）   |
+| [archive/2026-06-historical-snapshots/FINAL_COMPLETION_REPORT_2026-06-13.md](archive/2026-06-historical-snapshots/FINAL_COMPLETION_REPORT_2026-06-13.md) | 历史完成报告（6/13口径）     |
 | [archive/2026-06-18-rules-cleanup/README.md](archive/2026-06-18-rules-cleanup/README.md) | 417 文件整理与规则清理记录   |
 
 ### 🔍 规则文档（rules/）

@@ -208,7 +208,7 @@
 ## 7. 推荐阅读顺序
 
 1. docs/CURRENT_STATE.md
-2. docs/FINAL_COMPLETION_REPORT_2026-06-13.md
+2. docs/archive/2026-06-historical-snapshots/FINAL_COMPLETION_REPORT_2026-06-13.md
 3. product/PRD.md
 4. product/ROADMAP.md
 5. docs/IMPLEMENTATION_PLAN_v2.md

@@ -239,8 +239,8 @@
 
 已解决：
 
-- `docs/AUDIT_REPORT_2026-06-11.md` 已标注历史快照
-- `docs/REMEDIATION_TASK_BOARD_2026-06-11.md` 已标注历史快照
+- `docs/archive/2026-06-historical-snapshots/AUDIT_REPORT_2026-06-11.md` 已标注历史快照
+- `docs/archive/2026-06-historical-snapshots/REMEDIATION_TASK_BOARD_2026-06-11.md` 已标注历史快照
 - `reports/PROJECT_SYSTEM_REVIEW_2026-06-13.md` 已标注历史快照与真相源跳转
 
 仍缺：
