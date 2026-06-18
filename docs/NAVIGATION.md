@@ -58,13 +58,15 @@
 | [TECH_ARCHITECTURE.md](TECH_ARCHITECTURE.md)                                                   | 技术架构设计 🆕                |
 | [CURRENT_STATE.md](CURRENT_STATE.md)                                                           | 当前真相源 🆕                  |
 | [ACTIVE_REMEDIATION_2026-06-13.md](ACTIVE_REMEDIATION_2026-06-13.md)                           | 当前仍有效问题清单 🆕          |
-| [ACTIVE_EXECUTION_BOARD_2026-06-13.md](ACTIVE_EXECUTION_BOARD_2026-06-13.md)                   | 当前执行板 🆕                  |
-| [P0_P1_P2_REMEDIATION_PLAN_2026-06-14.md](P0_P1_P2_REMEDIATION_PLAN_2026-06-14.md)             | 2026-06-14 严格复审整改计划 🆕 |
+| [ACTIVE_EXECUTION_BOARD_2026-06-13.md](ACTIVE_EXECUTION_BOARD_2026-06-13.md)                   | 历史执行板（6/13快照）         |
+| [ACTIVE_EXECUTION_BOARD_2026-06-17.md](ACTIVE_EXECUTION_BOARD_2026-06-17.md)                   | 当前执行板（6/17口径） 🆕      |
+| [P0_P1_P2_REMEDIATION_PLAN_2026-06-14.md](P0_P1_P2_REMEDIATION_PLAN_2026-06-14.md)             | 历史整改板（以 CURRENT_STATE 为准） |
 | [PRODUCTION_DEPLOYMENT_CHECKLIST_2026-06-15.md](PRODUCTION_DEPLOYMENT_CHECKLIST_2026-06-15.md) | 线上部署与真实配置注入清单 🆕  |
 | [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md)                                               | v2.1实施计划 v1.0              |
 | [IMPLEMENTATION_PLAN_v2.md](IMPLEMENTATION_PLAN_v2.md)                                         | v2.1实施计划 v2.0（修订版）🆕  |
-| [AUDIT_REPORT_2026-06-11.md](AUDIT_REPORT_2026-06-11.md)                                       | 审核报告 🆕                    |
-| [REMEDIATION_TASK_BOARD_2026-06-11.md](REMEDIATION_TASK_BOARD_2026-06-11.md)                   | 修复任务板 🆕                  |
+| [AUDIT_REPORT_2026-06-11.md](AUDIT_REPORT_2026-06-11.md)                                       | 历史审核报告（6/11快照）       |
+| [REMEDIATION_TASK_BOARD_2026-06-11.md](REMEDIATION_TASK_BOARD_2026-06-11.md)                   | 历史修复任务板（6/11快照）     |
+| [FINAL_COMPLETION_REPORT_2026-06-13.md](FINAL_COMPLETION_REPORT_2026-06-13.md)                 | 历史完成报告（6/13口径）       |
 | [plans/](plans/)                                                                               | 详细任务计划 🆕                |
 
 ### 🔍 规则文档（rules/）
