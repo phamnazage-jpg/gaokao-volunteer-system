@@ -69,6 +69,14 @@
 | [FINAL_COMPLETION_REPORT_2026-06-13.md](FINAL_COMPLETION_REPORT_2026-06-13.md)                 | 历史完成报告（6/13口径）       |
 | [plans/](plans/)                                                                               | 详细任务计划 🆕                |
 
+### 🗃️ 历史归档（docs/archive/）
+
+| 文档                                                         | 用途                         |
+| ------------------------------------------------------------ | ---------------------------- |
+| [archive/README.md](archive/README.md)                       | 历史归档总索引               |
+| [archive/2026-06-historical-snapshots/README.md](archive/2026-06-historical-snapshots/README.md) | 6 月历史快照索引             |
+| [archive/2026-06-18-rules-cleanup/README.md](archive/2026-06-18-rules-cleanup/README.md) | 417 文件整理与规则清理记录   |
+
 ### 🔍 规则文档（rules/）
 
 | 文档                                                | 用途         |
