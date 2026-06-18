@@ -8,15 +8,17 @@
 
 ## 2. 数据分类与建议保留期
 
-| 数据类型     | 示例                        | 建议保留期              | 删除方式                   |
-| ------------ | --------------------------- | ----------------------- | -------------------------- |
-| 订单主数据   | orders 表、状态、金额、套餐 | 服务完成后 180 天       | 逻辑受理 + 物理删除/匿名化 |
-| 资料提交数据 | `order_intakes` payload     | 服务完成后 180 天       | 与订单一起删除             |
-| 报告交付文件 | HTML/PDF 报告               | 服务完成后 180 天       | 删除文件并清理路径         |
-| 通知审计     | `delivery_notifications`    | 服务完成后 180 天       | 随订单删除或单独清理       |
-| 支付审计     | 支付单/回调记录             | 至少 180 天，争议中延长 | 审计期结束后清理           |
-| 系统日志     | 服务日志/错误日志           | 30~90 天                | 日志轮转清理               |
-| 脱敏案例数据 | 仅用于内部复盘              | 长期，但必须脱敏        | 仅保留脱敏版               |
+| 数据类型       | 示例                                 | 建议保留期              | 删除方式                               |
+| -------------- | ------------------------------------ | ----------------------- | -------------------------------------- |
+| 订单主数据     | orders 表、状态、金额、套餐          | 服务完成后 180 天       | 逻辑受理 + 物理删除/匿名化             |
+| 资料提交数据   | `order_intakes` payload              | 服务完成后 180 天       | 与订单一起删除                         |
+| 报告交付文件   | HTML/PDF 报告                        | 服务完成后 180 天       | 删除文件并清理路径                     |
+| 通知审计       | `delivery_notifications`             | 服务完成后 180 天       | 删除时物理清除；匿名化时 payload 置空   |
+| 支付审计       | 支付单/回调记录                      | 至少 180 天，争议中延长 | 审计期结束后清理                       |
+| 删除申请日志   | `deletion-requests.jsonl`            | 随订单 retention 同步   | retention 作业按候选订单移除日志项     |
+| 分享访问遥测   | `share_link_access_events`           | 随订单 retention 同步   | retention 作业删除对应 report_id 事件  |
+| 系统日志       | 服务日志/错误日志                    | 30~90 天                | 日志轮转清理                           |
+| 脱敏案例数据   | 仅用于内部复盘                       | 长期，但必须脱敏        | 仅保留脱敏版                           |
 
 ## 3. 删除请求处理原则
 
@@ -32,6 +34,7 @@
    - 删除资料提交记录
    - 删除报告 HTML/PDF 文件
    - 删除关联通知记录
+   - 删除申请日志 / 分享访问遥测中的对应订单旁路记录
 4. 在审计记录中留下“已删除/已匿名化”的最小操作痕迹
 
 ## 4. 当前系统能力与缺口
@@ -41,9 +44,11 @@
 - `OrdersDAO.delete()` 删除订单能力
 - ON DELETE CASCADE 清理部分关联表
 - 后台 `DELETE /api/orders/{id}?mode=delete|anonymize&reason=...` 最小执行入口
-- 删除时自动清理 HTML/PDF 报告文件
+- 删除时自动清理 HTML/PDF 报告文件与 portal 上传附件
+- 匿名化时同步清空 `delivery_notifications.payload_json`
 - `order_deletion_audits` 最小审计表
 - `scripts/gaokao_retention_cleanup.py` / `scripts/gaokao-retention-cleanup.py` 保留期清理入口
+- retention 作业会同步修剪 `deletion-requests.jsonl` 与 `share_link_access_events`
 - `scripts/gaokao-retention-cleanup.py --retention-days 180` 最小定时调度入口
 - `docs/DELIVERY_RETENTION_OPS_RUNBOOK.md`
 - `deploy/systemd/gaokao-retention-cleanup.{service,timer}`
@@ -51,7 +56,7 @@
 
 尚缺：
 
-- 前台/客服删除工单流程
+- 前台/客服删除工单流程仍是 portal 提交 + 后台处理，不是全自动闭环
 - 更细粒度的匿名化策略（如案例长期保留脱敏版）
 - 目标生产主机上的实际安装/值班留痕（仓库内只有调度样例，不代表已部署）
 
@@ -73,4 +78,4 @@
 - runbook：`docs/DELIVERY_RETENTION_OPS_RUNBOOK.md`
 - systemd/cron 样例：`deploy/systemd/gaokao-retention-cleanup.{service,timer}` / `deploy/cron/gaokao-jobs.crontab`
 
-真相边界：当前保留期作业执行的是后台匿名化，不应误报成“用户删除请求流程已经完整上线”。
+真相边界：当前保留期作业执行的是后台匿名化，并同步修剪删除申请日志/分享访问遥测；这仍不应误报成“用户删除请求流程已经完整上线”。

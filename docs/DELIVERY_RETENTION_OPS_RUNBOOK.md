@@ -42,7 +42,8 @@
 
 - 当前清理动作是 **匿名化**（`anonymize_order`），不是物理删除。
 - 只处理 `completed/refunded` 且锚点时间早于 cutoff 的订单。
-- 它会清理订单侧敏感字段并写审计，但不等于“前台删除工单流程已上线”。
+- 它会清理订单侧敏感字段、清空 `delivery_notifications.payload_json`，并修剪 `deletion-requests.jsonl` / `share_link_access_events` 中对应订单的旁路记录。
+- 它不等于“前台删除工单流程已上线”。
 
 ## 2. 统一环境配置
 
@@ -75,6 +76,13 @@ python3 scripts/gaokao-retention-cleanup.py --cutoff 2025-12-31T00:00:00+00:00 -
 # retention 定时模式（自动计算 cutoff）
 python3 scripts/gaokao-retention-cleanup.py --retention-days 180
 ```
+
+执行后至少抽查：
+
+- 候选订单已匿名化
+- 对应 `delivery_notifications.payload_json` 已变成 `{}`
+- `deletion-requests.jsonl` 中对应订单记录已被修剪
+- `share_link_access_events` 中对应 report_id 的访问事件已被修剪
 
 退出码：
 

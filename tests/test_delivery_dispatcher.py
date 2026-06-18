@@ -329,3 +329,92 @@ def test_delivery_watchdog_exits_nonzero_when_failures_detected(settings, tmp_pa
 
     assert proc.returncode == 2, proc.stdout + proc.stderr
     assert '"failed": 1' in proc.stdout
+
+
+def test_retention_cleanup_scrubs_notification_payload_for_expired_orders(settings):
+    from data.orders.retention_cleanup import run_cleanup
+
+    order = Order(
+        id="GKO-20250101-RETENTION-NOTIFY",
+        source="web",
+        service_version="standard",
+        amount_cents=9900,
+        status="completed",
+        customer_name="张家长",
+        customer_phone="13800138000",
+        candidate_name="张三",
+        candidate_province="湖南",
+        created_at="2025-01-01T00:00:00+00:00",
+        completed_at="2025-01-02T00:00:00+00:00",
+        status_updated_at="2025-01-02T00:00:00+00:00",
+    )
+    with OrdersDAO.connect(settings.orders_db_path) as dao:
+        dao.create(order, actor="test", reason="seed_old_completed")
+
+    service = DeliveryNotificationService.for_db(settings.orders_db_path)
+    try:
+        service.notify_event(
+            order.id,
+            event_type="report_ready",
+            channel="email",
+            payload_json='{"customer_email":"parent@example.com","detail":"keep"}',
+        )
+    finally:
+        service.close()
+
+    result = run_cleanup(
+        settings.orders_db_path,
+        cutoff_iso="2025-06-30T00:00:00+00:00",
+        apply=True,
+    )
+
+    assert result.anonymized == 1
+    service = DeliveryNotificationService.for_db(settings.orders_db_path)
+    try:
+        events = service.list_events(order.id)
+    finally:
+        service.close()
+    assert len(events) == 1
+    assert events[0].payload_json == "{}"
+
+
+def test_share_access_events_have_retention_cleanup(settings):
+    from data.orders.retention_cleanup import run_cleanup
+    from data.share.short_link import ShortLinkService
+
+    order = Order(
+        id="GKO-20250101-RETENTION-SHARE",
+        source="web",
+        service_version="standard",
+        amount_cents=9900,
+        status="completed",
+        customer_name="张家长",
+        customer_phone="13800138000",
+        candidate_name="张三",
+        candidate_province="湖南",
+        created_at="2025-01-01T00:00:00+00:00",
+        completed_at="2025-01-02T00:00:00+00:00",
+        status_updated_at="2025-01-02T00:00:00+00:00",
+    )
+    with OrdersDAO.connect(settings.orders_db_path) as dao:
+        dao.create(order, actor="test", reason="seed_old_completed")
+
+    share = ShortLinkService(db_path=settings.share_db_path)
+    link = share.create(report_id=order.id)
+    share.resolve(link.code, visitor_token="visitor-1")
+
+    result = run_cleanup(
+        settings.orders_db_path,
+        cutoff_iso="2025-06-30T00:00:00+00:00",
+        apply=True,
+        share_db_path=settings.share_db_path,
+    )
+
+    assert result.anonymized == 1
+    with share._connect() as conn:
+        row = conn.execute(
+            "SELECT COUNT(*) FROM share_link_access_events WHERE code=?",
+            (link.code,),
+        ).fetchone()
+    assert row is not None
+    assert int(row[0]) == 0

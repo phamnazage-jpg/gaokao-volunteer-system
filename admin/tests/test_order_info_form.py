@@ -262,6 +262,48 @@ def test_portal_deletion_request_is_logged_and_visible_in_admin(client, auth_hea
     assert "parent@example.com" in admin_page.text
 
 
+def test_deletion_request_log_is_purged_by_retention_cleanup(settings):
+    from pathlib import Path
+
+    from data.orders.retention_cleanup import run_cleanup
+
+    order = Order(
+        id="GKO-20250101-DELETE-LOG",
+        source="web",
+        service_version="standard",
+        amount_cents=9900,
+        status="completed",
+        customer_name="张家长",
+        customer_phone="13800138000",
+        candidate_name="张三",
+        candidate_province="湖南",
+        created_at="2025-01-01T00:00:00+00:00",
+        completed_at="2025-01-02T00:00:00+00:00",
+        status_updated_at="2025-01-02T00:00:00+00:00",
+    )
+    with OrdersDAO.connect(settings.orders_db_path) as dao:
+        dao.create(order, actor="test", reason="seed_old_completed")
+
+    log_path = Path(settings.deletion_request_log_path)
+    log_path.parent.mkdir(parents=True, exist_ok=True)
+    log_path.write_text(
+        '{"created_at":"2025-01-02T00:00:00Z","order_id":"GKO-20250101-DELETE-LOG","requester_contact":"parent@example.com"}\n'
+        '{"created_at":"2026-01-02T00:00:00Z","order_id":"GKO-KEEP-LOG","requester_contact":"keep@example.com"}\n',
+        encoding="utf-8",
+    )
+
+    result = run_cleanup(
+        settings.orders_db_path,
+        cutoff_iso="2025-06-30T00:00:00+00:00",
+        apply=True,
+    )
+
+    assert result.anonymized == 1
+    remaining = log_path.read_text(encoding="utf-8")
+    assert "GKO-20250101-DELETE-LOG" not in remaining
+    assert "GKO-KEEP-LOG" in remaining
+
+
 def test_order_info_page_uses_checkbox_checked_state_for_submit(client, settings):
     order = _seed_order(settings.orders_db_path, order_id="GKO-20260615-INFO-CHECKED")
     _mark_paid(settings, order)

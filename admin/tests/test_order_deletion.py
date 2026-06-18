@@ -220,3 +220,41 @@ def test_admin_anonymize_order_removes_portal_attachments(
         intake_store.close()
     assert intake is not None
     assert intake.payload == {}
+
+
+def test_admin_anonymize_order_scrubs_delivery_notifications_payload(
+    client, auth_headers, settings
+):
+    order = _seed_order(settings.orders_db_path, order_id="GKO-20260618-ANON-NOTIFY")
+    _mark_paid(settings, order)
+
+    notification_service = DeliveryNotificationService.for_db(settings.orders_db_path)
+    try:
+        notification_service.notify_event(
+            order.id,
+            event_type="report_ready",
+            channel="station",
+            payload_json='{"customer_email":"parent@example.com","report_path":"/tmp/report.pdf"}',
+        )
+        notification_service.mark_delivered(
+            order.id,
+            channel="station",
+            payload_json='{"customer_email":"parent@example.com","report_path":"/tmp/report.pdf"}',
+        )
+    finally:
+        notification_service.close()
+
+    resp = client.delete(
+        f"/api/orders/{order.id}?mode=anonymize&reason=retention_expired",
+        headers=auth_headers,
+    )
+    assert resp.status_code == 200, resp.text
+
+    notification_service = DeliveryNotificationService.for_db(settings.orders_db_path)
+    try:
+        events = notification_service.list_events(order.id)
+    finally:
+        notification_service.close()
+
+    assert len(events) == 1
+    assert events[0].payload_json == "{}"

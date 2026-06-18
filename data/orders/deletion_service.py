@@ -125,6 +125,11 @@ class OrderDeletionService:
                     "UPDATE order_intakes SET payload_json='{}', updated_at=? WHERE order_id=?",
                     (now, order_id),
                 )
+            if self._table_exists("delivery_notifications"):
+                self._conn.execute(
+                    "UPDATE delivery_notifications SET payload_json='{}' WHERE order_id=?",
+                    (order_id,),
+                )
             self._insert_audit(
                 order_id=order_id,
                 action="anonymize",
