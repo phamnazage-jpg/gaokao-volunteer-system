@@ -2,6 +2,7 @@ scope: province
 province: 北京
 year: 2026
 version: '2026.1'
+last_verified_at: '2026-06-18'
 status: active
 rules:
   mode:
@@ -64,7 +65,9 @@ rules:
     title: 征集志愿次数
     severity: warning
     value:
-      collection_count: 1
+      collection_count: null
+      collection_arrangement: 动态安排
+      collection_timing: 下一批次录取开始前
     source_evidence_id: beijing-2026-collection_count
     effective_date: '2026-01-01'
     status: active

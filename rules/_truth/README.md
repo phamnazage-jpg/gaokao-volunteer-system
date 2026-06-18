@@ -11,3 +11,4 @@
 
 - 先从旧 `scripts/gaokao-checker` 的 `PROVINCE_RULES` 一次性迁移
 - 后续每次规则更新都必须同步 `source_evidence_id`、`last_verified_at` 与版本号
+- 当前 truth 文档顶层必须显式包含 `version` 与 `last_verified_at`

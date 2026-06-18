@@ -2,6 +2,7 @@ scope: province
 province: 江苏
 year: 2026
 version: '2026.1'
+last_verified_at: '2026-06-18'
 status: active
 rules:
   mode:
@@ -64,7 +65,9 @@ rules:
     title: 征集志愿次数
     severity: warning
     value:
-      collection_count: 1
+      collection_count: null
+      collection_arrangement: 各批次录取结束后按缺额公布征求志愿
+      supplementary_round: 专科补录
     source_evidence_id: jiangsu-2026-collection_count
     effective_date: '2026-01-01'
     status: active
@@ -80,7 +83,7 @@ rules:
     title: 官方来源链接
     severity: info
     value:
-      official_url: http://www.jseea.cn/
+      official_url: https://www.jseea.cn/
     source_evidence_id: jiangsu-2026-official_url
     effective_date: '2026-01-01'
     status: active

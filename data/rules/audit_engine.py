@@ -43,6 +43,8 @@ class AuditEngine:
 
     def audit_plan(self, province: str, plan: dict[str, Any]) -> dict[str, object]:
         issues: list[dict[str, object]] = []
+        snapshot = self.get_province_snapshot(province)
+        issues.extend(self._validate_province_rules(snapshot, plan))
         if self._majors_loader is not None:
             issues.extend(self._validate_majors(plan))
         return {
@@ -50,6 +52,31 @@ class AuditEngine:
             "overall_pass": not issues,
             "issues": issues,
         }
+
+    def _validate_province_rules(
+        self,
+        snapshot: ProvinceRuleSnapshot,
+        plan: dict[str, Any],
+    ) -> list[dict[str, object]]:
+        issues: list[dict[str, object]] = []
+        volunteer_count = len(plan.get("items", []))
+        max_volunteers_rule = _rule_by_key(snapshot.rules, "max_volunteers")
+        if max_volunteers_rule is None or max_volunteers_rule.status != "active":
+            return issues
+
+        max_volunteers = max_volunteers_rule.value.get("max_volunteers")
+        if max_volunteers is not None and volunteer_count > int(max_volunteers):
+            issues.append({
+                "rule_id": "RULES.max_volunteers",
+                "severity": max_volunteers_rule.severity,
+                "title": max_volunteers_rule.title,
+                "message": (
+                    f"当前方案包含 {volunteer_count} 个志愿单位，"
+                    f"已超过{snapshot.province}规则上限 {max_volunteers}"
+                ),
+                "suggestion": f"请减少到不超过 {max_volunteers} 个志愿单位后重新审计",
+            })
+        return issues
 
     def _validate_majors(self, plan: dict[str, Any]) -> list[dict[str, object]]:
         if self._majors_loader is None:
@@ -84,3 +111,10 @@ def _scalar(rule: LoadedRule | None, key: str):
     if rule is None:
         return None
     return rule.value.get(key)
+
+
+def _rule_by_key(rules: list[LoadedRule], key: str) -> LoadedRule | None:
+    for rule in rules:
+        if rule.rule_id.split(".", 1)[1] == key:
+            return rule
+    return None

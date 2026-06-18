@@ -2,13 +2,14 @@ scope: province
 province: 吉林
 year: 2026
 version: '2026.1'
+last_verified_at: '2026-06-18'
 status: active
 rules:
   mode:
     title: 志愿模式
     severity: fatal
     value:
-      mode: 专业+学校
+      mode: 院校专业组
     source_evidence_id: jilin-2026-mode
     effective_date: '2026-01-01'
     status: active
@@ -16,7 +17,7 @@ rules:
     title: 批次名称
     severity: info
     value:
-      batch: 普通批
+      batch: 本科批
     source_evidence_id: jilin-2026-batch
     effective_date: '2026-01-01'
     status: active
@@ -32,7 +33,7 @@ rules:
     title: 每组专业上限
     severity: warning
     value:
-      max_majors_per_group: 1
+      max_majors_per_group: 6
     source_evidence_id: jilin-2026-max_majors_per_group
     effective_date: '2026-01-01'
     status: active
@@ -40,7 +41,7 @@ rules:
     title: 是否允许调剂
     severity: warning
     value:
-      has_adjustment: false
+      has_adjustment: true
     source_evidence_id: jilin-2026-has_adjustment
     effective_date: '2026-01-01'
     status: active
@@ -48,7 +49,7 @@ rules:
     title: 调剂范围
     severity: fatal
     value:
-      adjustment_scope: 无
+      adjustment_scope: 组内专业
     source_evidence_id: jilin-2026-adjustment_scope
     effective_date: '2026-01-01'
     status: active
@@ -64,7 +65,7 @@ rules:
     title: 征集志愿次数
     severity: warning
     value:
-      collection_count: 1
+      collection_count: 2
     source_evidence_id: jilin-2026-collection_count
     effective_date: '2026-01-01'
     status: active

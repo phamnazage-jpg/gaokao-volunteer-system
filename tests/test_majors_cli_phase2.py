@@ -13,6 +13,8 @@ SCRIPT_PATH = PROJECT_ROOT / "scripts" / "gaokao-cli"
 def _write_catalog(root: Path) -> None:
     national = root / "national"
     national.mkdir(parents=True, exist_ok=True)
+    changes = root / "changes"
+    changes.mkdir(parents=True, exist_ok=True)
     payload = {
         "year": 2024,
         "version": "2024.1",
@@ -65,6 +67,9 @@ def _write_catalog(root: Path) -> None:
     (national / "latest.json").write_text(
         json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8"
     )
+    (changes / "2024-2026.md").write_text(
+        "# changes\n\n- sample\n", encoding="utf-8"
+    )
 
 
 def _run_cli(*args: str) -> subprocess.CompletedProcess[str]:
@@ -85,8 +90,12 @@ def test_majors_status_cli_reports_catalog_summary(tmp_path: Path) -> None:
     payload = json.loads(result.stdout)
     assert payload["ok"] is True
     assert payload["year"] == 2024
+    assert payload["version"] == "2024.1"
     assert payload["major_count"] == 3
+    assert payload["change_count"] == 1
+    assert payload["risky_major_count"] == 1
     assert payload["coverage_mode"] == "mvp_subset"
+    assert "changes/2024-2026.md" in payload["version_strategy"]
 
 
 def test_majors_lookup_cli_supports_name_and_code(tmp_path: Path) -> None:
@@ -119,6 +128,9 @@ def test_majors_verify_cli_checks_required_national_files(tmp_path: Path) -> Non
     assert payload["ok"] is True
     assert payload["missing_required_files"] == []
     assert payload["major_count"] == 3
+    assert payload["change_count"] == 1
+    assert payload["risky_major_count"] == 1
+    assert "changes/2024-2026.md" in payload["version_strategy"]
 
 
 def test_majors_lookup_cli_returns_business_error_when_missing(tmp_path: Path) -> None:
@@ -145,3 +157,4 @@ def test_majors_changes_cli_lists_non_active_majors(tmp_path: Path) -> None:
     assert payload["change_count"] == 1
     assert payload["changes"][0]["code"] == "120201K"
     assert payload["changes"][0]["status"] == "renamed"
+    assert "non_active" in payload["changes"][0]["risk_tags"]

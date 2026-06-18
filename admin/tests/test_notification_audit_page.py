@@ -84,7 +84,7 @@ def test_notification_audit_page_shows_station_and_email_events(client, settings
     assert "station" in page.text
     assert "email" in page.text
     assert "report_ready" in page.text
-    assert "report_ready_email" in page.text
+    assert "report_ready" in page.text
 
 def test_notification_audit_page_hides_payload_details(client, settings, tmp_path: Path):
     order = _seed_order(settings.orders_db_path, order_id="GKO-20260615-NOTIFY-HIDE")
@@ -115,7 +115,7 @@ def test_notification_audit_page_hides_payload_details(client, settings, tmp_pat
     assert "parent@example.com" not in page.text
     assert str(report_path) not in page.text
     assert str(pdf_path) not in page.text
-    assert "report_ready_email" in page.text
+    assert "report_ready" in page.text
 
 
 def test_status_page_links_to_notification_audit(client, settings):

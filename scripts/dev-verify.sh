@@ -15,13 +15,6 @@ SKIP_PRE_EXISTING="${GAOKAO_SKIP_PRE_EXISTING:-0}"
 # - tests/test_backup_workflow.py: 同样 subprocess 解释器问题
 # - tests/test_t5_performance.py: locust 不可用
 PRE_EXISTING_IGNORES=(
-  "tests/test_delivery_dispatcher.py::test_delivery_dispatch_script_prints_summary"
-  "tests/test_delivery_dispatcher.py::test_delivery_watchdog_exits_zero_when_no_failures"
-  "tests/test_delivery_dispatcher.py::test_delivery_watchdog_exits_nonzero_when_failures_detected"
-  "tests/test_retention_cleanup.py::test_retention_cleanup_script_prints_summary"
-  "tests/test_retention_cleanup.py::test_retention_cleanup_script_supports_retention_days"
-  "tests/test_retention_cleanup.py::test_retention_cleanup_underscore_script_alias_works"
-  "tests/test_backup_workflow.py::test_backup_verify_runs_restore_smoke_on_snapshot"
   "tests/test_t5_performance.py::test_admin_locust_10_concurrency_success_rate_above_95"
 )
 
@@ -43,7 +36,9 @@ ensure_venv() {
     # shellcheck disable=SC1091
     source "${VENV_DIR}/bin/activate"
   fi
-  python -m pip install --upgrade pip >/dev/null
+  if [[ "${SKIP_INSTALL}" != "1" ]]; then
+    python -m pip install --upgrade pip >/dev/null
+  fi
 }
 
 install_requirements() {

@@ -136,48 +136,46 @@ class PaymentService:
 
     def create_checkout(self, order_id: str, *, portal_token: str) -> PaymentCheckout:
         with OrdersDAO.connect(self.db_path) as orders_dao:
-            order = orders_dao.get(order_id)
-        payments = PaymentDAO.for_db(self.db_path)
-        try:
-            existing = payments.get_by_order(order_id)
-            if existing is not None and existing.status in {
-                "pending",
-                "paid",
-                "refunded",
-            }:
+            payments = PaymentDAO.from_connection(orders_dao.conn)
+            with orders_dao.transaction(begin_mode="immediate"):
+                order = orders_dao.get(order_id)
+                existing = payments.get_by_order(order_id)
+                if existing is not None and existing.status in {
+                    "pending",
+                    "paid",
+                    "refunded",
+                }:
+                    return PaymentCheckout(
+                        payment_id=existing.id,
+                        provider=existing.provider,
+                        checkout_url=self.provider.build_checkout_url(
+                            existing.id,
+                            portal_token,
+                            amount_cents=existing.amount_cents,
+                            subject=f"高考志愿服务-{order.service_version}",
+                        ),
+                        status=existing.status,
+                    )
+                payment = payments.create(
+                    PaymentRecord(
+                        id=f"pay_{secrets.token_hex(8)}",
+                        order_id=order.id,
+                        provider=self.provider.name,
+                        amount_cents=order.amount_cents,
+                        checkout_token=portal_token,
+                    )
+                )
                 return PaymentCheckout(
-                    payment_id=existing.id,
-                    provider=existing.provider,
+                    payment_id=payment.id,
+                    provider=payment.provider,
                     checkout_url=self.provider.build_checkout_url(
-                        existing.id,
+                        payment.id,
                         portal_token,
-                        amount_cents=existing.amount_cents,
+                        amount_cents=payment.amount_cents,
                         subject=f"高考志愿服务-{order.service_version}",
                     ),
-                    status=existing.status,
+                    status=payment.status,
                 )
-            payment = payments.create(
-                PaymentRecord(
-                    id=f"pay_{secrets.token_hex(8)}",
-                    order_id=order.id,
-                    provider=self.provider.name,
-                    amount_cents=order.amount_cents,
-                    checkout_token=portal_token,
-                )
-            )
-            return PaymentCheckout(
-                payment_id=payment.id,
-                provider=payment.provider,
-                checkout_url=self.provider.build_checkout_url(
-                    payment.id,
-                    portal_token,
-                    amount_cents=payment.amount_cents,
-                    subject=f"高考志愿服务-{order.service_version}",
-                ),
-                status=payment.status,
-            )
-        finally:
-            payments.close()
 
     def get_payment(self, payment_id: str) -> Optional[PaymentRecord]:
         payments = PaymentDAO.for_db(self.db_path)
@@ -249,6 +247,14 @@ class PaymentService:
                     != payment.amount_cents
                 ):
                     raise PaymentError("payment amount mismatch")
+                if payment.status == "refunded":
+                    order = orders_dao.get(payment.order_id)
+                    return WebhookHandleResult(
+                        payment_id=payment.id,
+                        processed=True,
+                        idempotent=True,
+                        order_status=order.status,
+                    )
                 if payment.status == "paid":
                     order = orders_dao.get(payment.order_id)
                     return WebhookHandleResult(

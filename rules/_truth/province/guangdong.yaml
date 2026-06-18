@@ -2,6 +2,7 @@ scope: province
 province: 广东
 year: 2026
 version: '2026.1'
+last_verified_at: '2026-06-18'
 status: active
 rules:
   mode:
@@ -64,7 +65,9 @@ rules:
     title: 征集志愿次数
     severity: warning
     value:
-      collection_count: 2
+      collection_count: null
+      collection_arrangement: 各批次录取结束后视缺额情况组织征集志愿
+      supplementary_round: 缺额较大时可多次征集志愿
     source_evidence_id: guangdong-2026-collection_count
     effective_date: '2026-01-01'
     status: active
@@ -80,7 +83,7 @@ rules:
     title: 官方来源链接
     severity: info
     value:
-      official_url: http://eea.gd.gov.cn/
+      official_url: https://eea.gd.gov.cn/
     source_evidence_id: guangdong-2026-official_url
     effective_date: '2026-01-01'
     status: active

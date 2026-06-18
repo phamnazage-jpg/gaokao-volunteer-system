@@ -2,13 +2,14 @@ scope: province
 province: 云南
 year: 2026
 version: '2026.1'
+last_verified_at: '2026-06-18'
 status: active
 rules:
   mode:
     title: 志愿模式
     severity: fatal
     value:
-      mode: 传统
+      mode: 院校专业组
     source_evidence_id: yunnan-2026-mode
     effective_date: '2026-01-01'
     status: active
@@ -16,7 +17,7 @@ rules:
     title: 批次名称
     severity: info
     value:
-      batch: 本科一批
+      batch: 本科批
     source_evidence_id: yunnan-2026-batch
     effective_date: '2026-01-01'
     status: active
@@ -24,7 +25,7 @@ rules:
     title: 志愿上限
     severity: fatal
     value:
-      max_volunteers: 5
+      max_volunteers: 40
     source_evidence_id: yunnan-2026-max_volunteers
     effective_date: '2026-01-01'
     status: active
@@ -32,7 +33,7 @@ rules:
     title: 每组专业上限
     severity: warning
     value:
-      max_majors_per_group: 5
+      max_majors_per_group: 10
     source_evidence_id: yunnan-2026-max_majors_per_group
     effective_date: '2026-01-01'
     status: active
@@ -48,7 +49,7 @@ rules:
     title: 调剂范围
     severity: fatal
     value:
-      adjustment_scope: 全部专业
+      adjustment_scope: 组内专业
     source_evidence_id: yunnan-2026-adjustment_scope
     effective_date: '2026-01-01'
     status: active
@@ -64,7 +65,9 @@ rules:
     title: 征集志愿次数
     severity: warning
     value:
-      collection_count: 1
+      collection_count: null
+      collection_arrangement: 根据录取实际情况公开征集志愿
+      collection_timing: 结合实际另行安排
     source_evidence_id: yunnan-2026-collection_count
     effective_date: '2026-01-01'
     status: active
@@ -72,7 +75,7 @@ rules:
     title: 选科模式
     severity: warning
     value:
-      subject_mode: 传统
+      subject_mode: 3+1+2
     source_evidence_id: yunnan-2026-subject_mode
     effective_date: '2026-01-01'
     status: active

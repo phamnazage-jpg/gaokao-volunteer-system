@@ -11,6 +11,8 @@
 > 1. Current：当前已落地的后台/API/CLI/Skills/Webhook 能力
 > 2. Target：尚未落地的用户端 Web/H5、自助支付、自助交付等目标能力
 >    阅读时请以 `docs/CURRENT_STATE.md` 为当前真相源。
+>
+> 当前项目定位：人工服务运营增强系统；用户端 Web 自助闭环仅为本地 MVP/目标态，不应把 Target 能力误读为当前已上线能力。
 
 ---
 

@@ -28,7 +28,8 @@
    - 分享库 `data/share/short_links.db`
 2. 文件目录
    - 分享/公开报告目录
-   - 报告 HTML/PDF 产物
+   - `GAOKAO_PORTAL_UPLOAD_DIR` 下的前台附件上传目录
+   - 订单记录真实引用的报告 HTML/PDF 产物（`orders.audit_report` / `orders.pdf_path`）
    - `data/examples` 中的样例交付物（用于恢复 smoke）
 3. 配置与运维资料
    - `.env` 实际部署值（不入 Git）
@@ -42,13 +43,14 @@
 
 - `scripts/backup_snapshot.sh`
   - 生成时间戳快照目录
-  - 复制 DB / 文件 / 可选 config / 可选 secrets
+  - 复制 DB / portal 上传目录 / 订单真实交付物 / 可选 config / 可选 secrets
   - 生成 `manifest.json`
   - 按 `GAOKAO_BACKUP_KEEP` 保留最近 N 份
 - `scripts/backup_verify.sh`
   - 可校验 live staging 或已有快照
   - 校验 SQLite 可读性
   - 校验 `manifest.json` 哈希完整性
+  - live staging 时同步复制 `portal_uploads` 与订单挂载交付物
   - 调用 restore smoke
 - `scripts/backup_restore_smoke.py`
   - 在恢复副本上启动 FastAPI `TestClient`
@@ -72,12 +74,14 @@
 ### 文件目录
 
 - 与数据库同批次快照
-- 报告/分享目录和样例报告分开保存，避免后续排障时混淆
+- `share_reports`、`portal_uploads`、订单挂载交付物、样例报告分开保存，避免后续排障时混淆
+- 订单挂载交付物统一落在 `files/order_artifacts/<order_id>/<artifact_kind>/...`，保留原始文件路径层级，便于恢复时回填
 
 ### 配置与密钥
 
 - `.env`、部署配置、密钥目录不与业务数据库混写到同一路径
 - 通过环境变量显式声明：
+  - `GAOKAO_PORTAL_UPLOAD_DIR`
   - `GAOKAO_BACKUP_ENV_FILE`
   - `GAOKAO_BACKUP_CONFIG_DIR`
   - `GAOKAO_BACKUP_SECRETS_DIR`
@@ -98,6 +102,7 @@ export GAOKAO_BACKUP_KEEP=7
 export GAOKAO_BACKUP_ENV_FILE=/etc/gaokao/.env
 export GAOKAO_BACKUP_CONFIG_DIR=/etc/gaokao
 export GAOKAO_BACKUP_SECRETS_DIR=/var/lib/gaokao/secrets
+export GAOKAO_PORTAL_UPLOAD_DIR=/var/lib/gaokao/portal_uploads
 ```
 
 ### 6.2 校验最近一份快照
@@ -161,6 +166,7 @@ bash scripts/backup_verify.sh
 ## 10. 不可降级的不变量
 
 - 备份必须覆盖 4 节列出的所有对象, 不得漏备份 `share_reports`
+- 备份必须覆盖 `portal_uploads` 与订单真实引用的 HTML/PDF 交付物
 - 快照必须含 manifest (`manifest.json`), 含每个文件的 SHA-256
 - 校验必须走 `scripts/backup_verify.sh`, 不允许用裸 SQLite `sqlite3 <file> ".schema"` 代替
 - 恢复演练必须是服务级 (FastAPI TestClient) 而不仅是文件级

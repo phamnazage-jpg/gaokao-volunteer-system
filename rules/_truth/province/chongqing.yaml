@@ -2,6 +2,7 @@ scope: province
 province: 重庆
 year: 2026
 version: '2026.1'
+last_verified_at: '2026-06-18'
 status: active
 rules:
   mode:
@@ -16,7 +17,7 @@ rules:
     title: 批次名称
     severity: info
     value:
-      batch: 普通批
+      batch: 本科批
     source_evidence_id: chongqing-2026-batch
     effective_date: '2026-01-01'
     status: active
@@ -64,7 +65,7 @@ rules:
     title: 征集志愿次数
     severity: warning
     value:
-      collection_count: 1
+      collection_count: null
     source_evidence_id: chongqing-2026-collection_count
     effective_date: '2026-01-01'
     status: active

@@ -2,6 +2,7 @@ scope: province
 province: 广西
 year: 2026
 version: '2026.1'
+last_verified_at: '2026-06-18'
 status: active
 rules:
   mode:
@@ -32,7 +33,7 @@ rules:
     title: 每组专业上限
     severity: warning
     value:
-      max_majors_per_group: 6
+      max_majors_per_group: 20
     source_evidence_id: guangxi-2026-max_majors_per_group
     effective_date: '2026-01-01'
     status: active
@@ -64,7 +65,7 @@ rules:
     title: 征集志愿次数
     severity: warning
     value:
-      collection_count: 2
+      collection_count: null
     source_evidence_id: guangxi-2026-collection_count
     effective_date: '2026-01-01'
     status: active

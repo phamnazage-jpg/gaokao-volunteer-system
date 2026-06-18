@@ -43,6 +43,7 @@ def _build_national_truth() -> dict[str, Any]:
         "scope": "national",
         "year": 2026,
         "version": "2026.1",
+        "last_verified_at": "2026-06-17",
         "rules": {
             "parallel_volunteer_principle": {
                 "title": "平行志愿原则",
@@ -50,6 +51,7 @@ def _build_national_truth() -> dict[str, Any]:
                 "value": {"rule": "分数优先、遵循志愿、一次投档"},
                 "source_evidence_id": "national-2026-parallel-volunteer-principle",
                 "effective_date": "2026-01-01",
+                "last_verified_at": "2026-06-17",
                 "status": "active",
             }
         },
@@ -73,6 +75,7 @@ def _build_province_truth(province: str, payload: dict[str, Any]) -> dict[str, A
         "province": province,
         "year": 2026,
         "version": "2026.1",
+        "last_verified_at": "2026-06-17",
         "status": "active",
         "rules": rules,
     }

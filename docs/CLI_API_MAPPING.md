@@ -1,6 +1,6 @@
 # CLI_API_MAPPING
 
-最后更新: 2026-06-16
+最后更新: 2026-06-18
 真相源: 本文件是"CLI / HTTP / Skill / 内部 import"四层调用关系的入口索引。
 设计上下文: `docs/DESIGN_RULES_TRUSTED_CLI_2026-06-16.md` §5-§7
 
@@ -43,7 +43,7 @@
 
 | 旧入口                                | 新 CLI 子命令                            | 服务层                      |
 | ------------------------------------- | ---------------------------------------- | --------------------------- |
-| `scripts/gaokao-checker`              | `gaokao-cli audit run`                   | `gaokato.services.audit`    |
+| `scripts/gaokao-checker`              | `gaokao-cli audit run` / `rules list` / `rules explain` / `rules scaffold-evidence` | `gaokato.services.audit`    |
 | `scripts/gaokao-audit`                | `gaokao-cli audit run`                   | 同上                        |
 | `scripts/gaokao-order-manager`        | `gaokao-cli order {create,get,list,...}` | `gaokato.services.order`    |
 | `scripts/gaokao-shortlink`            | `gaokao-cli share` (TBD)                 | (新增)                      |
@@ -62,7 +62,7 @@
 
 | 顶层命令    | 子命令                                                                | 落点                                                             |
 | ----------- | --------------------------------------------------------------------- | ---------------------------------------------------------------- |
-| `rules`     | `status` / `verify`                                                   | `data/rules/cli.py` `RuleLoader`                                 |
+| `rules`     | `status` / `verify` / `list [--province]` / `explain <rule_id>` / `scaffold-evidence [--province]` | `data/rules/cli.py` `RuleLoader`                                 |
 | `majors`    | `status` / `lookup <name>` / `verify` / `changes`                     | `data/majors_catalog/cli.py` `MajorsCatalogLoader`               |
 | `majors`    | `school-status --year <y>` / `school-verify --year <y>`               | `data/majors_catalog/cli.py`                                     |
 | `audit`     | `run --province <p> --plan <json>`                                    | `data/rules/audit_engine.py` `AuditEngine`                       |

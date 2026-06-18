@@ -2,6 +2,7 @@ scope: province
 province: 新疆
 year: 2026
 version: '2026.1'
+last_verified_at: '2026-06-18'
 status: active
 rules:
   mode:
@@ -24,7 +25,7 @@ rules:
     title: 志愿上限
     severity: fatal
     value:
-      max_volunteers: 9
+      max_volunteers: 18
     source_evidence_id: xinjiang-2026-max_volunteers
     effective_date: '2026-01-01'
     status: active
@@ -56,7 +57,7 @@ rules:
     title: 投档原则
     severity: critical
     value:
-      retrieval_rule: 志愿优先、遵循志愿
+      retrieval_rule: 分数优先、遵循志愿、一次投档
     source_evidence_id: xinjiang-2026-retrieval_rule
     effective_date: '2026-01-01'
     status: active
@@ -80,7 +81,7 @@ rules:
     title: 官方来源链接
     severity: info
     value:
-      official_url: http://www.xjzk.gov.cn/
+      official_url: https://www.xjzk.gov.cn/
     source_evidence_id: xinjiang-2026-official_url
     effective_date: '2026-01-01'
     status: active

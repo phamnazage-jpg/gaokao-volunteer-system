@@ -2,6 +2,7 @@ scope: province
 province: 湖北
 year: 2026
 version: '2026.1'
+last_verified_at: '2026-06-18'
 status: active
 rules:
   mode:
@@ -80,7 +81,7 @@ rules:
     title: 官方来源链接
     severity: info
     value:
-      official_url: http://www.hbea.edu.cn/
+      official_url: https://www.hbea.edu.cn/
     source_evidence_id: hubei-2026-official_url
     effective_date: '2026-01-01'
     status: active

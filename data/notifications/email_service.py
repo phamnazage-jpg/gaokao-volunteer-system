@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS delivery_notifications (
     last_attempt_at TEXT,
     failure_reason TEXT,
     created_at TEXT NOT NULL,
-    UNIQUE(order_id, event_type),
+    UNIQUE(order_id, event_type, channel),
     FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE
 );
 """
@@ -40,6 +40,10 @@ class DeliveryNotificationEvent:
     last_attempt_at: str | None
     failure_reason: str | None
     created_at: str
+
+
+class DuplicateNotificationEvent(ValueError):
+    """同一订单/事件/渠道的通知已存在。"""
 
 
 class DeliveryNotificationService:
@@ -89,6 +93,7 @@ class DeliveryNotificationService:
             conn.execute(
                 "ALTER TABLE delivery_notifications ADD COLUMN failure_reason TEXT"
             )
+        _ensure_unique_constraint(conn)
 
     def close(self) -> None:
         if self._owns_connection:
@@ -127,28 +132,36 @@ class DeliveryNotificationService:
             self._conn.commit()
         except sqlite3.IntegrityError:
             self._conn.rollback()
-
+            raise DuplicateNotificationEvent(
+                f"delivery notification already exists: order_id={order_id} event_type={event_type} channel={channel}"
+            )
 
     def mark_validated(
         self,
         order_id: str,
         event_type: str = "report_ready",
         *,
+        channel: str | None = None,
         payload_json: str | None = None,
         validated_at: str | None = None,
     ) -> None:
         if validated_at is None:
             validated_at = utc_now_iso()
+        sql = "UPDATE delivery_notifications SET status='validated', last_attempt_at=?"
+        params: list[object] = [validated_at]
         if payload_json is None:
-            self._conn.execute(
-                "UPDATE delivery_notifications SET status='validated', last_attempt_at=? WHERE order_id=? AND event_type=?",
-                (validated_at, order_id, event_type),
-            )
+            pass
         else:
-            self._conn.execute(
-                "UPDATE delivery_notifications SET status='validated', payload_json=?, last_attempt_at=? WHERE order_id=? AND event_type=?",
-                (payload_json, validated_at, order_id, event_type),
+            sql = (
+                "UPDATE delivery_notifications SET status='validated', payload_json=?, last_attempt_at=?"
             )
+            params = [payload_json, validated_at]
+        sql += " WHERE order_id=? AND event_type=?"
+        params.extend([order_id, event_type])
+        if channel is not None:
+            sql += " AND channel=?"
+            params.append(channel)
+        self._conn.execute(sql, tuple(params))
         self._conn.commit()
 
     def mark_delivered(
@@ -156,21 +169,27 @@ class DeliveryNotificationService:
         order_id: str,
         event_type: str = "report_ready",
         *,
+        channel: str | None = None,
         payload_json: str | None = None,
         sent_at: str | None = None,
     ) -> None:
         if sent_at is None:
             sent_at = utc_now_iso()
+        sql = "UPDATE delivery_notifications SET status='delivered', last_attempt_at=?, failure_reason=NULL"
+        params: list[object] = [sent_at]
         if payload_json is None:
-            self._conn.execute(
-                "UPDATE delivery_notifications SET status='delivered', last_attempt_at=?, failure_reason=NULL WHERE order_id=? AND event_type=?",
-                (sent_at, order_id, event_type),
-            )
+            pass
         else:
-            self._conn.execute(
-                "UPDATE delivery_notifications SET status='delivered', payload_json=?, last_attempt_at=?, failure_reason=NULL WHERE order_id=? AND event_type=?",
-                (payload_json, sent_at, order_id, event_type),
+            sql = (
+                "UPDATE delivery_notifications SET status='delivered', payload_json=?, last_attempt_at=?, failure_reason=NULL"
             )
+            params = [payload_json, sent_at]
+        sql += " WHERE order_id=? AND event_type=?"
+        params.extend([order_id, event_type])
+        if channel is not None:
+            sql += " AND channel=?"
+            params.append(channel)
+        self._conn.execute(sql, tuple(params))
         self._conn.commit()
 
     def mark_failed(
@@ -179,11 +198,16 @@ class DeliveryNotificationService:
         failure_reason: str,
         *,
         event_type: str = "report_ready",
+        channel: str | None = None,
     ) -> None:
-        self._conn.execute(
-            "UPDATE delivery_notifications SET status='failed', attempt_count=attempt_count+1, last_attempt_at=?, failure_reason=? WHERE order_id=? AND event_type=?",
-            (utc_now_iso(), failure_reason, order_id, event_type),
+        sql = (
+            "UPDATE delivery_notifications SET status='failed', attempt_count=attempt_count+1, last_attempt_at=?, failure_reason=? WHERE order_id=? AND event_type=?"
         )
+        params: list[object] = [utc_now_iso(), failure_reason, order_id, event_type]
+        if channel is not None:
+            sql += " AND channel=?"
+            params.append(channel)
+        self._conn.execute(sql, tuple(params))
         self._conn.commit()
 
     def list_events(
@@ -226,3 +250,65 @@ class DeliveryNotificationService:
         params.append(limit)
         rows = self._conn.execute(sql, tuple(params)).fetchall()
         return [DeliveryNotificationEvent(**dict(row)) for row in rows]
+
+
+def _has_unique_index(
+    conn: sqlite3.Connection,
+    *,
+    columns: tuple[str, ...],
+) -> bool:
+    for _, index_name, is_unique, *_ in conn.execute(
+        "PRAGMA index_list(delivery_notifications)"
+    ).fetchall():
+        if not is_unique:
+            continue
+        index_columns = tuple(
+            row[2] for row in conn.execute(f"PRAGMA index_info({index_name!r})").fetchall()
+        )
+        if index_columns == columns:
+            return True
+    return False
+
+
+def _ensure_unique_constraint(conn: sqlite3.Connection) -> None:
+    expected = ("order_id", "event_type", "channel")
+    legacy = ("order_id", "event_type")
+    if _has_unique_index(conn, columns=expected):
+        return
+    if not _has_unique_index(conn, columns=legacy):
+        return
+
+    conn.execute(
+        """
+        CREATE TABLE delivery_notifications_new (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            order_id TEXT NOT NULL,
+            event_type TEXT NOT NULL,
+            channel TEXT NOT NULL,
+            payload_json TEXT NOT NULL,
+            status TEXT NOT NULL DEFAULT 'ready',
+            attempt_count INTEGER NOT NULL DEFAULT 1,
+            last_attempt_at TEXT,
+            failure_reason TEXT,
+            created_at TEXT NOT NULL,
+            UNIQUE(order_id, event_type, channel),
+            FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE
+        )
+        """
+    )
+    conn.execute(
+        """
+        INSERT INTO delivery_notifications_new(
+            id, order_id, event_type, channel, payload_json, status,
+            attempt_count, last_attempt_at, failure_reason, created_at
+        )
+        SELECT
+            id, order_id, event_type, channel, payload_json, status,
+            attempt_count, last_attempt_at, failure_reason, created_at
+        FROM delivery_notifications
+        """
+    )
+    conn.execute("DROP TABLE delivery_notifications")
+    conn.execute(
+        "ALTER TABLE delivery_notifications_new RENAME TO delivery_notifications"
+    )

@@ -13,6 +13,8 @@ SCRIPT_PATH = PROJECT_ROOT / "scripts" / "gaokao-cli"
 def _write_catalog(root: Path) -> None:
     national = root / "national"
     national.mkdir(parents=True, exist_ok=True)
+    changes = root / "changes"
+    changes.mkdir(parents=True, exist_ok=True)
     national_payload = {
         "year": 2024,
         "version": "2024.1",
@@ -28,6 +30,9 @@ def _write_catalog(root: Path) -> None:
     (national / "latest.json").write_text(
         json.dumps(national_payload, ensure_ascii=False, indent=2), encoding="utf-8"
     )
+    (changes / "2024-2026.md").write_text(
+        "# changes\n\n- sample\n", encoding="utf-8"
+    )
 
     schools = root / "schools" / "2026"
     schools.mkdir(parents=True, exist_ok=True)
@@ -35,6 +40,7 @@ def _write_catalog(root: Path) -> None:
         "school_code": "10001",
         "school_name": "北京大学",
         "admission_year": 2026,
+        "version": "2026.1",
         "province": "北京",
         "source": "学校招生章程人工摘录",
         "source_url": "https://www.pku.edu.cn/",
@@ -45,6 +51,7 @@ def _write_catalog(root: Path) -> None:
                 "school_name": "北京大学",
                 "major_code": "080901",
                 "major_name": "计算机科学与技术",
+                "national_major_code": "080901",
                 "admission_year": 2026,
                 "province": "北京",
                 "duration_years": 4,
@@ -52,6 +59,7 @@ def _write_catalog(root: Path) -> None:
                 "study_mode": "全日制",
                 "is_new": False,
                 "is_discontinued": False,
+                "mapping_status": "exact",
                 "source": "学校招生章程人工摘录",
                 "last_verified_at": "2026-06-17",
             }
@@ -87,9 +95,13 @@ def test_majors_school_status_cli_reports_school_summary(tmp_path: Path) -> None
     payload = json.loads(result.stdout)
     assert payload["ok"] is True
     assert payload["year"] == 2026
+    assert payload["version"] == "2026.1"
     assert payload["school_count"] == 1
     assert payload["offering_count"] == 1
+    assert payload["mapped_offering_count"] == 1
+    assert payload["unmapped_offering_count"] == 0
     assert payload["school_codes"] == ["10001"]
+    assert "changes/2024-2026.md" in payload["version_strategy"]
 
 
 def test_majors_school_verify_cli_checks_year_directory(tmp_path: Path) -> None:
@@ -109,3 +121,7 @@ def test_majors_school_verify_cli_checks_year_directory(tmp_path: Path) -> None:
     assert payload["ok"] is True
     assert payload["missing_required_files"] == []
     assert payload["school_count"] == 1
+    assert payload["version"] == "2026.1"
+    assert payload["mapped_offering_count"] == 1
+    assert payload["unmapped_offering_count"] == 0
+    assert "changes/2024-2026.md" in payload["version_strategy"]

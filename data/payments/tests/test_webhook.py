@@ -3,7 +3,9 @@ from __future__ import annotations
 from typing import Any, cast
 
 import pytest
+from starlette.requests import Request
 
+from admin.routes.web_public import mock_payment_webhook
 from data.orders.dao import OrdersDAO
 from data.orders.models import Order
 from data.payments.service import PaymentError, PaymentService
@@ -25,7 +27,7 @@ def _seed_order(db_path: str, order_id: str = "GKO-20260614-WEBHOOK") -> Order:
         return dao.create(order, actor="test", reason="seed")
 
 
-def test_mock_payment_webhook_marks_order_paid_and_is_idempotent(client, settings):
+def test_mock_payment_webhook_marks_order_paid_and_is_idempotent(route_client, settings):
     order = _seed_order(settings.orders_db_path)
     service = PaymentService.for_db(
         settings.orders_db_path,
@@ -39,14 +41,14 @@ def test_mock_payment_webhook_marks_order_paid_and_is_idempotent(client, setting
         provider_trade_no="MOCK-ORDER-001",
     )
 
-    first = client.post(
+    first = route_client.post(
         "/api/public/payments/mock/webhook", json=payload, headers=headers
     )
     assert first.status_code == 200, first.text
     assert first.json()["processed"] is True
     assert first.json()["idempotent"] is False
 
-    second = client.post(
+    second = route_client.post(
         "/api/public/payments/mock/webhook", json=payload, headers=headers
     )
     assert second.status_code == 200, second.text
@@ -60,7 +62,7 @@ def test_mock_payment_webhook_marks_order_paid_and_is_idempotent(client, setting
     assert [item.to_status for item in history] == ["pending", "paid"]
 
 
-def test_mock_payment_webhook_rejects_amount_mismatch(client, settings):
+def test_mock_payment_webhook_rejects_amount_mismatch(route_client, settings):
     order = _seed_order(settings.orders_db_path, order_id="GKO-20260614-WEBHOOK-AMOUNT")
     service = PaymentService.for_db(
         settings.orders_db_path,
@@ -74,7 +76,7 @@ def test_mock_payment_webhook_rejects_amount_mismatch(client, settings):
         provider_trade_no="MOCK-AMOUNT-WRONG",
     )
 
-    resp = client.post(
+    resp = route_client.post(
         "/api/public/payments/mock/webhook", json=payload, headers=headers
     )
     assert resp.status_code == 409, resp.text
@@ -193,3 +195,54 @@ def test_handle_webhook_rejects_merchant_id_mismatch(settings):
     with OrdersDAO.connect(settings.orders_db_path) as dao:
         unchanged = dao.get(order.id)
     assert unchanged.status == "pending"
+
+
+def test_mock_payment_webhook_keeps_refunded_payment_terminal_state(settings):
+    order = _seed_order(
+        settings.orders_db_path, order_id="GKO-20260617-WEBHOOK-REFUND-REPLAY"
+    )
+    service = PaymentService.for_db(
+        settings.orders_db_path,
+        base_url=settings.payment_base_url,
+        webhook_secret=settings.payment_webhook_secret,
+    )
+    checkout = service.create_checkout(order.id, portal_token="portal-token")
+    payload, headers = service.provider.build_webhook_request(
+        payment_id=checkout.payment_id,
+        amount_cents=order.amount_cents,
+        provider_trade_no="MOCK-WEBHOOK-REFUND-001",
+    )
+
+    request = Request(
+        {
+            "type": "http",
+            "method": "POST",
+            "path": "/api/public/payments/mock/webhook",
+            "headers": [
+                (
+                    b"x-mock-signature",
+                    headers["X-Mock-Signature"].encode("utf-8"),
+                )
+            ],
+        }
+    )
+
+    first = mock_payment_webhook(payload, request, settings)
+    assert first.idempotent is False
+
+    refund = service.request_refund(order.id, reason="parent_request")
+    assert refund.status == "refunded"
+
+    replay = mock_payment_webhook(payload, request, settings)
+    assert replay.idempotent is True
+    assert replay.order_status == "refunded"
+
+    payment = service.get_payment(checkout.payment_id)
+    assert payment is not None
+    assert payment.status == "refunded"
+
+    with OrdersDAO.connect(settings.orders_db_path) as dao:
+        refunded_order = dao.get(order.id)
+        history = dao.get_status_history(order.id)
+    assert refunded_order.status == "refunded"
+    assert [item.to_status for item in history] == ["pending", "paid", "refunded"]

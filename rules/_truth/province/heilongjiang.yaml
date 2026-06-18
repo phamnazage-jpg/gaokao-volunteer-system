@@ -2,6 +2,7 @@ scope: province
 province: 黑龙江
 year: 2026
 version: '2026.1'
+last_verified_at: '2026-06-18'
 status: active
 rules:
   mode:
@@ -24,7 +25,7 @@ rules:
     title: 志愿上限
     severity: fatal
     value:
-      max_volunteers: 45
+      max_volunteers: 40
     source_evidence_id: heilongjiang-2026-max_volunteers
     effective_date: '2026-01-01'
     status: active

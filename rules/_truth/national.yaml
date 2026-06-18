@@ -1,6 +1,7 @@
 scope: national
 year: 2026
 version: '2026.1'
+last_verified_at: '2026-06-17'
 rules:
   parallel_volunteer_principle:
     title: 平行志愿原则

@@ -1,6 +1,6 @@
 # MAJOR_DATA_SOURCE_OF_TRUTH
 
-最后更新: 2026-06-17
+最后更新: 2026-06-18
 真相源: 本文件是"专业目录"维度的入口索引。
 审计上下文: `docs/PROJECT_PLANNING_REALIGNMENT_2026-06-16.md` §2.3-2.4
 设计上下文: `docs/DESIGN_RULES_TRUSTED_CLI_2026-06-16.md` §4
@@ -27,24 +27,25 @@
 | 元数据          | `data/majors_catalog/METADATA.md`                       | Markdown | 人工维护                  |
 | 已撤销/新设清单 | `data/majors_catalog/changes/2024-2026.md`              | Markdown | 人工维护                  |
 
-### 2.1 当前已落地范围（2026-06-17）
+### 2.1 当前已落地范围（2026-06-18）
 
-执行 Phase 2 三个 Batch 全部收口：
+执行 Phase 2 Batch 1/2/3 后，`P2-3` 已形成当前最小可信闭环：
 
 - 已落地 `data/majors_catalog/` 包与 national loader/CLI（Batch 1）
 - 已落地 `national/2024.json` + `national/latest.json`（13 个 curated subset, `coverage_mode=mvp_subset`）（Batch 1）
-- 已新增 `schools/2026/10001.json` 校级招生目录骨架样本（**当前仅 1 所样本**，未扩面）（Batch 2）
+- 已新增 `schools/2026/10001.json` 校级招生目录样本，并显式带 `version` / `national_major_code` / `mapping_status`（Batch 2 + P2-3）
+- 已新增 `changes/2024-2026.md`，作为版本化更新策略与风险标签解释入口（P2-3）
+- loader / CLI 已显式暴露 `risk_tags`、`version_strategy`、`mapped_offering_count`、`unmapped_offering_count`（P2-3）
 - 已落地 `major_validation` 接入 `audit_engine`（Batch 3）
 - 已新增 CLI 子命令：
   - `gaokao-cli majors {status,lookup,verify,changes}`（Batch 1）
   - `gaokao-cli majors {school-status,school-verify --year}`（Batch 2）
   - `gaokao-cli audit run --province --plan --truth-root --catalog-root --json` 命中 `MAJORS.not_found` / `MAJORS.non_active`（Batch 3）
-- 提交链：`36ad58a` → `6b1157f` → `edc5b11`，三仓同步
+- `school-verify` 当前会把“仅隐式 code 命中、未显式声明 `national_major_code`”视为映射缺口，而不是默许通过（P2-3）
 
 ### 2.2 尚未落地
 
 - 更多学校 `schools/<year>/` 批量目录（仅 1 所样本）
-- `changes/2024-2026.md`
 - 国家层第二批扩面（>13 个专业）
 - 国家层 2026 版（当前是 2024 版快照）
 
@@ -67,7 +68,8 @@ NationalMajor:
   year_removed: int | None
   notes: str | None
   source_url: str
-  last_verified_at: datetime
+  last_verified_at: str          # ISO 日期
+  risk_tags: list[str]          # e.g. non_active / removed_in_last_2y
 ```
 
 ### 3.2 校级(SchoolMajorOffering)
@@ -78,6 +80,7 @@ SchoolMajorOffering:
   school_name: str
   major_code: str
   major_name: str
+  national_major_code: str | None
   admission_year: int
   province: str
   duration_years: int
@@ -85,11 +88,21 @@ SchoolMajorOffering:
   study_mode: str
   is_new: bool
   is_discontinued: bool
+  mapping_status: "exact" | "mapped_alias" | "implicit_code_match" | "unmapped"
+  risk_tags: list[str]          # e.g. missing_explicit_mapping / school_new_in_last_2y
   source: str
-  last_verified_at: datetime
+  last_verified_at: str         # ISO 日期
 ```
 
-> **当前落地情况**：校级骨架 `schools/2026/10001.json` 1 所样本；其余待 Batch 4 扩面。
+> **当前落地情况**：校级目录仍只有 `schools/2026/10001.json` 1 所样本，但该样本已满足版本化与映射显式化契约。
+
+### 3.3 版本化更新与映射策略
+
+- 国家目录必须同时维护 `national/<year>.json` 与 `national/latest.json`
+- 校级目录必须使用 `schools/<year>/<school_code>.json`，且每个文件显式带 `version`
+- 跨年变更统一登记到 `changes/2024-2026.md`
+- 校级专业必须显式声明 `national_major_code`；仅靠 `major_code` 隐式命中不算“可信映射”
+- `majors verify` / `majors school-verify` 必须输出 `version_strategy`，不能把版本策略只留在文档中
 
 ---
 
@@ -108,6 +121,7 @@ SchoolMajorOffering:
 - **覆盖范围**: 首批 5-10 所重点高校
 - **接入节奏**: 每所高校每年一次,5 月前完成
 - **校验**: `python3 scripts/gaokao-cli majors school-verify --year <year> --json`
+- **映射要求**: 每条 `offering` 必须显式带 `national_major_code` 与可解释的 `mapping_status`
 
 ---
 
@@ -122,13 +136,12 @@ SchoolMajorOffering:
 
 ---
 
-## 6. 下一阶段（执行 Phase 2 收口后的 Batch 4 候选清单）
+## 6. 下一阶段（当前最小可信闭环后的扩面清单）
 
 > 已在 Batch 1/2/3 中**完成**的事项不再列入"必须收口"清单。
 
 - 国家层扩面（>13 个专业）— **Batch 4 候选**
 - 校级扩面（>1 所学校）— **Batch 4 候选**
-- `changes/2024-2026.md` — **Batch 4 候选**
 - 国家层 2026 版快照（当前为 2024 版）— **Batch 4 候选**
 
 ---

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import pytest
+
 from data.notifications.email_service import DeliveryNotificationService
 from data.orders.dao import OrdersDAO
 from data.orders.intake_store import IntakeStore
@@ -44,9 +46,7 @@ def _mark_paid(settings, order: Order) -> None:
     service.handle_webhook(payload, headers["X-Mock-Signature"])
 
 
-def test_report_ready_transition_creates_notification_event(
-    client, auth_headers, settings, tmp_path
-):
+def test_report_ready_transition_creates_notification_event(settings, tmp_path):
     order = _seed_order(settings.orders_db_path)
     _mark_paid(settings, order)
     IntakeStore.for_db(settings.orders_db_path).save(
@@ -58,23 +58,17 @@ def test_report_ready_transition_creates_notification_event(
     report_path.write_text("<h1>已生成</h1>", encoding="utf-8")
     pdf_path.write_bytes(b"%PDF-1.4\nnotify\n")
 
-    serving = client.patch(
-        f"/api/orders/{order.id}",
-        headers=auth_headers,
-        json={"to_status": "serving", "reason": "begin_processing"},
-    )
-    assert serving.status_code == 200, serving.text
-
-    delivered = client.patch(
-        f"/api/orders/{order.id}",
-        headers=auth_headers,
-        json={
-            "updates": {"audit_report": str(report_path), "pdf_path": str(pdf_path)},
-            "to_status": "delivered",
-            "reason": "report_ready",
-        },
-    )
-    assert delivered.status_code == 200, delivered.text
+    with OrdersDAO.connect(settings.orders_db_path) as dao:
+        dao.update(
+            order.id,
+            {"audit_report": str(report_path), "pdf_path": str(pdf_path)},
+            actor="test",
+            reason="attach_report",
+        )
+        dao.transition_status(order.id, "serving", actor="test", reason="begin_processing")
+        dao.transition_status(
+            order.id, "delivered", actor="test", reason="report_ready"
+        )
 
     notification_service = DeliveryNotificationService.for_db(settings.orders_db_path)
     try:
@@ -124,9 +118,59 @@ def test_dao_delivered_transition_also_creates_notification_event(settings, tmp_
     assert len(events) == 2
     event_types = {(event.channel, event.event_type) for event in events}
     assert ("station", "report_ready") in event_types
-    assert ("email", "report_ready_email") in event_types
+    assert ("email", "report_ready") in event_types
     email_event = next(event for event in events if event.channel == "email")
     assert "parent@example.com" in email_event.payload_json
+
+
+def test_delivery_notification_distinguishes_channel_in_unique_key(settings):
+    order = _seed_order(
+        settings.orders_db_path,
+        order_id="GKO-20260617-NOTIFY-CHANNEL-UNIQUE",
+        customer_email="parent@example.com",
+    )
+    service = DeliveryNotificationService.for_db(settings.orders_db_path)
+    try:
+        service.notify_event(
+            order.id,
+            event_type="report_ready",
+            channel="station",
+            payload_json='{"kind":"station"}',
+        )
+        service.notify_event(
+            order.id,
+            event_type="report_ready",
+            channel="email",
+            payload_json='{"kind":"email"}',
+        )
+        events = service.list_events(order.id)
+        assert {event.channel for event in events} == {"station", "email"}
+    finally:
+        service.close()
+
+
+def test_delivery_notification_rejects_duplicate_same_channel_same_event(settings):
+    order = _seed_order(
+        settings.orders_db_path,
+        order_id="GKO-20260617-NOTIFY-CHANNEL-DUP",
+    )
+    service = DeliveryNotificationService.for_db(settings.orders_db_path)
+    try:
+        service.notify_event(
+            order.id,
+            event_type="report_ready",
+            channel="station",
+            payload_json='{"kind":"station"}',
+        )
+        with pytest.raises(ValueError):
+            service.notify_event(
+                order.id,
+                event_type="report_ready",
+                channel="station",
+                payload_json='{"kind":"station-2"}',
+            )
+    finally:
+        service.close()
 
 
 def test_delivery_notification_tracks_failure_and_validated_status(settings, tmp_path):
@@ -155,14 +199,14 @@ def test_delivery_notification_tracks_failure_and_validated_status(settings, tmp
 
     notification_service = DeliveryNotificationService.for_db(settings.orders_db_path)
     try:
-        notification_service.mark_failed(order.id, "smtp timeout")
+        notification_service.mark_failed(order.id, "smtp timeout", channel="station")
         failed = notification_service.list_events(order.id)[0]
         assert failed.status == "failed"
         assert failed.attempt_count == 2
         assert failed.failure_reason == "smtp timeout"
         assert failed.last_attempt_at is not None
 
-        notification_service.mark_validated(order.id)
+        notification_service.mark_validated(order.id, channel="station")
         validated = notification_service.list_events(order.id)[0]
         assert validated.status == "validated"
         assert validated.attempt_count == 2

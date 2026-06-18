@@ -10,15 +10,235 @@
 
 from __future__ import annotations
 
+import json
 import sys
+from dataclasses import dataclass
 from pathlib import Path
+from typing import cast
+from urllib.parse import parse_qsl, urlsplit
 
 import pytest
+from fastapi import HTTPException
+from pydantic import ValidationError
+from starlette.requests import Request
 
 # 确保项目根在 sys.path
 _ROOT = Path(__file__).resolve().parent.parent.parent
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
+
+
+@dataclass
+class RouteResponse:
+    status_code: int
+    headers: dict[str, str]
+    text: str
+    _json: object | None = None
+
+    def json(self):
+        if self._json is None:
+            raise ValueError("response does not contain json payload")
+        return self._json
+
+
+class RouteClient:
+    """基于直接路由调用的轻量测试 client，绕开当前环境中的 TestClient 挂起。"""
+
+    def __init__(self, app):
+        self.app = app
+        self._started = False
+
+    def __enter__(self):
+        if not self._started:
+            from admin.app import _setup_database, _validate_and_log_settings
+
+            settings = self.app.state.settings
+            _validate_and_log_settings(settings)
+            _setup_database(settings)
+            self._started = True
+        return self
+
+    def __exit__(self, exc_type, exc, tb):
+        return False
+
+    @staticmethod
+    def _request(path: str, *, method: str = "GET", headers: dict[str, str] | None = None):
+        split = urlsplit(path)
+        raw_headers = [
+            (key.lower().encode("utf-8"), value.encode("utf-8"))
+            for key, value in (headers or {}).items()
+        ]
+        return Request(
+            {
+                "type": "http",
+                "method": method,
+                "path": split.path,
+                "query_string": split.query.encode("utf-8"),
+                "headers": raw_headers,
+            }
+        )
+
+    @staticmethod
+    def _html_response(response) -> RouteResponse:
+        return RouteResponse(
+            status_code=response.status_code,
+            headers=dict(response.headers),
+            text=response.body.decode("utf-8"),
+        )
+
+    @staticmethod
+    def _json_response(
+        payload: object,
+        *,
+        status_code: int = 200,
+        headers: dict[str, str] | None = None,
+    ) -> RouteResponse:
+        return RouteResponse(
+            status_code=status_code,
+            headers=headers or {"content-type": "application/json"},
+            text=json.dumps(payload, ensure_ascii=False),
+            _json=payload,
+        )
+
+    @staticmethod
+    def _redirect_response(response) -> RouteResponse:
+        return RouteResponse(
+            status_code=response.status_code,
+            headers=dict(response.headers),
+            text="",
+        )
+
+    @staticmethod
+    def _http_exception_response(exc: HTTPException) -> RouteResponse:
+        detail = exc.detail
+        if isinstance(detail, str):
+            payload = {"detail": {"reason": detail}}
+        else:
+            payload = {"detail": detail}
+        return RouteClient._json_response(
+            payload,
+            status_code=exc.status_code,
+        )
+
+    @staticmethod
+    def _validation_error_response(exc: ValidationError) -> RouteResponse:
+        from admin.errors.codes import DATA_VALIDATION_FAILED
+        from admin.errors.registry import get_message
+
+        msg = get_message(str(DATA_VALIDATION_FAILED))
+        payload = {
+            "code": str(DATA_VALIDATION_FAILED),
+            "message": msg.message,
+            "suggestion": msg.suggestion,
+            "severity": msg.severity,
+            "retryable": msg.retryable,
+            "detail": {
+                "fields": [
+                    {
+                        "field": "body." + ".".join(str(part) for part in err["loc"]),
+                        "reason": err["msg"],
+                    }
+                    for err in exc.errors()
+                ]
+            },
+        }
+        return RouteClient._json_response(payload, status_code=422)
+
+    def get(self, path: str, **kwargs):
+        from admin.routes.web_public import (
+            ServiceVersion,
+            checkout_page,
+            deletion_policy_page,
+            landing_page,
+            order_info_page,
+            order_status_page,
+            payment_return_page,
+            payment_success_page,
+            pricing_page,
+            privacy_page,
+            service_terms_page,
+        )
+
+        split = urlsplit(path)
+        route_path = split.path
+        settings = self.app.state.settings
+
+        try:
+            if route_path == "/":
+                return self._html_response(
+                    landing_page(self._request(path, method="GET"))
+                )
+            if route_path == "/pricing":
+                return self._html_response(
+                    pricing_page(self._request(path, method="GET"))
+                )
+            if route_path.startswith("/checkout/"):
+                service_version = cast(
+                    ServiceVersion, route_path.split("/checkout/", 1)[1]
+                )
+                return self._html_response(checkout_page(service_version))
+            if route_path == "/portal/payment-return":
+                query = dict(parse_qsl(split.query, keep_blank_values=True))
+                return self._redirect_response(
+                    payment_return_page(query["token"], settings)
+                )
+            if route_path.startswith("/portal/") and route_path.endswith("/payment-success"):
+                token = route_path.split("/portal/", 1)[1].rsplit("/payment-success", 1)[0]
+                return self._html_response(payment_success_page(token, settings))
+            if route_path.startswith("/portal/") and route_path.endswith("/status"):
+                token = route_path.split("/portal/", 1)[1].rsplit("/status", 1)[0]
+                return self._html_response(order_status_page(token, settings))
+            if route_path.startswith("/portal/") and route_path.endswith("/info"):
+                token = route_path.split("/portal/", 1)[1].rsplit("/info", 1)[0]
+                return self._html_response(order_info_page(token, settings))
+            if route_path == "/privacy":
+                query = dict(parse_qsl(split.query, keep_blank_values=True))
+                return self._html_response(privacy_page(query.get("token")))
+            if route_path == "/service-terms":
+                query = dict(parse_qsl(split.query, keep_blank_values=True))
+                return self._html_response(service_terms_page(query.get("token")))
+            if route_path == "/deletion-policy":
+                return self._html_response(deletion_policy_page())
+        except HTTPException as exc:
+            return self._http_exception_response(exc)
+
+        raise NotImplementedError(f"unsupported GET path in RouteClient: {path}")
+
+    def post(self, path: str, **kwargs):
+        from admin.routes.web_public import (
+            complete_mock_payment,
+            create_public_order_endpoint,
+            mock_payment_webhook,
+        )
+        from data.orders.public_flow import PublicOrderCreate
+
+        split = urlsplit(path)
+        route_path = split.path
+        settings = self.app.state.settings
+        payload = kwargs.get("json")
+        headers = kwargs.get("headers") or {}
+
+        try:
+            if route_path == "/api/public/orders":
+                try:
+                    model = PublicOrderCreate.model_validate(payload or {})
+                except ValidationError as exc:
+                    return self._validation_error_response(exc)
+                created = create_public_order_endpoint(model, settings)
+                return self._json_response(created.model_dump(), status_code=201)
+            if route_path.startswith("/pay/mock/") and route_path.endswith("/complete"):
+                payment_id = route_path.split("/pay/mock/", 1)[1].rsplit("/complete", 1)[0]
+                query = dict(parse_qsl(split.query, keep_blank_values=True))
+                redirect = complete_mock_payment(payment_id, query["token"], settings)
+                return self._redirect_response(redirect)
+            if route_path == "/api/public/payments/mock/webhook":
+                request = self._request(path, method="POST", headers=headers)
+                ack = mock_payment_webhook(payload or {}, request, settings)
+                return self._json_response(ack.model_dump())
+        except HTTPException as exc:
+            return self._http_exception_response(exc)
+
+        raise NotImplementedError(f"unsupported POST path in RouteClient: {path}")
 
 
 @pytest.fixture
@@ -113,6 +333,13 @@ def client(app):
     from fastapi.testclient import TestClient
 
     with TestClient(app) as c:
+        yield c
+
+
+@pytest.fixture
+def route_client(app):
+    """直接调用路由函数的轻量 client。"""
+    with RouteClient(app) as c:
         yield c
 
 

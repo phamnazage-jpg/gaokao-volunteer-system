@@ -16,7 +16,7 @@
 注意边界：
 
 - 当前 `station` 事件的最终状态是 `validated`，表示站内交付物校验通过；只有 `email` 渠道真实发送后才进入 `delivered`。
-- dispatcher 每次会处理 `ready` 与 `failed` 事件；如果缺少 HTML/PDF，会把事件记为 `failed`，并递增 `attempt_count`。
+- dispatcher 每次会处理 `ready` 与 `validated` 事件；如果缺少 HTML/PDF，会把事件记为 `failed`，并递增 `attempt_count`。
 - watchdog 复用同一 dispatch 路径，但只要本轮出现失败事件就返回 exit code `2`，适合接宿主机监控或外部告警。
 
 ### retention cleanup
@@ -54,7 +54,7 @@ cp deploy/systemd/gaokao-jobs.env.example deploy/systemd/gaokao-jobs.env
 ## 3. 手工执行口径
 
 ```bash
-# 主动推进 ready/failed 事件
+# 主动推进 ready/validated 事件
 python3 scripts/gaokao-delivery-dispatch.py --channel station --limit 100
 
 # 巡检：有失败时返回 2

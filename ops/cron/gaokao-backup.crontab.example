@@ -8,6 +8,7 @@ GAOKAO_DB_PATH=/var/lib/gaokao/admin.db
 GAOKAO_ORDERS_DB_PATH=/var/lib/gaokao/orders.db
 GAOKAO_SHARE_DB_PATH=/var/lib/gaokao/share/short_links.db
 GAOKAO_SHARE_REPORT_DIR=/var/lib/gaokao/share/reports
+GAOKAO_PORTAL_UPLOAD_DIR=/var/lib/gaokao/portal_uploads
 GAOKAO_BACKUP_ENV_FILE=/etc/gaokao/.env
 GAOKAO_BACKUP_CONFIG_DIR=/etc/gaokao
 GAOKAO_BACKUP_SECRETS_DIR=/var/lib/gaokao/secrets

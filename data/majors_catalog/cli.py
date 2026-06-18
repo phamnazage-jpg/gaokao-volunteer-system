@@ -16,10 +16,13 @@ def build_status_payload(catalog_root: Path) -> dict[str, object]:
         "year": status.year,
         "version": status.version,
         "major_count": status.major_count,
+        "change_count": status.change_count,
+        "risky_major_count": status.risky_major_count,
         "coverage_mode": status.coverage_mode,
         "source": status.source,
         "source_url": status.source_url,
         "last_verified_at": status.last_verified_at,
+        "version_strategy": status.version_strategy,
     }
 
 
@@ -41,6 +44,7 @@ def build_lookup_payload(catalog_root: Path, name_or_code: str) -> dict[str, obj
 def build_verify_payload(catalog_root: Path) -> dict[str, object]:
     missing_required_files: list[str] = []
     national_dir = catalog_root / "national"
+    changes_path = catalog_root / "changes" / "2024-2026.md"
     latest = national_dir / "latest.json"
     current_year = national_dir / "2024.json"
     if not national_dir.is_dir():
@@ -49,6 +53,8 @@ def build_verify_payload(catalog_root: Path) -> dict[str, object]:
         missing_required_files.append("national/2024.json")
     if not latest.is_file():
         missing_required_files.append("national/latest.json")
+    if not changes_path.is_file():
+        missing_required_files.append("changes/2024-2026.md")
 
     if missing_required_files:
         return {
@@ -63,7 +69,10 @@ def build_verify_payload(catalog_root: Path) -> dict[str, object]:
         "ok": True,
         "missing_required_files": [],
         "major_count": status.major_count,
+        "change_count": status.change_count,
+        "risky_major_count": status.risky_major_count,
         "coverage_mode": status.coverage_mode,
+        "version_strategy": status.version_strategy,
     }
 
 
@@ -83,9 +92,13 @@ def build_school_status_payload(catalog_root: Path, year: int) -> dict[str, obje
     return {
         "ok": True,
         "year": status.year,
+        "version": status.version,
         "school_count": status.school_count,
         "offering_count": status.offering_count,
+        "mapped_offering_count": status.mapped_offering_count,
+        "unmapped_offering_count": status.unmapped_offering_count,
         "school_codes": status.school_codes,
+        "version_strategy": status.version_strategy,
     }
 
 

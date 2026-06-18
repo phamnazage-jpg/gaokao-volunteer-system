@@ -10,6 +10,8 @@ ORDERS_DB="${GAOKAO_ORDERS_DB_PATH:-${ROOT_DIR}/data/orders.db}"
 SHARE_DB="${GAOKAO_SHARE_DB_PATH:-${ROOT_DIR}/data/share/short_links.db}"
 SHARE_REPORT_DIR="${GAOKAO_SHARE_REPORT_DIR:-${ROOT_DIR}/data/share/reports}"
 EXAMPLE_REPORT_DIR="${ROOT_DIR}/data/examples"
+PORTAL_UPLOAD_DIR="${GAOKAO_PORTAL_UPLOAD_DIR:-${ROOT_DIR}/data/portal_uploads}"
+ORDER_ARTIFACT_HELPER="${ROOT_DIR}/scripts/backup_collect_order_artifacts.py"
 
 usage() {
   cat <<'EOF'
@@ -52,6 +54,19 @@ copy_dir_if_exists() {
   fi
 }
 
+copy_order_artifacts_if_possible() {
+  local orders_db="$1"
+  local dest_dir="$2"
+  if [[ ! -f "$orders_db" ]]; then
+    log "skip order artifacts, missing orders db: $orders_db"
+    return
+  fi
+  mkdir -p "$dest_dir"
+  local summary
+  summary="$(python3 "$ORDER_ARTIFACT_HELPER" --orders-db "$orders_db" --output-dir "$dest_dir")"
+  log "copied order artifacts: $summary"
+}
+
 stage_live_sources() {
   log "verify dir: $VERIFY_DIR"
   copy_if_exists "$ADMIN_DB" "$VERIFY_DIR/db"
@@ -59,6 +74,8 @@ stage_live_sources() {
   copy_if_exists "$SHARE_DB" "$VERIFY_DIR/db"
   copy_dir_if_exists "$SHARE_REPORT_DIR" "$VERIFY_DIR/files/reports"
   copy_dir_if_exists "$EXAMPLE_REPORT_DIR" "$VERIFY_DIR/files/examples"
+  copy_dir_if_exists "$PORTAL_UPLOAD_DIR" "$VERIFY_DIR/files/portal_uploads"
+  copy_order_artifacts_if_possible "$ORDERS_DB" "$VERIFY_DIR/files/order_artifacts"
 }
 
 stage_existing_backup() {

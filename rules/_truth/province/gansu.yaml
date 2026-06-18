@@ -2,6 +2,7 @@ scope: province
 province: 甘肃
 year: 2026
 version: '2026.1'
+last_verified_at: '2026-06-18'
 status: active
 rules:
   mode:

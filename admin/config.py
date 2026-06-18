@@ -27,6 +27,8 @@ _MIN_ADMIN_PASSWORD_LENGTH = 10
 _MIN_PROD_WEBHOOK_SECRET_LEN = 16
 # Portal token secret 最低长度门槛 (生产环境)
 _MIN_PORTAL_TOKEN_SECRET_LEN = 32
+_SUPPORTED_PAYMENT_PROVIDERS = {"mock", "alipay_sim", "alipay"}
+_PROD_ALLOWED_PAYMENT_PROVIDERS = {"alipay"}
 
 
 @dataclass(frozen=True)
@@ -150,6 +152,26 @@ def _enforce_portal_token_secret_policy(settings: Settings) -> None:
         raise RuntimeError(f"GAOKAO_PORTAL_TOKEN_SECRET invalid in prod: {reason}")
 
 
+def _enforce_payment_provider_policy(settings: Settings) -> None:
+    provider = (settings.payment_provider or "mock").strip().lower()
+    if settings.env != "prod":
+        return
+    if provider not in _SUPPORTED_PAYMENT_PROVIDERS:
+        raise RuntimeError(
+            "GAOKAO_PAYMENT_PROVIDER={} 在生产环境被禁止，"
+            "仅允许受支持且可上线的 provider {} (P0-2 fail-closed)".format(
+                provider, sorted(_PROD_ALLOWED_PAYMENT_PROVIDERS)
+            )
+        )
+    if provider not in _PROD_ALLOWED_PAYMENT_PROVIDERS:
+        raise RuntimeError(
+            "GAOKAO_PAYMENT_PROVIDER={} 在生产环境被禁止，"
+            "仅允许受支持且可上线的 provider {} (P0-2 fail-closed)".format(
+                provider, sorted(_PROD_ALLOWED_PAYMENT_PROVIDERS)
+            )
+        )
+
+
 def load_settings() -> Settings:
     """从环境变量加载配置。
 
@@ -197,7 +219,7 @@ def load_settings() -> Settings:
         portal_upload_dir=os.getenv("GAOKAO_PORTAL_UPLOAD_DIR", "data/portal_uploads"),
         portal_upload_max_bytes=int(os.getenv("GAOKAO_PORTAL_UPLOAD_MAX_BYTES", "5242880")),
         portal_upload_max_files=int(os.getenv("GAOKAO_PORTAL_UPLOAD_MAX_FILES", "5")),
-        payment_provider=os.getenv("GAOKAO_PAYMENT_PROVIDER", "mock"),
+        payment_provider=os.getenv("GAOKAO_PAYMENT_PROVIDER", "mock").strip().lower(),
         payment_base_url=os.getenv("GAOKAO_PAYMENT_BASE_URL", "http://testserver"),
         payment_webhook_secret=_resolve_payment_webhook_secret(
             os.getenv("GAOKAO_ENV", "dev")
@@ -235,6 +257,7 @@ def load_settings() -> Settings:
     # 生产环境 post-load 校验:webhook / portal token secret 必须满足强度门槛。
     _enforce_payment_webhook_secret_policy(settings)
     _enforce_portal_token_secret_policy(settings)
+    _enforce_payment_provider_policy(settings)
     return settings
 
 

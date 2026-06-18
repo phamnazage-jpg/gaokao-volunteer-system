@@ -63,7 +63,10 @@ class DeliveryDispatcher:
             payload, failure_reason = self._validate_event(event)
             if failure_reason is not None:
                 self._service.mark_failed(
-                    event.order_id, failure_reason, event_type=event.event_type
+                    event.order_id,
+                    failure_reason,
+                    event_type=event.event_type,
+                    channel=event.channel,
                 )
                 result.failed += 1
                 continue
@@ -87,6 +90,7 @@ class DeliveryDispatcher:
                 self._service.mark_validated(
                     event.order_id,
                     event_type=event.event_type,
+                    channel=event.channel,
                     payload_json=json.dumps(
                         persisted_payload, ensure_ascii=False
                     ),
@@ -103,6 +107,7 @@ class DeliveryDispatcher:
                     event.order_id,
                     str(exc),
                     event_type=event.event_type,
+                    channel=event.channel,
                 )
                 result.failed += 1
                 continue
@@ -114,6 +119,7 @@ class DeliveryDispatcher:
                 self._service.mark_delivered(
                     event.order_id,
                     event_type=event.event_type,
+                    channel=event.channel,
                     payload_json=json.dumps(
                         rendered_payload, ensure_ascii=False
                     ),

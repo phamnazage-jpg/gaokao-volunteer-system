@@ -9,7 +9,13 @@ from data.rules.audit_engine import AuditEngine
 from data.rules.loader import RuleLoader
 
 
-def _write_truth_and_catalog(root: Path) -> tuple[Path, Path, Path]:
+def _write_truth_and_catalog(
+    root: Path,
+    *,
+    max_volunteers_status: str = "active",
+    max_volunteers_severity: str = "fatal",
+    max_volunteers_title: str = "志愿上限",
+) -> tuple[Path, Path, Path]:
     truth_root = root / "truth"
     province_dir = truth_root / "province"
     province_dir.mkdir(parents=True, exist_ok=True)
@@ -18,7 +24,16 @@ def _write_truth_and_catalog(root: Path) -> tuple[Path, Path, Path]:
         encoding="utf-8",
     )
     (province_dir / "hunan.yaml").write_text(
-        "scope: province\nprovince: 湖南\nyear: 2026\nversion: '2026.1'\nstatus: active\nrules:\n  max_volunteers:\n    title: 志愿上限\n    severity: fatal\n    value:\n      max_volunteers: 45\n    source_evidence_id: hunan-2026-max-volunteers\n    effective_date: '2026-01-01'\n    status: active\n",
+        (
+            "scope: province\nprovince: 湖南\nyear: 2026\nversion: '2026.1'\n"
+            "status: active\nrules:\n  max_volunteers:\n"
+            f"    title: {max_volunteers_title}\n"
+            f"    severity: {max_volunteers_severity}\n"
+            "    value:\n      max_volunteers: 45\n"
+            "    source_evidence_id: hunan-2026-max-volunteers\n"
+            "    effective_date: '2026-01-01'\n"
+            f"    status: {max_volunteers_status}\n"
+        ),
         encoding="utf-8",
     )
 
@@ -119,4 +134,82 @@ def test_audit_engine_major_validation_passes_when_all_majors_are_active(
     )
 
     assert result["issues"] == []
+    assert result["overall_pass"] is True
+
+
+def test_audit_engine_fails_when_volunteer_count_exceeds_province_limit(
+    tmp_path: Path,
+) -> None:
+    truth_root, catalog_root, _ = _write_truth_and_catalog(tmp_path)
+    loader = RuleLoader.from_truth_root(truth_root)
+    catalog = MajorsCatalogLoader.from_catalog_root(catalog_root)
+    engine = AuditEngine(loader, majors_loader=catalog)
+
+    result = engine.audit_plan(
+        "湖南",
+        {
+            "province": "湖南",
+            "items": [
+                {"school_name": f"学校{i}", "major_names": []}
+                for i in range(46)
+            ],
+        },
+    )
+
+    issues = cast(list[dict[str, Any]], result["issues"])
+    issue = next(issue for issue in issues if issue["rule_id"] == "RULES.max_volunteers")
+
+    assert result["overall_pass"] is False
+    assert issue["severity"] == "fatal"
+    assert issue["title"] == "志愿上限"
+    assert issue["message"] == "当前方案包含 46 个志愿单位，已超过湖南规则上限 45"
+    assert issue["suggestion"] == "请减少到不超过 45 个志愿单位后重新审计"
+
+
+def test_audit_engine_skips_non_active_max_volunteers_rule(tmp_path: Path) -> None:
+    truth_root, catalog_root, _ = _write_truth_and_catalog(
+        tmp_path,
+        max_volunteers_status="draft",
+    )
+    loader = RuleLoader.from_truth_root(truth_root)
+    catalog = MajorsCatalogLoader.from_catalog_root(catalog_root)
+    engine = AuditEngine(loader, majors_loader=catalog)
+
+    result = engine.audit_plan(
+        "湖南",
+        {
+            "province": "湖南",
+            "items": [
+                {"school_name": f"学校{i}", "major_names": []}
+                for i in range(46)
+            ],
+        },
+    )
+
+    issues = cast(list[dict[str, Any]], result["issues"])
+    assert all(issue["rule_id"] != "RULES.max_volunteers" for issue in issues)
+    assert result["overall_pass"] is True
+
+
+def test_audit_engine_allows_volunteer_count_equal_to_province_limit(
+    tmp_path: Path,
+) -> None:
+    truth_root, catalog_root, _ = _write_truth_and_catalog(tmp_path)
+    loader = RuleLoader.from_truth_root(truth_root)
+    catalog = MajorsCatalogLoader.from_catalog_root(catalog_root)
+    engine = AuditEngine(loader, majors_loader=catalog)
+
+    result = engine.audit_plan(
+        "湖南",
+        {
+            "province": "湖南",
+            "items": [
+                {"school_name": f"学校{i}", "major_names": []}
+                for i in range(45)
+            ],
+        },
+    )
+
+    issues = cast(list[dict[str, Any]], result["issues"])
+    assert all(issue["rule_id"] != "RULES.max_volunteers" for issue in issues)
     assert result["overall_pass"] is True

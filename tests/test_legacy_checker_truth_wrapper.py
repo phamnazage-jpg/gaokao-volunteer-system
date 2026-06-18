@@ -71,6 +71,29 @@ def test_legacy_checker_detects_earliest_province_signal_not_later_school_name()
     assert proc.stdout.strip() == "湖南"
 
 
+def test_legacy_checker_can_read_dynamic_collection_count_from_truth() -> None:
+    probe = (
+        "import importlib.util; from importlib.machinery import SourceFileLoader; "
+        f"loader=SourceFileLoader('legacy_gaokao_checker_wrapper', {str(LEGACY_CHECKER_PATH)!r}); "
+        "spec=importlib.util.spec_from_loader(loader.name, loader); "
+        "module=importlib.util.module_from_spec(spec); "
+        "assert spec is not None and spec.loader is not None; "
+        "spec.loader.exec_module(module); "
+        "print(repr(module.PROVINCE_RULES['北京']['collection_count'])); "
+        "print(repr(module.PROVINCE_RULES['江苏']['collection_count']))"
+    )
+    proc = subprocess.run(
+        [sys.executable, "-c", probe],
+        cwd=PROJECT_ROOT,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+
+    assert proc.returncode == 0, proc.stderr
+    assert proc.stdout.strip().splitlines() == ["None", "None"]
+
+
 def test_legacy_checker_cli_still_checks_plan_file_via_wrapper(tmp_path: Path) -> None:
     plan = tmp_path / "plan.txt"
     plan.write_text(

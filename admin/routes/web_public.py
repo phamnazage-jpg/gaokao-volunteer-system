@@ -60,6 +60,7 @@ _SERVICE_PRICES = {
     "standard": 9900,
     "premium": 19900,
 }
+_SIMULATED_PAYMENT_ROUTE_NOT_FOUND = "not found"
 
 
 class PublicOrderCreated(BaseModel):
@@ -126,6 +127,11 @@ def _log_deletion_request(
     }
     with path.open("a", encoding="utf-8") as fh:
         fh.write(json.dumps(item, ensure_ascii=False) + "\n")
+
+
+def _assert_simulated_payment_routes_allowed(settings: Settings) -> None:
+    if settings.env == "prod":
+        raise HTTPException(status_code=404, detail=_SIMULATED_PAYMENT_ROUTE_NOT_FOUND)
 
 
 @router.get("/", include_in_schema=False)
@@ -205,6 +211,7 @@ def mock_payment_webhook(
     request: Request,
     settings: Settings = Depends(get_settings_dep),
 ) -> WebhookAck:
+    _assert_simulated_payment_routes_allowed(settings)
     signature = request.headers.get("X-Mock-Signature", "")
     service = _payment_service(settings)
     try:
@@ -241,6 +248,7 @@ def mock_payment_page(
     token: str,
     settings: Settings = Depends(get_settings_dep),
 ) -> HTMLResponse:
+    _assert_simulated_payment_routes_allowed(settings)
     return _render_simulated_payment_page(
         payment_id, token, settings, provider_slug="mock"
     )
@@ -252,6 +260,7 @@ def complete_mock_payment(
     token: str,
     settings: Settings = Depends(get_settings_dep),
 ) -> RedirectResponse:
+    _assert_simulated_payment_routes_allowed(settings)
     return _complete_simulated_payment(
         payment_id, token, settings, provider_slug="mock"
     )
@@ -263,6 +272,7 @@ def alipay_sim_payment_page(
     token: str,
     settings: Settings = Depends(get_settings_dep),
 ) -> HTMLResponse:
+    _assert_simulated_payment_routes_allowed(settings)
     return _render_simulated_payment_page(
         payment_id, token, settings, provider_slug="alipay-sim"
     )
@@ -274,6 +284,7 @@ def complete_alipay_sim_payment(
     token: str,
     settings: Settings = Depends(get_settings_dep),
 ) -> RedirectResponse:
+    _assert_simulated_payment_routes_allowed(settings)
     return _complete_simulated_payment(
         payment_id, token, settings, provider_slug="alipay-sim"
     )

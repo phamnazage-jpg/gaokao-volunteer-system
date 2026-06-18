@@ -10,7 +10,13 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 SCRIPT_PATH = PROJECT_ROOT / "scripts" / "gaokao-cli"
 
 
-def _write_truth_and_catalog(root: Path) -> tuple[Path, Path, Path]:
+def _write_truth_and_catalog(
+    root: Path,
+    *,
+    max_volunteers_status: str = "active",
+    max_volunteers_severity: str = "fatal",
+    max_volunteers_title: str = "志愿上限",
+) -> tuple[Path, Path, Path]:
     truth_root = root / "truth"
     province_dir = truth_root / "province"
     province_dir.mkdir(parents=True, exist_ok=True)
@@ -19,7 +25,16 @@ def _write_truth_and_catalog(root: Path) -> tuple[Path, Path, Path]:
         encoding="utf-8",
     )
     (province_dir / "hunan.yaml").write_text(
-        "scope: province\nprovince: 湖南\nyear: 2026\nversion: '2026.1'\nstatus: active\nrules:\n  max_volunteers:\n    title: 志愿上限\n    severity: fatal\n    value:\n      max_volunteers: 45\n    source_evidence_id: hunan-2026-max-volunteers\n    effective_date: '2026-01-01'\n    status: active\n",
+        (
+            "scope: province\nprovince: 湖南\nyear: 2026\nversion: '2026.1'\n"
+            "status: active\nrules:\n  max_volunteers:\n"
+            f"    title: {max_volunteers_title}\n"
+            f"    severity: {max_volunteers_severity}\n"
+            "    value:\n      max_volunteers: 45\n"
+            "    source_evidence_id: hunan-2026-max-volunteers\n"
+            "    effective_date: '2026-01-01'\n"
+            f"    status: {max_volunteers_status}\n"
+        ),
         encoding="utf-8",
     )
 
@@ -161,3 +176,54 @@ def test_audit_run_cli_returns_zero_when_plan_majors_are_all_active(
     payload = json.loads(result.stdout)
     assert payload["overall_pass"] is True
     assert payload["issues"] == []
+
+
+def test_audit_run_cli_fails_when_volunteer_count_exceeds_province_limit(
+    tmp_path: Path,
+) -> None:
+    truth_root, catalog_root, _ = _write_truth_and_catalog(tmp_path)
+    plan_path = tmp_path / "too-many-volunteers.json"
+    plan_path.write_text(
+        json.dumps(
+            {
+                "province": "湖南",
+                "items": [
+                    {"school_name": f"学校{i}", "major_names": []}
+                    for i in range(46)
+                ],
+            },
+            ensure_ascii=False,
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(SCRIPT_PATH),
+            "audit",
+            "run",
+            "--province",
+            "湖南",
+            "--plan",
+            str(plan_path),
+            "--truth-root",
+            str(truth_root),
+            "--catalog-root",
+            str(catalog_root),
+            "--json",
+        ],
+        cwd=PROJECT_ROOT,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+
+    assert result.returncode == 1, result.stderr
+    payload = json.loads(result.stdout)
+    assert payload["overall_pass"] is False
+    issue = next(issue for issue in payload["issues"] if issue["rule_id"] == "RULES.max_volunteers")
+    assert issue["severity"] == "fatal"
+    assert issue["title"] == "志愿上限"
+    assert issue["message"] == "当前方案包含 46 个志愿单位，已超过湖南规则上限 45"
+    assert issue["suggestion"] == "请减少到不超过 45 个志愿单位后重新审计"

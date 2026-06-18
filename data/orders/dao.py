@@ -218,7 +218,9 @@ class OrdersDAO:
         self._conn.close()
 
     @contextlib.contextmanager
-    def transaction(self) -> Iterator[sqlite3.Connection]:
+    def transaction(
+        self, *, begin_mode: str = "deferred"
+    ) -> Iterator[sqlite3.Connection]:
         """事务上下文。
 
         进入时自动 ``BEGIN``，异常时 ``ROLLBACK`` 并重新抛出；
@@ -235,10 +237,14 @@ class OrdersDAO:
                 conn.execute(...)
                 conn.execute(...)  # 同事务
         """
+        if begin_mode not in {"deferred", "immediate"}:
+            raise ValueError(f"unsupported begin_mode: {begin_mode}")
+
         self._tx_depth += 1
         try:
             if self._tx_depth == 1:
-                # 顶层：依赖 sqlite3 的隐式 BEGIN，由 commit/rollback 终止
+                if begin_mode == "immediate":
+                    self._conn.execute("BEGIN IMMEDIATE")
                 yield self._conn
                 self._conn.commit()
             else:
@@ -596,7 +602,7 @@ class OrdersDAO:
                 if order.customer_email:
                     notifier.notify_event(
                         order_id,
-                        event_type="report_ready_email",
+                        event_type="report_ready",
                         channel="email",
                         payload_json=json.dumps(
                             {

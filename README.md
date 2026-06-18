@@ -8,6 +8,8 @@
 >
 > 当前真相源：`docs/CURRENT_STATE.md`
 > 最终完成报告：`docs/FINAL_COMPLETION_REPORT_2026-06-13.md`
+>
+> 当前项目定位：人工服务运营增强系统；用户端 Web 自助闭环仅为本地 MVP/目标态，不是完整用户端 Web 自助产品。
 
 ## 📋 项目简介
 
@@ -167,10 +169,11 @@ GAOKAO_SKIP_INSTALL=1 bash scripts/dev-verify.sh
 
 最小语义：
 
-- 交付物齐全（HTML/PDF 存在）→ `ready -> sent`
+- 交付物齐全（HTML/PDF 存在）→ `ready -> validated`
+- `station` 渠道停留在 `validated`；只有 `email` 渠道真实发送成功后才进入 `delivered`
 - 交付物缺失 → `failed`，并写入 `failure_reason`
 - watchdog 遇到失败事件返回 exit code `2`
-- 当前 `sent` 仍表示“站内交付物校验通过”，不是外部渠道真实发送成功
+- 当前 `validated` 才表示“站内交付物校验通过”，`delivered` 保留给真实外部发送成功
 
 ### 数据保留期清理
 

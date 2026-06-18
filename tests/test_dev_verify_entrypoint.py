@@ -93,3 +93,73 @@ ensure_venv
     )
     combined = proc.stdout + proc.stderr
     assert "pip" in combined
+
+
+def test_dev_verify_skip_install_does_not_upgrade_pip(tmp_path: Path):
+    venv_dir = tmp_path / ".venv"
+    subprocess.run(
+        ["python3", "-m", "venv", str(venv_dir)],
+        check=True,
+        text=True,
+        capture_output=True,
+    )
+
+    python_bin = venv_dir / "bin" / "python"
+    real_python = venv_dir / "bin" / "python-real"
+    python_bin.rename(real_python)
+    python_bin.write_text(
+        """#!/usr/bin/env bash
+set -euo pipefail
+if [[ "${1:-}" == "-m" && "${2:-}" == "pip" && "${3:-}" == "install" ]]; then
+  echo "unexpected pip install" >&2
+  exit 99
+fi
+exec "$(dirname "$0")/python-real" "$@"
+""",
+        encoding="utf-8",
+    )
+    python_bin.chmod(0o755)
+
+    probe = f"""
+set -euo pipefail
+export GAOKAO_SOURCE_ONLY=1
+source {SCRIPT}
+VENV_DIR={venv_dir}
+PYTHON_BIN=python3
+SKIP_INSTALL=1
+ensure_venv
+"""
+    proc = subprocess.run(
+        [BASH, "-lc", probe],
+        cwd=REPO_ROOT,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    assert proc.returncode == 0, (
+        f"ensure_venv should not upgrade pip when skip-install is enabled (rc={proc.returncode})\n"
+        f"stdout:\n{proc.stdout}\n"
+        f"stderr:\n{proc.stderr}"
+    )
+    assert "unexpected pip install" not in (proc.stdout + proc.stderr)
+
+
+def test_dev_verify_pre_existing_ignores_only_keeps_locust_probe():
+    probe = f"""
+set -euo pipefail
+export GAOKAO_SOURCE_ONLY=1
+source {SCRIPT}
+printf '%s\n' "${{PRE_EXISTING_IGNORES[@]}}"
+"""
+    proc = subprocess.run(
+        [BASH, "-lc", probe],
+        cwd=REPO_ROOT,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    assert proc.returncode == 0, proc.stderr
+    ignores = [line.strip() for line in proc.stdout.splitlines() if line.strip()]
+    assert ignores == [
+        "tests/test_t5_performance.py::test_admin_locust_10_concurrency_success_rate_above_95"
+    ]

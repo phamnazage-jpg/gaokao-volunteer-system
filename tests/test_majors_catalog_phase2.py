@@ -10,6 +10,8 @@ from data.majors_catalog.loader import MajorsCatalogLoader
 def _write_catalog(root: Path) -> None:
     national = root / "national"
     national.mkdir(parents=True, exist_ok=True)
+    changes = root / "changes"
+    changes.mkdir(parents=True, exist_ok=True)
     payload = {
         "year": 2024,
         "version": "2024.1",
@@ -62,6 +64,9 @@ def _write_catalog(root: Path) -> None:
     (national / "latest.json").write_text(
         json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8"
     )
+    (changes / "2024-2026.md").write_text(
+        "# changes\n\n- sample\n", encoding="utf-8"
+    )
 
 
 def test_majors_catalog_loader_reads_latest_and_supports_lookup(tmp_path: Path) -> None:
@@ -78,8 +83,13 @@ def test_majors_catalog_loader_reads_latest_and_supports_lookup(tmp_path: Path) 
     assert by_code is not None
     assert by_code.name == "经济学"
     assert status.year == 2024
+    assert status.version == "2024.1"
     assert status.major_count == 3
+    assert status.change_count == 1
+    assert status.risky_major_count == 1
     assert status.coverage_mode == "mvp_subset"
+    assert "changes/2024-2026.md" in status.version_strategy
+    assert by_name.risk_tags == []
 
 
 def test_majors_catalog_loader_lists_changes_for_non_active_majors(
@@ -93,3 +103,4 @@ def test_majors_catalog_loader_lists_changes_for_non_active_majors(
     assert len(changed) == 1
     assert changed[0].code == "120201K"
     assert changed[0].status == "renamed"
+    assert changed[0].risk_tags == ["non_active", "removed_in_last_2y"]

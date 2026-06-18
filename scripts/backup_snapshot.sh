@@ -11,9 +11,11 @@ ORDERS_DB="${GAOKAO_ORDERS_DB_PATH:-${ROOT_DIR}/data/orders.db}"
 SHARE_DB="${GAOKAO_SHARE_DB_PATH:-${ROOT_DIR}/data/share/short_links.db}"
 SHARE_REPORT_DIR="${GAOKAO_SHARE_REPORT_DIR:-${ROOT_DIR}/data/share/reports}"
 EXAMPLE_REPORT_DIR="${ROOT_DIR}/data/examples"
+PORTAL_UPLOAD_DIR="${GAOKAO_PORTAL_UPLOAD_DIR:-${ROOT_DIR}/data/portal_uploads}"
 ENV_FILE="${GAOKAO_BACKUP_ENV_FILE:-}"
 CONFIG_DIR="${GAOKAO_BACKUP_CONFIG_DIR:-}"
 SECRETS_DIR="${GAOKAO_BACKUP_SECRETS_DIR:-}"
+ORDER_ARTIFACT_HELPER="${ROOT_DIR}/scripts/backup_collect_order_artifacts.py"
 
 log() {
   printf '[backup-snapshot] %s\n' "$1"
@@ -31,6 +33,34 @@ copy_file_to() {
   fi
 }
 
+copy_sqlite_to() {
+  local src="$1"
+  local dest="$2"
+  if [[ -n "$src" && -f "$src" ]]; then
+    mkdir -p "$(dirname "$dest")"
+    python3 - "$src" "$dest" <<'PY'
+from __future__ import annotations
+
+import sqlite3
+import sys
+from pathlib import Path
+
+src_path = Path(sys.argv[1]).resolve()
+dest_path = Path(sys.argv[2]).resolve()
+if dest_path.exists():
+    dest_path.unlink()
+
+with sqlite3.connect(f"{src_path.as_uri()}?mode=ro", uri=True) as source_conn:
+    with sqlite3.connect(dest_path) as dest_conn:
+        source_conn.backup(dest_conn)
+        dest_conn.commit()
+PY
+    log "copied sqlite snapshot: $src -> $dest"
+  else
+    log "skip missing sqlite file: ${src:-<empty>}"
+  fi
+}
+
 copy_dir_to() {
   local src="$1"
   local dest="$2"
@@ -43,12 +73,27 @@ copy_dir_to() {
   fi
 }
 
+copy_order_artifacts_to() {
+  local orders_db="$1"
+  local dest="$2"
+  if [[ -z "$orders_db" || ! -f "$orders_db" ]]; then
+    log "skip order artifacts, missing orders db: ${orders_db:-<empty>}"
+    return
+  fi
+
+  mkdir -p "$dest"
+  local summary
+  summary="$(python3 "$ORDER_ARTIFACT_HELPER" --orders-db "$orders_db" --output-dir "$dest")"
+  log "copied order artifacts: $summary"
+}
+
 write_manifest() {
   ADMIN_DB="$ADMIN_DB" \
   ORDERS_DB="$ORDERS_DB" \
   SHARE_DB="$SHARE_DB" \
   SHARE_REPORT_DIR="$SHARE_REPORT_DIR" \
   EXAMPLE_REPORT_DIR="$EXAMPLE_REPORT_DIR" \
+  PORTAL_UPLOAD_DIR="$PORTAL_UPLOAD_DIR" \
   ENV_FILE="$ENV_FILE" \
   CONFIG_DIR="$CONFIG_DIR" \
   SECRETS_DIR="$SECRETS_DIR" \
@@ -82,6 +127,7 @@ manifest = {
         "share_db": os.environ.get("SHARE_DB", ""),
         "share_report_dir": os.environ.get("SHARE_REPORT_DIR", ""),
         "example_report_dir": os.environ.get("EXAMPLE_REPORT_DIR", ""),
+        "portal_upload_dir": os.environ.get("PORTAL_UPLOAD_DIR", ""),
         "env_file": os.environ.get("ENV_FILE", ""),
         "config_dir": os.environ.get("CONFIG_DIR", ""),
         "secrets_dir": os.environ.get("SECRETS_DIR", ""),
@@ -131,11 +177,13 @@ main() {
   mkdir -p "$SNAPSHOT_DIR"
   log "snapshot dir: $SNAPSHOT_DIR"
 
-  copy_file_to "$ADMIN_DB" "$SNAPSHOT_DIR/db/$(basename "$ADMIN_DB")"
-  copy_file_to "$ORDERS_DB" "$SNAPSHOT_DIR/db/$(basename "$ORDERS_DB")"
-  copy_file_to "$SHARE_DB" "$SNAPSHOT_DIR/db/$(basename "$SHARE_DB")"
+  copy_sqlite_to "$ADMIN_DB" "$SNAPSHOT_DIR/db/$(basename "$ADMIN_DB")"
+  copy_sqlite_to "$ORDERS_DB" "$SNAPSHOT_DIR/db/$(basename "$ORDERS_DB")"
+  copy_sqlite_to "$SHARE_DB" "$SNAPSHOT_DIR/db/$(basename "$SHARE_DB")"
   copy_dir_to "$SHARE_REPORT_DIR" "$SNAPSHOT_DIR/files/reports"
   copy_dir_to "$EXAMPLE_REPORT_DIR" "$SNAPSHOT_DIR/files/examples"
+  copy_dir_to "$PORTAL_UPLOAD_DIR" "$SNAPSHOT_DIR/files/portal_uploads"
+  copy_order_artifacts_to "$ORDERS_DB" "$SNAPSHOT_DIR/files/order_artifacts"
   copy_file_to "$ENV_FILE" "$SNAPSHOT_DIR/config/.env"
   copy_dir_to "$CONFIG_DIR" "$SNAPSHOT_DIR/config/deploy"
   copy_dir_to "$SECRETS_DIR" "$SNAPSHOT_DIR/secrets"

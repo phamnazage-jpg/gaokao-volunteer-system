@@ -2,6 +2,7 @@ scope: province
 province: 山东
 year: 2026
 version: '2026.1'
+last_verified_at: '2026-06-18'
 status: active
 rules:
   mode:
@@ -56,7 +57,7 @@ rules:
     title: 投档原则
     severity: critical
     value:
-      retrieval_rule: 分数优先、遵循志愿、一次投档
+      retrieval_rule: 分数优先、遵循志愿；同分按单科顺序比较，志愿顺序前者优先投档
     source_evidence_id: shandong-2026-retrieval_rule
     effective_date: '2026-01-01'
     status: active
@@ -64,7 +65,7 @@ rules:
     title: 征集志愿次数
     severity: warning
     value:
-      collection_count: 1
+      collection_count: 2
     source_evidence_id: shandong-2026-collection_count
     effective_date: '2026-01-01'
     status: active

@@ -32,6 +32,19 @@ CREATE INDEX IF NOT EXISTS idx_payments_order_id ON payments(order_id);
 CREATE INDEX IF NOT EXISTS idx_payments_status ON payments(status);
 """
 
+_SCHEMA_STATEMENTS = tuple(
+    statement.strip() for statement in SCHEMA_SQL.split(";") if statement.strip()
+)
+
+
+def _ensure_schema(conn: sqlite3.Connection, *, commit: bool) -> None:
+    conn.row_factory = sqlite3.Row
+    conn.execute("PRAGMA foreign_keys = ON")
+    for statement in _SCHEMA_STATEMENTS:
+        conn.execute(statement)
+    if commit:
+        conn.commit()
+
 
 class PaymentDAO:
     def __init__(self, conn: sqlite3.Connection, *, autocommit: bool = True) -> None:
@@ -41,17 +54,12 @@ class PaymentDAO:
     @classmethod
     def for_db(cls, db_path: str | Path) -> "PaymentDAO":
         conn = apply_schema(db_path)
-        conn.row_factory = sqlite3.Row
-        conn.execute("PRAGMA foreign_keys = ON")
-        conn.executescript(SCHEMA_SQL)
-        conn.commit()
+        _ensure_schema(conn, commit=True)
         return cls(conn, autocommit=True)
 
     @classmethod
     def from_connection(cls, conn: sqlite3.Connection) -> "PaymentDAO":
-        conn.row_factory = sqlite3.Row
-        conn.execute("PRAGMA foreign_keys = ON")
-        conn.executescript(SCHEMA_SQL)
+        _ensure_schema(conn, commit=False)
         return cls(conn, autocommit=False)
 
     def close(self) -> None:
@@ -96,10 +104,33 @@ class PaymentDAO:
 
     def get_by_order(self, order_id: str) -> Optional[PaymentRecord]:
         row = self._conn.execute(
-            "SELECT * FROM payments WHERE order_id=? ORDER BY created_at DESC LIMIT 1",
+            """
+            SELECT *
+            FROM payments
+            WHERE order_id=?
+            ORDER BY
+                CASE status
+                    WHEN 'refunded' THEN 0
+                    WHEN 'paid' THEN 1
+                    WHEN 'pending' THEN 2
+                    WHEN 'failed' THEN 3
+                    ELSE 4
+                END,
+                updated_at DESC,
+                created_at DESC,
+                id DESC
+            LIMIT 1
+            """,
             (order_id,),
         ).fetchone()
         return self._row_to_payment(row) if row is not None else None
+
+    def list_by_order(self, order_id: str) -> list[PaymentRecord]:
+        rows = self._conn.execute(
+            "SELECT * FROM payments WHERE order_id=? ORDER BY created_at ASC, id ASC",
+            (order_id,),
+        ).fetchall()
+        return [self._row_to_payment(row) for row in rows]
 
     def update_status(
         self,

@@ -77,7 +77,7 @@ def test_portal_token_secret_fails_closed_when_using_dev_default_in_prod(monkeyp
 
 
 def test_portal_token_issued_via_issue_endpoint_cannot_be_verified_with_jwt_secret(
-    client,
+    route_client,
 ):
     """下单签发的 portal token 必须不能用后台 jwt_secret 验签通过。
 
@@ -85,7 +85,7 @@ def test_portal_token_issued_via_issue_endpoint_cannot_be_verified_with_jwt_secr
     """
     from data.customer_portal.token import verify_portal_token, PortalTokenError
 
-    resp = client.post(
+    resp = route_client.post(
         "/api/public/orders",
         json={
             "service_version": "standard",
@@ -99,7 +99,7 @@ def test_portal_token_issued_via_issue_endpoint_cannot_be_verified_with_jwt_secr
     )
     assert resp.status_code == 201, resp.text
     token = resp.json()["portal_status_url"].split("/portal/")[1].split("/status")[0]
-    settings = client.app.state.settings
+    settings = route_client.app.state.settings
 
     # 关键断言:用 jwt_secret 验签应当失败(因为 secret 已经分离)
     with pytest.raises(PortalTokenError):
@@ -110,9 +110,9 @@ def test_portal_token_issued_via_issue_endpoint_cannot_be_verified_with_jwt_secr
     assert payload["order_id"].startswith("GKO-")
 
 
-def test_portal_status_page_uses_independent_secret(client):
+def test_portal_status_page_uses_independent_secret(route_client):
     """回归:端到端 portal status 页应当使用独立 secret 并能正常访问。"""
-    resp = client.post(
+    resp = route_client.post(
         "/api/public/orders",
         json={
             "service_version": "standard",
@@ -126,7 +126,7 @@ def test_portal_status_page_uses_independent_secret(client):
     )
     assert resp.status_code == 201, resp.text
     token = resp.json()["portal_status_url"].split("/portal/")[1].split("/status")[0]
-    status_resp = client.get(f"/portal/{token}/status")
+    status_resp = route_client.get(f"/portal/{token}/status")
     assert status_resp.status_code == 200, status_resp.text
     assert "订单" in status_resp.text or "支付" in status_resp.text
 
@@ -187,6 +187,7 @@ def test_payment_webhook_secret_accepted_in_prod_when_strong(monkeypatch):
     monkeypatch.setenv("GAOKAO_ENV", "prod")
     monkeypatch.setenv("GAOKAO_JWT_SECRET", "x" * 64)
     monkeypatch.setenv("GAOKAO_PORTAL_TOKEN_SECRET", "Z" * 64)
+    monkeypatch.setenv("GAOKAO_PAYMENT_PROVIDER", "alipay")
     monkeypatch.setenv(
         "GAOKAO_PAYMENT_WEBHOOK_SECRET", "P" + "r" * 31 + "!" * 32
     )  # 64 chars
@@ -202,3 +203,36 @@ def test_payment_webhook_secret_dev_default_still_works(monkeypatch):
     settings = _reload_settings()
     # dev 默认 secret 应能加载成功(用于本地开发/测试)
     assert settings.payment_webhook_secret == "dev-mock-payment-secret"
+
+
+def test_payment_provider_mock_fails_closed_in_prod(monkeypatch):
+    monkeypatch.setenv("GAOKAO_ENV", "prod")
+    monkeypatch.setenv("GAOKAO_JWT_SECRET", "x" * 64)
+    monkeypatch.setenv("GAOKAO_PORTAL_TOKEN_SECRET", "Z" * 64)
+    monkeypatch.setenv("GAOKAO_PAYMENT_WEBHOOK_SECRET", "P" + "r" * 31 + "!" * 32)
+    monkeypatch.setenv("GAOKAO_PAYMENT_PROVIDER", "mock")
+
+    with pytest.raises(RuntimeError, match=r"GAOKAO_PAYMENT_PROVIDER"):
+        _reload_settings()
+
+
+def test_payment_provider_alipay_sim_fails_closed_in_prod(monkeypatch):
+    monkeypatch.setenv("GAOKAO_ENV", "prod")
+    monkeypatch.setenv("GAOKAO_JWT_SECRET", "x" * 64)
+    monkeypatch.setenv("GAOKAO_PORTAL_TOKEN_SECRET", "Z" * 64)
+    monkeypatch.setenv("GAOKAO_PAYMENT_WEBHOOK_SECRET", "P" + "r" * 31 + "!" * 32)
+    monkeypatch.setenv("GAOKAO_PAYMENT_PROVIDER", "alipay_sim")
+
+    with pytest.raises(RuntimeError, match=r"GAOKAO_PAYMENT_PROVIDER"):
+        _reload_settings()
+
+
+def test_payment_provider_unknown_value_fails_closed_in_prod(monkeypatch):
+    monkeypatch.setenv("GAOKAO_ENV", "prod")
+    monkeypatch.setenv("GAOKAO_JWT_SECRET", "x" * 64)
+    monkeypatch.setenv("GAOKAO_PORTAL_TOKEN_SECRET", "Z" * 64)
+    monkeypatch.setenv("GAOKAO_PAYMENT_WEBHOOK_SECRET", "P" + "r" * 31 + "!" * 32)
+    monkeypatch.setenv("GAOKAO_PAYMENT_PROVIDER", "foo")
+
+    with pytest.raises(RuntimeError, match=r"GAOKAO_PAYMENT_PROVIDER=foo"):
+        _reload_settings()

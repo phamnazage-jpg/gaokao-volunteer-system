@@ -64,3 +64,20 @@ def test_design_doc_is_substantive(relpath: str, required: tuple[str, ...]):
     assert matched, (
         f"{relpath} 缺少任一必含关键词; 期望至少一个来自 {required!r}"
     )
+
+
+def test_product_docs_keep_current_vs_target_boundary():
+    current = (DOCS_DIR / "CURRENT_STATE.md").read_text(encoding="utf-8")
+    readme = (REPO_ROOT / "README.md").read_text(encoding="utf-8")
+    prd = (REPO_ROOT / "product" / "PRD.md").read_text(encoding="utf-8")
+    roadmap = (REPO_ROOT / "product" / "ROADMAP.md").read_text(encoding="utf-8")
+    runbook = (
+        DOCS_DIR / "DELIVERY_RETENTION_OPS_RUNBOOK.md"
+    ).read_text(encoding="utf-8")
+
+    assert "不是完整 Web 自助 SaaS" in current
+    assert "不是完整用户端 Web 自助产品" in readme
+    assert "Web系统流程（目标态）" in prd
+    assert "目标态 Web 自助闭环" in roadmap
+    assert "`ready` 与 `validated`" in runbook
+    assert "`ready -> validated`" in readme

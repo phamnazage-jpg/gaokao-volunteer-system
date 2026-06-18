@@ -43,6 +43,15 @@ def _prepare_backup_dir(staging: Path) -> None:
     if src_reports.exists():
         shutil.copytree(src_reports, files_dir / "reports")
 
+    examples_dir = files_dir / "examples"
+    examples_dir.mkdir(parents=True, exist_ok=True)
+    sample_html = REPO_ROOT / "data" / "examples" / "gaokao_report_李明_20260611_122443.html"
+    sample_pdf = REPO_ROOT / "data" / "examples" / "gaokao_report_李明_20260611_122443.pdf"
+    if sample_html.exists():
+        shutil.copy(sample_html, examples_dir / sample_html.name)
+    if sample_pdf.exists():
+        shutil.copy(sample_pdf, examples_dir / sample_pdf.name)
+
 
 def test_backup_verify_uses_venv_python_for_service_level_restore(tmp_path):
     staging = tmp_path / "backup"
@@ -78,3 +87,29 @@ def test_backup_verify_uses_venv_python_for_service_level_restore(tmp_path):
     # motivated this regression lock.
     assert "ModuleNotFoundError" not in proc.stderr
     assert "ModuleNotFoundError" not in proc.stdout
+
+
+def test_backup_restore_smoke_fails_fast_when_admin_db_missing(tmp_path):
+    staging = tmp_path / "backup"
+    _prepare_backup_dir(staging)
+    admin_db = staging / "db" / "admin.db"
+    if admin_db.exists():
+        admin_db.unlink()
+
+    proc = subprocess.run(
+        [
+            str(REPO_ROOT / ".venv" / "bin" / "python"),
+            str(SCRIPTS_DIR / "backup_restore_smoke.py"),
+            "--backup-dir",
+            str(staging),
+        ],
+        cwd=REPO_ROOT,
+        text=True,
+        capture_output=True,
+        check=False,
+        timeout=10,
+    )
+
+    assert proc.returncode != 0
+    assert "restore precondition failed" in proc.stderr
+    assert "db/admin.db" in proc.stderr

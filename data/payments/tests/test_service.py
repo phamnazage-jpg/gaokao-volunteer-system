@@ -1,8 +1,11 @@
 from __future__ import annotations
 
+import threading
+
 import pytest
 
 from data.orders.dao import OrdersDAO
+from data.payments.dao import PaymentDAO
 from data.orders.models import Order
 from data.payments.service import PaymentService
 
@@ -44,6 +47,95 @@ def test_create_checkout_is_idempotent_for_pending_payment(settings):
     assert payment is not None
     assert payment.status == "pending"
     assert payment.amount_cents == 9900
+
+
+def test_create_checkout_returns_same_payment_for_paid_order(settings):
+    order = _seed_order(settings.orders_db_path, order_id="GKO-20260617-PAID-REUSE")
+    service = PaymentService.for_db(
+        settings.orders_db_path,
+        base_url=settings.payment_base_url,
+        webhook_secret=settings.payment_webhook_secret,
+    )
+
+    first = service.create_checkout(order.id, portal_token="portal-token")
+    payload, headers = service.provider.build_webhook_request(
+        payment_id=first.payment_id,
+        amount_cents=order.amount_cents,
+        provider_trade_no="MOCK-PAID-REUSE-001",
+    )
+    service.handle_webhook(payload, headers["X-Mock-Signature"])
+
+    second = service.create_checkout(order.id, portal_token="portal-token")
+
+    assert first.payment_id == second.payment_id
+    payment = service.get_payment_by_order(order.id)
+    assert payment is not None
+    assert payment.status == "paid"
+
+    payments = PaymentDAO.for_db(settings.orders_db_path)
+    try:
+        all_payments = payments.list_by_order(order.id)
+    finally:
+        payments.close()
+    assert [item.id for item in all_payments] == [first.payment_id]
+
+
+def test_create_checkout_is_serialized_to_single_pending_payment(
+    settings, monkeypatch: pytest.MonkeyPatch
+):
+    order = _seed_order(settings.orders_db_path, order_id="GKO-20260617-CONCURRENT-PAY")
+    service = PaymentService.for_db(
+        settings.orders_db_path,
+        base_url=settings.payment_base_url,
+        webhook_secret=settings.payment_webhook_secret,
+    )
+
+    original_create = PaymentDAO.create
+
+    def slow_create(self, payment):
+        import time
+
+        time.sleep(0.1)
+        return original_create(self, payment)
+
+    monkeypatch.setattr(PaymentDAO, "create", slow_create)
+
+    results: list[str] = []
+    errors: list[BaseException] = []
+
+    def worker() -> None:
+        local_service = PaymentService.for_db(
+            settings.orders_db_path,
+            base_url=settings.payment_base_url,
+            webhook_secret=settings.payment_webhook_secret,
+        )
+        try:
+            checkout = local_service.create_checkout(order.id, portal_token="portal-token")
+            results.append(checkout.payment_id)
+        except BaseException as exc:  # pragma: no cover - 调试兜底
+            errors.append(exc)
+
+    first = threading.Thread(target=worker)
+    second = threading.Thread(target=worker)
+    first.start()
+    second.start()
+    first.join()
+    second.join()
+
+    assert not errors
+    assert len(results) == 2
+    assert len(set(results)) == 1
+
+    payment = service.get_payment_by_order(order.id)
+    assert payment is not None
+    assert payment.status == "pending"
+    payments = PaymentDAO.for_db(settings.orders_db_path)
+    try:
+        all_payments = payments.list_by_order(order.id)
+    finally:
+        payments.close()
+    assert len(all_payments) == 1
+    assert all_payments[0].status == "pending"
 
 
 def test_request_refund_is_idempotent_after_payment_success(settings):
@@ -122,3 +214,37 @@ def test_handle_webhook_rolls_back_payment_if_order_transition_fails(
         history = dao.get_status_history(order.id)
     assert reloaded.status == "pending"
     assert [item.to_status for item in history] == ["pending"]
+
+
+def test_handle_webhook_keeps_refunded_payment_terminal_state(settings):
+    order = _seed_order(settings.orders_db_path, order_id="GKO-20260617-REFUND-REPLAY")
+    service = PaymentService.for_db(
+        settings.orders_db_path,
+        base_url=settings.payment_base_url,
+        webhook_secret=settings.payment_webhook_secret,
+    )
+    checkout = service.create_checkout(order.id, portal_token="portal-token")
+    payload, headers = service.provider.build_webhook_request(
+        payment_id=checkout.payment_id,
+        amount_cents=order.amount_cents,
+        provider_trade_no="MOCK-REFUND-REPLAY-001",
+    )
+
+    first = service.handle_webhook(payload, headers["X-Mock-Signature"])
+    assert first.idempotent is False
+    refund = service.request_refund(order.id, reason="parent_request")
+    assert refund.status == "refunded"
+
+    replay = service.handle_webhook(payload, headers["X-Mock-Signature"])
+    assert replay.idempotent is True
+    assert replay.order_status == "refunded"
+
+    payment = service.get_payment(checkout.payment_id)
+    assert payment is not None
+    assert payment.status == "refunded"
+
+    with OrdersDAO.connect(settings.orders_db_path) as dao:
+        refunded_order = dao.get(order.id)
+        history = dao.get_status_history(order.id)
+    assert refunded_order.status == "refunded"
+    assert [item.to_status for item in history] == ["pending", "paid", "refunded"]

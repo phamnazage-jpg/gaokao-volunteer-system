@@ -14,6 +14,7 @@
 - `national/2024.json`
 - `national/latest.json`
 - `schools/2026/10001.json`（北京大学示例骨架）
+- `changes/2024-2026.md`（版本化更新策略与变更记录入口）
 
 ## coverage_mode
 
@@ -25,3 +26,10 @@
 1. 扩充国家级目录到完整教育部 2024 本科专业目录
 2. 新增 `schools/<year>/<school_code>.json`
 3. 接入 majors validation 到 audit engine
+
+## 版本化更新策略
+
+- 国家目录按 `national/<year>.json` 归档，`national/latest.json` 指向当前默认快照。
+- 校级招生目录按 `schools/<year>/<school_code>.json` 归档，每个文件必须显式带 `version`。
+- 跨年变化汇总记录在 `changes/2024-2026.md`，用于解释风险标签与更新批次。
+- loader / verify 必须能读取 `version`、`last_verified_at`、`version_strategy`，不能只依赖目录命名推断。

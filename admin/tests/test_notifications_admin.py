@@ -39,11 +39,16 @@ def test_admin_notification_list_api_filters_by_status_and_channel(client, auth_
         service.mark_validated(order.id, event_type="report_ready", payload_json='{"kind":"station"}')
         service.notify_event(
             order.id,
-            event_type="report_ready_email",
+            event_type="report_ready",
             channel="email",
             payload_json='{"kind":"email"}',
         )
-        service.mark_delivered(order.id, event_type="report_ready_email", payload_json='{"kind":"email"}')
+        service.mark_delivered(
+            order.id,
+            event_type="report_ready",
+            channel="email",
+            payload_json='{"kind":"email"}',
+        )
     finally:
         service.close()
 
