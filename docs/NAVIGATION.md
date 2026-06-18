@@ -71,8 +71,8 @@
 
 | 文档                                                | 用途         |
 | --------------------------------------------------- | ------------ |
-| [provinces/README.md](../rules/provinces/README.md) | 省份规则总览 |
-| [provinces.md](../rules/provinces.md)               | 27省规则详情 |
+| [provinces/README.md](../rules/provinces/README.md) | 省份规则目录入口 |
+| [provinces.md](../rules/provinces.md)               | 省份规则索引与 truth/evidence 入口 |
 | [errors/ERRORS.md](../rules/errors/ERRORS.md)       | 错误模式库   |
 
 ### 📖 案例文档（docs/case-studies/）
@@ -120,7 +120,7 @@
 
 ### 场景5：我想了解规则
 
-→ [rules/provinces.md](../rules/provinces.md) → [rules/errors/ERRORS.md](../rules/errors/ERRORS.md)
+→ [rules/provinces.md](../rules/provinces.md) → `rules/_truth/province/*.yaml` / `rules/_evidence/` → [rules/errors/ERRORS.md](../rules/errors/ERRORS.md)
 
 ### 场景6：我想查看案例
 

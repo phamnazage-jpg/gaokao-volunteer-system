@@ -95,11 +95,9 @@ python3 ~/.local/bin/gaokao-quick-3min.py
 
 **A**: 共27个省
 
-- 院校专业组模式：湖南、广东、湖北等14省
-- 专业+学校模式：浙江、山东、河北等8省
-- 传统模式：河南、四川、新疆等5省
-
-详见 [rules/provinces.md](rules/provinces.md)
+- 详细字段真相源在 `rules/_truth/province/*.yaml`
+- 官方摘录证据在 `rules/_evidence/`
+- 对外阅读入口见 [rules/provinces.md](rules/provinces.md)
 
 ### Q10: 数据准确吗？
 
