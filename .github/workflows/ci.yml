@@ -66,6 +66,10 @@ jobs:
         run: |
           PYTHON_BIN=python bash scripts/dev-verify.sh
 
+      - name: Run PDF runtime smoke
+        run: |
+          python -m pytest -q tests/test_pdf_runtime_smoke.py
+
       - name: Upload coverage artifact
         if: always() && matrix.python-version == '3.11' && hashFiles('coverage.xml') != ''
         uses: actions/upload-artifact@v4

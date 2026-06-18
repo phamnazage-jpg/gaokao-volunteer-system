@@ -7,7 +7,6 @@ import pytest
 from data.orders.dao import OrdersDAO
 from data.payments.dao import PaymentDAO
 from data.orders.models import Order
-from data.payments.models import PaymentRecord
 from data.payments.service import PaymentService
 
 
@@ -278,18 +277,6 @@ def test_failed_payment_state_is_not_rendered_as_portal_stage(settings):
 
     from admin.routes.web_public import _build_portal_context
 
-    failed_payment = PaymentRecord(
-        id=payment.id,
-        order_id=payment.order_id,
-        provider=payment.provider,
-        amount_cents=payment.amount_cents,
-        currency=payment.currency,
-        status="failed",
-        checkout_token=payment.checkout_token,
-        callback_payload=payment.callback_payload,
-        created_at=payment.created_at,
-        updated_at=payment.updated_at,
-    )
     dao = PaymentDAO.for_db(settings.orders_db_path)
     try:
         dao.update_status(payment.id, status="failed")

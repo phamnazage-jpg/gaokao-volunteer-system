@@ -9,7 +9,7 @@ from fastapi import APIRouter, Depends, Query
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 
-from admin.auth import get_current_user, require_role
+from admin.auth import require_role
 from admin.config import Settings, get_settings_dep
 from admin.db import AdminUser
 

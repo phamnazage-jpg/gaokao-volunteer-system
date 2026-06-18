@@ -162,6 +162,16 @@ bash scripts/dev-verify.sh
 GAOKAO_SKIP_INSTALL=1 bash scripts/dev-verify.sh
 ```
 
+### PDF 运行时证明
+
+当前仓库的 PDF 生成证明口径：
+
+- 本地 smoke：`./.venv/bin/python -m pytest -q tests/test_pdf_runtime_smoke.py`
+- CI smoke：GitHub Actions 额外执行 `tests/test_pdf_runtime_smoke.py`
+- Docker 运行时：`Dockerfile` 已显式安装 WeasyPrint 所需系统库（`libpango-1.0-0`、`libpangoft2-1.0-0`、`libharfbuzz-subset0` 等）
+
+这才表示“PDF 运行时已被交付门禁覆盖”；不是只靠开发机本地可跑。
+
 ### T12 交付事件最小执行链
 
 当前 `report_ready` 不再只停留在事件表：

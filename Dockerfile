@@ -11,6 +11,17 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     no_proxy= \
     NO_PROXY=
 
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        libpango-1.0-0 \
+        libpangoft2-1.0-0 \
+        libharfbuzz-subset0 \
+        libjpeg62-turbo \
+        libopenjp2-7 \
+        libffi8 \
+        shared-mime-info \
+    && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 
 COPY constraints.txt requirements-admin.txt /tmp/

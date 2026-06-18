@@ -20,7 +20,7 @@ from typing import Any, Literal, Optional, cast
 from fastapi import APIRouter, Depends, Path as ApiPath, Query, Response, status
 from pydantic import BaseModel, Field
 
-from admin.auth import get_current_user, require_role
+from admin.auth import require_role
 from admin.config import Settings, get_settings_dep
 from admin.db import AdminUser
 from admin.errors import (

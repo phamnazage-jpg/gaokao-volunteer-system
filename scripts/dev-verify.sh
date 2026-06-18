@@ -3,7 +3,14 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 VENV_DIR="${ROOT_DIR}/.venv"
-PYTHON_BIN="${PYTHON_BIN:-python3}"
+DEFAULT_PYTHON_BIN="python3"
+if [[ -n "${PYTHON_BIN+x}" ]]; then
+  PYTHON_BIN_WAS_DEFAULT=0
+  PYTHON_BIN="${PYTHON_BIN}"
+else
+  PYTHON_BIN_WAS_DEFAULT=1
+  PYTHON_BIN="${DEFAULT_PYTHON_BIN}"
+fi
 SKIP_INSTALL="${GAOKAO_SKIP_INSTALL:-0}"
 # P1 整改板完成后, 我们仍把 P2 pre-existing tests (locust / 解释器漂移)
 # 视为已知遗留问题。X-06 引入 ``--skip-pre-existing`` 以便在本地一键
@@ -35,6 +42,11 @@ ensure_python_bin_matches_venv() {
   venv_version="$(python_version_of "${VENV_DIR}/bin/python")"
   target_version="$(python_version_of "${PYTHON_BIN}")"
   if [[ "${venv_version}" != "${target_version}" ]]; then
+    if [[ "${PYTHON_BIN_WAS_DEFAULT}" == "1" && "${PYTHON_BIN}" == "${DEFAULT_PYTHON_BIN}" ]]; then
+      log "python bin drift detected against default interpreter; reusing ${VENV_DIR}/bin/python"
+      PYTHON_BIN="${VENV_DIR}/bin/python"
+      return
+    fi
     log "python bin drift detected: venv=${venv_version} target=${target_version}"
     log "remove ${VENV_DIR} and rerun, or point PYTHON_BIN at a matching interpreter"
     return 1

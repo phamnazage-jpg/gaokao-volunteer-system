@@ -32,6 +32,7 @@ from admin.config import (
 )
 from admin.db import bootstrap_admin, ensure_schema
 from admin.errors import register_exception_handler
+from data.orders.intake_store import SCHEMA_SQL as INTAKE_SCHEMA_SQL
 from admin.logging_utils import (
     bind_request_context,
     clear_request_context,
@@ -98,6 +99,8 @@ def _setup_database(settings: Settings) -> None:
     cases_conn = apply_cases_schema(settings.db_path)
     cases_conn.close()
     orders_conn = apply_orders_schema(settings.orders_db_path)
+    orders_conn.executescript(INTAKE_SCHEMA_SQL)
+    orders_conn.commit()
     orders_conn.close()
     created, msg = bootstrap_admin(settings)
     if created:

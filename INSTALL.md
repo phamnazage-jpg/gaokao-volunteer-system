@@ -115,7 +115,17 @@ export QQ_EMAIL_PASSWORD="your-password"
 echo 'export QQ_EMAIL_PASSWORD="your-password"' >> ~/.bashrc
 ```
 
-### 3. 配置浏览器（可选）
+### 3. PDF 运行时依赖（必看）
+
+当前仓库验证过的 PDF 生成口径：
+
+- 本地：激活 `.venv` 后执行 `python -m pytest -q tests/test_pdf_runtime_smoke.py`
+- CI：workflow 会额外跑同一条 smoke
+- Docker：`Dockerfile` 已安装 WeasyPrint 所需系统库
+
+如果你的机器缺少系统库，WeasyPrint 可能安装成功但生成 PDF 失败。
+
+### 4. 配置浏览器（可选）
 
 用于生成PDF：
 
@@ -202,16 +212,14 @@ hermes skills reload
 
 ### Q4: PDF 生成失败
 
-**原因**: weasyprint 依赖缺失
+**原因**: WeasyPrint 系统库缺失，或未跑过 PDF smoke
 
 **解决**:
 
 ```bash
-# 安装系统依赖
-sudo apt-get install libpango-1.0-0 libpangoft2-1.0-0
-
-# 重新安装 weasyprint
-pip3 install --user --break-system-packages --force-reinstall weasyprint
+sudo apt-get install libpango-1.0-0 libpangoft2-1.0-0 libharfbuzz-subset0
+source .venv/bin/activate
+python -m pytest -q tests/test_pdf_runtime_smoke.py
 ```
 
 ### Q5: Git 提交失败

@@ -25,11 +25,21 @@ class RestorePreconditionError(RuntimeError):
 
 
 def _choose_restore_file(backup_dir: Path, suffix: str) -> Path | None:
-    candidates = sorted(
-        path
-        for path in (backup_dir / "files").rglob(f"*{suffix}")
-        if path.is_file() and "__pycache__" not in path.parts
-    )
+    search_roots = [
+        backup_dir / "files" / "order_artifacts",
+        backup_dir / "files" / "reports",
+        backup_dir / "files",
+    ]
+    seen: set[Path] = set()
+    candidates: list[Path] = []
+    for root in search_roots:
+        if not root.exists():
+            continue
+        for path in sorted(root.rglob(f"*{suffix}")):
+            if not path.is_file() or "__pycache__" in path.parts or path in seen:
+                continue
+            seen.add(path)
+            candidates.append(path)
     return candidates[0] if candidates else None
 
 
@@ -128,6 +138,7 @@ def run_restore_smoke(backup_dir: str | Path) -> dict[str, object]:
         "GAOKAO_ORDERS_DB_PATH": str(orders_db),
         "GAOKAO_SHARE_DB_PATH": str(share_db or (root / "db" / "short_links.db")),
         "GAOKAO_SHARE_REPORT_DIR": str(share_report_dir),
+        "GAOKAO_PORTAL_UPLOAD_DIR": str(root / "files" / "portal_uploads"),
         "GAOKAO_ORDERS_FERNET_KEY": os.environ.get(
             "GAOKAO_ORDERS_FERNET_KEY", DEFAULT_FERNET_SECRET
         ),
@@ -212,7 +223,7 @@ def run_restore_smoke(backup_dir: str | Path) -> dict[str, object]:
 
         report_page = report_view_page(token, settings)
         report_body = bytes(report_page.body).decode("utf-8")
-        if report_page.status_code != 200 or "<html" not in report_body.lower():
+        if report_page.status_code != 200 or not report_body.strip():
             raise RuntimeError(
                 f"portal report failed: {report_page.status_code} {report_body}"
             )

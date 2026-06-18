@@ -58,8 +58,10 @@ def test_order_status_page_and_report_download(client, settings, tmp_path: Path)
         submit=True,
     )
 
-    report_path = tmp_path / "report.html"
-    pdf_path = tmp_path / "report.pdf"
+    report_root = Path(settings.share_report_dir)
+    report_root.mkdir(parents=True, exist_ok=True)
+    report_path = report_root / "report.html"
+    pdf_path = report_root / "report.pdf"
     report_path.write_text("<h1>志愿方案报告</h1><p>已生成。</p>", encoding="utf-8")
     pdf_path.write_bytes(b"%PDF-1.4\nportal-report\n")
 
@@ -99,8 +101,10 @@ def test_portal_status_page_shows_sent_station_notification(
         order_id=order.id, payload={"candidate_score": 578}, submit=True
     )
 
-    report_path = tmp_path / "status-notice-report.html"
-    pdf_path = tmp_path / "status-notice-report.pdf"
+    report_root = Path(settings.share_report_dir)
+    report_root.mkdir(parents=True, exist_ok=True)
+    report_path = report_root / "status-notice-report.html"
+    pdf_path = report_root / "status-notice-report.pdf"
     report_path.write_text("<h1>志愿方案报告</h1><p>已生成。</p>", encoding="utf-8")
     pdf_path.write_bytes(b"%PDF-1.4\nportal-notice\n")
 
@@ -192,7 +196,9 @@ def test_partial_artifacts_do_not_expose_delivery_links_before_report_ready(
         submit=True,
     )
 
-    report_path = tmp_path / "partial-report.html"
+    report_root = Path(settings.share_report_dir)
+    report_root.mkdir(parents=True, exist_ok=True)
+    report_path = report_root / "partial-report.html"
     report_path.write_text("<h1>partial</h1>", encoding="utf-8")
     with OrdersDAO.connect(settings.orders_db_path) as dao:
         dao.update(
