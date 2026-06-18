@@ -15,6 +15,7 @@ import pytest
 
 from admin.auth import TokenError, decode_token, encode_token
 from admin.db import AdminUser
+from admin.errors import BusinessError
 
 
 def _make_user() -> AdminUser:
@@ -134,3 +135,19 @@ def test_get_current_user_rejects_inactive(settings):
     with TestClient(app) as c:
         resp = c.get("/api/auth/me", headers={"Authorization": f"Bearer {token}"})
         assert resp.status_code == 403
+
+
+def test_require_role_rejects_non_admin_user(settings):
+    from admin.auth import require_role
+    from admin.db import AdminUserRepo, ensure_schema
+
+    ensure_schema(settings.db_path)
+    repo = AdminUserRepo(settings.db_path)
+    viewer = repo.create(username="viewer-role-test", password="p@ss123", role="viewer")
+
+    dep = require_role("admin")
+
+    with pytest.raises(BusinessError) as exc_info:
+        dep(viewer)
+
+    assert str(exc_info.value.code) == "E01301"

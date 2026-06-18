@@ -86,6 +86,33 @@ def test_notification_audit_page_shows_station_and_email_events(client, settings
     assert "report_ready" in page.text
     assert "report_ready" in page.text
 
+def test_viewer_cannot_access_notification_admin_page(client, viewer_headers, settings, tmp_path: Path):
+    order = _seed_order(settings.orders_db_path, order_id="GKO-20260615-NOTIFY-VIEWER")
+    _mark_paid(settings, order)
+    IntakeStore.for_db(settings.orders_db_path).save(
+        order_id=order.id, payload={"candidate_score": 578}, submit=True
+    )
+
+    report_path = tmp_path / "viewer-report.html"
+    pdf_path = tmp_path / "viewer-report.pdf"
+    report_path.write_text("<h1>report</h1>", encoding="utf-8")
+    pdf_path.write_bytes(b"%PDF-1.4\nviewer\n")
+    with OrdersDAO.connect(settings.orders_db_path) as dao:
+        dao.update(
+            order.id,
+            {"audit_report": str(report_path), "pdf_path": str(pdf_path)},
+            actor="test",
+            reason="attach_report",
+        )
+        dao.transition_status(order.id, "serving", actor="test", reason="processing")
+        dao.transition_status(order.id, "delivered", actor="test", reason="report_ready")
+
+    resp = client.get("/admin/notifications", headers=viewer_headers)
+    assert resp.status_code == 403
+    body = resp.json()
+    assert body["code"] == "E01301"
+
+
 def test_notification_audit_page_hides_payload_details(client, settings, tmp_path: Path):
     order = _seed_order(settings.orders_db_path, order_id="GKO-20260615-NOTIFY-HIDE")
     _mark_paid(settings, order)

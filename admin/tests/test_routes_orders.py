@@ -284,6 +284,30 @@ def test_patch_order_rejects_pdf_path_outside_allowed_report_dir(
     assert "untrusted artifact" in body["detail"]["reason"]
 
 
+def test_viewer_cannot_list_orders(client, viewer_headers, settings):
+    _seed_order(settings, id="GKO-20260612-VIEWER-LIST")
+
+    resp = client.get("/api/orders", headers=viewer_headers)
+
+    assert resp.status_code == 403
+    body = resp.json()
+    assert body["code"] == "E01301"
+
+
+def test_viewer_cannot_patch_order(client, viewer_headers, settings):
+    created = _seed_order(settings, id="GKO-20260612-VIEWER-PATCH")
+
+    resp = client.patch(
+        f"/api/orders/{created.id}",
+        headers=viewer_headers,
+        json={"updates": {"notes": "viewer should fail"}, "reason": "forbidden"},
+    )
+
+    assert resp.status_code == 403
+    body = resp.json()
+    assert body["code"] == "E01301"
+
+
 def test_export_orders_csv_returns_masked_rows(client, auth_headers, settings):
     _seed_order(
         settings,

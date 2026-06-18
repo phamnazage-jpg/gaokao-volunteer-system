@@ -12,7 +12,7 @@ from typing import Any, Optional
 from fastapi import APIRouter, Depends, Path, Query
 from pydantic import BaseModel
 
-from admin.auth import get_current_user
+from admin.auth import get_current_user, require_role
 from admin.config import Settings, get_settings_dep
 from admin.db import AdminUser
 from admin.errors import DATA_NOT_FOUND
@@ -56,7 +56,7 @@ def list_users(
         None, min_length=1, description="姓名/手机号/微信/订单号搜索"
     ),
     settings: Settings = Depends(get_settings_dep),
-    _: AdminUser = Depends(get_current_user),
+    _: AdminUser = Depends(require_role("admin")),
 ) -> dict[str, Any]:
     return build_user_list_payload(
         settings.orders_db_path,
@@ -74,7 +74,7 @@ def list_users(
 def get_user_detail(
     user_key: str = Path(..., min_length=1),
     settings: Settings = Depends(get_settings_dep),
-    _: AdminUser = Depends(get_current_user),
+    _: AdminUser = Depends(require_role("admin")),
 ) -> dict[str, Any]:
     try:
         return build_user_detail_payload(settings.orders_db_path, user_key)

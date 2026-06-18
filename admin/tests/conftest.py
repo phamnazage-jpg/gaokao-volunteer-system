@@ -370,3 +370,18 @@ def auth_token(client) -> str:
 @pytest.fixture
 def auth_headers(auth_token) -> dict:
     return {"Authorization": f"Bearer {auth_token}"}
+
+
+@pytest.fixture
+def viewer_token(settings):
+    from admin.auth import encode_token
+    from admin.db import AdminUserRepo
+
+    repo = AdminUserRepo(settings.db_path)
+    viewer = repo.create("viewer", "viewer-pass-123", role="viewer")
+    return encode_token(viewer, settings)
+
+
+@pytest.fixture
+def viewer_headers(viewer_token) -> dict:
+    return {"Authorization": f"Bearer {viewer_token}"}

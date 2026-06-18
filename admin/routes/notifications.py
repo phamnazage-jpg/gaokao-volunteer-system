@@ -9,7 +9,7 @@ from fastapi import APIRouter, Depends, Query
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 
-from admin.auth import get_current_user
+from admin.auth import get_current_user, require_role
 from admin.config import Settings, get_settings_dep
 from admin.db import AdminUser
 
@@ -68,7 +68,7 @@ class DeletionRequestResponse(BaseModel):
 def list_deletion_requests(
     limit: int = Query(50, ge=1, le=200),
     order_id: Optional[str] = Query(None),
-    _: AdminUser = Depends(get_current_user),
+    _: AdminUser = Depends(require_role("admin")),
     settings: Settings = Depends(get_settings_dep),
 ) -> dict[str, Any]:
     path = Path(settings.deletion_request_log_path)
@@ -94,7 +94,7 @@ def list_deletion_requests(
 def deletion_request_admin_page(
     limit: int = Query(50, ge=1, le=200),
     order_id: Optional[str] = Query(None),
-    _: AdminUser = Depends(get_current_user),
+    _: AdminUser = Depends(require_role("admin")),
     settings: Settings = Depends(get_settings_dep),
 ) -> HTMLResponse:
     payload = list_deletion_requests(
@@ -139,7 +139,7 @@ def deletion_request_admin_page(
 @router.get("/ops-alerts", response_model=OpsAlertListResponse, summary="运维告警列表")
 def list_ops_alerts(
     limit: int = Query(50, ge=1, le=200),
-    _: AdminUser = Depends(get_current_user),
+    _: AdminUser = Depends(require_role("admin")),
     settings: Settings = Depends(get_settings_dep),
 ) -> dict[str, Any]:
     path = Path(settings.ops_alert_log_path)
@@ -159,7 +159,7 @@ def list_ops_alerts(
 
 @page_router.get("/admin/ops-alerts", include_in_schema=False)
 def ops_alert_audit_page(
-    _: AdminUser = Depends(get_current_user),
+    _: AdminUser = Depends(require_role("admin")),
     settings: Settings = Depends(get_settings_dep),
 ) -> HTMLResponse:
     payload = list_ops_alerts(limit=200, _=_, settings=settings)
@@ -207,7 +207,7 @@ def list_notifications(
     order_id: Optional[str] = Query(None),
     status: Optional[str] = Query(None),
     channel: Optional[str] = Query(None),
-    _: AdminUser = Depends(get_current_user),
+    _: AdminUser = Depends(require_role("admin")),
     settings: Settings = Depends(get_settings_dep),
 ) -> dict[str, Any]:
     from data.notifications.email_service import DeliveryNotificationService
@@ -273,7 +273,7 @@ def notification_audit_admin_page(
     order_id: Optional[str] = Query(None),
     status: Optional[str] = Query(None),
     channel: Optional[str] = Query(None),
-    _: AdminUser = Depends(get_current_user),
+    _: AdminUser = Depends(require_role("admin")),
     settings: Settings = Depends(get_settings_dep),
 ) -> HTMLResponse:
     payload = list_notifications(

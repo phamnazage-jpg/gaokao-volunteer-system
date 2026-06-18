@@ -18,6 +18,7 @@ from admin.config import Settings
 from admin.db import AdminUser, AdminUserRepo
 from admin.errors import (
     AUTH_ACCOUNT_DISABLED,
+    AUTH_INSUFFICIENT_PERMISSION,
     AUTH_TOKEN_EXPIRED,
     AUTH_TOKEN_INVALID,
     BusinessError,
@@ -139,3 +140,19 @@ def get_current_user(
     if not user.is_active:
         raise BusinessError(AUTH_ACCOUNT_DISABLED, detail={"user_id": user.id})
     return user
+
+
+def require_role(*allowed_roles: str):
+    def _dep(user: AdminUser = Depends(get_current_user)) -> AdminUser:
+        if user.role not in allowed_roles:
+            raise BusinessError(
+                AUTH_INSUFFICIENT_PERMISSION,
+                detail={
+                    "required_roles": list(allowed_roles),
+                    "actual_role": user.role,
+                    "user_id": user.id,
+                },
+            )
+        return user
+
+    return _dep

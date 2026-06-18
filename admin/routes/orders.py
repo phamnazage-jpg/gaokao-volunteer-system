@@ -20,7 +20,7 @@ from typing import Any, Literal, Optional, cast
 from fastapi import APIRouter, Depends, Path as ApiPath, Query, Response, status
 from pydantic import BaseModel, Field
 
-from admin.auth import get_current_user
+from admin.auth import get_current_user, require_role
 from admin.config import Settings, get_settings_dep
 from admin.db import AdminUser
 from admin.errors import (
@@ -398,7 +398,7 @@ def list_orders(
     status_filter: Optional[OrderStatus] = Query(None, alias="status"),
     source: Optional[OrderSource] = Query(None),
     settings: Settings = Depends(get_settings_dep),
-    _: AdminUser = Depends(get_current_user),
+    _: AdminUser = Depends(require_role("admin")),
 ) -> list[dict[str, Any]]:
     with OrdersDAO.connect(settings.orders_db_path) as dao:
         orders = dao.list(
@@ -427,7 +427,7 @@ def export_orders_csv(
     status_filter: Optional[OrderStatus] = Query(None, alias="status"),
     source: Optional[OrderSource] = Query(None),
     settings: Settings = Depends(get_settings_dep),
-    _: AdminUser = Depends(get_current_user),
+    _: AdminUser = Depends(require_role("admin")),
 ) -> Response:
     with OrdersDAO.connect(settings.orders_db_path) as dao:
         orders = dao.list(status=status_filter, source=source, limit=limit, offset=0)
@@ -459,7 +459,7 @@ def export_orders_csv(
 def get_order(
     order_id: str = ApiPath(..., min_length=1),
     settings: Settings = Depends(get_settings_dep),
-    _: AdminUser = Depends(get_current_user),
+    _: AdminUser = Depends(require_role("admin")),
 ) -> dict[str, Any]:
     with OrdersDAO.connect(settings.orders_db_path) as dao:
         try:
@@ -489,7 +489,7 @@ def get_order(
 def create_order(
     payload: CreateOrderRequest,
     settings: Settings = Depends(get_settings_dep),
-    current_user: AdminUser = Depends(get_current_user),
+    current_user: AdminUser = Depends(require_role("admin")),
 ) -> dict[str, Any]:
     order = Order(
         id=generate_order_id(),
@@ -543,7 +543,7 @@ def create_order(
 def create_dev_seed_order(
     payload: DevSeedRequest,
     settings: Settings = Depends(get_settings_dep),
-    current_user: AdminUser = Depends(get_current_user),
+    current_user: AdminUser = Depends(require_role("admin")),
 ) -> dict[str, Any]:
     _ensure_non_prod_seed_env(settings)
     if payload.scenario == "overdue_pending_once":
@@ -577,7 +577,7 @@ def patch_order(
     payload: UpdateOrderRequest,
     order_id: str = ApiPath(..., min_length=1),
     settings: Settings = Depends(get_settings_dep),
-    current_user: AdminUser = Depends(get_current_user),
+    current_user: AdminUser = Depends(require_role("admin")),
 ) -> dict[str, Any]:
     updates = _normalize_updates(payload.updates, settings)
     if not updates and payload.to_status is None:
@@ -669,7 +669,7 @@ def delete_or_anonymize_order(
     mode: Literal["delete", "anonymize"] = Query("delete"),
     reason: str = Query(..., min_length=1),
     settings: Settings = Depends(get_settings_dep),
-    current_user: AdminUser = Depends(get_current_user),
+    current_user: AdminUser = Depends(require_role("admin")),
 ) -> dict[str, Any]:
     service = OrderDeletionService.for_db(settings.orders_db_path)
     try:
