@@ -70,6 +70,15 @@ class IntakeStore:
     ) -> IntakeRecord:
         now = utc_now_iso()
         status = "submitted" if submit else "draft"
+        normalized_payload = dict(payload)
+        if submit:
+            normalized_payload.setdefault("consent_channel", "portal")
+            normalized_payload.setdefault("consent_operator", "guardian")
+            normalized_payload.setdefault("consent_given_at", now)
+            if normalized_payload.get("privacy_accepted"):
+                normalized_payload.setdefault("privacy_accepted_at", now)
+            if normalized_payload.get("service_terms_accepted"):
+                normalized_payload.setdefault("service_terms_accepted_at", now)
         current = self.get(order_id)
         if current is None:
             self._conn.execute(
@@ -77,7 +86,7 @@ class IntakeStore:
                 (
                     order_id,
                     status,
-                    json.dumps(payload, ensure_ascii=False),
+                    json.dumps(normalized_payload, ensure_ascii=False),
                     now,
                     now,
                     now if submit else None,
@@ -88,7 +97,7 @@ class IntakeStore:
                 "UPDATE order_intakes SET status=?, payload_json=?, updated_at=?, submitted_at=? WHERE order_id=?",
                 (
                     status,
-                    json.dumps(payload, ensure_ascii=False),
+                    json.dumps(normalized_payload, ensure_ascii=False),
                     now,
                     now if submit else current.submitted_at,
                     order_id,

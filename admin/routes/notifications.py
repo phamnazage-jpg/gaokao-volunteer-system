@@ -37,6 +37,31 @@ class NotificationListResponse(BaseModel):
     items: list[NotificationEventResponse]
 
 
+_NOTIFICATION_PAYLOAD_ALLOWLIST = {
+    "kind",
+    "delivery_channel",
+    "delivery_stage",
+    "reason",
+    "status",
+}
+
+
+def _sanitize_notification_payload(raw: str | None) -> dict[str, Any] | str | None:
+    if not raw:
+        return None
+    try:
+        payload = json.loads(raw)
+    except Exception:
+        return None
+    if not isinstance(payload, dict):
+        return None
+    sanitized: dict[str, Any] = {}
+    for key in _NOTIFICATION_PAYLOAD_ALLOWLIST:
+        if key in payload:
+            sanitized[key] = payload[key]
+    return sanitized
+
+
 class OpsAlertEventResponse(BaseModel):
     created_at: str
     alert_type: str
@@ -238,13 +263,7 @@ def list_notifications(
 
     items = []
     for row in rows:
-        payload = None
-        raw = row["payload_json"]
-        if raw:
-            try:
-                payload = json.loads(raw)
-            except Exception:
-                payload = raw
+        payload = _sanitize_notification_payload(row["payload_json"])
         items.append(
             {
                 "order_id": row["order_id"],

@@ -59,7 +59,7 @@ class Order:
     customer_phone: Optional[str] = None  # 明文（API 入口接收）
     customer_phone_hash: Optional[str] = None  # 自动派生
     customer_wechat: Optional[str] = None
-    customer_email: Optional[str] = None
+    customer_email: Optional[str] = None  # 明文（API 入口接收，落盘加密）
 
     # 考生
     candidate_name: Optional[str] = None
@@ -117,6 +117,8 @@ class Order:
         # 加密落盘字段
         if self.customer_phone:
             data["customer_phone_enc"] = encrypt(self.customer_phone)
+        if self.customer_email:
+            data["customer_email"] = encrypt(self.customer_email)
         if self.candidate_id_card:
             data["candidate_id_card_enc"] = encrypt(self.candidate_id_card)
         # tags/subjects JSON 化
@@ -135,6 +137,13 @@ class Order:
             data["customer_phone"] = decrypt(data["customer_phone_enc"])
         else:
             data["customer_phone"] = None
+        if data.get("customer_email"):
+            try:
+                data["customer_email"] = decrypt(data["customer_email"])
+            except Exception:
+                pass
+        else:
+            data["customer_email"] = None
         if data.get("candidate_id_card_enc"):
             data["candidate_id_card"] = decrypt(data["candidate_id_card_enc"])
         else:

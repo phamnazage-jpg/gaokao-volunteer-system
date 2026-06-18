@@ -54,9 +54,25 @@ def test_order_to_db_row_encrypts_phone():
     assert row["customer_phone_enc"] != "13800001234"
     # hash 字段保留
     assert row["customer_phone_hash"] == hash_for_index("13800001234")
-    assert row["customer_email"] == "parent@example.com"
+    assert row["customer_email"] != "parent@example.com"
     # 密文可解
     assert decrypt(row["customer_phone_enc"]) == "13800001234"
+    assert decrypt(row["customer_email"]) == "parent@example.com"
+
+
+def test_customer_email_is_not_stored_as_plaintext():
+    order = Order(
+        id="GKO-20260612-EMAIL",
+        source="web",
+        service_version="basic",
+        amount_cents=1000,
+        customer_phone="13800001234",
+        customer_email="parent@example.com",
+    )
+    row = order.to_db_row()
+
+    assert row["customer_email"] != "parent@example.com"
+    assert row["customer_email"]
 
 
 def test_order_to_db_row_encrypts_id_card():

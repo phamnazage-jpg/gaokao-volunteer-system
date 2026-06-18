@@ -145,6 +145,33 @@ def test_notification_audit_page_hides_payload_details(client, settings, tmp_pat
     assert "report_ready" in page.text
 
 
+def test_notification_audit_api_masks_internal_paths_and_customer_email(
+    client, auth_headers, settings, tmp_path: Path
+):
+    order = _seed_order(settings.orders_db_path, order_id="GKO-20260618-NOTIFY-API")
+    _mark_paid(settings, order)
+
+    service = DeliveryNotificationService.for_db(settings.orders_db_path)
+    try:
+        service.notify_event(
+            order.id,
+            event_type="report_ready",
+            channel="email",
+            payload_json='{"kind":"email","customer_email":"parent@example.com","report_path":"/tmp/report.pdf"}',
+        )
+    finally:
+        service.close()
+
+    resp = client.get(f"/api/admin/notifications?order_id={order.id}", headers=auth_headers)
+    assert resp.status_code == 200, resp.text
+    body = resp.json()
+    assert body["items"]
+    payload = body["items"][0]["payload"]
+    assert payload["kind"] == "email"
+    assert "customer_email" not in payload
+    assert "report_path" not in payload
+
+
 def test_status_page_links_to_notification_audit(client, settings):
     order = _seed_order(settings.orders_db_path, order_id="GKO-20260615-NOTIFY-LINK")
     _mark_paid(settings, order)

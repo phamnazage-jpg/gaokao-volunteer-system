@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from data.customer_portal.token import issue_portal_token
 from data.orders.dao import OrdersDAO
+from data.orders.intake_store import IntakeStore
 from data.orders.models import Order
 from data.payments.service import PaymentService
 
@@ -212,6 +213,40 @@ def test_submit_requires_at_least_one_target_preference(client, settings):
     )
     assert resp.status_code == 422
     assert "至少填写一个偏好与目标字段" in resp.text
+
+
+def test_portal_intake_persists_consent_audit_fields(client, settings):
+    order = _seed_order(settings.orders_db_path, order_id="GKO-20260618-CONSENT")
+    _mark_paid(settings, order)
+    token = issue_portal_token(order.id, settings.portal_token_secret)
+
+    resp = client.post(
+        f"/portal/{token}/info",
+        json={
+            "mode": "submit",
+            "candidate_score": 601,
+            "candidate_rank": 2123,
+            "candidate_subjects": ["物理", "化学", "生物"],
+            "candidate_interests": "计算机",
+            "consent_version": "t12-web-mvp-v1",
+            "consent_scope": "web-self-service-order-intake",
+            "privacy_accepted": True,
+            "service_terms_accepted": True,
+            "guardian_confirmed": True,
+        },
+    )
+    assert resp.status_code == 200, resp.text
+
+    intake = IntakeStore.for_db(settings.orders_db_path)
+    try:
+        record = intake.get(order.id)
+    finally:
+        intake.close()
+    assert record is not None
+    assert record.payload["consent_channel"] == "portal"
+    assert record.payload["consent_given_at"]
+    assert record.payload["privacy_accepted_at"]
+    assert record.payload["service_terms_accepted_at"]
 
 
 def test_order_info_page_exposes_policy_and_deletion_links(client, settings):

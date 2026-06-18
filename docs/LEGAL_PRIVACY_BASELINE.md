@@ -88,8 +88,8 @@
 当前状态:
 
 - `consent_version / consent_scope / privacy_accepted / service_terms_accepted / guardian_confirmed` 已落在 `order_intakes` payload 提交链路
-- 但 `consent_given_at / consent_operator` 等更完整审计字段仍未补齐
-- 因此当前可视为**最小同意字段已落地**，但仍不可宣称“监护人同意闭环已整体完成”
+- `consent_given_at / privacy_accepted_at / service_terms_accepted_at / consent_channel / consent_operator` 现已在 portal 提交链路自动补齐
+- 但后台代录 / 外部渠道补录仍需逐步统一到同一审计口径，因此仍不可宣称“监护人同意闭环已整体完成”
 
 ---
 
@@ -141,11 +141,9 @@
 
 尚缺：
 
-- 正式隐私政策页面入口
-- 数据保留与删除规则对外入口
-- `consent_given_at / consent_operator` 等更完整审计字段
+- 后台代录 / 外部渠道补录的同意审计统一化
 - 数据删除 SOP 的脚本化/产品化
-- 服务条款/免责声明前台可见入口
+- 对外正式法务审阅与版本管理
 
 ---
 
