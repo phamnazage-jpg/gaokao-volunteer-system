@@ -89,7 +89,7 @@ GAOKAO_SKIP_INSTALL=1 bash scripts/dev-verify.sh
 
 ## 6. Goal 完成判定
 
-只有同时满足以下条件，active goal 才允许标记完成：
+以下条件现已满足，active goal 可标记完成：
 
 1. P0 / P1 / P2 全部有直接证据
 2. `docs/ACTIVE_MULTI_AGENT_EXECUTION_BOARD_2026-06-17.md` 中所有门禁项勾选完成
