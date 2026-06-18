@@ -51,6 +51,8 @@ class AuditEngine:
             "province": province,
             "overall_pass": not issues,
             "issues": issues,
+            "checks_executed": ["province_rules", "majors_catalog"],
+            "checks_not_executed": ["crowd_risk", "overall_score"],
         }
 
     def _validate_province_rules(

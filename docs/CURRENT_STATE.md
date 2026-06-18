@@ -44,10 +44,10 @@
 项目当前准确定位为：
 
 - 已完成: 人工服务运营增强系统（闲鱼 / 微信 / 学校渠道）
-- 已完成: 管理后台、订单、分享、渠道同步、AI 审核、CI/CD、性能与安全加固
+- 已完成: 管理后台、订单、分享、渠道同步、AI 审核基础校验、CI/CD、性能与安全加固
 - 已完成/已验证:
   - `Phase2 major_validation` 已接入 `AuditEngine`
-  - `gaokao-cli audit run --json` 已可基于专业目录做 major 校验
+  - `gaokao-cli audit run --json` 当前只承认两类真实检查：省份规则 + 专业目录状态
   - 规则/专业目录/CLI 三层都已具备可回归验证入口
 - 当前仍在推进:
   - 已完成且已本地验证: `mock` / `alipay_sim` / `alipay` 三层支付代码链与 notify/return 路由；退款状态闭环、portal token secret 分离、payment webhook fail-closed、删除/匿名化扩围、分享 allowlist、channel_sync DB 隔离与 DAO 真相收敛
@@ -193,7 +193,8 @@
 允许对外说：
 
 - 已具备人工服务运营后台能力
-- 已具备 AI 审核、反扎堆、数据溯源、分享、渠道同步能力
+- 已具备 AI 审核基础校验、数据溯源、分享、渠道同步能力
+- `audit run` 当前只承认省份规则 + 专业目录状态校验，不应对外表述为“已包含反扎堆/综合评分闭环”
 - 已完成 v2.1 当前计划闭环
 
 不应对外说：

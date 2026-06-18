@@ -7,6 +7,7 @@ import pytest
 from data.orders.dao import OrdersDAO
 from data.payments.dao import PaymentDAO
 from data.orders.models import Order
+from data.payments.models import PaymentRecord
 from data.payments.service import PaymentService
 
 
@@ -261,3 +262,41 @@ def test_handle_webhook_keeps_refunded_payment_terminal_state(settings):
         history = dao.get_status_history(order.id)
     assert refunded_order.status == "refunded"
     assert [item.to_status for item in history] == ["pending", "paid", "refunded"]
+
+
+def test_failed_payment_state_is_not_rendered_as_portal_stage(settings):
+    order = _seed_order(settings.orders_db_path, order_id="GKO-20260618-PAYMENT-FAILED")
+    service = PaymentService.for_db(
+        settings.orders_db_path,
+        base_url=settings.payment_base_url,
+        webhook_secret=settings.payment_webhook_secret,
+    )
+
+    checkout = service.create_checkout(order.id)
+    payment = service.get_payment(checkout.payment_id)
+    assert payment is not None
+
+    from admin.routes.web_public import _build_portal_context
+
+    failed_payment = PaymentRecord(
+        id=payment.id,
+        order_id=payment.order_id,
+        provider=payment.provider,
+        amount_cents=payment.amount_cents,
+        currency=payment.currency,
+        status="failed",
+        checkout_token=payment.checkout_token,
+        callback_payload=payment.callback_payload,
+        created_at=payment.created_at,
+        updated_at=payment.updated_at,
+    )
+    dao = PaymentDAO.for_db(settings.orders_db_path)
+    try:
+        dao.update_status(payment.id, status="failed")
+    finally:
+        dao.close()
+
+    order = OrdersDAO.connect(settings.orders_db_path).get(order.id)
+    assert order is not None
+    context = _build_portal_context(order, settings)
+    assert context["stage"] != "payment_failed"

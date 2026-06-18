@@ -97,13 +97,13 @@
 ### 2.2 v2.1新增技术栈
 
 ```
-├── AI审核服务
-│   ├── 方案解析: PDF (pdfplumber) / 文本 / 截图(OCR待定)
-│   ├── 政策检查: 调用 gaokao-spec-checker
-│   ├── 扎堆检测: 大厂AI推荐数据库(本地JSON)
-│   └── 报告生成: weasyprint (PDF)
+├── AI审核服务（当前已落地部分）
+│   ├── 方案输入: JSON plan
+│   ├── 政策检查: 省份规则上限 / 结构约束
+│   ├── 专业目录检查: majors catalog active / deprecated / missing
+│   └── 报告输出: JSON payload（非综合评分）
 │
-├── 反扎堆检测
+├── 反扎堆检测（Target / 未接入当前 audit run）
 │   ├── 推荐库: JSON文件 (data/crowd_db/)
 │   ├── 比对算法: Python fuzzy match
 │   └── 风险评估: 规则引擎
@@ -180,22 +180,21 @@ report_generator.py 输出PDF
 #### 关键接口
 
 ```python
-# 审核服务接口
-def audit_plan(plan_content: str, plan_format: str) -> AuditResult:
+# 当前 audit run 接口（已落地）
+def audit_plan(province: str, plan: dict[str, Any]) -> dict[str, object]:
     """
-    审核大厂AI生成的志愿方案
+    当前只执行两类真实检查：
 
-    Args:
-        plan_content: 方案内容（PDF文本/原始文字）
-        plan_format: 'pdf_text' | 'text' | 'screenshot_ocr'
+    1. 省份规则：例如 max_volunteers
+    2. 专业目录状态：missing / deprecated / non-active
 
-    Returns:
-        AuditResult: {
-            'policy_errors': [...],     # 政策错误
-            'crowd_risks': [...],       # 扎堆风险
-            'data_issues': [...],       # 数据问题
-            'suggestions': [...],       # 修正建议
-            'overall_score': int,       # 综合评分 0-100
+    返回：
+        {
+            'province': str,
+            'overall_pass': bool,
+            'issues': list[dict],
+            'checks_executed': ['province_rules', 'majors_catalog'],
+            'checks_not_executed': ['crowd_risk', 'overall_score'],
         }
     """
 ```

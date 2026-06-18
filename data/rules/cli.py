@@ -105,7 +105,10 @@ def _build_parser() -> argparse.ArgumentParser:
 
     audit_parser = subparsers.add_parser("audit", help="structured audit commands")
     audit_sub = audit_parser.add_subparsers(dest="audit_command", required=True)
-    audit_run = audit_sub.add_parser("run", help="run structured audit on JSON plan")
+    audit_run = audit_sub.add_parser(
+        "run",
+        help="run province-limit + majors-catalog checks on JSON plan",
+    )
     audit_run.add_argument("--province", required=True)
     audit_run.add_argument("--plan", required=True)
     audit_run.add_argument("--truth-root", default=str(DEFAULT_RULES_TRUTH_ROOT))

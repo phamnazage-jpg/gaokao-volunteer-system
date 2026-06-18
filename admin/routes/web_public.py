@@ -52,7 +52,6 @@ _STAGE_META: dict[str, tuple[str, str]] = {
     "report_ready": ("报告已就绪", "已可站内查看报告并下载 PDF。"),
     "completed": ("已完成", "订单已完成，后续可继续查看历史交付内容。"),
     "refunded": ("已退款", "该订单已完成退款。"),
-    "payment_failed": ("支付失败", "支付未成功，请重新发起支付。"),
 }
 _SERVICE_PRICES = {
     "audit": 4900,
@@ -636,9 +635,7 @@ def _build_portal_context(order: Order, settings: Settings) -> dict[str, Any]:
         payment is not None and payment.status == "refunded"
     ):
         stage = "refunded"
-    elif payment is not None and payment.status == "failed":
-        stage = "payment_failed"
-    elif payment is None or payment.status == "pending":
+    elif payment is None or payment.status in {"pending", "failed"}:
         stage = "pending_payment"
     elif order.status == "completed":
         stage = "completed"
