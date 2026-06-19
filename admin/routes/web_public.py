@@ -7,6 +7,7 @@ import logging
 import secrets
 from html import escape
 from pathlib import Path
+from datetime import datetime, timedelta, timezone
 from typing import Any, Literal
 from urllib.parse import parse_qsl
 
@@ -17,7 +18,7 @@ from fastapi.responses import (
     PlainTextResponse,
     RedirectResponse,
 )
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from admin.config import Settings, get_settings_dep
 from data.customer_portal.token import (
@@ -28,6 +29,7 @@ from data.customer_portal.token import (
 from data.notifications.email_service import DeliveryNotificationService
 from data.orders import crypto
 from data.orders.dao import OrderNotFound, OrdersDAO
+from data.orders.deletion_service import RETENTION_GUARDED_STATUSES
 from data.orders.intake_schema import IntakePayload
 from data.orders.intake_store import IntakeStore
 from data.orders.models import Order
@@ -60,6 +62,13 @@ _SERVICE_PRICES = {
     "premium": 19900,
 }
 _SIMULATED_PAYMENT_ROUTE_NOT_FOUND = "not found"
+
+_DELETION_SCOPE_VALUES = ("order_only", "order_and_attachments", "full_account")
+_DELETION_NEXT_STEP_OUTSIDE = (
+    "已超过 180 天保留期，可申请删除；提交成功后将由人工核验后处理"
+)
+_DELETION_NEXT_STEP_WITHIN = "提交成功后将由人工核验后处理（订单仍在 180 天保留期内）"
+_DELETION_NEXT_STEP_PENDING = "提交成功后将由人工核验后处理"
 
 
 class PublicOrderCreated(BaseModel):
@@ -95,11 +104,46 @@ class PortalAttachmentUploaded(BaseModel):
 
 
 class DeletionRequestCreate(BaseModel):
-    requester_name: str
-    requester_contact: str
-    reason: str
-    scope: str
-    confirm_guardian: bool
+    # 2026-06-19 T12-C: scope 锁定到白名单, confirm_guardian 强制要求
+    requester_name: str = Field(..., min_length=1, max_length=64)
+    requester_contact: str = Field(..., min_length=1, max_length=128)
+    reason: str = Field(..., min_length=1, max_length=2000)
+    scope: Literal["order_only", "order_and_attachments", "full_account"]
+    confirm_guardian: bool = Field(...)
+
+
+def _resolve_retention_status(order: Order, settings: Settings) -> str:
+    """返回订单的保留期相对位置。
+
+    - "pending": 订单状态不在保留期门禁子集内 (例如 pending)
+    - "within": 订单在保留期门禁子集且未到保留期
+    - "outside": 订单在保留期门禁子集且已超过保留期
+    """
+    if order.status not in RETENTION_GUARDED_STATUSES:
+        return "pending"
+    updated_raw = (
+        order.status_updated_at or order.completed_at or order.created_at or ""
+    ).strip()
+    if not updated_raw:
+        return "within"
+    try:
+        updated = datetime.fromisoformat(updated_raw.replace("Z", "+00:00"))
+    except ValueError:
+        return "within"
+    if updated.tzinfo is None:
+        updated = updated.replace(tzinfo=timezone.utc)
+    elapsed = datetime.now(timezone.utc) - updated
+    if elapsed >= timedelta(days=settings.retention_days):
+        return "outside"
+    return "within"
+
+
+def _next_step_for_retention(status: str) -> str:
+    if status == "outside":
+        return _DELETION_NEXT_STEP_OUTSIDE
+    if status == "within":
+        return _DELETION_NEXT_STEP_WITHIN
+    return _DELETION_NEXT_STEP_PENDING
 
 
 class DeletionRequestCreated(BaseModel):
@@ -265,7 +309,9 @@ def alipay_sim_payment_page(
     settings: Settings = Depends(get_settings_dep),
 ) -> HTMLResponse:
     _assert_simulated_payment_routes_allowed(settings)
-    return _render_simulated_payment_page(payment_id, settings, provider_slug="alipay-sim")
+    return _render_simulated_payment_page(
+        payment_id, settings, provider_slug="alipay-sim"
+    )
 
 
 @router.post("/pay/alipay-sim/{payment_id}/complete", include_in_schema=False)
@@ -486,7 +532,7 @@ def deletion_request_page(
     token: str, settings: Settings = Depends(get_settings_dep)
 ) -> HTMLResponse:
     order = _resolve_order_from_token(token, settings)
-    return HTMLResponse(_render_deletion_request_page(token, order))
+    return HTMLResponse(_render_deletion_request_page(token, order, settings))
 
 
 @router.post("/portal/{token}/deletion-request", response_model=DeletionRequestCreated)
@@ -497,10 +543,12 @@ def submit_deletion_request(
 ) -> DeletionRequestCreated:
     order = _resolve_order_from_token(token, settings)
     _log_deletion_request(order.id, payload, settings)
+    # 2026-06-19 T12-C: next_step 根据订单保留期分文案, 给用户明确预期
+    retention_status = _resolve_retention_status(order, settings)
     return DeletionRequestCreated(
         order_id=order.id,
         request_logged=True,
-        next_step="客服将在核验后处理删除申请",
+        next_step=_next_step_for_retention(retention_status),
     )
 
 
@@ -589,7 +637,9 @@ def _is_trusted_report_path(path: str | None, settings: Settings) -> bool:
     candidate = Path(path).resolve()
     trusted_roots = (
         Path(settings.share_report_dir).resolve(),
-        (Path(settings.portal_upload_dir).resolve().parent / "order_artifacts").resolve(),
+        (
+            Path(settings.portal_upload_dir).resolve().parent / "order_artifacts"
+        ).resolve(),
         Path("data/examples").resolve(),
     )
     return any(root == candidate or root in candidate.parents for root in trusted_roots)
@@ -993,7 +1043,9 @@ def _render_pricing_page(request: Request) -> str:
     score = str(query.get("score") or "").strip()
     goal = str(query.get("goal") or "").strip()
     recommendation_title = "你可以先从 99 元完整志愿方案开始"
-    recommendation_body = "如果你没有现成方案，直接进入完整规划最省时间；如果已有方案，再先审计。"
+    recommendation_body = (
+        "如果你没有现成方案，直接进入完整规划最省时间；如果已有方案，再先审计。"
+    )
     if consult_text or "审计" in goal or "审核" in goal:
         recommendation_title = "更适合先做 49 元方案审核"
         recommendation_body = "你提到已有方案或需要先判断风险，先做审核更符合当前目标。"
@@ -1611,7 +1663,9 @@ def _complete_simulated_payment(
         )
     service.handle_webhook(payload, signature)
     portal_token = issue_portal_token(payment.order_id, settings.portal_token_secret)
-    return RedirectResponse(url=f"/portal/{portal_token}/payment-success", status_code=303)
+    return RedirectResponse(
+        url=f"/portal/{portal_token}/payment-success", status_code=303
+    )
 
 
 def _render_info_page(
@@ -1630,7 +1684,11 @@ def _render_info_page(
         missing_items.append("位次")
     if not payload.get("candidate_subjects"):
         missing_items.append("选科")
-    if not payload.get("target_cities") and not payload.get("target_majors") and not payload.get("university_preferences"):
+    if (
+        not payload.get("target_cities")
+        and not payload.get("target_majors")
+        and not payload.get("university_preferences")
+    ):
         missing_items.append("至少一个偏好目标")
     attachment_items = []
     for item in attachments:
@@ -2206,11 +2264,38 @@ def _render_report_page(order: Order, settings: Settings) -> str:
     raise HTTPException(status_code=404, detail="report not found")
 
 
-def _render_deletion_request_page(token: str, order: Order) -> str:
+def _render_deletion_request_page(token: str, order: Order, settings: Settings) -> str:
+    # 2026-06-19 T12-C: 让用户先看见"我的订单处于哪个保留期阶段", 决定是否现在就申请
+    retention_status = _resolve_retention_status(order, settings)
+    if retention_status == "outside":
+        retention_card = (
+            "<section class='panel'>"
+            "<span class='eyebrow'>保留期状态</span>"
+            "<p class='lead'><strong>已超过 180 天保留期</strong>，可申请删除订单资料、附件与交付物。"
+            "提交后我们会同步做人工核验，并在订单状态链路中继续反馈处理进度。</p>"
+            "</section>"
+        )
+    elif retention_status == "within":
+        retention_card = (
+            "<section class='panel'>"
+            "<span class='eyebrow'>保留期状态</span>"
+            "<p class='lead'>当前订单仍在 <strong>180 天保留期</strong>内。提交删除申请后，我们仍会先做人工核验，"
+            "并按既定保留期规则处理订单、资料与附件。</p>"
+            "</section>"
+        )
+    else:
+        retention_card = (
+            "<section class='panel'>"
+            "<span class='eyebrow'>保留期状态</span>"
+            "<p class='lead'>本订单当前不需要走保留期清理流程（尚未进入服务完成阶段）。"
+            "如需撤回资料或申请删除，提交申请后我们会先做人工核验。</p>"
+            "</section>"
+        )
     return f"""<!doctype html>
 <html lang='zh-CN'><head><meta charset='utf-8' /><meta name='viewport' content='width=device-width, initial-scale=1' /><title>删除申请</title><link rel='stylesheet' href='/static/portal-ui.css' /><style>body{{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f4f7fb;padding:32px 20px;color:#172033;margin:0}}.wrap{{max-width:920px;margin:0 auto;display:grid;gap:16px}}.panel{{background:#fff;border:1px solid #dbe3f0;border-radius:20px;padding:24px;box-shadow:0 18px 42px rgba(20,34,53,.08)}}.eyebrow{{display:inline-flex;padding:6px 10px;border-radius:999px;background:#fff7e6;color:#8a5a00;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}}.lead{{color:#5b6b88;line-height:1.8}}.field{{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}}input,textarea{{width:100%;padding:12px;border-radius:12px;border:1px solid #cfd7e6}}textarea{{min-height:120px;resize:vertical}}.check{{display:flex;gap:10px;align-items:flex-start;margin:12px 0}}button{{border:none;border-radius:14px;background:#1f6feb;color:#fff;font-weight:700;padding:13px 18px;cursor:pointer}}#result{{margin-top:14px;min-height:24px;color:#5b6b88;white-space:pre-wrap}}</style></head>
 <body><main class='wrap'>
 <section class='panel'><span class='eyebrow'>删除申请</span><h1>提交删除申请</h1><p class='lead'>可用于申请删除资料、附件或交付物。提交后，系统会保留必要审计记录，并由人工核验订单与监护人信息后处理。</p></section>
+{retention_card}
 <section class='panel'>
   <p><strong>订单号：</strong>{escape(order.id)}</p>
   <form id='deletion-request-form'>

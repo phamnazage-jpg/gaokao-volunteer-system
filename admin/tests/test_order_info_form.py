@@ -1,10 +1,30 @@
 from __future__ import annotations
 
+from datetime import datetime, timedelta, timezone
+
 from data.customer_portal.token import issue_portal_token
 from data.orders.dao import OrdersDAO
 from data.orders.intake_store import IntakeStore
 from data.orders.models import Order
 from data.payments.service import PaymentService
+
+
+def _expire_retention_window(db_path: str, order_id: str, days: int = 200) -> None:
+    """把订单的 status_updated_at 拨到 N 天前, 让保留期门禁放行。
+
+    真实 180 天窗口太慢, 测试场景需要可重现的"已过保留期"状态。
+    """
+    backdated = (
+        (datetime.now(timezone.utc) - timedelta(days=days))
+        .replace(microsecond=0)
+        .isoformat()
+    )
+    with OrdersDAO.connect(db_path) as dao:
+        dao.conn.execute(
+            "UPDATE orders SET status_updated_at=? WHERE id=?",
+            (backdated, order_id),
+        )
+        dao.conn.commit()
 
 
 def _seed_order(db_path: str, order_id: str = "GKO-20260614-INFO") -> Order:
@@ -49,7 +69,7 @@ def test_order_info_form_accepts_draft_and_submit(client, settings):
     assert "资料填写向导" in page.text
     assert "四步资料向导" in page.text
     assert "当前资料状态" in page.text
-    assert '/static/portal-ui.css' in page.text
+    assert "/static/portal-ui.css" in page.text
     assert "目标城市" in page.text
     assert "目标专业" in page.text
     assert "已有方案说明" in page.text
@@ -117,7 +137,7 @@ def test_order_info_form_accepts_draft_and_submit(client, settings):
     status_page = client.get(f"/portal/{token}/status")
     assert status_page.status_code == 200, status_page.text
     assert "订单进度总览" in status_page.text
-    assert '/static/portal-ui.css' in status_page.text
+    assert "/static/portal-ui.css" in status_page.text
     assert "处理中" in status_page.text
     assert "当前资料摘要" in status_page.text
     assert "下一步建议" in status_page.text
@@ -258,10 +278,12 @@ def test_order_info_page_exposes_policy_and_deletion_links(client, settings):
     assert page.status_code == 200, page.text
     assert 'href="/privacy"' in page.text
     assert 'href="/service-terms"' in page.text
-    assert f'/portal/{token}/deletion-request' in page.text
+    assert f"/portal/{token}/deletion-request" in page.text
 
 
-def test_portal_deletion_request_is_logged_and_visible_in_admin(client, auth_headers, settings):
+def test_portal_deletion_request_is_logged_and_visible_in_admin(
+    client, auth_headers, settings
+):
     order = _seed_order(settings.orders_db_path, order_id="GKO-20260615-DELETE-REQ")
     _mark_paid(settings, order)
     token = issue_portal_token(order.id, settings.portal_token_secret)
@@ -270,7 +292,7 @@ def test_portal_deletion_request_is_logged_and_visible_in_admin(client, auth_hea
     assert form_page.status_code == 200, form_page.text
     assert "删除申请" in form_page.text
     assert "提交删除申请" in form_page.text
-    assert '/static/portal-ui.css' in form_page.text
+    assert "/static/portal-ui.css" in form_page.text
 
     submit = client.post(
         f"/portal/{token}/deletion-request",
@@ -286,6 +308,10 @@ def test_portal_deletion_request_is_logged_and_visible_in_admin(client, auth_hea
     body = submit.json()
     assert body["order_id"] == order.id
     assert body["request_logged"] is True
+    # 2026-06-19 T12-C: next_step 必须根据保留期窗口分文案
+    assert (
+        body["next_step"] == "提交成功后将由人工核验后处理（订单仍在 180 天保留期内）"
+    )
 
     admin_page = client.get(
         f"/admin/deletion-requests?order_id={order.id}", headers=auth_headers
@@ -295,6 +321,84 @@ def test_portal_deletion_request_is_logged_and_visible_in_admin(client, auth_hea
     assert order.id in admin_page.text
     assert "需要撤回资料并删除附件" in admin_page.text
     assert "parent@example.com" in admin_page.text
+
+
+def test_portal_deletion_request_after_retention_window_uses_outside_next_step(
+    client, auth_headers, settings
+):
+    order = _seed_order(
+        settings.orders_db_path, order_id="GKO-20250619-DELETE-RETN-OUTSIDE"
+    )
+    _mark_paid(settings, order)
+    _expire_retention_window(settings.orders_db_path, order.id)
+    token = issue_portal_token(order.id, settings.portal_token_secret)
+
+    submit = client.post(
+        f"/portal/{token}/deletion-request",
+        json={
+            "requester_name": "张家长",
+            "requester_contact": "parent@example.com",
+            "reason": "已经超过保留期，请尽快删除",
+            "scope": "order_and_attachments",
+            "confirm_guardian": True,
+        },
+    )
+    assert submit.status_code == 200, submit.text
+    body = submit.json()
+    # 2026-06-19 T12-C: 保留期外可申请, next_step 必须明确可走删除
+    assert (
+        body["next_step"]
+        == "已超过 180 天保留期，可申请删除；提交成功后将由人工核验后处理"
+    )
+
+
+def test_portal_deletion_request_rejects_invalid_scope(client, settings):
+    order = _seed_order(
+        settings.orders_db_path, order_id="GKO-20260619-DELETE-BAD-SCOPE"
+    )
+    _mark_paid(settings, order)
+    token = issue_portal_token(order.id, settings.portal_token_secret)
+
+    submit = client.post(
+        f"/portal/{token}/deletion-request",
+        json={
+            "requester_name": "张家长",
+            "requester_contact": "parent@example.com",
+            "reason": "test",
+            "scope": "bogus_scope",
+            "confirm_guardian": True,
+        },
+    )
+    # 2026-06-19 T12-C: scope 必须锁定到白名单
+    assert submit.status_code == 422, submit.text
+
+
+def test_portal_deletion_request_page_shows_retention_outside_hint(client, settings):
+    order = _seed_order(
+        settings.orders_db_path, order_id="GKO-20260619-DELETE-PAGE-OUTSIDE"
+    )
+    _mark_paid(settings, order)
+    _expire_retention_window(settings.orders_db_path, order.id)
+    token = issue_portal_token(order.id, settings.portal_token_secret)
+
+    page = client.get(f"/portal/{token}/deletion-request")
+    assert page.status_code == 200, page.text
+    # 2026-06-19 T12-C: 保留期外页面必须明确告诉用户"可申请删除"
+    assert "已超过 180 天保留期" in page.text
+    assert "可申请删除" in page.text
+
+
+def test_portal_deletion_request_page_shows_retention_within_hint(client, settings):
+    order = _seed_order(
+        settings.orders_db_path, order_id="GKO-20260619-DELETE-PAGE-WITHIN"
+    )
+    _mark_paid(settings, order)
+    token = issue_portal_token(order.id, settings.portal_token_secret)
+
+    page = client.get(f"/portal/{token}/deletion-request")
+    assert page.status_code == 200, page.text
+    # 2026-06-19 T12-C: 保留期内页面必须明确"保留期内 + 保留期满后会清理"
+    assert "180 天保留期" in page.text
 
 
 def test_deletion_request_log_is_purged_by_retention_cleanup(settings):
@@ -346,7 +450,10 @@ def test_order_info_page_uses_checkbox_checked_state_for_submit(client, settings
 
     page = client.get(f"/portal/{token}/info")
     assert page.status_code == 200, page.text
-    assert 'document.querySelector(\'input[name="privacy_accepted"]\')?.checked' in page.text
+    assert (
+        "document.querySelector('input[name=\"privacy_accepted\"]')?.checked"
+        in page.text
+    )
     assert "form.get('privacy_accepted') === 'on'" not in page.text
     assert "form.get('service_terms_accepted') === 'on'" not in page.text
     assert "form.get('guardian_confirmed') === 'on'" not in page.text

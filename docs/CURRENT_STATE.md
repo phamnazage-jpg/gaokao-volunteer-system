@@ -1,24 +1,74 @@
 # CURRENT_STATE
 
-最后更新: 2026-06-17
-状态词: 本地验证完成（执行 Phase 1 规则真相源化 + Phase 1.5 verify 收口 + Phase 2 专业目录三 Batch 全部收口 + 下一阶段 = 执行 Phase 3 统一 CLI 命令面，未启动）
+最后更新: 2026-06-19
+状态词: 本地验证完成（6/19 复审 + 6/19 整改计划 + A1 保留期门禁 + B1 支付失败持久化 + A2/B2 文档与执行板校准已全部落地；下一阶段 = 推进 T12 真实支付 acceptance + 前台删除工单 + 合规审定）
 
 真相源优先级:
 
 1. 本文件
-2. `docs/ACTIVE_EXECUTION_BOARD_2026-06-17.md`（6/17 当前执行板，docs-only 收口任务之一）
-3. `docs/plans/2026-06-17-phase2-majors-catalog-implementation-plan.md`（Phase 2 已收口快照）
-4. `docs/DESIGN_RULES_TRUSTED_CLI_2026-06-16.md`（设计快照；Phase 编号需与执行口径消歧）
-5. `docs/PROJECT_PLANNING_REALIGNMENT_2026-06-16.md`（历史规划/实现漂移审计）
-6. `docs/RULES_SOURCE_OF_TRUTH.md`（规则真相源索引；待补建）
-7. `docs/MAJOR_DATA_SOURCE_OF_TRUTH.md`（专业目录真相源索引）
-8. `docs/CLI_API_MAPPING.md`（CLI/API 映射索引）
-9. `docs/P0_P1_P2_REMEDIATION_PLAN_2026-06-14.md`（历史整改板；§4 卡片以 §2.1 状态归一为准）
-10. `docs/FRONTEND_UI_AUDIT_2026-06-16.md` / `docs/FRONTEND_UI_EXECUTION_BOARD_2026-06-16.md`
-11. `docs/ACTIVE_REMEDIATION_2026-06-13.md`
-12. `product/PRD.md` / `product/ROADMAP.md` / `docs/IMPLEMENTATION_PLAN_v2.md`
-13. `docs/PRODUCTION_DEPLOYMENT_CHECKLIST_2026-06-15.md`
-14. `reports/PRODUCT_PLANNING_TECH_ALIGNMENT_REVIEW_2026-06-13.md`（历史评审快照）
+2. `docs/ACTIVE_REMEDIATION_2026-06-19.md`（6/19 当前整改清单，**取代 6/13 历史快照**）
+3. `docs/ACTIVE_EXECUTION_BOARD_2026-06-19.md`（6/19 当前执行板，**取代 6/13 历史快照**）
+4. `docs/plans/2026-06-19-production-readiness-remediation-plan.md`（6/19 整改计划）
+5. `reports/PRODUCTION_STRICT_REVIEW_2026-06-19.md`（6/19 复审报告）
+6. `docs/plans/2026-06-17-phase2-majors-catalog-implementation-plan.md`（Phase 2 已收口快照）
+7. `docs/DESIGN_RULES_TRUSTED_CLI_2026-06-16.md`（设计快照；Phase 编号需与执行口径消歧）
+8. `docs/PROJECT_PLANNING_REALIGNMENT_2026-06-16.md`（历史规划/实现漂移审计）
+9. `docs/RULES_SOURCE_OF_TRUTH.md`（规则真相源索引；待补建）
+10. `docs/MAJOR_DATA_SOURCE_OF_TRUTH.md`（专业目录真相源索引）
+11. `docs/CLI_API_MAPPING.md`（CLI/API 映射索引）
+12. `docs/P0_P1_P2_REMEDIATION_PLAN_2026-06-14.md`（历史整改板；§4 卡片以 §2.1 状态归一为准）
+13. `docs/FRONTEND_UI_AUDIT_2026-06-16.md` / `docs/FRONTEND_UI_EXECUTION_BOARD_2026-06-16.md`
+14. `docs/ACTIVE_REMEDIATION_2026-06-13.md`（**已降级为历史快照**）
+15. `docs/ACTIVE_EXECUTION_BOARD_2026-06-13.md`（**已降级为历史快照**）
+16. `product/PRD.md` / `product/ROADMAP.md` / `docs/IMPLEMENTATION_PLAN_v2.md`
+17. `docs/PRODUCTION_DEPLOYMENT_CHECKLIST_2026-06-15.md`
+18. `reports/PRODUCT_PLANNING_TECH_ALIGNMENT_REVIEW_2026-06-13.md`（历史评审快照）
+
+---
+
+## 0. 6/19 增量段（叠加在 6/13 真相源之上）
+
+6/19 落地了 3 项 P0/P1 整改 + 1 项真相源分层。**本节是当前唯一增量**：
+
+### 0.1 A1 — 删除/匿名化保留期门禁（P0）
+
+- 错误码 `BIZ_ORDER_RETENTION_NOT_EXPIRED` (E02002) → HTTP 409
+- 配置 `GAOKAO_RETENTION_DAYS`（默认 180）
+- 路由层 `_assert_retention_expired` 守卫，状态子集 paid/serving/delivered/completed/refunded 触发，pending 直接放行
+- 口径来源: `docs/DATA_RETENTION_AND_DELETION.md` §2
+- 测试: 3 个新失败/放行用例 + `_expire_retention_window` helper
+- 验证: dev-verify all checks passed（1175 passed）
+
+### 0.2 B1 — 支付失败状态持久化（P1）
+
+- `data.payments.service.handle_webhook`: 非 success 状态不再抛 PaymentError，改为持久化 `payment.status='failed'` + `failed_at` + `failure_reason` + 完整 `callback_payload`
+- schema 增量升级：`_ensure_column` 幂等 `ALTER TABLE payments ADD COLUMN failed_at / failure_reason`
+- 幂等保证：终态（paid / refunded / failed）后到达的失败 webhook 走 idempotent 路径
+- 测试: `test_handle_webhook_persists_failed_status` 锁住新契约
+- 验证: dev-verify all checks passed
+
+### 0.3 A2 — 4 个产品/工程文档 Current/Target 校准（P1）
+
+- `README.md` 顶部执行板指向 6/19 + 6/19 新增约束
+- `product/PRD.md` 顶部"最后更新"升级为 6/19
+- `product/ROADMAP.md` 顶部校准从 6/13 升级到 6/19
+- `docs/TECH_ARCHITECTURE.md` 顶部 Current/Target 指向 6/19 执行板
+
+### 0.4 B2 — 真相源分层与历史快照降级（P1）
+
+- 6/13 整改板/执行板顶部加"⚠ 历史快照"头注
+- 新建 `docs/ACTIVE_REMEDIATION_2026-06-19.md` + `docs/ACTIVE_EXECUTION_BOARD_2026-06-19.md`
+- 本节作为 6/19 增量叠加在 6/13 真相源之上
+
+### 0.5 T12-C — 前台删除工单 + 保留期外可申请（P1，本节落盘即收口）
+
+- 落地:
+  - `admin/routes/web_public.py` 加 `_resolve_retention_status` + `_next_step_for_retention`
+  - `DeletionRequestCreate` Pydantic 锁 `scope` 到白名单 + `confirm_guardian` 强制 bool
+  - `POST /portal/{token}/deletion-request` 根据订单保留期返回 3 种 next_step 文案
+  - `GET /portal/{token}/deletion-request` 在表单上方加"保留期状态"提示卡
+- 测试: 4 个新测试 + 2 个 helper 复用
+- 验证: 1179 passed, dev-verify all checks passed
 
 ---
 
