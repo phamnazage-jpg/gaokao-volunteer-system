@@ -22,15 +22,27 @@ CREATE TABLE IF NOT EXISTS payments (
     checkout_token TEXT,
     callback_payload TEXT,
     refund_reason TEXT,
+    failure_reason TEXT,
     created_at TEXT NOT NULL,
     updated_at TEXT NOT NULL,
     paid_at TEXT,
     refunded_at TEXT,
+    failed_at TEXT,
     FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE
 );
 CREATE INDEX IF NOT EXISTS idx_payments_order_id ON payments(order_id);
 CREATE INDEX IF NOT EXISTS idx_payments_status ON payments(status);
 """
+
+
+def _ensure_column(conn: sqlite3.Connection, table: str, column: str, ddl: str) -> None:
+    """幂等 ALTER TABLE ADD COLUMN, 用于老库 schema 升级 (6/19 新增 failed_at/failure_reason)."""
+    existing = {
+        row[1] for row in conn.execute(f"PRAGMA table_info({table})").fetchall()
+    }
+    if column not in existing:
+        conn.execute(f"ALTER TABLE {table} ADD COLUMN {ddl}")
+
 
 _SCHEMA_STATEMENTS = tuple(
     statement.strip() for statement in SCHEMA_SQL.split(";") if statement.strip()
@@ -42,6 +54,9 @@ def _ensure_schema(conn: sqlite3.Connection, *, commit: bool) -> None:
     conn.execute("PRAGMA foreign_keys = ON")
     for statement in _SCHEMA_STATEMENTS:
         conn.execute(statement)
+    # 6/19: 老库增量升级 — failed_at / failure_reason (失败 webhook 持久化)
+    _ensure_column(conn, "payments", "failed_at", "failed_at TEXT")
+    _ensure_column(conn, "payments", "failure_reason", "failure_reason TEXT")
     if commit:
         conn.commit()
 
@@ -69,8 +84,9 @@ class PaymentDAO:
         self._conn.execute(
             """
             INSERT INTO payments(id, order_id, provider, amount_cents, currency, status, provider_trade_no,
-                                 checkout_token, callback_payload, refund_reason, created_at, updated_at, paid_at, refunded_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                                 checkout_token, callback_payload, refund_reason, failure_reason,
+                                 created_at, updated_at, paid_at, refunded_at, failed_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 payment.id,
@@ -83,10 +99,12 @@ class PaymentDAO:
                 payment.checkout_token,
                 payment.callback_payload,
                 payment.refund_reason,
+                payment.failure_reason,
                 payment.created_at,
                 payment.updated_at,
                 payment.paid_at,
                 payment.refunded_at,
+                payment.failed_at,
             ),
         )
         if self._autocommit:
@@ -140,6 +158,7 @@ class PaymentDAO:
         provider_trade_no: Optional[str] = None,
         callback_payload: Optional[dict] = None,
         refund_reason: Optional[str] = None,
+        failure_reason: Optional[str] = None,
     ) -> PaymentRecord:
         now = utc_now_iso()
         payment = self.get(payment_id)
@@ -150,14 +169,18 @@ class PaymentDAO:
             payload_json = json.dumps(callback_payload, ensure_ascii=False)
         paid_at = payment.paid_at
         refunded_at = payment.refunded_at
+        failed_at = payment.failed_at
         if status == "paid" and paid_at is None:
             paid_at = now
         if status == "refunded" and refunded_at is None:
             refunded_at = now
+        if status == "failed" and failed_at is None:
+            failed_at = now
         self._conn.execute(
             """
             UPDATE payments
-            SET status=?, provider_trade_no=?, callback_payload=?, refund_reason=?, updated_at=?, paid_at=?, refunded_at=?
+            SET status=?, provider_trade_no=?, callback_payload=?, refund_reason=?, failure_reason=?,
+                updated_at=?, paid_at=?, refunded_at=?, failed_at=?
             WHERE id=?
             """,
             (
@@ -165,9 +188,11 @@ class PaymentDAO:
                 provider_trade_no or payment.provider_trade_no,
                 payload_json,
                 refund_reason or payment.refund_reason,
+                failure_reason or payment.failure_reason,
                 now,
                 paid_at,
                 refunded_at,
+                failed_at,
                 payment_id,
             ),
         )
@@ -190,8 +215,10 @@ class PaymentDAO:
             checkout_token=row["checkout_token"],
             callback_payload=row["callback_payload"],
             refund_reason=row["refund_reason"],
+            failure_reason=row["failure_reason"],
             created_at=row["created_at"],
             updated_at=row["updated_at"],
             paid_at=row["paid_at"],
             refunded_at=row["refunded_at"],
+            failed_at=row["failed_at"],
         )

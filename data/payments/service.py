@@ -134,7 +134,9 @@ class PaymentService:
             alipay_public_key_path=alipay_public_key_path,
         )
 
-    def create_checkout(self, order_id: str, *, portal_token: str | None = None) -> PaymentCheckout:
+    def create_checkout(
+        self, order_id: str, *, portal_token: str | None = None
+    ) -> PaymentCheckout:
         with OrdersDAO.connect(self.db_path) as orders_dao:
             payments = PaymentDAO.from_connection(orders_dao.conn)
             with orders_dao.transaction(begin_mode="immediate"):
@@ -200,8 +202,6 @@ class PaymentService:
             raise PaymentError("missing payment_id")
         normalized_status = str(normalized_payload.get("status") or "").strip()
         success_statuses = {"paid", "TRADE_SUCCESS", "TRADE_FINISHED"}
-        if normalized_status not in success_statuses:
-            raise PaymentError("payment status not successful")
         expected_app_id = str(getattr(self.provider, "app_id", "") or "").strip()
         expected_merchant_id = str(
             getattr(self.provider, "merchant_id", "") or ""
@@ -235,6 +235,54 @@ class PaymentService:
         ).strip()
         if expected_app_id and not provider_trade_no:
             raise PaymentError("payment provider_trade_no missing")
+
+        # 6/19: 失败 webhook 持久化分支
+        # 状态不在 success_statuses 时不再抛 PaymentError, 而是标 payment.status='failed'
+        # 并写入 failure_reason, 供 portal / admin / 客服看到真实支付终态.
+        if normalized_status not in success_statuses:
+            failure_reason = (
+                str(payload.get("failure_reason") or "").strip()
+                or normalized_status
+                or "payment_status_not_successful"
+            )
+            with OrdersDAO.connect(self.db_path) as orders_dao:
+                payments = PaymentDAO.from_connection(orders_dao.conn)
+                with orders_dao.transaction():
+                    payment = payments.get(payment_id)
+                    if payment is None:
+                        raise PaymentError("payment not found")
+                    if payment.status in {"paid", "refunded"}:
+                        # 终态后到达的失败 webhook, 走幂等路径
+                        return WebhookHandleResult(
+                            payment_id=payment.id,
+                            processed=True,
+                            idempotent=True,
+                            order_status=orders_dao.get(payment.order_id).status,
+                        )
+                    if payment.status == "failed":
+                        return WebhookHandleResult(
+                            payment_id=payment.id,
+                            processed=True,
+                            idempotent=True,
+                            order_status=orders_dao.get(payment.order_id).status,
+                        )
+                    updated = payments.update_status(
+                        payment.id,
+                        status="failed",
+                        provider_trade_no=(
+                            normalized_payload.get("provider_trade_no")
+                            or payment.provider_trade_no
+                        ),
+                        callback_payload=payload,
+                        failure_reason=failure_reason,
+                    )
+                    order = orders_dao.get(updated.order_id)
+            return WebhookHandleResult(
+                payment_id=updated.id,
+                processed=True,
+                idempotent=False,
+                order_status=order.status,
+            )
 
         with OrdersDAO.connect(self.db_path) as orders_dao:
             payments = PaymentDAO.from_connection(orders_dao.conn)

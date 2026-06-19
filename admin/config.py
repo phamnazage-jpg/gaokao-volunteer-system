@@ -63,6 +63,7 @@ class Settings:
     alert_webhook_urls: list[str]
     ops_alert_log_path: str
     deletion_request_log_path: str
+    retention_days: int  # 2026-06-19: 删除/匿名化保留期 (天)
     jwt_secret: str
     portal_token_secret: str  # P2-4: 与后台 jwt_secret 分离
     jwt_algorithm: str
@@ -217,7 +218,9 @@ def load_settings() -> Settings:
         share_db_path=os.getenv("GAOKAO_SHARE_DB_PATH", "data/share/short_links.db"),
         share_report_dir=os.getenv("GAOKAO_SHARE_REPORT_DIR", "data/share/reports"),
         portal_upload_dir=os.getenv("GAOKAO_PORTAL_UPLOAD_DIR", "data/portal_uploads"),
-        portal_upload_max_bytes=int(os.getenv("GAOKAO_PORTAL_UPLOAD_MAX_BYTES", "5242880")),
+        portal_upload_max_bytes=int(
+            os.getenv("GAOKAO_PORTAL_UPLOAD_MAX_BYTES", "5242880")
+        ),
         portal_upload_max_files=int(os.getenv("GAOKAO_PORTAL_UPLOAD_MAX_FILES", "5")),
         payment_provider=os.getenv("GAOKAO_PAYMENT_PROVIDER", "mock").strip().lower(),
         payment_base_url=os.getenv("GAOKAO_PAYMENT_BASE_URL", "http://testserver"),
@@ -239,12 +242,23 @@ def load_settings() -> Settings:
         smtp_password=os.getenv("GAOKAO_SMTP_PASS", ""),
         smtp_use_tls=os.getenv("GAOKAO_SMTP_USE_TLS", "false").lower() == "true",
         smtp_use_ssl=os.getenv("GAOKAO_SMTP_USE_SSL", "false").lower() == "true",
-        alert_recipients=[s.strip() for s in os.getenv("GAOKAO_ALERT_RECIPIENTS", "").split(",") if s.strip()],
-        alert_webhook_urls=[s.strip() for s in os.getenv("GAOKAO_ALERT_WEBHOOK_URLS", "").split(",") if s.strip()],
-        ops_alert_log_path=os.getenv("GAOKAO_OPS_ALERT_LOG", "data/alerts/ops-alerts.jsonl"),
+        alert_recipients=[
+            s.strip()
+            for s in os.getenv("GAOKAO_ALERT_RECIPIENTS", "").split(",")
+            if s.strip()
+        ],
+        alert_webhook_urls=[
+            s.strip()
+            for s in os.getenv("GAOKAO_ALERT_WEBHOOK_URLS", "").split(",")
+            if s.strip()
+        ],
+        ops_alert_log_path=os.getenv(
+            "GAOKAO_OPS_ALERT_LOG", "data/alerts/ops-alerts.jsonl"
+        ),
         deletion_request_log_path=os.getenv(
             "GAOKAO_DELETION_REQUEST_LOG", "data/alerts/deletion-requests.jsonl"
         ),
+        retention_days=int(os.getenv("GAOKAO_RETENTION_DAYS", "180")),
         jwt_secret=os.getenv("GAOKAO_JWT_SECRET", _DEV_JWT_SECRET),
         portal_token_secret=_resolve_portal_token_secret(
             os.getenv("GAOKAO_ENV", "dev")

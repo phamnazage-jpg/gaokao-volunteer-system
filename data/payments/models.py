@@ -18,10 +18,12 @@ class PaymentRecord:
     checkout_token: Optional[str] = None  # payment-bound return key, never portal token
     callback_payload: Optional[str] = None
     refund_reason: Optional[str] = None
+    failure_reason: Optional[str] = None  # 6/19: 失败 webhook 持久化原因
     created_at: str = ""
     updated_at: str = ""
     paid_at: Optional[str] = None
     refunded_at: Optional[str] = None
+    failed_at: Optional[str] = None  # 6/19: 失败 webhook 时间戳
 
     def __post_init__(self) -> None:
         now = utc_now_iso()

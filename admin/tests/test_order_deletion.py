@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from data.notifications.email_service import DeliveryNotificationService
@@ -29,7 +30,7 @@ def _seed_order(db_path: str, order_id: str = "GKO-20260614-DELETE") -> Order:
         return dao.create(order, actor="test", reason="seed")
 
 
-def _mark_paid(settings, order: Order) -> None:
+def _mark_paid(settings, order) -> None:
     service = PaymentService.for_db(
         settings.orders_db_path,
         base_url=settings.payment_base_url,
@@ -42,6 +43,24 @@ def _mark_paid(settings, order: Order) -> None:
         provider_trade_no=f"MOCK-{order.id}",
     )
     service.handle_webhook(payload, headers["X-Mock-Signature"])
+
+
+def _expire_retention_window(db_path: str, order_id: str, days: int = 200) -> None:
+    """把订单的 status_updated_at 拨到 N 天前, 让保留期门禁放行。
+
+    真实 180 天窗口太慢, 测试场景需要可重现的"已过保留期"状态。
+    """
+    backdated = (
+        (datetime.now(timezone.utc) - timedelta(days=days))
+        .replace(microsecond=0)
+        .isoformat()
+    )
+    with OrdersDAO.connect(db_path) as dao:
+        dao.conn.execute(
+            "UPDATE orders SET status_updated_at=? WHERE id=?",
+            (backdated, order_id),
+        )
+        dao.conn.commit()
 
 
 def _prepare_order_with_artifacts(
@@ -63,6 +82,7 @@ def _prepare_order_with_artifacts(
             order_id, "delivered", actor="test", reason="report_ready"
         )
     return report_path, pdf_path
+
 
 def _prepare_portal_attachment(settings, order_id: str) -> Path:
     upload_dir = Path(settings.portal_upload_dir) / order_id
@@ -96,6 +116,7 @@ def test_admin_delete_order_removes_artifacts_and_related_records(
     _mark_paid(settings, order)
     attachment = _prepare_portal_attachment(settings, order.id)
     report_path, pdf_path = _prepare_order_with_artifacts(settings, tmp_path, order.id)
+    _expire_retention_window(settings.orders_db_path, order.id)
 
     notification_service = DeliveryNotificationService.for_db(settings.orders_db_path)
     try:
@@ -145,6 +166,7 @@ def test_admin_anonymize_order_masks_pii_but_keeps_order(
 ):
     order = _seed_order(settings.orders_db_path, order_id="GKO-20260614-ANON")
     _mark_paid(settings, order)
+    _expire_retention_window(settings.orders_db_path, order.id)
     IntakeStore.for_db(settings.orders_db_path).save(
         order_id=order.id,
         payload={"candidate_score": 578, "guardian_notes": "contains pii"},
@@ -199,6 +221,7 @@ def test_admin_anonymize_order_removes_portal_attachments(
 ):
     order = _seed_order(settings.orders_db_path, order_id="GKO-20260614-ANON-FILE")
     _mark_paid(settings, order)
+    _expire_retention_window(settings.orders_db_path, order.id)
     attachment = _prepare_portal_attachment(settings, order.id)
 
     resp = client.delete(
@@ -227,6 +250,7 @@ def test_admin_anonymize_order_scrubs_delivery_notifications_payload(
 ):
     order = _seed_order(settings.orders_db_path, order_id="GKO-20260618-ANON-NOTIFY")
     _mark_paid(settings, order)
+    _expire_retention_window(settings.orders_db_path, order.id)
 
     notification_service = DeliveryNotificationService.for_db(settings.orders_db_path)
     try:
@@ -258,3 +282,75 @@ def test_admin_anonymize_order_scrubs_delivery_notifications_payload(
 
     assert len(events) == 1
     assert events[0].payload_json == "{}"
+
+
+def test_admin_delete_rejected_within_retention_window(client, auth_headers, settings):
+    """RED: 刚 paid 的订单未过 180 天保留期, 删除必须被业务错误拒绝。
+
+    锁住 docs/DATA_RETENTION_AND_DELETION.md §2 的"服务完成后 180 天"口径,
+    防止管理员对仍处于保留期内的订单直接 delete / anonymize。
+    """
+    order = _seed_order(settings.orders_db_path, order_id="GKO-20260619-RETN-DEL")
+    _mark_paid(settings, order)
+
+    resp = client.delete(
+        f"/api/orders/{order.id}?mode=delete&reason=user_request",
+        headers=auth_headers,
+    )
+    assert resp.status_code == 409, resp.text
+    body = resp.json()
+    assert body["code"] == "E02002"
+    assert "保留期" in body["message"]
+
+    # 订单仍存在, 没被删
+    with OrdersDAO.connect(settings.orders_db_path) as dao:
+        assert dao.get(order.id).id == order.id
+
+
+def test_admin_anonymize_rejected_within_retention_window(
+    client, auth_headers, settings
+):
+    """RED: 匿名化同样要走保留期门禁。"""
+    order = _seed_order(settings.orders_db_path, order_id="GKO-20260619-RETN-ANO")
+    _mark_paid(settings, order)
+
+    resp = client.delete(
+        f"/api/orders/{order.id}?mode=anonymize&reason=retention_expired",
+        headers=auth_headers,
+    )
+    assert resp.status_code == 409, resp.text
+    body = resp.json()
+    assert body["code"] == "E02002"
+
+    # 关键字段未被清空, 证明没执行 anonymize 路径
+    with OrdersDAO.connect(settings.orders_db_path) as dao:
+        kept = dao.get(order.id)
+    assert kept.customer_name != "已匿名化"
+    assert kept.customer_wechat == "wx-parent-01"
+
+
+def test_admin_delete_allowed_after_retention_window(client, auth_headers, settings):
+    """GREEN 期望: 把 status_updated_at 拨到 181 天前, 删除可成功。"""
+    order = _seed_order(settings.orders_db_path, order_id="GKO-20260619-RETN-OK")
+    _mark_paid(settings, order)
+
+    with OrdersDAO.connect(settings.orders_db_path) as dao:
+        backdated = (
+            (datetime.now(timezone.utc) - timedelta(days=181))
+            .replace(microsecond=0)
+            .isoformat()
+        )
+        dao.conn.execute(
+            "UPDATE orders SET status_updated_at=? WHERE id=?",
+            (backdated, order.id),
+        )
+        dao.conn.commit()
+
+    resp = client.delete(
+        f"/api/orders/{order.id}?mode=delete&reason=retention_expired",
+        headers=auth_headers,
+    )
+    assert resp.status_code == 200, resp.text
+    body = resp.json()
+    assert body["action"] == "deleted"
+    assert body["order_id"] == order.id

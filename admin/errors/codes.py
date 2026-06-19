@@ -141,6 +141,9 @@ AUTH_ACCOUNT_DISABLED = ErrorCode(
 BIZ_ORDER_NOT_FOUND = ErrorCode(
     segment=ErrorSegment.BUSINESS, subdomain=ErrorSubdomain.GENERAL, sequence=1
 )  # E02001
+BIZ_ORDER_RETENTION_NOT_EXPIRED = ErrorCode(
+    segment=ErrorSegment.BUSINESS, subdomain=ErrorSubdomain.GENERAL, sequence=2
+)  # E02002
 BIZ_ORDER_INVALID_STATUS = ErrorCode(
     segment=ErrorSegment.BUSINESS, subdomain=ErrorSubdomain.PERMISSION, sequence=1
 )  # E02301

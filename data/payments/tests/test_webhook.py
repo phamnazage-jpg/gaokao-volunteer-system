@@ -27,7 +27,9 @@ def _seed_order(db_path: str, order_id: str = "GKO-20260614-WEBHOOK") -> Order:
         return dao.create(order, actor="test", reason="seed")
 
 
-def test_mock_payment_webhook_marks_order_paid_and_is_idempotent(route_client, settings):
+def test_mock_payment_webhook_marks_order_paid_and_is_idempotent(
+    route_client, settings
+):
     order = _seed_order(settings.orders_db_path)
     service = PaymentService.for_db(
         settings.orders_db_path,
@@ -86,8 +88,13 @@ def test_mock_payment_webhook_rejects_amount_mismatch(route_client, settings):
     assert unchanged.status == "pending"
 
 
-def test_handle_webhook_rejects_non_success_status(settings):
-    order = _seed_order(settings.orders_db_path, order_id="GKO-20260614-WEBHOOK-STATUS")
+def test_handle_webhook_persists_failed_status(settings):
+    """6/19: 失败 webhook 必须持久化 payment.status='failed', 不再只抛 PaymentError.
+
+    之前的契约 (test_handle_webhook_rejects_non_success_status) 让失败 webhook 抛 PaymentError,
+    导致 portal/admin 看 payment 仍为 pending, 用户/客服无法判断真实支付状态.
+    """
+    order = _seed_order(settings.orders_db_path, order_id="GKO-20260619-WEBHOOK-FAILED")
     service = PaymentService.for_db(
         settings.orders_db_path,
         base_url=settings.payment_base_url,
@@ -97,19 +104,35 @@ def test_handle_webhook_rejects_non_success_status(settings):
     payload, headers = service.provider.build_webhook_request(
         payment_id=checkout.payment_id,
         amount_cents=order.amount_cents,
-        provider_trade_no="MOCK-WAITING-001",
+        provider_trade_no="MOCK-FAILED-001",
     )
     payload = cast(dict[str, Any], payload)
     headers = cast(dict[str, str], headers)
-    payload["status"] = "failed"
+    payload["status"] = "TRADE_CLOSED"
+    payload["failure_reason"] = "buyer_closed_payment"
     headers["X-Mock-Signature"] = service.provider.sign_payload(payload)
 
-    with pytest.raises(PaymentError, match="payment status not successful"):
-        service.handle_webhook(payload, headers["X-Mock-Signature"])
+    result = service.handle_webhook(payload, headers["X-Mock-Signature"])
 
+    assert result.processed is True
+    assert result.idempotent is False
+    assert result.payment_id == checkout.payment_id
+
+    # 订单保持 pending (失败支付不应该推进订单状态机)
     with OrdersDAO.connect(settings.orders_db_path) as dao:
-        unchanged = dao.get(order.id)
-    assert unchanged.status == "pending"
+        kept = dao.get(order.id)
+    assert kept.status == "pending"
+
+    # 关键: payment 行已持久化为 failed, 留有 callback_payload + failure_reason
+    payment = service.get_payment_by_order(order.id)
+    assert payment is not None
+    assert payment.status == "failed"
+    assert payment.provider_trade_no == "MOCK-FAILED-001"
+    assert payment.callback_payload is not None
+    assert "TRADE_CLOSED" in payment.callback_payload
+    # 新加字段: failed_at 与 failure_reason
+    assert getattr(payment, "failed_at", None) is not None
+    assert getattr(payment, "failure_reason", None) == "buyer_closed_payment"
 
 
 def test_handle_webhook_rejects_app_id_mismatch(settings):
@@ -168,7 +191,9 @@ def test_handle_webhook_rejects_missing_notify_id_for_bound_provider(settings):
 
 
 def test_handle_webhook_rejects_merchant_id_mismatch(settings):
-    order = _seed_order(settings.orders_db_path, order_id="GKO-20260615-WEBHOOK-MERCHANT")
+    order = _seed_order(
+        settings.orders_db_path, order_id="GKO-20260615-WEBHOOK-MERCHANT"
+    )
     service = PaymentService.for_db(
         settings.orders_db_path,
         base_url=settings.payment_base_url,
@@ -213,19 +238,17 @@ def test_mock_payment_webhook_keeps_refunded_payment_terminal_state(settings):
         provider_trade_no="MOCK-WEBHOOK-REFUND-001",
     )
 
-    request = Request(
-        {
-            "type": "http",
-            "method": "POST",
-            "path": "/api/public/payments/mock/webhook",
-            "headers": [
-                (
-                    b"x-mock-signature",
-                    headers["X-Mock-Signature"].encode("utf-8"),
-                )
-            ],
-        }
-    )
+    request = Request({
+        "type": "http",
+        "method": "POST",
+        "path": "/api/public/payments/mock/webhook",
+        "headers": [
+            (
+                b"x-mock-signature",
+                headers["X-Mock-Signature"].encode("utf-8"),
+            )
+        ],
+    })
 
     first = mock_payment_webhook(payload, request, settings)
     assert first.idempotent is False

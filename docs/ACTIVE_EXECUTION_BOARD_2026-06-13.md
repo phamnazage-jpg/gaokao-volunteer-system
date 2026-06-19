@@ -1,9 +1,14 @@
-# ACTIVE_EXECUTION_BOARD
+# ACTIVE_EXECUTION_BOARD_2026-06-13
+
+> ⚠ **历史快照（2026-06-13 落盘版本，已被 6/19 当前版本取代）**
+>
+> 当前真相源已切换到 `docs/ACTIVE_EXECUTION_BOARD_2026-06-19.md`。
+> 本文件保留仅为完整审计链可追溯；任何"当前正在执行"任务以 6/19 版本为准。
 
 最后更新: 2026-06-13
 状态词: 当前有效问题执行板
 真相源: `docs/CURRENT_STATE.md`
-问题来源: `docs/ACTIVE_REMEDIATION_2026-06-13.md`
+问题来源: `docs/ACTIVE_REMEDIATION_2026-06-19.md`
 
 ---
 

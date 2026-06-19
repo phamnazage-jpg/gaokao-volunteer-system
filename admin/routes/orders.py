@@ -13,6 +13,7 @@ from __future__ import annotations
 import csv
 import json
 from dataclasses import asdict
+from datetime import datetime, timezone
 from pathlib import Path
 from io import StringIO
 from typing import Any, Literal, Optional, cast
@@ -26,15 +27,65 @@ from admin.db import AdminUser
 from admin.errors import (
     BIZ_ORDER_INVALID_STATUS,
     BIZ_ORDER_NOT_FOUND,
+    BIZ_ORDER_RETENTION_NOT_EXPIRED,
     DATA_PERSIST_FAILED,
     DATA_VALIDATION_FAILED,
 )
 from admin.errors.exceptions import BusinessError
 from data.orders.dao import DuplicateOrder, OrderNotFound, OrdersDAO
-from data.orders.deletion_service import OrderDeletionService
+from data.orders.deletion_service import (
+    RETENTION_GUARDED_STATUSES,
+    OrderDeletionService,
+)
 from data.orders.intake_store import IntakeStore
 from data.orders.models import Order, generate_order_id
 from data.orders.state_machine import InvalidStateTransition, next_states
+
+
+def _parse_iso_utc(raw: Optional[str]) -> Optional[datetime]:
+    if not raw:
+        return None
+    try:
+        dt = datetime.fromisoformat(raw.replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
+    return dt
+
+
+def _assert_retention_expired(
+    order: Order,
+    *,
+    retention_days: int,
+    now: Optional[datetime] = None,
+) -> None:
+    """保留期门禁 — paid/serving/... 状态的订单必须过 retention_days 才允许 delete/anonymize。
+
+    口径来源: docs/DATA_RETENTION_AND_DELETION.md §2 — 服务完成后 180 天。
+    落在 admin 层而不是 data.orders 层,避免反向依赖。
+    """
+    if order.status not in RETENTION_GUARDED_STATUSES:
+        return
+    anchor = _parse_iso_utc(order.status_updated_at) or _parse_iso_utc(order.created_at)
+    if anchor is None:
+        return
+    from datetime import timedelta
+
+    current = now or datetime.now(timezone.utc)
+    elapsed = current - anchor
+    if elapsed < timedelta(days=retention_days):
+        remaining = timedelta(days=retention_days) - elapsed
+        raise BusinessError(
+            BIZ_ORDER_RETENTION_NOT_EXPIRED,
+            detail={
+                "order_id": order.id,
+                "status": order.status,
+                "status_updated_at": order.status_updated_at,
+                "retention_days": retention_days,
+                "remaining_seconds": int(remaining.total_seconds()),
+            },
+        )
 
 
 router = APIRouter(prefix="/api/orders", tags=["orders"])
@@ -240,7 +291,9 @@ def _detail_payload(
     }
 
 
-def _normalize_updates(updates: Optional[dict[str, Any]], settings: Settings) -> dict[str, Any]:
+def _normalize_updates(
+    updates: Optional[dict[str, Any]], settings: Settings
+) -> dict[str, Any]:
     if not updates:
         return {}
     bad = sorted(set(updates) - _ALLOWED_UPDATE_FIELDS)
@@ -275,7 +328,9 @@ _REPORT_ARTIFACT_SUFFIXES = {".html", ".json", ".md", ".pdf"}
 def _trusted_report_roots(settings: Settings) -> tuple[Path, ...]:
     return (
         Path(settings.share_report_dir).resolve(),
-        (Path(settings.portal_upload_dir).resolve().parent / "order_artifacts").resolve(),
+        (
+            Path(settings.portal_upload_dir).resolve().parent / "order_artifacts"
+        ).resolve(),
         Path("data/examples").resolve(),
     )
 
@@ -350,7 +405,9 @@ def _create_overdue_pending_seed(
         created_at=created_at,
     )
     with OrdersDAO.connect(settings.orders_db_path) as dao:
-        created = dao.create(order, actor=current_user.username, reason="admin_hidden_seed")
+        created = dao.create(
+            order, actor=current_user.username, reason="admin_hidden_seed"
+        )
     intake_store = IntakeStore.for_db(settings.orders_db_path)
     try:
         intake_store.save(
@@ -372,7 +429,10 @@ def _cleanup_demo_seed_orders(settings: Settings) -> tuple[list[str], dict[str, 
         for order_id in _list_demo_seed_order_ids(dao):
             if dao.delete(order_id):
                 deleted_ids.append(order_id)
-    return deleted_ids, {"scenario": "cleanup_demo_seed", "deleted_count": len(deleted_ids)}
+    return deleted_ids, {
+        "scenario": "cleanup_demo_seed",
+        "deleted_count": len(deleted_ids),
+    }
 
 
 def _transition_error(order_id: str, to_status: str, exc: Exception) -> BusinessError:
@@ -671,6 +731,14 @@ def delete_or_anonymize_order(
     settings: Settings = Depends(get_settings_dep),
     current_user: AdminUser = Depends(require_role("admin")),
 ) -> dict[str, Any]:
+    # 保留期门禁: 必须先查到订单, 校验 retention_days 内不允许 delete / anonymize
+    with OrdersDAO.connect(settings.orders_db_path) as dao:
+        try:
+            order = dao.get(order_id)
+        except OrderNotFound as exc:
+            raise _business_error_for_lookup(order_id) from exc
+        _assert_retention_expired(order, retention_days=settings.retention_days)
+
     service = OrderDeletionService.for_db(settings.orders_db_path)
     try:
         try:

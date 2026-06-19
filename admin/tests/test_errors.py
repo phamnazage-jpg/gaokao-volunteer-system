@@ -151,10 +151,12 @@ class TestRegistry:
         }
 
     def test_all_registered_codes_count(self):
-        """注册表里有 17 个码点 (1 兜底 + 16 业务)."""
-        # 16 业务: AUTH×5 + BIZ×3 + DATA×3 + THIRD×2 + SYS×3 = 16
-        # FALLBACK_CODE 也在注册表 (但函数中它仅作兜底不入注册)
-        assert len(MESSAGES_ZH_CN) == 16
+        """注册表里有 17 个码点 (1 兜底 + 16 业务).
+
+        16 业务: AUTH×5 + BIZ×4 (含 2026-06-19 新增 retention) + DATA×3 + THIRD×2 + SYS×3 = 17
+        FALLBACK_CODE 也在注册表 (但函数中它仅作兜底不入注册)
+        """
+        assert len(MESSAGES_ZH_CN) == 17
 
 
 # ---------------- exceptions.py ----------------

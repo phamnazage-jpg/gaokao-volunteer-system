@@ -24,6 +24,20 @@ CREATE INDEX IF NOT EXISTS idx_order_deletion_audits_order_id ON order_deletion_
 """
 
 
+# 状态 → 触发保留期门禁的子集。
+# pending 视为未付款,可由后台直接清理(避免未支付订单卡在 retention 周期里);
+# paid/serving/delivered/completed/refunded 才进入"服务完成后 180 天"口径。
+# 实际抛 BusinessError 的 gate 在 admin/routes/orders.py 路由层 (避免 data.orders 反向依赖 admin)。
+RETENTION_GUARDED_STATUSES = frozenset({
+    "paid",
+    "serving",
+    "delivered",
+    "completed",
+    "refunded",
+})
+DEFAULT_RETENTION_DAYS = 180
+
+
 @dataclass
 class DeletionResult:
     order_id: str

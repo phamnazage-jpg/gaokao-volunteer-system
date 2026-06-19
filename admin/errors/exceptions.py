@@ -168,6 +168,7 @@ _DEFAULT_HTTP_STATUS: Mapping[str, int] = {
     "E01301": status.HTTP_403_FORBIDDEN,
     # 02 业务域
     "E02001": status.HTTP_404_NOT_FOUND,
+    "E02002": status.HTTP_409_CONFLICT,
     "E02301": status.HTTP_409_CONFLICT,
     "E02501": status.HTTP_429_TOO_MANY_REQUESTS,
     # 03 数据域

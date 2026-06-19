@@ -8,11 +8,12 @@
 
 > 说明：本文同时描述两类内容：
 >
-> 1. Current：当前已落地的后台/API/CLI/Skills/Webhook 能力
+> 1. Current：当前已落地的后台/API/CLI/Skills/Webhook 能力（含 6/19 新增的删除/匿名化 180 天保留期门禁）
 > 2. Target：尚未落地的用户端 Web/H5、自助支付、自助交付等目标能力
->    阅读时请以 `docs/CURRENT_STATE.md` 为当前真相源。
+>    阅读时请以 `docs/CURRENT_STATE.md` 为当前真相源，6/19 当前执行板为 `docs/ACTIVE_EXECUTION_BOARD_2026-06-19.md`。
 >
 > 当前项目定位：人工服务运营增强系统；用户端 Web 自助闭环仅为本地 MVP/目标态，不应把 Target 能力误读为当前已上线能力。
+> 6/19 新增约束：删除/匿名化 180 天保留期门禁（E02002）已落地，详情见 `docs/plans/2026-06-19-production-readiness-remediation-plan.md`。
 
 ---
 
