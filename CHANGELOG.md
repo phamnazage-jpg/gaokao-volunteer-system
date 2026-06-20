@@ -4,6 +4,30 @@
 
 ---
 
+## v2.1.1 (2026-06-20) — T12-D retention cleanup 生产化部署验收
+
+### 🐛 修复
+
+- **retention cleanup 多订单 anonymize 崩溃**（P0 — T12-D 端到端 acceptance 必现）
+  - 现象: `retention_cleanup.run_cleanup(apply=True)` 在一次命中 ≥ 2 笔终端态订单时，
+    第二笔开始全部 `sqlite3.ProgrammingError: Cannot operate on a closed database`
+  - 根因: `OrdersDAO.__exit__` 不区分连接所有权，对外部 service 传入的
+    `self._conn` 也 `close()`。`deletion_service.anonymize_order` 把 service 持有的
+    连接包成 `OrdersDAO(self._conn)` 走 with-block，第一笔执行完就把连接关掉
+  - 触发条件: 生产 `retention_days=180` + 周日 03:30 timer 触发时极易命中
+  - 修复: `OrdersDAO.__init__` 新增 `owns_conn: bool = False` 参数；
+    `__exit__` 仅在 `owns_conn=True` 时 close；`connect()` classmethod
+    创建的连接自动设 `owns_conn=True`（保持原行为）
+  - 回归测试: `tests/test_retention_cleanup.py::test_retention_cleanup_apply_anonymizes_multiple_old_orders_in_sequence` 锁住多订单连续 anonymize 契约
+
+### 📝 文档
+
+- `docs/DELIVERY_RETENTION_OPS_RUNBOOK.md` §8 新增 T12-D 本地端到端 acceptance 步骤
+  + 验收通过判定表（6 项全过）+ 部署前 checklist
+- 历史 bug 背景已写入 runbook §8.4，避免后续误判为"运行环境问题"
+
+---
+
 ## v2.1 (2026-06-13)
 
 ### 🚧 进行中

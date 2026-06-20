@@ -178,8 +178,18 @@ class OrdersDAO:
        退出上下文时自动 commit/close。
     """
 
-    def __init__(self, conn: sqlite3.Connection) -> None:
+    def __init__(self, conn: sqlite3.Connection, *, owns_conn: bool = False) -> None:
+        """构造 DAO。
+
+        - ``owns_conn=False``（默认）: ``conn`` 由调用方持有与关闭，``__exit__``
+          只 commit/rollback，**不** close。这允许上层 service 把自己的连接
+          包成 DAO 走 with-block（典型场景：循环里多次复用同一连接执行多个
+          写操作，再由 service 统一 commit/close）。T12-D regression。
+        - ``owns_conn=True``: ``OrdersDAO.connect()`` 内部 ``apply_schema`` 创建
+          的连接由 DAO 自己关闭，``__exit__`` 在 commit/rollback 后再 close。
+        """
         self._conn = conn
+        self._owns_conn = owns_conn
         self._tx_depth = 0  # 嵌套事务深度（0 = 顶层）
         # DAO 假设 conn 已启用 foreign_keys；不强制重设（调用方控制）。
 
@@ -206,7 +216,8 @@ class OrdersDAO:
         conn = apply_schema(db_path)
         if row_factory:
             conn.row_factory = sqlite3.Row
-        return cls(conn)
+        # ``connect`` 自己创建了连接，DAO 拥有所有权；__exit__ 必须 close。
+        return cls(conn, owns_conn=True)
 
     @property
     def conn(self) -> sqlite3.Connection:
@@ -920,7 +931,11 @@ class OrdersDAO:
             else:
                 self._conn.rollback()
         finally:
-            self._conn.close()
+            # 只在 DAO 自己拥有连接时才关闭；外部传入的连接由调用方负责生命周期。
+            # T12-D regression: deletion_service.anonymize_order 多次复用 service
+            # 持有的 self._conn，若 DAO 退出时 close 会导致后续所有 DAO 操作崩。
+            if self._owns_conn:
+                self._conn.close()
 
 
 __all__ = [

@@ -120,6 +120,50 @@ def test_retention_cleanup_script_supports_retention_days(settings):
     assert '"candidates": 1' in proc.stdout
 
 
+def test_retention_cleanup_apply_anonymizes_multiple_old_orders_in_sequence(
+    settings,
+) -> None:
+    """T12-D regression: 服务持有 conn 时，连续 anonymize 多笔订单必须全部成功。
+
+    历史 bug: ``deletion_service.anonymize_order`` 把 ``self._conn`` 包成
+    ``OrdersDAO(self._conn)`` 走 with-block，而 ``OrdersDAO.__exit__`` 不区分
+    conn 所有权，一律 close。第一个订单执行完就把 service 持有的连接关掉，
+    第二个订单开始全部 ``Cannot operate on a closed database``。
+    """
+    from data.orders.retention_cleanup import run_cleanup
+
+    order_ids = [
+        "GKO-20250101-RETENTION-MULTI-A",
+        "GKO-20250101-RETENTION-MULTI-B",
+        "GKO-20250101-RETENTION-MULTI-C",
+    ]
+    for idx, oid in enumerate(order_ids, start=1):
+        _seed_old_completed_order(settings.orders_db_path, order_id=oid)
+        # 给每个订单一点时间间隔，确保 status_updated_at 不完全相同
+        # （cleanup 按 cutoff 命中即可，无需显式 sleep）
+
+    result = run_cleanup(
+        settings.orders_db_path,
+        cutoff_iso="2025-06-30T00:00:00+00:00",
+        apply=True,
+    )
+
+    assert result.scanned >= 3
+    assert result.candidates == 3
+    assert result.anonymized == 3, (
+        f"连续多笔订单应全部匿名化，实际 anonymized={result.anonymized} "
+        f"（历史 bug: 第一个 anonymize 关闭 service.conn 后后续全部失败）"
+    )
+
+    with OrdersDAO.connect(settings.orders_db_path) as dao:
+        for oid in order_ids:
+            order = dao.get(oid)
+            assert order.customer_phone is None, f"{oid} phone 未被清空"
+            assert order.customer_name == "已匿名化", (
+                f"{oid} name 未被替换为'已匿名化'，实际={order.customer_name!r}"
+            )
+
+
 def test_retention_cleanup_underscore_script_alias_works(settings):
     _seed_old_completed_order(
         settings.orders_db_path, order_id="GKO-20250101-RETENTION-ALIAS"
