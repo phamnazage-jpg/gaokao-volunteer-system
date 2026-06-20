@@ -20,6 +20,11 @@ def test_admin_orders_alias_list_and_detail(client, auth_headers):
             "customer_phone": "13800138000",
             "candidate_name": "张三",
             "candidate_province": "湖南",
+            # A-2 (2026-06-20): 后台补录路径强制要求 consent 块
+            "consent": {
+                "consent_method": "verbal_chat",
+                "consent_note": "alias route test",
+            },
         },
     )
     assert created.status_code == 201, created.text

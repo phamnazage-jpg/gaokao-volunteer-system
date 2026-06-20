@@ -38,7 +38,7 @@ from data.orders.deletion_service import (
     OrderDeletionService,
 )
 from data.orders.intake_store import IntakeStore
-from data.orders.models import Order, generate_order_id
+from data.orders.models import Order, generate_order_id, utc_now_iso
 from data.orders.state_machine import InvalidStateTransition, next_states
 
 
@@ -229,6 +229,34 @@ class CreateOrderRequest(BaseModel):
     assigned_consultant: Optional[str] = None
     notes: Optional[str] = None
     tags: list[str] = Field(default_factory=list)
+
+    # A-2 (2026-06-20): 后台/外部渠道补录同意审计统一化
+    # LEGAL_PRIVACY_BASELINE §6 要求任何订单创建路径必须记录同意审计字段。
+    # portal 路径已自动落 consent_channel=portal / consent_operator=guardian
+    # (见 web_public.py + intake_store.save), admin/外部渠道补录必须显式带
+    # consent 块, 否则 422。空 consent_note 也允许, 表示"已确认但无备注"。
+    consent: "ConsentInfo"
+
+
+# A-2: 同意审计子模型
+# consent_method 白名单:
+# - verbal_chat: 家长/考生口头同意 (微信/电话/线下沟通)
+# - phone_recording: 通话录音存档
+# - screenshot: 微信/聊天截图存档
+# - written_form: 书面/电子签字确认单
+# - self_declared: 平台代填声明 (极少使用, 仅限已签长期合作协议的渠道)
+ConsentMethod = Literal[
+    "verbal_chat",
+    "phone_recording",
+    "screenshot",
+    "written_form",
+    "self_declared",
+]
+
+
+class ConsentInfo(BaseModel):
+    consent_method: ConsentMethod
+    consent_note: Optional[str] = None
 
 
 class UpdateOrderRequest(BaseModel):
@@ -551,6 +579,16 @@ def create_order(
     settings: Settings = Depends(get_settings_dep),
     current_user: AdminUser = Depends(require_role("admin")),
 ) -> dict[str, Any]:
+    # A-2 (2026-06-20): 后台代录/外部渠道补录的同意审计时间戳统一为"创建时间"
+    # portal 路径用 intake_store.save(submit=True) 内部 utc_now_iso() 自动落库
+    # (web_public.py + intake_store.save), admin 路径这里手动计算保持口径一致
+    consent_given_at = utc_now_iso()
+    # consent_operator:
+    # 严格按 LEGAL_PRIVACY_BASELINE §4 白名单: self / guardian / admin_import
+    # - web 渠道: "guardian" (用户本人或监护人自助 portal, 与 web_public.py 一致)
+    # - 其他渠道 (xianyu/wechat/school): "admin_import" (后台代录, 同意来源是渠道商)
+    consent_operator = "guardian" if payload.source == "web" else "admin_import"
+
     order = Order(
         id=generate_order_id(),
         source=payload.source,
@@ -574,6 +612,8 @@ def create_order(
         assigned_consultant=payload.assigned_consultant,
         notes=payload.notes,
         tags=payload.tags,
+        consent_method=payload.consent.consent_method,
+        consent_given_at=consent_given_at,
     )
     with OrdersDAO.connect(settings.orders_db_path) as dao:
         try:
@@ -587,7 +627,41 @@ def create_order(
             ) from exc
         except Exception as exc:  # pragma: no cover - 持久层兜底
             raise BusinessError(DATA_PERSIST_FAILED) from exc
-        return {"action": "created", **_detail_payload(dao, created)}
+        order_id = created.id
+        # 在 dao 仍持有 conn 的 with-block 内先抓 detail_payload 快照,
+        # 避免退出 with-block 后再调 dao.get_status_history 等接口
+        detail = _detail_payload(dao, created)
+
+    # A-2: 同步写 order_intakes 记录, 与 portal 路径同口径
+    # (consent_channel/operator/given_at/method/note)
+    # 走独立 IntakeStore.for_db(), 不复用 OrdersDAO 的 conn — T12-D 修过
+    # OrdersDAO.__exit__ 不再 close 外部传入的 conn, 但这里用独立 conn 更清晰
+    # (admin_create 是低频写操作, 多开一个 sqlite conn 无性能影响)
+    intake_store = IntakeStore.for_db(settings.orders_db_path)
+    try:
+        intake_payload: dict[str, Any] = {
+            "candidate_name": payload.candidate_name,
+            "candidate_province": payload.candidate_province,
+            "candidate_score": payload.candidate_score,
+            "candidate_subjects": payload.candidate_subjects,
+            "customer_name": payload.customer_name,
+            "customer_phone": payload.customer_phone,
+            "customer_wechat": payload.customer_wechat,
+            # 同意审计字段(与 web_public.py + intake_store.save 默认值同源)
+            "consent_version": "t12-web-mvp-v1",
+            "consent_scope": f"{payload.source}-channel-intake",
+            "consent_channel": payload.source,
+            "consent_operator": consent_operator,
+            "consent_method": payload.consent.consent_method,
+            "consent_given_at": consent_given_at,
+        }
+        if payload.consent.consent_note:
+            intake_payload["consent_note"] = payload.consent.consent_note
+        intake_store.save(order_id=order_id, payload=intake_payload, submit=True)
+    finally:
+        intake_store.close()
+
+    return {"action": "created", **detail}
 
 
 @router.post(
