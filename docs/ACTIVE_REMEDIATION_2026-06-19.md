@@ -1,6 +1,10 @@
 # ACTIVE_REMEDIATION_2026-06-19
 
-最后更新: 2026-06-19
+> ⚠ **历史快照** — 本文件为 2026-06-19 整改清单，已被 [`docs/ACTIVE_REMEDIATION_2026-06-20.md`](ACTIVE_REMEDIATION_2026-06-20.md) 取代。保留此文件仅供历史回溯；当前未解决问题以 6/20 版本为准。
+>
+> **6/20 增量**: retention cleanup 多订单 conn ownership 修复（T12-D 端到端本地 acceptance 步骤就绪）— 见 `docs/ACTIVE_REMEDIATION_2026-06-20.md` §B-2
+
+最后更新: 2026-06-19（已降级为历史快照）
 状态词: 当前仍然有效的问题清单（仅保留未解决项）
 真相源: `docs/CURRENT_STATE.md`
 来源基线:

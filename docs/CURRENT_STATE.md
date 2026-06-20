@@ -1,32 +1,60 @@
 # CURRENT_STATE
 
-最后更新: 2026-06-19
-状态词: 本地验证完成（6/19 复审 + 6/19 整改计划 + A1 保留期门禁 + B1 支付失败持久化 + A2/B2 文档与执行板校准已全部落地；下一阶段 = 推进 T12 真实支付 acceptance + 前台删除工单 + 合规审定）
+最后更新: 2026-06-20
+状态词: 本地验证完成（6/19 复审 + 6/19 整改计划 + A1 保留期门禁 + B1 支付失败持久化
+
+- A2/B2 文档与执行板校准 + 6/20 T12-D retention cleanup conn ownership 修复
+- 端到端本地 acceptance 步骤落地；下一阶段 = 推进 T12 真实支付 acceptance
+- 后台/外部渠道补录同意审计统一化 + 合规审定）
 
 真相源优先级:
 
 1. 本文件
-2. `docs/ACTIVE_REMEDIATION_2026-06-19.md`（6/19 当前整改清单，**取代 6/13 历史快照**）
-3. `docs/ACTIVE_EXECUTION_BOARD_2026-06-19.md`（6/19 当前执行板，**取代 6/13 历史快照**）
-4. `docs/plans/2026-06-19-production-readiness-remediation-plan.md`（6/19 整改计划）
-5. `reports/PRODUCTION_STRICT_REVIEW_2026-06-19.md`（6/19 复审报告）
-6. `docs/plans/2026-06-17-phase2-majors-catalog-implementation-plan.md`（Phase 2 已收口快照）
-7. `docs/DESIGN_RULES_TRUSTED_CLI_2026-06-16.md`（设计快照；Phase 编号需与执行口径消歧）
-8. `docs/PROJECT_PLANNING_REALIGNMENT_2026-06-16.md`（历史规划/实现漂移审计）
-9. `docs/RULES_SOURCE_OF_TRUTH.md`（规则真相源索引；待补建）
-10. `docs/MAJOR_DATA_SOURCE_OF_TRUTH.md`（专业目录真相源索引）
-11. `docs/CLI_API_MAPPING.md`（CLI/API 映射索引）
-12. `docs/P0_P1_P2_REMEDIATION_PLAN_2026-06-14.md`（历史整改板；§4 卡片以 §2.1 状态归一为准）
-13. `docs/FRONTEND_UI_AUDIT_2026-06-16.md` / `docs/FRONTEND_UI_EXECUTION_BOARD_2026-06-16.md`
-14. `docs/ACTIVE_REMEDIATION_2026-06-13.md`（**已降级为历史快照**）
-15. `docs/ACTIVE_EXECUTION_BOARD_2026-06-13.md`（**已降级为历史快照**）
-16. `product/PRD.md` / `product/ROADMAP.md` / `docs/IMPLEMENTATION_PLAN_v2.md`
-17. `docs/PRODUCTION_DEPLOYMENT_CHECKLIST_2026-06-15.md`
-18. `reports/PRODUCT_PLANNING_TECH_ALIGNMENT_REVIEW_2026-06-13.md`（历史评审快照）
+2. `docs/ACTIVE_REMEDIATION_2026-06-20.md`（6/20 当前整改清单，**取代 6/19 历史快照**）
+3. `docs/ACTIVE_EXECUTION_BOARD_2026-06-20.md`（6/20 当前执行板，**取代 6/19 历史快照**）
+4. `docs/ACTIVE_REMEDIATION_2026-06-19.md`（**已降级为历史快照**）
+5. `docs/ACTIVE_EXECUTION_BOARD_2026-06-19.md`（**已降级为历史快照**）
+6. `docs/plans/2026-06-19-production-readiness-remediation-plan.md`（6/19 整改计划）
+7. `reports/PRODUCTION_STRICT_REVIEW_2026-06-19.md`（6/19 复审报告）
+8. `docs/plans/2026-06-17-phase2-majors-catalog-implementation-plan.md`（Phase 2 已收口快照）
+9. `docs/DESIGN_RULES_TRUSTED_CLI_2026-06-16.md`（设计快照；Phase 编号需与执行口径消歧）
+10. `docs/PROJECT_PLANNING_REALIGNMENT_2026-06-16.md`（历史规划/实现漂移审计）
+11. `docs/RULES_SOURCE_OF_TRUTH.md`（规则真相源索引；待补建）
+12. `docs/MAJOR_DATA_SOURCE_OF_TRUTH.md`（专业目录真相源索引）
+13. `docs/CLI_API_MAPPING.md`（CLI/API 映射索引）
+14. `docs/P0_P1_P2_REMEDIATION_PLAN_2026-06-14.md`（历史整改板；§4 卡片以 §2.1 状态归一为准）
+15. `docs/FRONTEND_UI_AUDIT_2026-06-16.md` / `docs/FRONTEND_UI_EXECUTION_BOARD_2026-06-16.md`
+16. `docs/ACTIVE_REMEDIATION_2026-06-13.md`（**已降级为历史快照**）
+17. `docs/ACTIVE_EXECUTION_BOARD_2026-06-13.md`（**已降级为历史快照**）
+18. `product/PRD.md` / `product/ROADMAP.md` / `docs/IMPLEMENTATION_PLAN_v2.md`
+19. `docs/PRODUCTION_DEPLOYMENT_CHECKLIST_2026-06-15.md`
+20. `reports/PRODUCT_PLANNING_TECH_ALIGNMENT_REVIEW_2026-06-13.md`（历史评审快照）
 
 ---
 
-## 0. 6/19 增量段（叠加在 6/13 真相源之上）
+## 0. 6/20 增量段（叠加在 6/19 真相源之上）
+
+6/20 落地了 1 项 P1 整改 + 端到端本地 acceptance 步骤 + 真相源分层。**本节是当前唯一增量**：
+
+### 0.1 T12-D retention cleanup conn ownership 修复（P1）
+
+- 现象: `retention_cleanup.run_cleanup(apply=True)` 一次命中 ≥ 2 笔终端态订单时，第二笔起全部 `sqlite3.ProgrammingError: Cannot operate on a closed database`
+- 根因: `OrdersDAO.__exit__` 不区分连接所有权，对外部 service 传入的 `self._conn` 也 `close()`；`deletion_service.anonymize_order` 把 service 持有的连接包成 `OrdersDAO(self._conn)` 走 with-block，第一笔执行完就把连接关掉
+- 修复: `OrdersDAO.__init__` 新增 `owns_conn: bool = False` 参数；`__exit__` 仅在 `owns_conn=True` 时 close；`connect()` classmethod 创建的连接自动设 `owns_conn=True`（保持原行为）；外部 service 包成 DAO 走 with-block 默认不 close
+- 回归测试: `tests/test_retention_cleanup.py::test_retention_cleanup_apply_anonymizes_multiple_old_orders_in_sequence` 锁住多订单连续 anonymize 契约
+- 端到端 smoke 实测: 4 笔订单（2 笔旧 terminal + 1 笔 fresh pending + 1 笔 paid-in-window）→ dry-run 报 2 candidates / 0 anonymized；apply 真把 2 笔匿名化，pending/paid-in-window 严格不动，deletion log 1 条被裁，share events 2 条被裁
+- runbook §8 新增 T12-D 本地端到端 acceptance 步骤 + 部署前 checklist + 历史 bug 背景
+- 验证: 6 个 retention 测试 + 205 个直接相关子集全过，ruff + mypy 通过
+
+### 0.2 真相源分层与历史快照降级（6/20 增量）
+
+- 6/19 整改板/执行板顶部加"⚠ 历史快照"头注，指向 6/20
+- 6/20 新建 `docs/ACTIVE_REMEDIATION_2026-06-20.md` + `docs/ACTIVE_EXECUTION_BOARD_2026-06-20.md`
+- 本节作为 6/20 增量叠加在 6/19 真相源之上
+
+---
+
+## 6/19 增量段（叠加在 6/13 真相源之上）
 
 6/19 落地了 3 项 P0/P1 整改 + 1 项真相源分层。**本节是当前唯一增量**：
 
