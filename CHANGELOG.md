@@ -4,6 +4,66 @@
 
 ---
 
+## v2.1.3 (2026-06-20) — 生产加固 + L-A 送审前修复 + crowd_db 质量契约
+
+### ✨ 新增
+
+- **admin `/health` 端点增强** (6/20 加固)
+  - 主键契约: `status: "ok"` (PRODUCTION_DEPLOYMENT_CHECKLIST §4 liveness probe)
+  - 新增 `checks` 子对象: `db_writable` / `disk_writable` / `settings_valid`
+  - DB 可写: connect + CREATE TEMP TABLE + INSERT + SELECT + DROP
+  - 磁盘可写: 在 ops_alert_log_path 目录创建临时文件 + 删除
+  - settings_valid: 复用 `is_jwt_secret_secure` 判断配置就绪
+  - 仍不暴露环境/路径/版本细节
+- **`_enforce_jwt_secret_policy`** (P2-4 同级, 6/20 加固)
+  - `GAOKAO_ENV=prod` + dev 默认 JWT secret → RuntimeError fail-closed
+  - `GAOKAO_ENV=prod` + JWT secret 长度 < 32 → RuntimeError fail-closed
+- **`_enforce_default_admin_password_policy`** (6/20 加固)
+  - `GAOKAO_ENV=prod` + `GAOKAO_ADMIN_PASS=admin123` → RuntimeError fail-closed
+  - `GAOKAO_ENV=prod` + 密码 < 10 字符 / 字符类 < 3 → RuntimeError fail-closed
+- **`tests/test_crowd_db_data_quality.py`** (Q-A 闭环, CROWD_DB_DATA_QUALITY §7 承诺的锁死文件)
+  - 锁住 27 省总数 + 仅湖南 high + 其它 26 省 ≤ usable + 高考生源大省不在 high 集合
+  - 锁住 data_year=2025 (6/25 后需显式更新)
+  - 防止"27 省高置信"合规假象回归
+- **admin 后台 footer 隐私政策链接** (L-A R7)
+  - `admin/static/dashboard.html` (592 行) 加 `<footer>` 块, 链接 /privacy + /deletion-policy + /service-terms
+  - `admin/routes/ui.py` 内联 admin/orders/new 模板 (line 182 闭包) 同步加 footer
+  - 与 portal 前台 `_render_footer_links()` 同口径
+
+### 🐛 修复
+
+- **L-A R1**: `docs/LEGAL_PRIVACY_BASELINE.md` §6 `consent_channel` 列表移除孤儿 `admin` 渠道值 (代码侧从未实际产生)
+- **L-A R4**: `docs/LEGAL_PRIVACY_BASELINE.md` §7 "已具备/尚缺" 同步 6/20 A-2 + T12-D 进展 (后台/外部渠道补录同意审计 + 数据删除 SOP 脚本化)
+
+### 📝 文档
+
+- `docs/LEGAL_PRIVACY_BASELINE.md` §6 增注释说明 admin 渠道值移除原因
+- `docs/LEGAL_PRIVACY_BASELINE.md` §7 重写"已具备/尚缺"分区, 显式归到 6/20 增量
+- `docs/CURRENT_STATE.md` 状态词段升级 (见下)
+- `docs/ACTIVE_REMEDIATION_2026-06-20.md` 加固项标记 ✅ completed
+- `reports/PRODUCTION_HARDENING_AUDIT_2026-06-20.md` (子代理失信, 主代理自跑)
+- `reports/LA_LEGAL_PRIVACY_PRE_AUDIT_2026-06-20.md` (子代理 363 行交付)
+- `reports/QA_CROWD_DB_NON_HUNAN_DENSITY_AUDIT.md` (子代理 45 行交付)
+
+### 🧪 测试
+
+- `admin/tests/test_health.py`:
+  - `test_health_endpoint_returns_minimal_readiness_only` (升级: 断言 checks 子对象)
+  - `test_load_settings_prod_rejects_dev_jwt_secret` (新)
+  - `test_load_settings_prod_rejects_short_jwt_secret` (新)
+  - `test_load_settings_prod_rejects_default_admin_password` (新)
+- `data/crowd_db/tests/test_crowd_db_data_quality.py` (新, 8 个测试):
+  - `test_total_provinces_is_27`
+  - `test_hunan_is_the_only_high_quality_province`
+  - `test_hunan_confidence_meets_high_threshold`
+  - `test_non_hunan_provinces_not_high`
+  - `test_high_population_provinces_acknowledged_as_skeleton_or_lower`
+  - `test_quality_levels_are_valid_enum`
+  - `test_confidence_values_in_valid_range`
+  - `test_data_year_is_2025_until_2026_published`
+
+---
+
 ## v2.1.2 (2026-06-20) — A-2 后台/外部渠道补录同意审计统一化
 
 ### ✨ 新增
@@ -69,7 +129,7 @@
 ### 📝 文档
 
 - `docs/DELIVERY_RETENTION_OPS_RUNBOOK.md` §8 新增 T12-D 本地端到端 acceptance 步骤
-  + 验收通过判定表（6 项全过）+ 部署前 checklist
+  - 验收通过判定表（6 项全过）+ 部署前 checklist
 - 历史 bug 背景已写入 runbook §8.4，避免后续误判为"运行环境问题"
 
 ---

@@ -20,7 +20,10 @@ def test_create_app_runs_lifespan(client):
     resp = client.get("/health")
     assert resp.status_code == 200
     body = resp.json()
-    assert body == {"status": "ok"}
+    assert body.get("status") == "ok"
+    assert body.get("checks", {}).get("db_writable") is True
+    assert body.get("checks", {}).get("disk_writable") is True
+    assert body.get("checks", {}).get("settings_valid") is True
 
 
 def test_openapi_json_exposes_all_routes(client):
@@ -83,8 +86,8 @@ def test_dashboard_page_served(client):
     assert 'id="pending-breakdown"' in body
     assert 'id="pending-overdue-tag"' in body
     assert 'id="pending-missing-tag"' in body
-    assert 'pending-tag-overdue' in body
-    assert 'pending-tag-missing' in body
+    assert "pending-tag-overdue" in body
+    assert "pending-tag-missing" in body
     assert 'id="orders-spark"' in body
     assert 'id="revenue-spark"' in body
     assert 'id="status-title"' in body
@@ -142,6 +145,7 @@ def test_dashboard_static_js_served(client):
     assert "postDevSeed" in body
     assert "dev-seed-panel" in body
     assert "/api/admin/orders/dev-seed" in body
+
 
 def test_bootstrap_admin_only_once(client, settings):
     """lifespan 已 bootstrap 后,再次调用应报告已存在,不再创建。"""
@@ -244,5 +248,7 @@ def test_prod_rejects_default_admin_password(tmp_path, monkeypatch):
     from admin.app import _validate_and_log_settings
     from admin.config import load_settings
 
-    with pytest.raises(RuntimeError, match="default admin password insecure in prod"):
+    with pytest.raises(
+        RuntimeError, match="GAOKAO_ADMIN_PASS invalid in prod|默认管理员密码"
+    ):
         _validate_and_log_settings(load_settings())

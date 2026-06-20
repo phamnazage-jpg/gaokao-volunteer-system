@@ -153,6 +153,20 @@ def _enforce_portal_token_secret_policy(settings: Settings) -> None:
         raise RuntimeError(f"GAOKAO_PORTAL_TOKEN_SECRET invalid in prod: {reason}")
 
 
+def _enforce_jwt_secret_policy(settings: Settings) -> None:
+    """6/20 加固: 生产环境 JWT secret 必须满足强度门槛, 否则 fail-closed。"""
+    secure, reason = is_jwt_secret_secure(settings)
+    if not secure and settings.env == "prod":
+        raise RuntimeError(f"GAOKAO_JWT_SECRET invalid in prod: {reason}")
+
+
+def _enforce_default_admin_password_policy(settings: Settings) -> None:
+    """6/20 加固: 生产环境默认管理员密码必须满足强度门槛, 否则 fail-closed。"""
+    secure, reason = is_default_admin_password_secure(settings)
+    if not secure and settings.env == "prod":
+        raise RuntimeError(f"GAOKAO_ADMIN_PASS invalid in prod: {reason}")
+
+
 def _enforce_payment_provider_policy(settings: Settings) -> None:
     provider = (settings.payment_provider or "mock").strip().lower()
     if settings.env != "prod":
@@ -268,9 +282,12 @@ def load_settings() -> Settings:
         default_admin_username=os.getenv("GAOKAO_ADMIN_USER", "admin"),
         default_admin_password=os.getenv("GAOKAO_ADMIN_PASS", _DEFAULT_ADMIN_PASSWORD),
     )
-    # 生产环境 post-load 校验:webhook / portal token secret 必须满足强度门槛。
+    # 生产环境 post-load 校验:webhook / portal token / JWT / admin password
+    # / payment provider 必须满足强度门槛, 任一不满足 fail-closed (P0-2/P2-4/P2-5/6/20)。
     _enforce_payment_webhook_secret_policy(settings)
     _enforce_portal_token_secret_policy(settings)
+    _enforce_jwt_secret_policy(settings)
+    _enforce_default_admin_password_policy(settings)
     _enforce_payment_provider_policy(settings)
     return settings
 

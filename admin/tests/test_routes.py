@@ -19,7 +19,10 @@ def test_health_public(client):
     resp = client.get("/health")
     assert resp.status_code == 200
     body = resp.json()
-    assert body == {"status": "ok"}
+    assert body.get("status") == "ok"
+    assert body.get("checks", {}).get("db_writable") is True
+    assert body.get("checks", {}).get("disk_writable") is True
+    assert body.get("checks", {}).get("settings_valid") is True
 
 
 # ---------------- auth ----------------
@@ -106,7 +109,9 @@ def test_order_detail_requires_auth(client):
 
 
 def test_dev_seed_requires_auth(client):
-    resp = client.post("/api/admin/orders/dev-seed", json={"scenario": "overdue_pending_once"})
+    resp = client.post(
+        "/api/admin/orders/dev-seed", json={"scenario": "overdue_pending_once"}
+    )
     assert resp.status_code == 401
 
 

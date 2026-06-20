@@ -5,7 +5,9 @@
 
 - A2/B2 文档与执行板校准 + 6/20 T12-D retention cleanup conn ownership 修复
 - 端到端本地 acceptance 步骤落地 + 6/20 A-2 admin/外部渠道补录同意审计统一化
-  落地；下一阶段 = 推进 T12 真实支付 acceptance + 隐私政策正式审定 + 备份恢复
+- 6/20 生产加固 (`/health` checks + JWT/admin password fail-closed) + 6/20
+  L-A 送审前修复 (admin footer + baseline §6/§7 同步) + 6/20 crowd_db 质量契约
+  锁死；下一阶段 = 推进 T12 真实支付 acceptance + 隐私政策正式审定 + 备份恢复
   异机演练）
 
 真相源优先级:
@@ -35,8 +37,9 @@
 
 ## 0. 6/20 增量段（叠加在 6/19 真相源之上）
 
-6/20 落地了 1 项 P1 整改 + 端到端本地 acceptance 步骤 + 1 项合规补录统一化 + 真相源分层。
-**本节是当前唯一增量**：
+6/20 落地了 1 项 P1 整改 + 端到端本地 acceptance 步骤 + 1 项合规补录统一化
+
+- 生产加固 + L-A 送审前修复 + crowd_db 质量契约 + 真相源分层。**本节是当前唯一增量**：
 
 ### 0.1 T12-D retention cleanup conn ownership 修复（P1）
 
@@ -65,7 +68,38 @@
 - 测试: 4 个参数化 missing_consent_block + 3 个 audit 字段校验 + 1 个白名单校验
   - 1 个 detail 返回值 + 1 个 update test_create_order_returns_masked_payload
 
-### 0.3 真相源分层与历史快照降级（6/20 增量）
+### 0.3 生产加固（6/20 v2.1.3）
+
+- **`/health` 端点增强**: 主键契约 `status: "ok"` 不变；增 `checks` 子对象
+  覆盖 `db_writable` / `disk_writable` / `settings_valid` 三项 readiness 指标
+- **JWT secret fail-closed**: `_enforce_jwt_secret_policy` 在 `load_settings()`
+  post-load 校验中调用；prod env 使用 dev 默认 JWT / 长度 < 32 → RuntimeError
+- **admin password fail-closed**: `_enforce_default_admin_password_policy` 同样接入
+  post-load 校验；prod env 使用 `admin123` 默认值 / 密码 < 10 字符 / 字符类 < 3 → RuntimeError
+- 验证: 4 个 health/config 测试全过；dev-verify 全量通过
+
+### 0.4 L-A 送审前修复（6/20 v2.1.3）
+
+- **R1**: `docs/LEGAL_PRIVACY_BASELINE.md` §6 移除 `consent_channel` 列表里
+  的孤儿 `admin` 渠道值（代码侧从未实际产生）；增注释说明移除原因
+- **R4**: `docs/LEGAL_PRIVACY_BASELINE.md` §7 "已具备/尚缺" 重写，显式归到 6/20 增量
+- **R7**: admin 后台 dashboard.html (592 行) + ui.py 内联 orders/new 模板加 footer
+  隐私政策 + 数据删除说明 + 服务说明链接；与 portal 前台 `_render_footer_links()`
+  同口径
+
+### 0.5 crowd_db 数据质量契约（6/20 v2.1.3 Q-A 闭环）
+
+- 新增 `data/crowd_db/tests/test_crowd_db_data_quality.py` (CROWD_DB_DATA_QUALITY
+  §7 承诺的锁死文件，仓库此前缺失)：
+  - 27 省总数 (23 省 + 4 直辖市)
+  - 仅湖南为 high
+  - 其它 26 省 quality_level ∈ {usable, skeleton}
+  - 高考生源大省 (广东/江苏/北京/上海/山东/河南/四川/湖北) 不在 high 集合
+  - 所有 confidence ∈ [0, 1]
+  - 所有 data_year = 2025 (6/25 后需显式更新)
+- 防止"27 省 crowd_db 均为高置信强推荐数据"合规假象回归
+
+### 0.6 真相源分层与历史快照降级（6/20 增量）
 
 - 6/19 整改板/执行板顶部加"⚠ 历史快照"头注，指向 6/20
 - 6/20 新建 `docs/ACTIVE_REMEDIATION_2026-06-20.md` + `docs/ACTIVE_EXECUTION_BOARD_2026-06-20.md`

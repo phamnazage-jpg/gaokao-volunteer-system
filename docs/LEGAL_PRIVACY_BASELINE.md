@@ -120,7 +120,8 @@
 - `privacy_accepted_at`: 隐私政策同意时间
 - `service_terms_accepted_at`: 服务说明同意时间
 - `guardian_confirmed`: 是否监护人确认
-- `consent_channel`: web / wechat / xianyu / school / admin
+- `consent_channel`: web / wechat / xianyu / school
+  (实现侧 4 个 source；旧版文档曾列 `admin` 渠道值，因未在生产路径写入而移除，6/20 校准)
 
 这些字段可先落在：
 
@@ -133,17 +134,19 @@
 
 ## 7. 当前代码与本基线的差距
 
-已具备：
+已具备（6/20 增量）：
 
 - 订单敏感字段加密/脱敏基础
-- 订单删除 DAO 能力
+- 订单删除 DAO 能力（含 OrdersDAO conn ownership 修复，T12-D）
 - Portal token 访问控制基础
+- **后台代录 / 外部渠道补录的同意审计统一化**（A-2 6/20 落地：`consent_method` / `consent_operator` / `consent_channel` / `consent_given_at` / `consent_version` 5 字段在 admin/portal 双轨写库；admin `CreateOrderRequest.consent` 必填；`consent_operator` 严格按 `self/guardian/admin_import` 白名单；缺失或非法 consent → HTTP 422）
+- **数据删除 SOP 的脚本化/产品化**（T12-D 6/20 落地：`scripts/gaokao-retention-cleanup.py` + systemd unit + cron 样例 + runbook §8 端到端 acceptance 步骤）
 
-尚缺：
+尚缺（截至 6/20）：
 
-- 后台代录 / 外部渠道补录的同意审计统一化
-- 数据删除 SOP 的脚本化/产品化
-- 对外正式法务审阅与版本管理
+- 对外正式法务审阅与版本管理（PM/legal 拍板，4 份草案已就绪）
+- `consent_version` 升级机制（当前硬编码 `t12-web-mvp-v1`，改版时需 bump）
+- `consent_scope` 命名空间统一（portal `web-self-service-order-intake` vs admin `{source}-channel-intake`，建议提升为 Literal）
 
 ---
 

@@ -179,4 +179,12 @@ document.getElementById('order-form').addEventListener('submit', async function(
   const body = await resp.json();
   resultNode.textContent = JSON.stringify(body, null, 2);
 }});
-</script></body></html>"""
+</script>
+<!-- 合规 footer: 与 portal 前台 _render_footer_links() 同口径 -->
+<footer style="margin-top:32px;padding:16px;border-top:1px solid #d8e0ee;color:#5b6b88;font-size:13px;text-align:center;background:#f4f6fb;">
+  <a href="/privacy" style="color:#2f55a4;text-decoration:none;margin:0 8px;">隐私政策</a> ·
+  <a href="/deletion-policy" style="color:#2f55a4;text-decoration:none;margin:0 8px;">数据删除说明</a> ·
+  <a href="/service-terms" style="color:#2f55a4;text-decoration:none;margin:0 8px;">服务说明</a>
+  <div style="margin-top:4px;color:#7c8aa8;">© 2026 高考志愿填报智能系统 · 内部操作员亦需遵守隐私与数据合规</div>
+</footer>
+</body></html>"""
