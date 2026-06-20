@@ -141,6 +141,10 @@ _WRITABLE_COLUMNS: tuple[str, ...] = (
     "notes",
     "tags",
     "upgrade_from",
+    # A-2 (2026-06-20) — 后台/外部渠道补录同意审计统一化
+    # 冗余字段, 避免每次列表 join order_intakes。
+    "consent_method",
+    "consent_given_at",
 )
 
 # 历史阶段字段映射：状态进入时自动置位的 timestamp 字段。

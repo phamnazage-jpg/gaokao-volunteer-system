@@ -106,6 +106,14 @@ def apply_schema(db_path: str | Path) -> sqlite3.Connection:
         }
         if "customer_email" not in columns:
             conn.execute("ALTER TABLE orders ADD COLUMN customer_email TEXT")
+        # A-2 (2026-06-20) — 后台/外部渠道补录同意审计统一化
+        # consent_method 记录采集方式(verbal_chat/phone_recording/screenshot/
+        # written_form/self_declared), consent_given_at 记录采集时间。
+        # 两个字段都冗余落库, 避免每次列表 join order_intakes。
+        if "consent_method" not in columns:
+            conn.execute("ALTER TABLE orders ADD COLUMN consent_method TEXT")
+        if "consent_given_at" not in columns:
+            conn.execute("ALTER TABLE orders ADD COLUMN consent_given_at TEXT")
         conn.commit()
     except Exception:
         conn.close()

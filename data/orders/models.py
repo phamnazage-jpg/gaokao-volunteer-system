@@ -91,6 +91,12 @@ class Order:
     tags: List[str] = field(default_factory=list)
     upgrade_from: Optional[str] = None
 
+    # 同意审计（A-2 2026-06-20 落地，冗余落库避免每次列表 join order_intakes）
+    # - consent_method: 见 routes/orders.py 中 ConsentInfo 的 consent_method Literal
+    # - consent_given_at: ISO8601, 与 order_intakes.payload_json.consent_given_at 同源
+    consent_method: Optional[str] = None
+    consent_given_at: Optional[str] = None
+
     def __post_init__(self) -> None:
         """自动派生 hash 与时间戳。"""
         if self.customer_phone and not self.customer_phone_hash:

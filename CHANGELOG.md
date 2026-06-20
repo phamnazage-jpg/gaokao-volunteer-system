@@ -4,6 +4,52 @@
 
 ---
 
+## v2.1.2 (2026-06-20) — A-2 后台/外部渠道补录同意审计统一化
+
+### ✨ 新增
+
+- **admin `POST /api/orders` 强制要求 `consent` 块**（A-2 落地）
+  - `CreateOrderRequest` 新增必填字段 `consent: ConsentInfo`
+  - `ConsentInfo.consent_method` 白名单: `verbal_chat / phone_recording / screenshot / written_form / self_declared`
+  - `ConsentInfo.consent_note` 可选, 表示"已确认但无备注"
+  - 缺失或非法 → HTTP 422
+  - 4 个 source (xianyu / wechat / web / school) 一致处理
+- **`Order` 冗余字段: `consent_method` + `consent_given_at`**
+  - 落 orders 表, 避免每次列表 join `order_intakes`
+  - schema 增量升级: `ALTER TABLE orders ADD COLUMN consent_method TEXT` (幂等)
+  - schema 增量升级: `ALTER TABLE orders ADD COLUMN consent_given_at TEXT` (幂等)
+  - DAO `_WRITABLE_COLUMNS` 加新字段
+- **创建订单后同步写 `order_intakes` 记录**
+  - 与 portal 路径同口径: `consent_version` / `consent_scope` / `consent_channel` / `consent_operator` / `consent_method` / `consent_given_at` / `consent_note`
+  - `consent_channel` = 渠道 source (xianyu / wechat / school / web)
+  - `consent_operator` 严格按 `LEGAL_PRIVACY_BASELINE §4` 白名单 `self / guardian / admin_import`:
+    - `web` 渠道: `guardian` (用户本人或监护人自助 portal, 与 `intake_store.save` 默认值一致)
+    - 其他渠道 (xianyu / wechat / school): `admin_import` (后台代录, 同意来源是渠道商)
+
+### 🐛 修复
+
+- **后台代录合规盲区**: 6/20 之前 admin `create_order` 路径完全不入任何 consent 字段
+  (consent 字段在 `admin/routes/orders.py` grep 0 命中), 直接违反
+  `LEGAL_PRIVACY_BASELINE §6`。现已统一审计口径。
+
+### 📝 文档
+
+- `docs/LEGAL_PRIVACY_BASELINE.md` §6 已隐含 admin 补录需 consent 字段,
+  本次落地后真正闭环
+- `docs/ACTIVE_REMEDIATION_2026-06-20.md` A-2 状态从 `pending` 升级为 `completed`
+- `CHANGELOG.md` 顶部加 v2.1.2 段
+
+### 🧪 测试
+
+- `test_create_order_rejects_missing_consent_block[xianyu|wechat|school|web]` (4 个参数化)
+- `test_create_order_writes_intake_record_with_consent_audit`
+- `test_create_order_external_channel_marks_consent_operator_as_admin`
+- `test_create_order_rejects_invalid_consent_method`
+- `test_order_detail_returns_consent_method_and_given_at`
+- 更新: `test_create_order_returns_masked_payload_with_history` (加 consent 块)
+
+---
+
 ## v2.1.1 (2026-06-20) — T12-D retention cleanup 生产化部署验收
 
 ### 🐛 修复

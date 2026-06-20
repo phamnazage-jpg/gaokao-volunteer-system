@@ -68,6 +68,10 @@ def test_create_order_returns_masked_payload_with_history(client, auth_headers):
             "candidate_subjects": ["物理", "化学"],
             "notes": "手工补录",
             "tags": ["渠道补单"],
+            "consent": {
+                "consent_method": "verbal_chat",
+                "consent_note": "微信沟通后家长口头同意",
+            },
         },
     )
 
@@ -79,8 +83,155 @@ def test_create_order_returns_masked_payload_with_history(client, auth_headers):
     assert body["order"]["customer_phone"] == "139****1111"
     assert body["order"]["candidate_id_card"] == "110101********1234"
     assert "customer_phone_hash" not in body["order"]
+    assert body["order"]["consent_method"] == "verbal_chat"
+    assert body["order"]["consent_given_at"] is not None
     assert body["history"][0]["from_status"] is None
     assert body["history"][0]["to_status"] == "pending"
+
+
+# ---------------------------------------------------------------------------
+# A-2: 后台/外部渠道补录同意审计统一化（2026-06-20 落地）
+#
+# LEGAL_PRIVACY_BASELINE §6 要求所有订单创建路径必须记录同意审计字段。
+# portal 路径已自动落 consent_channel=portal / consent_operator=guardian
+# （见 web_public.py + intake_store.save）。
+# admin 代录/外部渠道补录路径必须在请求体里显式带 consent 块, 否则拒绝
+# (HTTP 422)。
+# ---------------------------------------------------------------------------
+
+
+_XIANYU_BASE = {
+    "source": "xianyu",
+    "external_id": "XY-A2-001",
+    "service_version": "standard",
+    "amount_cents": 9900,
+    "customer_name": "陈家长",
+    "customer_phone": "13900002222",
+    "candidate_name": "陈同学",
+    "candidate_province": "广东",
+    "candidate_score": 595,
+}
+
+
+@pytest.mark.parametrize("source", ["xianyu", "wechat", "school", "web"])
+def test_create_order_rejects_missing_consent_block(client, auth_headers, source):
+    """A-2 RED: 任何 source 补录都必须在请求体里带 consent 块, 否则 422。"""
+    resp = client.post(
+        "/api/orders",
+        headers=auth_headers,
+        json={**_XIANYU_BASE, "source": source, "external_id": f"TEST-{source}"},
+    )
+    assert resp.status_code == 422, resp.text
+    body_str = resp.text
+    # 项目对 422 走自定义 exception handler, detail 可能是 dict 或 str
+    # 只要 body 里出现 "consent" 字段名就算合规
+    assert "consent" in body_str, f"422 错误体未提及 consent 字段: {body_str}"
+
+
+def test_create_order_writes_intake_record_with_consent_audit(
+    client, auth_headers, settings
+):
+    """A-2 RED: 合规补录成功后, 必须能在 order_intakes 表查到 consent 审计字段。"""
+    resp = client.post(
+        "/api/orders",
+        headers=auth_headers,
+        json={
+            **_XIANYU_BASE,
+            "external_id": "XY-A2-002",
+            "consent": {
+                "consent_method": "phone_recording",
+                "consent_note": "闲鱼沟通后电话确认",
+            },
+        },
+    )
+    assert resp.status_code == 201, resp.text
+    order_id = resp.json()["order"]["id"]
+
+    intake_store = IntakeStore.for_db(settings.orders_db_path)
+    try:
+        record = intake_store.get(order_id)
+    finally:
+        intake_store.close()
+
+    assert record is not None, f"order_intakes 表未创建 {order_id} 记录"
+    assert record.status == "submitted"
+    assert record.submitted_at is not None
+    # 同意审计字段必须落库, 与 portal 路径同口径
+    assert record.payload.get("consent_channel") == "xianyu"
+    assert record.payload.get("consent_operator") == "admin_import"
+    assert record.payload.get("consent_method") == "phone_recording"
+    assert record.payload.get("consent_given_at") == record.submitted_at
+    assert record.payload.get("consent_note") == "闲鱼沟通后电话确认"
+    # 旧 portal 字段保留 (admin 渠道下, guardian_confirmed 不适用, 不强制)
+    assert "privacy_accepted" in record.payload or "consent_note" in record.payload
+
+
+def test_create_order_external_channel_marks_consent_operator_as_admin(
+    client, auth_headers, settings
+):
+    """A-2 RED: 外部渠道(xianyu/wechat/school)的 consent_operator 必须是 admin,
+    因为是后台代录而非用户自助 portal。"""
+    resp = client.post(
+        "/api/orders",
+        headers=auth_headers,
+        json={
+            **_XIANYU_BASE,
+            "external_id": "WECHAT-A2-003",
+            "source": "wechat",
+            "consent": {"consent_method": "screenshot", "consent_note": "微信截图"},
+        },
+    )
+    assert resp.status_code == 201, resp.text
+    order_id = resp.json()["order"]["id"]
+
+    intake_store = IntakeStore.for_db(settings.orders_db_path)
+    try:
+        record = intake_store.get(order_id)
+    finally:
+        intake_store.close()
+
+    assert record is not None
+    assert record.payload.get("consent_channel") == "wechat"
+    assert record.payload.get("consent_operator") == "admin_import"
+
+
+def test_create_order_rejects_invalid_consent_method(client, auth_headers):
+    """A-2 RED: consent_method 必须是白名单值。"""
+    resp = client.post(
+        "/api/orders",
+        headers=auth_headers,
+        json={
+            **_XIANYU_BASE,
+            "external_id": "XY-A2-004",
+            "consent": {"consent_method": "telepathy", "consent_note": "非法方法"},
+        },
+    )
+    assert resp.status_code == 422, resp.text
+
+
+def test_order_detail_returns_consent_method_and_given_at(client, auth_headers):
+    """A-2 RED: Order 列表/详情接口直接返回 consent_method + consent_given_at,
+    不必后端 join order_intakes 表 (冗余字段落库, 性能 + 一致性)。"""
+    create_resp = client.post(
+        "/api/orders",
+        headers=auth_headers,
+        json={
+            **_XIANYU_BASE,
+            "external_id": "XY-A2-005",
+            "consent": {
+                "consent_method": "written_form",
+                "consent_note": "书面确认单已签字",
+            },
+        },
+    )
+    assert create_resp.status_code == 201, create_resp.text
+    order_id = create_resp.json()["order"]["id"]
+
+    detail_resp = client.get(f"/api/orders/{order_id}", headers=auth_headers)
+    assert detail_resp.status_code == 200, detail_resp.text
+    detail = detail_resp.json()["order"]
+    assert detail["consent_method"] == "written_form"
+    assert detail["consent_given_at"] is not None
 
 
 def test_list_and_detail_return_real_orders_with_masking(
