@@ -1,6 +1,7 @@
 # DELIVERY_RETENTION_OPS_RUNBOOK
 
-最后更新: 2026-06-14
+最后更新: 2026-06-20（T12-D 端到端本地 acceptance 步骤新增；T12-D 修复
+`OrdersDAO.__exit__` 不区分 conn 所有权导致多订单连续 anonymize 失败的 bug）
 
 ## 1. 当前真相
 
@@ -142,3 +143,100 @@ crontab -l
 2. watchdog 的本地告警 sink 已存在，但目标主机上的真实 SMTP / webhook 联调仍未验收。
 3. retention cleanup 只是后台匿名化作业，前台/客服删除工单流程仍未上线。
 4. 这些 unit/timer/cron 样例已落仓，但是否真正安装到目标生产主机，需要部署时另行执行并留存记录。
+
+---
+
+## 8. T12-D 本地端到端 acceptance（2026-06-20 落地）
+
+下面这套步骤可在任意干净临时目录里复现 retention cleanup 真实行为，
+用于部署前最后一道本地 smoke。回归测试已锁住相同契约：
+
+`tests/test_retention_cleanup.py::test_retention_cleanup_apply_anonymizes_multiple_old_orders_in_sequence`
+
+### 8.1 前置环境
+
+```bash
+export PY=/home/long/project/gaokao-volunteer-system/.venv/bin/python
+export GAOKAO_ORDERS_DB_PATH=/tmp/t12d-orders.db
+export GAOKAO_SHARE_DB_PATH=/tmp/t12d-share.db
+export GAOKAO_DELETION_REQUEST_LOG_PATH=/tmp/t12d-deletion-requests.jsonl
+export GAOKAO_ORDERS_FERNET_KEY="test-secret-for-web-self-service"
+```
+
+### 8.2 最小 acceptance 步骤
+
+```bash
+# 1) 跑针对性回归（必须全过）
+cd /home/long/project/gaokao-volunteer-system
+$PY -m pytest tests/test_retention_cleanup.py -q
+# 期望: 6 passed
+
+# 2) 端到端 smoke：seed 4 订单 + apply + 验证后置状态
+#    （一次性脚本，留在仓库外即可）
+$PY -c "
+import os, json
+from admin.config import load_settings
+from data.orders.dao import OrdersDAO
+from data.orders.models import Order
+from data.share.short_link import ShortLinkService
+from data.orders.retention_cleanup import run_cleanup
+
+# 4 笔订单: 2 笔终端态(应被清理) + 1 笔 pending(应保留) + 1 笔 paid-in-window(应保留)
+with OrdersDAO.connect('/tmp/t12d-orders.db') as dao:
+    for spec in [
+        dict(id='GKO-T12D-OLD-COMPLETED', status='completed', phone='13800000001'),
+        dict(id='GKO-T12D-OLD-REFUNDED',  status='refunded',  phone='13800000002'),
+        dict(id='GKO-T12D-FRESH-PENDING', status='pending',   phone='13800000003'),
+        dict(id='GKO-T12D-PAID-RECENT',   status='paid',      phone='13800000004'),
+    ]:
+        o = Order(id=spec['id'], source='web', service_version='standard',
+                  amount_cents=9900, status=spec['status'],
+                  customer_name='张某', customer_phone=spec['phone'],
+                  candidate_name='考生', candidate_province='湖南',
+                  notes='seeded', created_at='2024-12-01T00:00:00+00:00')
+        dao.create(o, actor='smoke', reason='seed')
+
+print(run_cleanup('/tmp/t12d-orders.db',
+                  cutoff_iso='2025-06-30T00:00:00+00:00', apply=True,
+                  deletion_request_log_path='/tmp/t12d-deletion-requests.jsonl',
+                  share_db_path='/tmp/t12d-share.db').__dict__)
+"
+```
+
+### 8.3 验收通过判定（2026-06-20 实测）
+
+| 检查项 | 期望 | 实际 |
+| --- | --- | --- |
+| `candidates` | 2（仅 terminal 且 < cutoff） | 2 ✅ |
+| `anonymized` | 2（无 `Cannot operate on a closed database`） | 2 ✅ |
+| GKO-T12D-OLD-COMPLETED post-state | `customer_phone=None, customer_name="已匿名化"` | ✅ |
+| GKO-T12D-OLD-REFUNDED post-state | 同上 | ✅ |
+| GKO-T12D-FRESH-PENDING post-state | 原值保留 | ✅ |
+| GKO-T12D-PAID-RECENT post-state | 原值保留 | ✅ |
+| `deletion_logs_pruned` | 匹配订单日志被裁掉 | 1 ✅ |
+| `share_events_pruned` | 指向已删订单的访问事件被裁掉 | 2 ✅ |
+
+### 8.4 历史 bug 背景
+
+T12-D acceptance 之前，端到端 smoke 在 `apply=True` 多订单场景下崩溃：
+- 现象: 第一笔 `anonymize_order` 退出时，`OrdersDAO.__exit__` 不区分
+  连接所有权（外部传入的 `conn` 也被 `close()`），把
+  `OrderDeletionService` 持有的连接关掉
+- 后果: 第二笔开始全部 `sqlite3.ProgrammingError: Cannot operate on a closed database`
+- 触发条件: `retention_cleanup.run_cleanup` 一次命中 ≥ 2 笔终端态订单
+  （生产环境 retention_days=180 + 周日 03:30 触发时极易命中）
+- 修复: `OrdersDAO.__init__` 新增 `owns_conn: bool = False` 参数；
+  `__exit__` 仅在 `owns_conn=True` 时 close；`connect()` classmethod
+  创建的连接自动设 `owns_conn=True`（保持原行为）；外部 service
+  包成 DAO 走 with-block 默认不 close
+
+### 8.5 部署前 checklist
+
+- [ ] `tests/test_retention_cleanup.py` 全过（6 passed）
+- [ ] 本节 8.2 smoke 实跑通过
+- [ ] `deploy/systemd/gaokao-retention-cleanup.service` 中 `WorkingDirectory` /
+      `GAOKAO_ORDERS_DB_PATH` / `GAOKAO_PYTHON_BIN` 与目标主机实际路径一致
+- [ ] `deploy/systemd/gaokao-retention-cleanup.timer` 已 `systemctl enable --now`
+- [ ] 首次 cron / timer 触发后，`journalctl -u gaokao-retention-cleanup.service`
+      出现 `"candidates"` 字段且数量与后端订单分布合理
+- [ ] 上述部署动作的真实执行记录已留在 ops 留痕
