@@ -1,0 +1,79 @@
+{
+  "date": "2026-06-20",
+  "port": 19092,
+  "order_id": "GKO-20260620-24VE",
+  "portal_token_len": 131,
+  "overall_ok": true,
+  "captures": [
+    {
+      "viewport": "desktop",
+      "page": "landing",
+      "status": 200,
+      "title": "高考志愿填报智能规划服务",
+      "shot": "reports/user_simulation_2026_06_20/desktop_landing.png"
+    },
+    {
+      "viewport": "desktop",
+      "page": "pricing",
+      "status": 200,
+      "title": "服务套餐 - 高考志愿填报智能规划服务",
+      "shot": "reports/user_simulation_2026_06_20/desktop_pricing.png"
+    },
+    {
+      "viewport": "desktop",
+      "page": "privacy",
+      "status": 200,
+      "title": "隐私政策",
+      "shot": "reports/user_simulation_2026_06_20/desktop_privacy.png"
+    },
+    {
+      "viewport": "desktop",
+      "page": "portal_info",
+      "status": 200,
+      "title": "考生资料填写",
+      "shot": "reports/user_simulation_2026_06_20/desktop_portal_info.png"
+    },
+    {
+      "viewport": "desktop",
+      "page": "portal_status",
+      "status": 200,
+      "title": "订单进度总览",
+      "shot": "reports/user_simulation_2026_06_20/desktop_portal_status.png"
+    },
+    {
+      "viewport": "mobile",
+      "page": "landing",
+      "status": 200,
+      "title": "高考志愿填报智能规划服务",
+      "shot": "reports/user_simulation_2026_06_20/mobile_landing.png"
+    },
+    {
+      "viewport": "mobile",
+      "page": "pricing",
+      "status": 200,
+      "title": "服务套餐 - 高考志愿填报智能规划服务",
+      "shot": "reports/user_simulation_2026_06_20/mobile_pricing.png"
+    },
+    {
+      "viewport": "mobile",
+      "page": "privacy",
+      "status": 200,
+      "title": "隐私政策",
+      "shot": "reports/user_simulation_2026_06_20/mobile_privacy.png"
+    },
+    {
+      "viewport": "mobile",
+      "page": "portal_info",
+      "status": 200,
+      "title": "考生资料填写",
+      "shot": "reports/user_simulation_2026_06_20/mobile_portal_info.png"
+    },
+    {
+      "viewport": "mobile",
+      "page": "portal_status",
+      "status": 200,
+      "title": "订单进度总览",
+      "shot": "reports/user_simulation_2026_06_20/mobile_portal_status.png"
+    }
+  ]
+}

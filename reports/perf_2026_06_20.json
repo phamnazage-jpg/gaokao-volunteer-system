@@ -1,0 +1,30 @@
+{
+  "date": "2026-06-20",
+  "port": 19090,
+  "baseline": {
+    "label": "health_baseline_200_seq",
+    "total": 200,
+    "success_2xx": 200,
+    "failures": 0,
+    "success_rate": 100.0,
+    "p50_ms": 2.35,
+    "p95_ms": 3.01,
+    "p99_ms": 3.41,
+    "max_ms": 3.62,
+    "mean_ms": 2.36
+  },
+  "concurrency": {
+    "label": "concurrency_10x50",
+    "total": 150,
+    "success_2xx": 150,
+    "failures": 0,
+    "success_rate": 100.0,
+    "p50_ms": 7.45,
+    "p95_ms": 10.68,
+    "p99_ms": 12.5,
+    "max_ms": 13.18,
+    "mean_ms": 7.54,
+    "wall_time_s": 0.12,
+    "rps": 1250.0
+  }
+}

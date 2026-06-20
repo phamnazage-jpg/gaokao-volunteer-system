@@ -1,0 +1,42 @@
+{
+  "date": "2026-06-20",
+  "port": 19091,
+  "overall_ok": true,
+  "steps": [
+    {
+      "step": "health",
+      "ok": true,
+      "detail": "status=ok db=True"
+    },
+    {
+      "step": "login",
+      "ok": true,
+      "detail": "status=200 token_len=195"
+    },
+    {
+      "step": "create_order",
+      "ok": true,
+      "detail": "status=201 order_id=GKO-20260620-G5TM"
+    },
+    {
+      "step": "get_order",
+      "ok": true,
+      "detail": "status=200 consent_method='verbal_chat'"
+    },
+    {
+      "step": "ops_alerts = 200",
+      "ok": true,
+      "detail": "status=200"
+    },
+    {
+      "step": "retention_dry_run",
+      "ok": true,
+      "detail": "candidates=0 anonymized=0 deletion_logs_pruned=0 share_events_pruned=0"
+    },
+    {
+      "step": "retention_apply",
+      "ok": true,
+      "detail": "candidates=0 anonymized=0 deletion_logs_pruned=0"
+    }
+  ]
+}

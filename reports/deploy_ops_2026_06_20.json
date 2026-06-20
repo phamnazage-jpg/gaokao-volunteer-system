@@ -1,0 +1,67 @@
+{
+  "date": "2026-06-20",
+  "port": 19093,
+  "overall_ok": true,
+  "checks": [
+    {
+      "check": "/health = 200",
+      "ok": true,
+      "detail": "status=200"
+    },
+    {
+      "check": "checks.db_writable=True",
+      "ok": true,
+      "detail": "db=True"
+    },
+    {
+      "check": "checks.disk_writable=True",
+      "ok": true,
+      "detail": "disk=True"
+    },
+    {
+      "check": "checks.settings_valid=True",
+      "ok": true,
+      "detail": "settings=True"
+    },
+    {
+      "check": "login_wrong_password = 401",
+      "ok": true,
+      "detail": "status=401"
+    },
+    {
+      "check": "login_correct = 200",
+      "ok": true,
+      "detail": "status=200"
+    },
+    {
+      "check": "orders_no_token = 401",
+      "ok": true,
+      "detail": "status=401"
+    },
+    {
+      "check": "orders_bad_token = 401",
+      "ok": true,
+      "detail": "status=401"
+    },
+    {
+      "check": "orders_valid_token = 200",
+      "ok": true,
+      "detail": "status=200"
+    },
+    {
+      "check": "openapi 含必需路径",
+      "ok": true,
+      "detail": "missing=set()"
+    },
+    {
+      "check": "ops_alerts = 200",
+      "ok": true,
+      "detail": "status=200"
+    },
+    {
+      "check": "admin_dashboard_footer 链接",
+      "ok": true,
+      "detail": "status=200 footer=True"
+    }
+  ]
+}
