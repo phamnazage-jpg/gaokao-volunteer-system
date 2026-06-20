@@ -4,8 +4,9 @@
 状态词: 本地验证完成（6/19 复审 + 6/19 整改计划 + A1 保留期门禁 + B1 支付失败持久化
 
 - A2/B2 文档与执行板校准 + 6/20 T12-D retention cleanup conn ownership 修复
-- 端到端本地 acceptance 步骤落地；下一阶段 = 推进 T12 真实支付 acceptance
-- 后台/外部渠道补录同意审计统一化 + 合规审定）
+- 端到端本地 acceptance 步骤落地 + 6/20 A-2 admin/外部渠道补录同意审计统一化
+  落地；下一阶段 = 推进 T12 真实支付 acceptance + 隐私政策正式审定 + 备份恢复
+  异机演练）
 
 真相源优先级:
 
@@ -34,7 +35,8 @@
 
 ## 0. 6/20 增量段（叠加在 6/19 真相源之上）
 
-6/20 落地了 1 项 P1 整改 + 端到端本地 acceptance 步骤 + 真相源分层。**本节是当前唯一增量**：
+6/20 落地了 1 项 P1 整改 + 端到端本地 acceptance 步骤 + 1 项合规补录统一化 + 真相源分层。
+**本节是当前唯一增量**：
 
 ### 0.1 T12-D retention cleanup conn ownership 修复（P1）
 
@@ -46,7 +48,24 @@
 - runbook §8 新增 T12-D 本地端到端 acceptance 步骤 + 部署前 checklist + 历史 bug 背景
 - 验证: 6 个 retention 测试 + 205 个直接相关子集全过，ruff + mypy 通过
 
-### 0.2 真相源分层与历史快照降级（6/20 增量）
+### 0.2 A-2 admin/外部渠道补录同意审计统一化（P1）
+
+- 现象: `admin/routes/orders.py:543-590` `create_order` 路径不收任何 consent 字段
+  （grep `consent` 0 命中），直接违反 `LEGAL_PRIVACY_BASELINE §6`。
+  portal 路径早已自动落 `consent_channel=portal / consent_operator=guardian`
+- 修复: `CreateOrderRequest.consent: ConsentInfo` 必填；`consent_method` 白名单
+  `verbal_chat / phone_recording / screenshot / written_form / self_declared`
+- 落地: `Order` 模型 + DAO + schema 增量加 `consent_method / consent_given_at`
+  （冗余避免 join）；创建订单后同步写 `order_intakes` 记录（独立 `IntakeStore.for_db`）
+  - `consent_channel` = source
+  - `consent_operator` 严格按基线白名单 `self / guardian / admin_import`:
+    - `web` 渠道: `guardian`（与 `intake_store.save` 默认值一致）
+    - 其他渠道: `admin_import`（后台代录，同意来源是渠道商）
+- 验证: 25 个 admin orders + alias 测试全过；ruff + mypy 通过；端到端 smoke 通过
+- 测试: 4 个参数化 missing_consent_block + 3 个 audit 字段校验 + 1 个白名单校验
+  - 1 个 detail 返回值 + 1 个 update test_create_order_returns_masked_payload
+
+### 0.3 真相源分层与历史快照降级（6/20 增量）
 
 - 6/19 整改板/执行板顶部加"⚠ 历史快照"头注，指向 6/20
 - 6/20 新建 `docs/ACTIVE_REMEDIATION_2026-06-20.md` + `docs/ACTIVE_EXECUTION_BOARD_2026-06-20.md`

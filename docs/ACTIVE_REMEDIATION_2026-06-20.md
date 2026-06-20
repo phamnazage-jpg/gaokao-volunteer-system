@@ -56,23 +56,27 @@
 - 前台删除工单流程（6/19 T12-C 已落地表单与保留期资格，**但生产化部署验收仍在 T12-D 范围**）
 - 备案域名 + 公网 notify_url
 
-#### A-2 后台/外部渠道补录同意审计统一化
+### A-2 后台/外部渠道补录同意审计统一化（6/20 已完成）
 
 严重度: P1
-当前状态: 闲鱼/微信/学校渠道补录的同意字段未强制要求 `consent_version` / `consent_scope` / `consent_given_at` / `consent_operator`
+当前状态: **6/20 已完成**
 范围归属: 合规/数据治理
 
-已完成：
+已完成（6/20 增量）:
 
-- `order_intakes` payload 提交链路已落 `consent_version / consent_scope / privacy_accepted / service_terms_accepted / guardian_confirmed`
-- portal 提交链路自动补齐 `consent_given_at / privacy_accepted_at / service_terms_accepted_at / consent_channel / consent_operator`
+- `CreateOrderRequest.consent: ConsentInfo` 必填，缺失或非法 → HTTP 422
+- `consent_method` 白名单: `verbal_chat / phone_recording / screenshot / written_form / self_declared`
+- 4 个 source (xianyu / wechat / web / school) 一致处理
+- `Order` 模型 + DAO + schema 增量加 `consent_method / consent_given_at` 字段（冗余避免 join）
+- 创建订单后同步写 `order_intakes` 记录，与 portal 路径同口径
+- `consent_operator` 严格按基线白名单 `self / guardian / admin_import`:
+  - `web` 渠道: `guardian`（与 `intake_store.save` 默认值一致）
+  - 其他渠道: `admin_import`（后台代录，同意来源是渠道商）
+- 测试: 4 个参数化 missing_consent_block + 3 个 audit 字段校验 + 1 个白名单校验 + 1 个 detail 返回值 + 1 个 update
+- 验证: 25/25 admin orders + alias 测试全过；ruff + mypy 通过；端到端 smoke 通过
+- 提交: `187b2ae` fix(compliance): A-2 admin/外部渠道补录同意审计统一化 → `bd27b01` merge: A-2 admin/外部渠道补录同意审计统一化
 
-仍缺：
-
-- 闲鱼/微信/学校渠道代录与外部补录走同一同意审计口径
-- 同意字段写入后台审计日志的最小测试
-
-### B. 6/20 已完成但仍可继续增强的真实质量问题
+## 1. 当前仍然有效的问题（按优先级，只保留未解决项）
 
 #### B-1 真实支付 acceptance 仍依赖外部前置
 
@@ -216,7 +220,7 @@
 | L-A   | 隐私政策 / 服务协议正式法务审定      | P1     | 是（当前真实缺口）                                             |
 | L-B   | 备份恢复异机演练 + 密钥轮换记录      | P1     | 是（当前真实缺口）                                             |
 | Q-A   | crowd_db 非湖南省份高置信数据密度    | P1     | 是（当前真实缺口）                                             |
-| A-2   | 后台/外部渠道补录同意审计统一化      | P1     | 是（6/20 整改板新增）                                          |
+| A-2   | 后台/外部渠道补录同意审计统一化      | P1     | ✅ **6/20 已收口**                                             |
 
 ---
 
