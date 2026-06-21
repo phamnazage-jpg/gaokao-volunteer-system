@@ -158,8 +158,6 @@ def main():
         if not portal_token:
             print(f"[sim] issue_portal_token failed for order={order_id}")
             return 1
-            print(f"[sim] no portal_token in order response: {j2.get('order', {})}")
-            return 1
         print(f"[sim] order={order_id} portal_token length={len(portal_token)}")
 
         # 2. Playwright 跳

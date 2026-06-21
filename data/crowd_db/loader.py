@@ -188,6 +188,10 @@ class CrowdDBLoader:
         if not data:
             return None
 
+        trusted_sources = data.get("trusted_sources")
+        if not isinstance(trusted_sources, list):
+            trusted_sources = []
+
         return {
             "province": data.get("province", province),
             "last_updated": data.get("last_updated", ""),
@@ -196,6 +200,9 @@ class CrowdDBLoader:
             "source_url": data.get("source_url", ""),
             "source_type": data.get("source_type", ""),
             "confidence": data.get("confidence"),
+            "quality_note": data.get("quality_note", ""),
+            "trusted_sources": trusted_sources,
+            "trusted_sources_count": len(trusted_sources),
             "record_count": sum(
                 len(score_range.get("recommendations", []))
                 for score_range in data.get("score_ranges", [])
@@ -217,24 +224,22 @@ class CrowdDBLoader:
                 if file_path and os.path.exists(file_path)
                 else None
             )
-            provinces.append(
-                {
-                    "province": province,
-                    "file_name": os.path.basename(file_path) if file_path else None,
-                    "exists": data is not None,
-                    "last_updated": data.get("last_updated") if data else None,
-                    "data_year": data.get("data_year") if data else None,
-                    "source_type": data.get("source_type") if data else None,
-                    "confidence": data.get("confidence") if data else None,
-                    "record_count": sum(
-                        len(score_range.get("recommendations", []))
-                        for score_range in data.get("score_ranges", [])
-                        if isinstance(score_range, dict)
-                    )
-                    if data
-                    else 0,
-                }
-            )
+            provinces.append({
+                "province": province,
+                "file_name": os.path.basename(file_path) if file_path else None,
+                "exists": data is not None,
+                "last_updated": data.get("last_updated") if data else None,
+                "data_year": data.get("data_year") if data else None,
+                "source_type": data.get("source_type") if data else None,
+                "confidence": data.get("confidence") if data else None,
+                "record_count": sum(
+                    len(score_range.get("recommendations", []))
+                    for score_range in data.get("score_ranges", [])
+                    if isinstance(score_range, dict)
+                )
+                if data
+                else 0,
+            })
         return provinces
 
     def _resolve_file_path(self, province: str) -> Optional[str]:
@@ -393,6 +398,21 @@ class CrowdDBLoader:
         # source_url 空时记 warning（不影响 ok，但与人工复核流程相关）
         if isinstance(su, str) and su == "":
             validation.warnings.append("empty_source_url: source_url 为空")
+        elif isinstance(su, str) and (
+            "github.com" in su
+            or "gaokao-volunteer-system/blob" in su
+            or "localhost" in su
+        ):
+            validation.warnings.append(
+                "self_reference_source_url: source_url 指向仓库/本地路径，不应作为可信来源证明"
+            )
+
+        # trusted_sources 可选，但若存在应为 list
+        trusted_sources = data.get("trusted_sources")
+        if trusted_sources is not None and not isinstance(trusted_sources, list):
+            validation.errors.append(
+                f"type_error: trusted_sources 应为 list, got {type(trusted_sources).__name__}"
+            )
 
         # 摘要（仅在已加载且含核心字段时）
         if all(

@@ -175,7 +175,7 @@
 - `reports/LA_LEGAL_PRIVACY_PRE_AUDIT_2026-06-20.md`
 - `reports/QA_CROWD_DB_NON_HUNAN_DENSITY_AUDIT.md`
 
-### 6.2 本轮新增 (待 commit)
+### 6.2 本轮新增（已于 `240c38e` 提交并三仓同步）
 
 - `scripts/perf_benchmark.py` (性能测试)
 - `scripts/integration_test.py` (集成测试)
@@ -207,5 +207,5 @@
 
 ---
 
-**报告生成**: 2026-06-20 (commit 待推)
-**基于**: v2.1.3 (6eafe1f) + 待 commit 性能/集成/模拟/部署 4 脚本
+**报告生成**: 2026-06-20；2026-06-21 已复核并确认 `240c38e` 已提交三仓同步
+**基于**: v2.1.3 (`6eafe1f`) + v2.1.4 四维验证脚本/报告 (`240c38e`)

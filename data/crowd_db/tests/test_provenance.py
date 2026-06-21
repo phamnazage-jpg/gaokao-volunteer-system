@@ -98,7 +98,7 @@ def test_loader_existing_count_27():
 
 
 def test_loader_metadata_hunan():
-    """load_metadata('湖南') 返回 8 个字段且 record_count > 0"""
+    """load_metadata('湖南') 返回扩展元数据字段且 record_count > 0"""
     loader = CrowdDBLoader(warn_low_confidence=False)
     meta = loader.load_metadata("湖南")
     assert meta is not None
@@ -110,6 +110,9 @@ def test_loader_metadata_hunan():
         "source_url",
         "source_type",
         "confidence",
+        "quality_note",
+        "trusted_sources",
+        "trusted_sources_count",
         "record_count",
     ):
         assert k in meta, f"meta 缺 {k}"
@@ -117,6 +120,8 @@ def test_loader_metadata_hunan():
     assert meta["confidence"] >= 0.8, (
         f"湖南 confidence 应 ≥ 0.8，实际 {meta['confidence']}"
     )
+    assert meta["trusted_sources_count"] >= 2
+    assert isinstance(meta["trusted_sources"], list) and meta["trusted_sources"]
 
 
 def test_loader_low_confidence_warning():
@@ -139,3 +144,29 @@ def test_loader_end_to_end_match():
     assert rec is not None, "长沙理工大学 应当在湖南 575 段命中"
     assert rec["frequency"] >= 1
     assert isinstance(rec["platforms"], list) and len(rec["platforms"]) >= 1
+
+
+def test_all_provinces_have_trusted_sources_and_non_repo_source_url():
+    """27 省必须补齐可信来源元数据，source_url 不能再用仓库自引用冒充来源。"""
+    for fname in _list_json_files():
+        d = json.load(open(os.path.join(DATA_DIR, fname), encoding="utf-8"))
+        source_url = d.get("source_url", "")
+        assert isinstance(source_url, str) and source_url.startswith("https://"), (
+            f"{fname}: source_url 应为 https:// 开头的可信入口, got {source_url!r}"
+        )
+        assert (
+            "github.com" not in source_url
+            and "gaokao-volunteer-system/blob" not in source_url
+        ), f"{fname}: source_url 不能是仓库自引用路径, got {source_url}"
+        trusted_sources = d.get("trusted_sources")
+        assert isinstance(trusted_sources, list) and len(trusted_sources) >= 2, (
+            f"{fname}: trusted_sources 应至少包含 2 个可信来源"
+        )
+        assert any(
+            (item.get("url") or "").startswith("https://")
+            for item in trusted_sources
+            if isinstance(item, dict)
+        ), f"{fname}: trusted_sources 至少 1 个条目应带 https:// 官方入口"
+        assert isinstance(d.get("quality_note"), str) and d.get("quality_note"), (
+            f"{fname}: 缺少 quality_note 可信度口径说明"
+        )

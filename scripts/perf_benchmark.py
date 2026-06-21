@@ -20,7 +20,6 @@ import os
 import statistics
 import subprocess
 import sys
-import tempfile
 import time
 from pathlib import Path
 
@@ -173,17 +172,16 @@ def main() -> int:
 
         # 3. login
         token = _get_jwt()
-        authed = {"Authorization": f"Bearer {token}"}
 
         # 4. concurrency: 10 worker x 50 task
-        def _work(_i: int) -> list[tuple[int, float]]:
-            out = []
+        def _work(_i: int) -> list[tuple[int, float, str]]:
+            out: list[tuple[int, float, str]] = []
             out.append(_http("GET", "/health"))
             out.append(_http("GET", "/api/auth/me", token=token))
             out.append(_http("GET", "/api/meta", token=token))
             return out
 
-        all_samples: list[tuple[int, float]] = []
+        all_samples: list[tuple[int, float, str]] = []
         t0 = time.perf_counter()
         with concurrent.futures.ThreadPoolExecutor(max_workers=10) as ex:
             for batch in ex.map(_work, range(50)):

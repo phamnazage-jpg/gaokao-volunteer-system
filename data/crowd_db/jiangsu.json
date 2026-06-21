@@ -1,9 +1,9 @@
 {
   "province": "江苏",
-  "last_updated": "2026-06-12",
+  "last_updated": "2026-06-21",
   "data_year": 2025,
-  "source": "江苏 大厂AI推荐初版骨架（T3.1），仅含头部高校，待人工补完",
-  "source_url": "https://github.com/phamnazage-jpg/gaokao-volunteer-system/blob/main/data/crowd_db/jiangsu.json",
+  "source": "江苏 大厂AI推荐初版骨架（T3.1），仅含头部高校，待人工补完；可信来源治理补齐 2026-06-21",
+  "source_url": "https://gaokao.chsi.com.cn/",
   "source_type": "manual_summary",
   "confidence": 0.45,
   "score_ranges": [
@@ -118,5 +118,23 @@
         }
       ]
     }
-  ]
+  ],
+  "trusted_sources": [
+    {
+      "name": "教育部阳光高考",
+      "url": "https://gaokao.chsi.com.cn/",
+      "kind": "national_official"
+    },
+    {
+      "name": "教育部官网",
+      "url": "https://www.moe.gov.cn/",
+      "kind": "national_official"
+    },
+    {
+      "name": "江苏招生考试机构/教育考试院",
+      "url": "",
+      "kind": "province_official_pending_review"
+    }
+  ],
+  "quality_note": "当前仍为结构化骨架/人工摘要，已补齐可信来源元数据与复核入口口径；这不等于该省已具备高置信推荐。"
 }

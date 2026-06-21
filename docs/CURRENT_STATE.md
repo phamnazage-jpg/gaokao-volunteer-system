@@ -1,14 +1,15 @@
 # CURRENT_STATE
 
-最后更新: 2026-06-20
+最后更新: 2026-06-21
 状态词: 本地验证完成（6/19 复审 + 6/19 整改计划 + A1 保留期门禁 + B1 支付失败持久化
 
 - A2/B2 文档与执行板校准 + 6/20 T12-D retention cleanup conn ownership 修复
 - 端到端本地 acceptance 步骤落地 + 6/20 A-2 admin/外部渠道补录同意审计统一化
 - 6/20 生产加固 (`/health` checks + JWT/admin password fail-closed) + 6/20
   L-A 送审前修复 (admin footer + baseline §6/§7 同步) + 6/20 crowd_db 质量契约
-  锁死；下一阶段 = 推进 T12 真实支付 acceptance + 隐私政策正式审定 + 备份恢复
-  异机演练）
+  锁死 + 6/20 v2.1.4 四维验证脚本（性能/集成/用户模拟/部署运维）已落地，2026-06-21
+  复跑仍通过；下一阶段 = 推进 T12 真实支付 acceptance + 隐私政策正式审定 +
+  备份恢复异机演练）
 
 真相源优先级:
 
@@ -99,15 +100,28 @@
   - 所有 data_year = 2025 (6/25 后需显式更新)
 - 防止"27 省 crowd_db 均为高置信强推荐数据"合规假象回归
 
-### 0.6 真相源分层与历史快照降级（6/20 增量）
+### 0.6 crowd_db 可信来源元数据补齐（2026-06-21）
+
+- 27 个省级 JSON 统一补齐 `trusted_sources` / `quality_note`
+- `source_url` 从仓库自引用改为可信公开入口 `https://gaokao.chsi.com.cn/`
+- `SCHEMA.md` / loader / provenance tests 已同步
+- 这补齐的是**可信来源治理口径**，不代表 26 个非湖南省已升级为高置信推荐数据
+
+### 0.7 真相源分层与历史快照降级（6/20 增量）
 
 - 6/19 整改板/执行板顶部加"⚠ 历史快照"头注，指向 6/20
 - 6/20 新建 `docs/ACTIVE_REMEDIATION_2026-06-20.md` + `docs/ACTIVE_EXECUTION_BOARD_2026-06-20.md`
 - 本节作为 6/20 增量叠加在 6/19 真相源之上
 
----
+### 0.8 法务协议与 crowd_db 可信来源补齐（2026-06-21）
 
-## 6/19 增量段（叠加在 6/13 真相源之上）
+- `docs/PRIVACY_POLICY_DRAFT.md` 补齐：未成年人、委托处理、用户权利、存储与删除、投诉联系方式、版本生效等条款
+- `docs/SERVICE_TERMS.md` 补齐：服务边界、支付退款、知识产权、免责、争议解决、版本更新等条款
+- `docs/LEGAL_PRIVACY_BASELINE.md` 补齐正式法务审核条款清单与待审状态说明
+- `data/crowd_db/*.json` 统一补齐可信来源元数据（`trusted_sources` / `quality_note`），并将 `source_url` 切到可信公开入口
+- 这两项仍处于**待法务 / 待内容深化**阶段，但已经从“缺文档/缺元数据”提升为“可审核、可复核、可继续推进”
+
+---
 
 6/19 落地了 3 项 P0/P1 整改 + 1 项真相源分层。**本节是当前唯一增量**：
 

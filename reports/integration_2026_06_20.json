@@ -16,7 +16,7 @@
     {
       "step": "create_order",
       "ok": true,
-      "detail": "status=201 order_id=GKO-20260620-G5TM"
+      "detail": "status=201 order_id=GKO-20260621-MB9S"
     },
     {
       "step": "get_order",

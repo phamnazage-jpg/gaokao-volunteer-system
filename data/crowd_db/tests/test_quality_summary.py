@@ -21,6 +21,8 @@ def test_build_quality_summary_returns_expected_shape():
         "data_year",
         "source_type",
     })
+    hunan = next(p for p in summary["provinces"] if p["province"] == "湖南")
+    assert hunan["quality_level"] == "high"
 
 
 def test_quality_summary_cli_human_output(capsys):

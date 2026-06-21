@@ -12,10 +12,12 @@
 | `last_updated` | str (ISO) | ✅   | 本文件最后更新日期，格式 `YYYY-MM-DD`                                 |
 | `data_year`    | int       | ✅   | 数据的参考年份（如 `2025` 表示基于 2025 高考数据）                    |
 | `source`       | str       | ✅   | 数据来源描述（人类可读），如 `千问/元宝/百度/豆包 公开推荐汇总`       |
-| `source_url`   | str       | ⚠️   | 数据源 URL（如官方/仓库路径/可访问链接；无则填空串 `""`）             |
+| `source_url`   | str       | ⚠️   | 主参考来源 URL；不得使用仓库自引用路径冒充来源证明                     |
 | `source_type`  | str enum  | ✅   | `manual_summary` / `official_release` / `platform_scrape` / `derived` |
 | `confidence`   | float     | ✅   | 数据可信度，区间 `[0.0, 1.0]`；0.5 以下视为不可用，触发人工复核提示   |
 | `score_ranges` | list      | ✅   | 分数段列表（结构见下节）；骨架文件允许 `[]` 表示待人工整理            |
+| `trusted_sources` | list[object] | ⚠️ | 可信参考源数组；用于记录后续年度复核应优先使用的官方/权威来源         |
+| `quality_note` | str       | ⚠️   | 对当前省份数据可信度口径的人工说明（如“高置信人工整理”/“结构化骨架”） |
 
 ### source_type 枚举
 
@@ -43,7 +45,25 @@
 | `predicted_increase` | int       | ⚠️   | 预测分数上涨分；无可靠预测可填 `0` |
 | `alternatives`       | list      | ⚠️   | 替代院校推荐，可空                 |
 
-## 4. 骨架文件约定
+## 4. `trusted_sources` 元素
+
+推荐结构：
+
+```json
+{
+  "name": "教育部阳光高考",
+  "url": "https://gaokao.chsi.com.cn/",
+  "kind": "national_official"
+}
+```
+
+说明：
+
+- `name`: 来源名称
+- `url`: 入口 URL；如仅确认机构类型、尚未完成年度入口复核，可暂为空串
+- `kind`: `national_official` / `province_official_pending_review` / 其他内部约定枚举
+
+## 5. 骨架文件约定
 
 未完整整理数据的省份，应输出符合顶层 schema 的骨架：
 
@@ -62,13 +82,13 @@
 
 骨架文件 `confidence=0.0`，loader 应在 `confidence < 0.5` 时打印 WARN 但不抛错（避免阻断运行）。
 
-## 5. 27省覆盖范围
+## 6. 27省覆盖范围
 
 - 23省：河北、山西、辽宁、吉林、黑龙江、江苏、浙江、安徽、福建、江西、山东、河南、湖北、湖南、广东、海南、四川、贵州、云南、陕西、甘肃、青海、新疆
 - 4直辖市：北京、上海、天津、重庆
 - 不含：5个自治区（内蒙古、广西、西藏、宁夏）、香港、澳门、台湾
 
-## 6. 验证
+## 7. 验证
 
 ```bash
 python3 -c "import json,glob; [print(p, list(json.load(open(p)).keys())) for p in sorted(glob.glob('data/crowd_db/*.json'))]"

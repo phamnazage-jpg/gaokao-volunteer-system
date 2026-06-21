@@ -7,11 +7,11 @@
     "success_2xx": 200,
     "failures": 0,
     "success_rate": 100.0,
-    "p50_ms": 2.35,
-    "p95_ms": 3.01,
-    "p99_ms": 3.41,
-    "max_ms": 3.62,
-    "mean_ms": 2.36
+    "p50_ms": 2.39,
+    "p95_ms": 3.2,
+    "p99_ms": 4.1,
+    "max_ms": 262.37,
+    "mean_ms": 3.73
   },
   "concurrency": {
     "label": "concurrency_10x50",
@@ -19,11 +19,11 @@
     "success_2xx": 150,
     "failures": 0,
     "success_rate": 100.0,
-    "p50_ms": 7.45,
-    "p95_ms": 10.68,
-    "p99_ms": 12.5,
-    "max_ms": 13.18,
-    "mean_ms": 7.54,
+    "p50_ms": 7.29,
+    "p95_ms": 11.02,
+    "p99_ms": 14.52,
+    "max_ms": 15.58,
+    "mean_ms": 7.65,
     "wall_time_s": 0.12,
     "rps": 1250.0
   }

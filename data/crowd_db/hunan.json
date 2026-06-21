@@ -1,21 +1,28 @@
 {
   "province": "湖南",
-  "last_updated": "2026-06-12",
+  "last_updated": "2026-06-21",
   "data_year": 2025,
-  "source": "千问/元宝/百度/豆包 公开推荐汇总（手动整理），T2.1 扩展覆盖专科批与省外顶尖段",
-  "source_url": "https://github.com/phamnazage-jpg/gaokao-volunteer-system/blob/main/data/crowd_db/hunan.json",
+  "source": "千问/元宝/百度/豆包 公开推荐汇总（手动整理），T2.1 扩展覆盖专科批与省外顶尖段；可信来源治理补齐 2026-06-21",
+  "source_url": "https://gaokao.chsi.com.cn/",
   "source_type": "manual_summary",
   "confidence": 0.85,
   "score_ranges": [
     {
-      "range": [440, 480],
+      "range": [
+        440,
+        480
+      ],
       "note": "专科批临界",
       "recommendations": [
         {
           "name": "长沙民政职业技术学院",
           "major": "社会工作",
           "frequency": 3,
-          "platforms": ["千问", "元宝", "百度"],
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度"
+          ],
           "predicted_increase": 10,
           "alternatives": [
             {
@@ -34,7 +41,11 @@
           "name": "湖南铁道职业技术学院",
           "major": "铁道机车",
           "frequency": 3,
-          "platforms": ["元宝", "百度", "豆包"],
+          "platforms": [
+            "元宝",
+            "百度",
+            "豆包"
+          ],
           "predicted_increase": 9,
           "alternatives": [
             {
@@ -53,7 +64,10 @@
           "name": "湖南大众传媒学院",
           "major": "新闻采编与制作",
           "frequency": 2,
-          "platforms": ["千问", "豆包"],
+          "platforms": [
+            "千问",
+            "豆包"
+          ],
           "predicted_increase": 6,
           "alternatives": [
             {
@@ -72,7 +86,10 @@
           "name": "长沙商贸旅游职业技术学院",
           "major": "会计电算化",
           "frequency": 2,
-          "platforms": ["千问", "百度"],
+          "platforms": [
+            "千问",
+            "百度"
+          ],
           "predicted_increase": 5,
           "alternatives": [
             {
@@ -90,14 +107,21 @@
       ]
     },
     {
-      "range": [480, 510],
+      "range": [
+        480,
+        510
+      ],
       "note": "本科批临界段",
       "recommendations": [
         {
           "name": "湖南文理学院",
           "major": "汉语言文学",
           "frequency": 3,
-          "platforms": ["千问", "元宝", "百度"],
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度"
+          ],
           "predicted_increase": 8,
           "alternatives": [
             {
@@ -116,7 +140,10 @@
           "name": "湖南文理学院",
           "major": "数学与应用数学",
           "frequency": 2,
-          "platforms": ["千问", "百度"],
+          "platforms": [
+            "千问",
+            "百度"
+          ],
           "predicted_increase": 6,
           "alternatives": [
             {
@@ -135,7 +162,11 @@
           "name": "邵阳学院",
           "major": "临床医学",
           "frequency": 3,
-          "platforms": ["元宝", "百度", "豆包"],
+          "platforms": [
+            "元宝",
+            "百度",
+            "豆包"
+          ],
           "predicted_increase": 9,
           "alternatives": [
             {
@@ -154,7 +185,10 @@
           "name": "湖南科技学院",
           "major": "英语",
           "frequency": 2,
-          "platforms": ["千问", "豆包"],
+          "platforms": [
+            "千问",
+            "豆包"
+          ],
           "predicted_increase": 5,
           "alternatives": [
             {
@@ -173,7 +207,12 @@
           "name": "湖南第一师范学院",
           "major": "小学教育",
           "frequency": 4,
-          "platforms": ["千问", "元宝", "百度", "豆包"],
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
           "predicted_increase": 12,
           "alternatives": [
             {
@@ -192,7 +231,11 @@
           "name": "长沙师范学院",
           "major": "学前教育",
           "frequency": 3,
-          "platforms": ["千问", "元宝", "百度"],
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度"
+          ],
           "predicted_increase": 10,
           "alternatives": [
             {
@@ -210,14 +253,22 @@
       ]
     },
     {
-      "range": [510, 540],
+      "range": [
+        510,
+        540
+      ],
       "note": "二本中段",
       "recommendations": [
         {
           "name": "湖南工商大学",
           "major": "会计学",
           "frequency": 4,
-          "platforms": ["千问", "元宝", "百度", "豆包"],
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
           "predicted_increase": 15,
           "alternatives": [
             {
@@ -236,7 +287,11 @@
           "name": "湖南理工学院",
           "major": "机械设计制造及其自动化",
           "frequency": 3,
-          "platforms": ["千问", "元宝", "百度"],
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度"
+          ],
           "predicted_increase": 11,
           "alternatives": [
             {
@@ -255,7 +310,11 @@
           "name": "湖南工程学院",
           "major": "电气工程及其自动化",
           "frequency": 3,
-          "platforms": ["元宝", "百度", "豆包"],
+          "platforms": [
+            "元宝",
+            "百度",
+            "豆包"
+          ],
           "predicted_increase": 12,
           "alternatives": [
             {
@@ -274,7 +333,10 @@
           "name": "中南林业科技大学",
           "major": "林学",
           "frequency": 2,
-          "platforms": ["千问", "百度"],
+          "platforms": [
+            "千问",
+            "百度"
+          ],
           "predicted_increase": 6,
           "alternatives": [
             {
@@ -293,7 +355,10 @@
           "name": "湖南农业大学",
           "major": "动物科学",
           "frequency": 2,
-          "platforms": ["元宝", "豆包"],
+          "platforms": [
+            "元宝",
+            "豆包"
+          ],
           "predicted_increase": 5,
           "alternatives": [
             {
@@ -312,7 +377,12 @@
           "name": "湖南中医药大学",
           "major": "中医学",
           "frequency": 4,
-          "platforms": ["千问", "元宝", "百度", "豆包"],
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
           "predicted_increase": 14,
           "alternatives": [
             {
@@ -331,7 +401,10 @@
           "name": "湖南第一师范学院",
           "major": "汉语言文学",
           "frequency": 2,
-          "platforms": ["千问", "百度"],
+          "platforms": [
+            "千问",
+            "百度"
+          ],
           "predicted_increase": 6,
           "alternatives": [
             {
@@ -350,7 +423,10 @@
           "name": "吉首大学",
           "major": "音乐学",
           "frequency": 2,
-          "platforms": ["千问", "豆包"],
+          "platforms": [
+            "千问",
+            "豆包"
+          ],
           "predicted_increase": 5,
           "alternatives": [
             {
@@ -368,14 +444,22 @@
       ]
     },
     {
-      "range": [540, 560],
+      "range": [
+        540,
+        560
+      ],
       "note": "二本高段/一本临界",
       "recommendations": [
         {
           "name": "长沙理工大学",
           "major": "会计学",
           "frequency": 4,
-          "platforms": ["千问", "元宝", "百度", "豆包"],
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
           "predicted_increase": 18,
           "alternatives": [
             {
@@ -394,7 +478,12 @@
           "name": "长沙理工大学",
           "major": "电气工程及其自动化",
           "frequency": 4,
-          "platforms": ["千问", "元宝", "百度", "豆包"],
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
           "predicted_increase": 17,
           "alternatives": [
             {
@@ -413,7 +502,11 @@
           "name": "湖南师范大学",
           "major": "汉语言文学",
           "frequency": 3,
-          "platforms": ["千问", "元宝", "百度"],
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度"
+          ],
           "predicted_increase": 10,
           "alternatives": [
             {
@@ -432,7 +525,11 @@
           "name": "中南林业科技大学",
           "major": "土木工程",
           "frequency": 3,
-          "platforms": ["元宝", "百度", "豆包"],
+          "platforms": [
+            "元宝",
+            "百度",
+            "豆包"
+          ],
           "predicted_increase": 11,
           "alternatives": [
             {
@@ -451,7 +548,10 @@
           "name": "湖南科技大学",
           "major": "采矿工程",
           "frequency": 2,
-          "platforms": ["千问", "百度"],
+          "platforms": [
+            "千问",
+            "百度"
+          ],
           "predicted_increase": 5,
           "alternatives": [
             {
@@ -470,7 +570,12 @@
           "name": "湘潭大学",
           "major": "法学",
           "frequency": 4,
-          "platforms": ["千问", "元宝", "百度", "豆包"],
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
           "predicted_increase": 16,
           "alternatives": [
             {
@@ -489,7 +594,10 @@
           "name": "湖南农业大学",
           "major": "农学",
           "frequency": 2,
-          "platforms": ["千问", "豆包"],
+          "platforms": [
+            "千问",
+            "豆包"
+          ],
           "predicted_increase": 5,
           "alternatives": [
             {
@@ -508,7 +616,11 @@
           "name": "吉首大学",
           "major": "临床医学",
           "frequency": 3,
-          "platforms": ["元宝", "百度", "豆包"],
+          "platforms": [
+            "元宝",
+            "百度",
+            "豆包"
+          ],
           "predicted_increase": 9,
           "alternatives": [
             {
@@ -526,14 +638,21 @@
       ]
     },
     {
-      "range": [560, 580],
+      "range": [
+        560,
+        580
+      ],
       "note": "一本中段",
       "recommendations": [
         {
           "name": "湖南大学",
           "major": "会计学",
           "frequency": 3,
-          "platforms": ["千问", "元宝", "百度"],
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度"
+          ],
           "predicted_increase": 12,
           "alternatives": [
             {
@@ -552,7 +671,12 @@
           "name": "湖南师范大学",
           "major": "会计学",
           "frequency": 4,
-          "platforms": ["千问", "元宝", "百度", "豆包"],
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
           "predicted_increase": 15,
           "alternatives": [
             {
@@ -571,7 +695,12 @@
           "name": "中南大学",
           "major": "临床医学",
           "frequency": 4,
-          "platforms": ["千问", "元宝", "百度", "豆包"],
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
           "predicted_increase": 14,
           "alternatives": [
             {
@@ -590,7 +719,11 @@
           "name": "湖南大学",
           "major": "土木工程",
           "frequency": 3,
-          "platforms": ["千问", "百度", "豆包"],
+          "platforms": [
+            "千问",
+            "百度",
+            "豆包"
+          ],
           "predicted_increase": 10,
           "alternatives": [
             {
@@ -609,7 +742,11 @@
           "name": "湘潭大学",
           "major": "数学与应用数学",
           "frequency": 3,
-          "platforms": ["元宝", "百度", "豆包"],
+          "platforms": [
+            "元宝",
+            "百度",
+            "豆包"
+          ],
           "predicted_increase": 9,
           "alternatives": [
             {
@@ -628,7 +765,12 @@
           "name": "长沙理工大学",
           "major": "计算机科学与技术",
           "frequency": 4,
-          "platforms": ["千问", "元宝", "百度", "豆包"],
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
           "predicted_increase": 16,
           "alternatives": [
             {
@@ -647,7 +789,10 @@
           "name": "湖南科技大学",
           "major": "机械设计制造及其自动化",
           "frequency": 2,
-          "platforms": ["千问", "元宝"],
+          "platforms": [
+            "千问",
+            "元宝"
+          ],
           "predicted_increase": 7,
           "alternatives": [
             {
@@ -666,7 +811,10 @@
           "name": "中南林业科技大学",
           "major": "风景园林",
           "frequency": 2,
-          "platforms": ["百度", "豆包"],
+          "platforms": [
+            "百度",
+            "豆包"
+          ],
           "predicted_increase": 5,
           "alternatives": [
             {
@@ -684,14 +832,22 @@
       ]
     },
     {
-      "range": [580, 600],
+      "range": [
+        580,
+        600
+      ],
       "note": "一本高段",
       "recommendations": [
         {
           "name": "湖南大学",
           "major": "计算机科学与技术",
           "frequency": 4,
-          "platforms": ["千问", "元宝", "百度", "豆包"],
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
           "predicted_increase": 18,
           "alternatives": [
             {
@@ -710,7 +866,12 @@
           "name": "中南大学",
           "major": "计算机科学与技术",
           "frequency": 4,
-          "platforms": ["千问", "元宝", "百度", "豆包"],
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
           "predicted_increase": 17,
           "alternatives": [
             {
@@ -729,7 +890,11 @@
           "name": "湖南大学",
           "major": "金融学",
           "frequency": 3,
-          "platforms": ["千问", "元宝", "百度"],
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度"
+          ],
           "predicted_increase": 13,
           "alternatives": [
             {
@@ -748,7 +913,12 @@
           "name": "湖南师范大学",
           "major": "汉语言文学",
           "frequency": 4,
-          "platforms": ["千问", "元宝", "百度", "豆包"],
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
           "predicted_increase": 14,
           "alternatives": [
             {
@@ -767,7 +937,12 @@
           "name": "中南大学",
           "major": "临床医学(八年制)",
           "frequency": 4,
-          "platforms": ["千问", "元宝", "百度", "豆包"],
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
           "predicted_increase": 15,
           "alternatives": [
             {
@@ -786,7 +961,11 @@
           "name": "中南大学",
           "major": "材料科学与工程",
           "frequency": 3,
-          "platforms": ["元宝", "百度", "豆包"],
+          "platforms": [
+            "元宝",
+            "百度",
+            "豆包"
+          ],
           "predicted_increase": 10,
           "alternatives": [
             {
@@ -805,7 +984,11 @@
           "name": "湘潭大学",
           "major": "法学",
           "frequency": 3,
-          "platforms": ["千问", "元宝", "百度"],
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度"
+          ],
           "predicted_increase": 11,
           "alternatives": [
             {
@@ -824,7 +1007,10 @@
           "name": "湖南师范大学",
           "major": "英语",
           "frequency": 2,
-          "platforms": ["千问", "豆包"],
+          "platforms": [
+            "千问",
+            "豆包"
+          ],
           "predicted_increase": 7,
           "alternatives": [
             {
@@ -842,14 +1028,22 @@
       ]
     },
     {
-      "range": [600, 620],
+      "range": [
+        600,
+        620
+      ],
       "note": "211 中段",
       "recommendations": [
         {
           "name": "中南大学",
           "major": "临床医学",
           "frequency": 4,
-          "platforms": ["千问", "元宝", "百度", "豆包"],
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
           "predicted_increase": 16,
           "alternatives": [
             {
@@ -868,7 +1062,12 @@
           "name": "湖南大学",
           "major": "电气工程及其自动化",
           "frequency": 4,
-          "platforms": ["千问", "元宝", "百度", "豆包"],
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
           "predicted_increase": 15,
           "alternatives": [
             {
@@ -887,7 +1086,12 @@
           "name": "中南大学",
           "major": "软件工程",
           "frequency": 4,
-          "platforms": ["千问", "元宝", "百度", "豆包"],
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
           "predicted_increase": 17,
           "alternatives": [
             {
@@ -906,7 +1110,11 @@
           "name": "湖南大学",
           "major": "车辆工程",
           "frequency": 3,
-          "platforms": ["元宝", "百度", "豆包"],
+          "platforms": [
+            "元宝",
+            "百度",
+            "豆包"
+          ],
           "predicted_increase": 12,
           "alternatives": [
             {
@@ -925,7 +1133,10 @@
           "name": "湖南大学",
           "major": "新闻传播学",
           "frequency": 2,
-          "platforms": ["千问", "元宝"],
+          "platforms": [
+            "千问",
+            "元宝"
+          ],
           "predicted_increase": 7,
           "alternatives": [
             {
@@ -944,7 +1155,11 @@
           "name": "中南大学",
           "major": "工商管理",
           "frequency": 3,
-          "platforms": ["千问", "百度", "豆包"],
+          "platforms": [
+            "千问",
+            "百度",
+            "豆包"
+          ],
           "predicted_increase": 11,
           "alternatives": [
             {
@@ -963,7 +1178,10 @@
           "name": "湘潭大学",
           "major": "数学与应用数学",
           "frequency": 2,
-          "platforms": ["千问", "豆包"],
+          "platforms": [
+            "千问",
+            "豆包"
+          ],
           "predicted_increase": 6,
           "alternatives": [
             {
@@ -982,7 +1200,10 @@
           "name": "湖南师范大学",
           "major": "教育学",
           "frequency": 2,
-          "platforms": ["元宝", "百度"],
+          "platforms": [
+            "元宝",
+            "百度"
+          ],
           "predicted_increase": 6,
           "alternatives": [
             {
@@ -1000,14 +1221,22 @@
       ]
     },
     {
-      "range": [620, 640],
+      "range": [
+        620,
+        640
+      ],
       "note": "211 高段/985 临界",
       "recommendations": [
         {
           "name": "中南大学",
           "major": "计算机科学与技术",
           "frequency": 4,
-          "platforms": ["千问", "元宝", "百度", "豆包"],
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
           "predicted_increase": 18,
           "alternatives": [
             {
@@ -1026,7 +1255,11 @@
           "name": "湖南大学",
           "major": "金融学",
           "frequency": 3,
-          "platforms": ["千问", "元宝", "百度"],
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度"
+          ],
           "predicted_increase": 12,
           "alternatives": [
             {
@@ -1045,7 +1278,12 @@
           "name": "中南大学",
           "major": "口腔医学",
           "frequency": 4,
-          "platforms": ["千问", "元宝", "百度", "豆包"],
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
           "predicted_increase": 17,
           "alternatives": [
             {
@@ -1064,7 +1302,11 @@
           "name": "国防科技大学",
           "major": "电子科学与技术",
           "frequency": 3,
-          "platforms": ["元宝", "百度", "豆包"],
+          "platforms": [
+            "元宝",
+            "百度",
+            "豆包"
+          ],
           "predicted_increase": 13,
           "alternatives": [
             {
@@ -1083,7 +1325,11 @@
           "name": "湖南大学",
           "major": "建筑学",
           "frequency": 3,
-          "platforms": ["千问", "元宝", "百度"],
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度"
+          ],
           "predicted_increase": 11,
           "alternatives": [
             {
@@ -1102,7 +1348,11 @@
           "name": "中南大学",
           "major": "自动化",
           "frequency": 3,
-          "platforms": ["千问", "百度", "豆包"],
+          "platforms": [
+            "千问",
+            "百度",
+            "豆包"
+          ],
           "predicted_increase": 11,
           "alternatives": [
             {
@@ -1120,14 +1370,22 @@
       ]
     },
     {
-      "range": [640, 660],
+      "range": [
+        640,
+        660
+      ],
       "note": "985 重点",
       "recommendations": [
         {
           "name": "国防科技大学",
           "major": "计算机科学与技术",
           "frequency": 4,
-          "platforms": ["千问", "元宝", "百度", "豆包"],
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
           "predicted_increase": 18,
           "alternatives": [
             {
@@ -1146,7 +1404,12 @@
           "name": "国防科技大学",
           "major": "信息与通信工程",
           "frequency": 4,
-          "platforms": ["千问", "元宝", "百度", "豆包"],
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
           "predicted_increase": 16,
           "alternatives": [
             {
@@ -1165,7 +1428,12 @@
           "name": "中南大学",
           "major": "临床医学(八年制)",
           "frequency": 4,
-          "platforms": ["千问", "元宝", "百度", "豆包"],
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
           "predicted_increase": 17,
           "alternatives": [
             {
@@ -1184,7 +1452,11 @@
           "name": "湖南大学",
           "major": "金融学",
           "frequency": 3,
-          "platforms": ["千问", "元宝", "百度"],
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度"
+          ],
           "predicted_increase": 12,
           "alternatives": [
             {
@@ -1203,7 +1475,11 @@
           "name": "中南大学",
           "major": "材料科学与工程",
           "frequency": 3,
-          "platforms": ["元宝", "百度", "豆包"],
+          "platforms": [
+            "元宝",
+            "百度",
+            "豆包"
+          ],
           "predicted_increase": 10,
           "alternatives": [
             {
@@ -1222,7 +1498,10 @@
           "name": "国防科技大学",
           "major": "数学与应用数学",
           "frequency": 2,
-          "platforms": ["千问", "豆包"],
+          "platforms": [
+            "千问",
+            "豆包"
+          ],
           "predicted_increase": 7,
           "alternatives": [
             {
@@ -1240,14 +1519,22 @@
       ]
     },
     {
-      "range": [660, 690],
+      "range": [
+        660,
+        690
+      ],
       "note": "省外顶尖(清北复交浙)",
       "recommendations": [
         {
           "name": "清华大学",
           "major": "计算机科学与技术",
           "frequency": 4,
-          "platforms": ["千问", "元宝", "百度", "豆包"],
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
           "predicted_increase": 20,
           "alternatives": [
             {
@@ -1266,7 +1553,12 @@
           "name": "北京大学",
           "major": "金融学",
           "frequency": 4,
-          "platforms": ["千问", "元宝", "百度", "豆包"],
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
           "predicted_increase": 18,
           "alternatives": [
             {
@@ -1285,7 +1577,12 @@
           "name": "上海交通大学",
           "major": "电子科学与技术",
           "frequency": 4,
-          "platforms": ["千问", "元宝", "百度", "豆包"],
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
           "predicted_increase": 17,
           "alternatives": [
             {
@@ -1304,7 +1601,11 @@
           "name": "浙江大学",
           "major": "临床医学(八年制)",
           "frequency": 3,
-          "platforms": ["千问", "元宝", "百度"],
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度"
+          ],
           "predicted_increase": 15,
           "alternatives": [
             {
@@ -1323,7 +1624,11 @@
           "name": "复旦大学",
           "major": "新闻传播学",
           "frequency": 3,
-          "platforms": ["元宝", "百度", "豆包"],
+          "platforms": [
+            "元宝",
+            "百度",
+            "豆包"
+          ],
           "predicted_increase": 14,
           "alternatives": [
             {
@@ -1342,7 +1647,10 @@
           "name": "中国科学技术大学",
           "major": "数学与应用数学",
           "frequency": 2,
-          "platforms": ["千问", "豆包"],
+          "platforms": [
+            "千问",
+            "豆包"
+          ],
           "predicted_increase": 8,
           "alternatives": [
             {
@@ -1359,5 +1667,23 @@
         }
       ]
     }
-  ]
+  ],
+  "trusted_sources": [
+    {
+      "name": "教育部阳光高考",
+      "url": "https://gaokao.chsi.com.cn/",
+      "kind": "national_official"
+    },
+    {
+      "name": "教育部官网",
+      "url": "https://www.moe.gov.cn/",
+      "kind": "national_official"
+    },
+    {
+      "name": "湖南招生考试机构/教育考试院",
+      "url": "",
+      "kind": "province_official_pending_review"
+    }
+  ],
+  "quality_note": "当前为高置信人工整理推荐，已补齐可信来源元数据；后续仍需按年度招生章程与考试院公告复核。"
 }
