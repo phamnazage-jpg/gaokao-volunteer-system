@@ -296,8 +296,8 @@
           "predicted_increase": 3,
           "alternatives": [
             {
-              "name": "山东财经大学",
-              "major": "经济学",
+              "name": "齐鲁工业大学",
+              "major": "金融学",
               "score": 88
             },
             {
@@ -441,8 +441,8 @@
           "predicted_increase": 2,
           "alternatives": [
             {
-              "name": "山东财经大学",
-              "major": "工商管理",
+              "name": "青岛大学",
+              "major": "经济学",
               "score": 85
             },
             {
@@ -520,8 +520,8 @@
           "predicted_increase": 1,
           "alternatives": [
             {
-              "name": "山东师范大学",
-              "major": "汉语言文学",
+              "name": "曲阜师范大学",
+              "major": "教育学",
               "score": 82
             },
             {
@@ -665,8 +665,8 @@
           "predicted_increase": 1,
           "alternatives": [
             {
-              "name": "山东师范大学",
-              "major": "教育学",
+              "name": "聊城大学",
+              "major": "汉语言文学",
               "score": 80
             },
             {

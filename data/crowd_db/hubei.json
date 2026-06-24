@@ -32,7 +32,7 @@
               "score": 97
             },
             {
-              "name": "武汉大学",
+              "name": "华中师范大学",
               "major": "遥感科学与技术",
               "score": 96
             }
@@ -55,7 +55,7 @@
               "score": 98
             },
             {
-              "name": "武汉大学",
+              "name": "中南财经政法大学",
               "major": "临床医学",
               "score": 97
             }
@@ -79,7 +79,7 @@
               "score": 97
             },
             {
-              "name": "华中科技大学",
+              "name": "武汉理工大学",
               "major": "人工智能",
               "score": 96
             }
@@ -135,7 +135,7 @@
               "score": 95
             },
             {
-              "name": "华中科技大学",
+              "name": "中南财经政法大学",
               "major": "自动化",
               "score": 93
             }
@@ -159,7 +159,7 @@
               "score": 92
             },
             {
-              "name": "武汉理工大学",
+              "name": "中国地质大学(武汉)",
               "major": "无机非金属材料工程",
               "score": 91
             }
@@ -187,8 +187,8 @@
           "predicted_increase": 7,
           "alternatives": [
             {
-              "name": "华中师范大学",
-              "major": "英语",
+              "name": "中南财经政法大学",
+              "major": "教育学",
               "score": 93
             },
             {
@@ -211,7 +211,7 @@
           "predicted_increase": 11,
           "alternatives": [
             {
-              "name": "中南财经政法大学",
+              "name": "湖北大学",
               "major": "金融学",
               "score": 95
             },
@@ -233,8 +233,8 @@
           "predicted_increase": 5,
           "alternatives": [
             {
-              "name": "中国地质大学(武汉)",
-              "major": "资源勘查工程",
+              "name": "武汉科技大学",
+              "major": "地质学",
               "score": 91
             },
             {
@@ -256,8 +256,8 @@
           "predicted_increase": 8,
           "alternatives": [
             {
-              "name": "武汉理工大学",
-              "major": "交通运输",
+              "name": "华中农业大学",
+              "major": "材料化学",
               "score": 92
             },
             {
@@ -287,8 +287,8 @@
           "predicted_increase": 4,
           "alternatives": [
             {
-              "name": "华中农业大学",
-              "major": "动物科学",
+              "name": "湖北大学",
+              "major": "农学",
               "score": 89
             },
             {
@@ -311,8 +311,8 @@
           "predicted_increase": 9,
           "alternatives": [
             {
-              "name": "中南财经政法大学",
-              "major": "经济学",
+              "name": "武汉科技大学",
+              "major": "工商管理",
               "score": 93
             },
             {
@@ -333,8 +333,8 @@
           "predicted_increase": 5,
           "alternatives": [
             {
-              "name": "华中师范大学",
-              "major": "物理学",
+              "name": "湖北大学",
+              "major": "英语",
               "score": 90
             },
             {
@@ -514,8 +514,8 @@
               "score": 91
             },
             {
-              "name": "武汉纺织大学",
-              "major": "服装设计与工程",
+              "name": "湖北美术学院",
+              "major": "服装设计",
               "score": 83
             }
           ]
@@ -644,8 +644,8 @@
               "score": 88
             },
             {
-              "name": "武汉职业技术学院",
-              "major": "电气自动化技术",
+              "name": "武汉铁路职业技术学院",
+              "major": "机电一体化",
               "score": 90
             }
           ]
@@ -688,8 +688,8 @@
               "score": 87
             },
             {
-              "name": "武汉船舶职业技术学院",
-              "major": "海洋工程技术",
+              "name": "湖北水利水电职业技术学院",
+              "major": "船舶工程",
               "score": 85
             }
           ]

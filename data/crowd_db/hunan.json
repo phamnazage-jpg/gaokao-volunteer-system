@@ -31,7 +31,7 @@
               "score": 88
             },
             {
-              "name": "长沙民政职业技术学院",
+              "name": "湖南工商职业学院",
               "major": "民政管理",
               "score": 90
             }
@@ -54,7 +54,7 @@
               "score": 89
             },
             {
-              "name": "湖南铁道职业技术学院",
+              "name": "湖南高速铁路职业技术学院",
               "major": "铁道车辆",
               "score": 91
             }
@@ -76,7 +76,7 @@
               "score": 88
             },
             {
-              "name": "湖南大众传媒学院",
+              "name": "湖南艺术职业学院",
               "major": "播音与主持",
               "score": 90
             }
@@ -98,7 +98,7 @@
               "score": 87
             },
             {
-              "name": "长沙商贸旅游职业技术学院",
+              "name": "湖南生物机电职业技术学院",
               "major": "财务管理",
               "score": 89
             }
@@ -345,7 +345,7 @@
               "score": 92
             },
             {
-              "name": "中南林业科技大学",
+              "name": "湖南农业大学",
               "major": "森林保护",
               "score": 90
             }
@@ -367,8 +367,8 @@
               "score": 90
             },
             {
-              "name": "湖南农业大学",
-              "major": "动物医学",
+              "name": "中南林业科技大学",
+              "major": "园艺",
               "score": 92
             }
           ]
@@ -386,8 +386,8 @@
           "predicted_increase": 14,
           "alternatives": [
             {
-              "name": "湖南中医药大学",
-              "major": "中西医临床医学",
+              "name": "湖南医药学院",
+              "major": "针灸推拿学",
               "score": 94
             },
             {
@@ -560,8 +560,8 @@
               "score": 95
             },
             {
-              "name": "湖南科技大学",
-              "major": "安全工程",
+              "name": "湘潭大学",
+              "major": "机械工程",
               "score": 90
             }
           ]
@@ -709,8 +709,8 @@
               "score": 94
             },
             {
-              "name": "中南大学",
-              "major": "口腔医学",
+              "name": "湖南大学",
+              "major": "临床医学",
               "score": 96
             }
           ]
@@ -823,8 +823,8 @@
               "score": 96
             },
             {
-              "name": "中南林业科技大学",
-              "major": "园林",
+              "name": "吉首大学",
+              "major": "林学",
               "score": 91
             }
           ]
@@ -946,8 +946,8 @@
           "predicted_increase": 15,
           "alternatives": [
             {
-              "name": "中南大学",
-              "major": "临床医学(五年制)",
+              "name": "湘潭大学",
+              "major": "材料科学与工程",
               "score": 96
             },
             {
@@ -1052,8 +1052,8 @@
               "score": 93
             },
             {
-              "name": "中南大学",
-              "major": "麻醉学",
+              "name": "长沙理工大学",
+              "major": "自动化",
               "score": 94
             }
           ]
@@ -1287,8 +1287,8 @@
           "predicted_increase": 17,
           "alternatives": [
             {
-              "name": "中南大学",
-              "major": "临床医学",
+              "name": "湖南师范大学",
+              "major": "计算机科学与技术",
               "score": 95
             },
             {
@@ -1310,8 +1310,8 @@
           "predicted_increase": 13,
           "alternatives": [
             {
-              "name": "国防科技大学",
-              "major": "通信工程",
+              "name": "湖南大学",
+              "major": "航空航天工程",
               "score": 96
             },
             {
@@ -1389,8 +1389,8 @@
           "predicted_increase": 18,
           "alternatives": [
             {
-              "name": "国防科技大学",
-              "major": "网络工程",
+              "name": "中南大学",
+              "major": "计算机科学与技术",
               "score": 97
             },
             {
@@ -1413,8 +1413,8 @@
           "predicted_increase": 16,
           "alternatives": [
             {
-              "name": "国防科技大学",
-              "major": "电子科学与技术",
+              "name": "湖南大学",
+              "major": "航空航天工程",
               "score": 96
             },
             {
@@ -1437,8 +1437,8 @@
           "predicted_increase": 17,
           "alternatives": [
             {
-              "name": "中南大学",
-              "major": "口腔医学",
+              "name": "湖南大学",
+              "major": "临床医学",
               "score": 96
             },
             {
