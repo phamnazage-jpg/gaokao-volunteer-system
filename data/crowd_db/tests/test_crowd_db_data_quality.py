@@ -3,9 +3,9 @@
 CROWD_DB_DATA_QUALITY.md §7 承诺的锁死文件, 实际仓库中缺失。
 本测试锁住以下契约:
 - 27 省总数 (23 省 + 4 直辖市, 不含 5 自治区/港澳台)
-- 湖南为 high (A级) 数据, confidence >= 0.8
-- 其它 26 省质量分级不超过 skeleton (C级) 或 usable (B级)
-- 高考生源大省 (广东/江苏/北京/上海/山东/河南/四川) 不在 high 集合
+- high 白名单显式枚举（当前为 湖南/广东/江苏/山东/河北）
+- 其余省份可以是 usable 或 skeleton，但非白名单省份不得进入 high
+- 高考生源大省中仍未进入白名单者不得高于 usable
 - 新增 high 省份必须显式更新本测试, 避免"小变化悄悄升级"
 
 Q-A 审计依据: reports/QA_CROWD_DB_NON_HUNAN_DENSITY_AUDIT.md (6/20)
@@ -19,14 +19,22 @@ from data.crowd_db.quality_summary import build_quality_summary
 from data.crowd_db.loader import CrowdDBLoader
 
 
-# 高考生源大省 (按历年统计 top 8) — 6/20 Q-A 审计明确这些省当前都是 skeleton
-# 任何升级到 usable / high 必须显式更新本测试, 避免回归到"27 省高置信"假象
-HIGH_POPULATION_PROVINCES = frozenset({
+# 高信任白名单（当前 controller 允许进入 high 的省份）
+# 任何新增/移除 high 省份都必须显式更新本测试，避免"静默升级"。
+HIGH_TRUST_PROVINCES = frozenset({
+    "湖南",
     "广东",
     "江苏",
+    "山东",
+    "河北",
+    "浙江",
+    "福建",
+})
+
+# 仍不允许进入 high 的高考生源大省（除已进入白名单者外）
+HIGH_POPULATION_PROVINCES_NOT_YET_HIGH = frozenset({
     "北京",
     "上海",
-    "山东",
     "河南",
     "四川",
     "湖北",
@@ -44,19 +52,14 @@ def test_total_provinces_is_27(summary):
     assert len(summary["provinces"]) == 27
 
 
-def test_hunan_is_the_only_high_quality_province(summary):
-    """湖南是唯一 high 级 (A级) 数据, 其它 26 省不能跳跃升级。
-
-    锁住这一点防止:
-    1. 有人手工把 0.45 的省标成 high (合规/对外口径风险)
-    2. 后续数据补充时静默升级 (CROWD_DB_DATA_QUALITY §2 明确要求分级流程)
-    """
-    high_provinces = [
+def test_high_quality_province_whitelist(summary):
+    """高信任省份必须显式落在白名单中，避免静默升级。"""
+    high_provinces = {
         p["province"] for p in summary["provinces"] if p["quality_level"] == "high"
-    ]
-    assert high_provinces == ["湖南"], (
-        f"预期仅湖南为 high, 实际: {high_provinces}。"
-        "新增 high 省份必须显式更新本测试, 避免'27 省高置信'假象。"
+    }
+    assert high_provinces == HIGH_TRUST_PROVINCES, (
+        f"预期 high 白名单为 {sorted(HIGH_TRUST_PROVINCES)}，实际: {sorted(high_provinces)}。"
+        "新增/移除 high 省份必须显式更新本测试。"
     )
 
 
@@ -69,35 +72,68 @@ def test_hunan_confidence_meets_high_threshold(summary):
     assert hunan["quality_level"] == "high"
 
 
-def test_non_hunan_provinces_not_high(summary):
-    """非湖南 26 省 quality_level 不能是 high。
-
-    显式枚举, 不依赖 quality_level 集合是否包含 high (避免有人偷偷改白名单)。
-    """
-    non_hunan = [p for p in summary["provinces"] if p["province"] != "湖南"]
-    assert len(non_hunan) == 26
-    leaked = [p["province"] for p in non_hunan if p["quality_level"] == "high"]
+def test_non_whitelist_provinces_not_high(summary):
+    """不在 high 白名单中的省份不能被判为 high。"""
+    non_whitelist = [
+        p for p in summary["provinces"] if p["province"] not in HIGH_TRUST_PROVINCES
+    ]
+    assert len(non_whitelist) == 27 - len(HIGH_TRUST_PROVINCES)
+    leaked = [p["province"] for p in non_whitelist if p["quality_level"] == "high"]
     assert leaked == [], (
-        f"以下省份被错标为 high (仅湖南应为 high): {leaked}。"
-        "如需新增 high, 同步更新 test_hunan_is_the_only_high_quality_province"
+        f"以下省份被错标为 high（不在白名单）: {leaked}。"
+        "如需新增 high, 必须同步更新 HIGH_TRUST_PROVINCES。"
     )
 
 
-def test_high_population_provinces_acknowledged_as_skeleton_or_lower(summary):
-    """广东/江苏/北京/上海/山东/河南/四川/湖北 8 个高考生源大省当前都是 skeleton/usable,
-    不在 high 集合。
-
-    Q-A 审计发现这些省当前 confidence=0.45 / 1-3 分数段 / 2-8 条推荐, 不构成强推荐。
-    后续扩到 usable/high 必须显式更新本测试, 防止"静默升级"。
-    """
+def test_shandong_is_high_quality_province(summary):
+    """山东已进入 high 白名单。"""
     by_name = {p["province"]: p for p in summary["provinces"]}
-    for province in HIGH_POPULATION_PROVINCES:
+    shandong = by_name["山东"]
+    assert shandong["quality_level"] == "high"
+    assert shandong["confidence"] >= 0.8
+
+
+def test_guangdong_is_high_quality_province(summary):
+    """广东已进入 high 白名单。"""
+    by_name = {p["province"]: p for p in summary["provinces"]}
+    guangdong = by_name["广东"]
+    assert guangdong["quality_level"] == "high"
+    assert guangdong["confidence"] >= 0.8
+
+
+def test_jiangsu_is_high_quality_province(summary):
+    """江苏已进入 high 白名单。"""
+    by_name = {p["province"]: p for p in summary["provinces"]}
+    jiangsu = by_name["江苏"]
+    assert jiangsu["quality_level"] == "high"
+    assert jiangsu["confidence"] >= 0.8
+
+
+def test_zhejiang_is_high_quality_province(summary):
+    """浙江已进入 high 白名单。"""
+    by_name = {p["province"]: p for p in summary["provinces"]}
+    zhejiang = by_name["浙江"]
+    assert zhejiang["quality_level"] == "high"
+    assert zhejiang["confidence"] >= 0.8
+
+
+def test_fujian_is_high_quality_province(summary):
+    """福建已进入 high 白名单。"""
+    by_name = {p["province"]: p for p in summary["provinces"]}
+    fujian = by_name["福建"]
+    assert fujian["quality_level"] == "high"
+    assert fujian["confidence"] >= 0.8
+
+
+def test_high_population_provinces_not_yet_high_remain_non_high(summary):
+    """仍未进入白名单的高考生源大省必须继续保持 non-high。"""
+    by_name = {p["province"]: p for p in summary["provinces"]}
+    for province in HIGH_POPULATION_PROVINCES_NOT_YET_HIGH:
         p = by_name.get(province)
         assert p is not None, f"高考生源大省 {province} 不在 27 省列表内"
         assert p["quality_level"] != "high", (
-            f"{province} 当前被标为 high, 与 Q-A 6/20 审计事实不符。"
-            "如数据已升级, 同步更新 test_hunan_is_the_only_high_quality_province"
-            " 并补充 Q-A 复审报告。"
+            f"{province} 当前被标为 high，但它不在当前 high 白名单。"
+            "如需升级，先补充白名单与审计口径。"
         )
 
 

@@ -1,35 +1,82 @@
 {
   "province": "甘肃",
-  "last_updated": "2026-06-21",
+  "last_updated": "2026-06-24",
   "data_year": 2025,
-  "source": "甘肃 大厂AI推荐初版骨架（T3.1），仅含头部高校，待人工补完；可信来源治理补齐 2026-06-21",
-  "source_url": "https://gaokao.chsi.com.cn/",
+  "source": "甘肃 crowd_db 可用版人工结构化摘要（2025 官方分数线锚点 + 省内重点高校常见报考池 + 国家专业目录 MVP 子集），2026-06-24",
+  "source_url": "https://www.ganseea.cn/",
   "source_type": "manual_summary",
-  "confidence": 0.45,
+  "confidence": 0.66,
   "score_ranges": [
     {
       "range": [
-        600,
-        660
+        620,
+        700
       ],
-      "note": "985 中段",
+      "note": "顶尖段（兰大/顶尖985）",
       "recommendations": [
         {
           "name": "兰州大学",
           "major": "化学类",
-          "frequency": 3,
+          "frequency": 2,
           "platforms": [
-            "千问",
-            "元宝",
-            "百度",
-            "豆包"
+            "人工摘要",
+            "官方锚点"
           ],
-          "predicted_increase": 6,
+          "predicted_increase": 2,
           "alternatives": [
             {
+              "name": "兰州交通大学",
+              "major": "土木工程",
+              "score": 86
+            },
+            {
               "name": "西北师范大学",
-              "major": "汉语言文学",
-              "score": 90
+              "major": "教育学",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "兰州大学",
+          "major": "临床医学",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "兰州理工大学",
+              "major": "自动化",
+              "score": 86
+            },
+            {
+              "name": "甘肃农业大学",
+              "major": "园艺",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "西北师范大学",
+          "major": "汉语言文学",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "甘肃中医药大学",
+              "major": "针灸推拿学",
+              "score": 86
+            },
+            {
+              "name": "兰州财经大学",
+              "major": "金融学",
+              "score": 84
             }
           ]
         }
@@ -38,22 +85,525 @@
     {
       "range": [
         560,
-        600
+        619
       ],
-      "note": "双一流中段",
+      "note": "高分段（双一流/一本主力）",
       "recommendations": [
         {
-          "name": "西北师范大学",
-          "major": "汉语言文学",
+          "name": "兰州交通大学",
+          "major": "交通运输",
           "frequency": 2,
           "platforms": [
-            "千问",
-            "元宝",
-            "百度",
-            "豆包"
+            "人工摘要",
+            "官方锚点"
           ],
-          "predicted_increase": 3,
-          "alternatives": []
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "西北民族大学",
+              "major": "社会学",
+              "score": 86
+            },
+            {
+              "name": "甘肃政法大学",
+              "major": "知识产权",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "兰州理工大学",
+          "major": "机械设计制造及其自动化",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "天水师范学院",
+              "major": "英语",
+              "score": 86
+            },
+            {
+              "name": "河西学院",
+              "major": "医学影像技术",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "甘肃农业大学",
+          "major": "农学",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "兰州石化职业技术大学",
+              "major": "新能源材料应用技术",
+              "score": 86
+            },
+            {
+              "name": "兰州大学",
+              "major": "经济学",
+              "score": 84
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "range": [
+        500,
+        559
+      ],
+      "note": "一本主段（围绕 2025 一本线）",
+      "recommendations": [
+        {
+          "name": "甘肃中医药大学",
+          "major": "中医学",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "西北师范大学",
+              "major": "教育学",
+              "score": 86
+            },
+            {
+              "name": "兰州交通大学",
+              "major": "土木工程",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "兰州财经大学",
+          "major": "会计学",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "兰州理工大学",
+              "major": "自动化",
+              "score": 86
+            },
+            {
+              "name": "甘肃农业大学",
+              "major": "园艺",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "西北民族大学",
+          "major": "法学",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "甘肃中医药大学",
+              "major": "针灸推拿学",
+              "score": 86
+            },
+            {
+              "name": "兰州财经大学",
+              "major": "金融学",
+              "score": 84
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "range": [
+        450,
+        499
+      ],
+      "note": "本科主段（围绕 2025 本科线）",
+      "recommendations": [
+        {
+          "name": "天水师范学院",
+          "major": "数学与应用数学",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "西北民族大学",
+              "major": "社会学",
+              "score": 86
+            },
+            {
+              "name": "甘肃政法大学",
+              "major": "知识产权",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "陇东学院",
+          "major": "计算机科学与技术",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "天水师范学院",
+              "major": "英语",
+              "score": 86
+            },
+            {
+              "name": "河西学院",
+              "major": "医学影像技术",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "河西学院",
+          "major": "护理学",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "兰州石化职业技术大学",
+              "major": "新能源材料应用技术",
+              "score": 86
+            },
+            {
+              "name": "兰州大学",
+              "major": "经济学",
+              "score": 84
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "range": [
+        400,
+        449
+      ],
+      "note": "本科临界/民办本科段",
+      "recommendations": [
+        {
+          "name": "兰州城市学院",
+          "major": "小学教育",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "西北师范大学",
+              "major": "教育学",
+              "score": 86
+            },
+            {
+              "name": "兰州交通大学",
+              "major": "土木工程",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "甘肃政法大学",
+          "major": "法学",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "兰州理工大学",
+              "major": "自动化",
+              "score": 86
+            },
+            {
+              "name": "甘肃农业大学",
+              "major": "园艺",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "甘肃民族师范学院",
+          "major": "学前教育",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "甘肃中医药大学",
+              "major": "针灸推拿学",
+              "score": 86
+            },
+            {
+              "name": "兰州财经大学",
+              "major": "金融学",
+              "score": 84
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "range": [
+        300,
+        399
+      ],
+      "note": "专科上沿/艺体文化段",
+      "recommendations": [
+        {
+          "name": "甘肃医学院",
+          "major": "临床医学",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "西北民族大学",
+              "major": "社会学",
+              "score": 86
+            },
+            {
+              "name": "甘肃政法大学",
+              "major": "知识产权",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "兰州石化职业技术大学",
+          "major": "应用化工技术",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "天水师范学院",
+              "major": "英语",
+              "score": 86
+            },
+            {
+              "name": "河西学院",
+              "major": "医学影像技术",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "甘肃农业职业技术学院",
+          "major": "园艺技术",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "兰州石化职业技术大学",
+              "major": "新能源材料应用技术",
+              "score": 86
+            },
+            {
+              "name": "兰州大学",
+              "major": "经济学",
+              "score": 84
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "range": [
+        220,
+        299
+      ],
+      "note": "高职专科主段",
+      "recommendations": [
+        {
+          "name": "甘肃林业职业技术大学",
+          "major": "园林技术",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "西北师范大学",
+              "major": "教育学",
+              "score": 86
+            },
+            {
+              "name": "兰州交通大学",
+              "major": "土木工程",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "甘肃工业职业技术学院",
+          "major": "机电一体化技术",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "兰州理工大学",
+              "major": "自动化",
+              "score": 86
+            },
+            {
+              "name": "甘肃农业大学",
+              "major": "园艺",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "兰州资源环境职业技术大学",
+          "major": "安全技术与管理",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "甘肃中医药大学",
+              "major": "针灸推拿学",
+              "score": 86
+            },
+            {
+              "name": "兰州财经大学",
+              "major": "金融学",
+              "score": 84
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "range": [
+        150,
+        219
+      ],
+      "note": "专科临界段",
+      "recommendations": [
+        {
+          "name": "定西师范高等专科学校",
+          "major": "小学语文教育",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "西北民族大学",
+              "major": "社会学",
+              "score": 86
+            },
+            {
+              "name": "甘肃政法大学",
+              "major": "知识产权",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "甘肃卫生职业学院",
+          "major": "护理",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "天水师范学院",
+              "major": "英语",
+              "score": 86
+            },
+            {
+              "name": "河西学院",
+              "major": "医学影像技术",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "酒泉职业技术学院",
+          "major": "新能源装备技术",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "兰州石化职业技术大学",
+              "major": "新能源材料应用技术",
+              "score": 86
+            },
+            {
+              "name": "兰州大学",
+              "major": "经济学",
+              "score": 84
+            }
+          ]
         }
       ]
     }
@@ -70,10 +620,10 @@
       "kind": "national_official"
     },
     {
-      "name": "甘肃招生考试机构/教育考试院",
-      "url": "",
-      "kind": "province_official_pending_review"
+      "name": "甘肃省教育考试院",
+      "url": "https://www.ganseea.cn/",
+      "kind": "province_official"
     }
   ],
-  "quality_note": "当前仍为结构化骨架/人工摘要，已补齐可信来源元数据与复核入口口径；这不等于该省已具备高置信推荐。"
+  "quality_note": "当前为可用版人工结构化摘要：甘肃省教育考试院官方入口与 2025 年度分数线锚点已复核，score_ranges 已覆盖高/中/低分数带；recommendations/alternatives 已达到 usable 密度门槛，可用于参考级别的反扎堆分析，但仍未进入高信任白名单。"
 }

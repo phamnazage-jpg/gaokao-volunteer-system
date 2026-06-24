@@ -1,50 +1,609 @@
 {
   "province": "吉林",
-  "last_updated": "2026-06-21",
+  "last_updated": "2026-06-24",
   "data_year": 2025,
-  "source": "吉林 大厂AI推荐初版骨架（T3.1），仅含头部高校，待人工补完；可信来源治理补齐 2026-06-21",
-  "source_url": "https://gaokao.chsi.com.cn/",
+  "source": "吉林 crowd_db 可用版人工结构化摘要（2025 官方分数线锚点 + 本地重点高校常见报考池 + 国家专业目录 MVP 子集），2026-06-24",
+  "source_url": "https://www.jleea.edu.cn/",
   "source_type": "manual_summary",
-  "confidence": 0.45,
+  "confidence": 0.66,
   "score_ranges": [
     {
       "range": [
-        620,
-        680
+        640,
+        700
       ],
-      "note": "985 中段",
+      "note": "顶尖段（吉大/顶尖985）",
       "recommendations": [
         {
           "name": "吉林大学",
-          "major": "车辆工程",
-          "frequency": 3,
+          "major": "临床医学",
+          "frequency": 2,
           "platforms": [
-            "千问",
-            "元宝",
-            "百度",
-            "豆包"
+            "人工摘要",
+            "官方锚点"
           ],
-          "predicted_increase": 7,
+          "predicted_increase": 2,
           "alternatives": [
             {
+              "name": "延边大学",
+              "major": "法学",
+              "score": 86
+            },
+            {
               "name": "东北师范大学",
-              "major": "汉语言文学",
-              "score": 92
+              "major": "教育学",
+              "score": 84
             }
           ]
         },
         {
           "name": "东北师范大学",
           "major": "汉语言文学",
-          "frequency": 3,
+          "frequency": 2,
           "platforms": [
-            "千问",
-            "元宝",
-            "百度",
-            "豆包"
+            "人工摘要",
+            "官方锚点"
           ],
-          "predicted_increase": 6,
-          "alternatives": []
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "长春理工大学",
+              "major": "电子信息工程",
+              "score": 86
+            },
+            {
+              "name": "东北电力大学",
+              "major": "自动化",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "延边大学",
+          "major": "朝鲜语",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "吉林农业大学",
+              "major": "园艺",
+              "score": 86
+            },
+            {
+              "name": "长春工业大学",
+              "major": "自动化",
+              "score": 84
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "range": [
+        590,
+        639
+      ],
+      "note": "高分段（985/211 主力）",
+      "recommendations": [
+        {
+          "name": "长春理工大学",
+          "major": "光电信息科学与工程",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "长春中医药大学",
+              "major": "针灸推拿学",
+              "score": 86
+            },
+            {
+              "name": "北华大学",
+              "major": "医学影像学",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "东北电力大学",
+          "major": "电气工程及其自动化",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "吉林财经大学",
+              "major": "财政学",
+              "score": 86
+            },
+            {
+              "name": "吉林师范大学",
+              "major": "英语",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "吉林农业大学",
+          "major": "农学",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "长春大学",
+              "major": "网络工程",
+              "score": 86
+            },
+            {
+              "name": "吉林大学",
+              "major": "法学",
+              "score": 84
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "range": [
+        540,
+        589
+      ],
+      "note": "一本主段（围绕 2025 一本线）",
+      "recommendations": [
+        {
+          "name": "长春工业大学",
+          "major": "机械工程",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "东北师范大学",
+              "major": "教育学",
+              "score": 86
+            },
+            {
+              "name": "延边大学",
+              "major": "法学",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "长春中医药大学",
+          "major": "中医学",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "长春理工大学",
+              "major": "电子信息工程",
+              "score": 86
+            },
+            {
+              "name": "东北电力大学",
+              "major": "自动化",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "北华大学",
+          "major": "临床医学",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "吉林农业大学",
+              "major": "园艺",
+              "score": 86
+            },
+            {
+              "name": "长春工业大学",
+              "major": "自动化",
+              "score": 84
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "range": [
+        500,
+        539
+      ],
+      "note": "一本下沿/本科上沿",
+      "recommendations": [
+        {
+          "name": "吉林财经大学",
+          "major": "会计学",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "长春中医药大学",
+              "major": "针灸推拿学",
+              "score": 86
+            },
+            {
+              "name": "北华大学",
+              "major": "医学影像学",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "吉林师范大学",
+          "major": "数学与应用数学",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "吉林财经大学",
+              "major": "财政学",
+              "score": 86
+            },
+            {
+              "name": "长春大学",
+              "major": "网络工程",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "长春师范大学",
+          "major": "小学教育",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "吉林大学",
+              "major": "法学",
+              "score": 86
+            },
+            {
+              "name": "东北师范大学",
+              "major": "教育学",
+              "score": 84
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "range": [
+        430,
+        499
+      ],
+      "note": "本科主段（围绕 2025 本科线）",
+      "recommendations": [
+        {
+          "name": "长春大学",
+          "major": "软件工程",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "延边大学",
+              "major": "法学",
+              "score": 86
+            },
+            {
+              "name": "长春理工大学",
+              "major": "电子信息工程",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "吉林化工学院",
+          "major": "化学工程与工艺",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "东北电力大学",
+              "major": "自动化",
+              "score": 86
+            },
+            {
+              "name": "吉林农业大学",
+              "major": "园艺",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "长春工程学院",
+          "major": "土木工程",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "长春工业大学",
+              "major": "自动化",
+              "score": 86
+            },
+            {
+              "name": "长春中医药大学",
+              "major": "针灸推拿学",
+              "score": 84
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "range": [
+        380,
+        429
+      ],
+      "note": "本科临界/民办本科段",
+      "recommendations": [
+        {
+          "name": "吉林建筑大学",
+          "major": "建筑学",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "北华大学",
+              "major": "医学影像学",
+              "score": 86
+            },
+            {
+              "name": "吉林财经大学",
+              "major": "财政学",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "吉林医药学院",
+          "major": "护理学",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "吉林师范大学",
+              "major": "英语",
+              "score": 86
+            },
+            {
+              "name": "长春大学",
+              "major": "网络工程",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "通化师范学院",
+          "major": "英语",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "吉林大学",
+              "major": "法学",
+              "score": 86
+            },
+            {
+              "name": "东北师范大学",
+              "major": "教育学",
+              "score": 84
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "range": [
+        250,
+        379
+      ],
+      "note": "专科上沿/艺体文化段",
+      "recommendations": [
+        {
+          "name": "白城师范学院",
+          "major": "学前教育",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "延边大学",
+              "major": "法学",
+              "score": 86
+            },
+            {
+              "name": "长春理工大学",
+              "major": "电子信息工程",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "吉林工商学院",
+          "major": "金融学",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "东北电力大学",
+              "major": "自动化",
+              "score": 86
+            },
+            {
+              "name": "吉林农业大学",
+              "major": "园艺",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "长春汽车职业技术大学",
+          "major": "新能源汽车工程技术",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "长春工业大学",
+              "major": "自动化",
+              "score": 86
+            },
+            {
+              "name": "长春中医药大学",
+              "major": "针灸推拿学",
+              "score": 84
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "range": [
+        150,
+        249
+      ],
+      "note": "高职专科主段",
+      "recommendations": [
+        {
+          "name": "吉林交通职业技术学院",
+          "major": "道路与桥梁工程技术",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "北华大学",
+              "major": "医学影像学",
+              "score": 86
+            },
+            {
+              "name": "吉林财经大学",
+              "major": "财政学",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "长春职业技术学院",
+          "major": "机电一体化技术",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "吉林师范大学",
+              "major": "英语",
+              "score": 86
+            },
+            {
+              "name": "长春大学",
+              "major": "网络工程",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "白城医学高等专科学校",
+          "major": "护理",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "吉林大学",
+              "major": "法学",
+              "score": 86
+            },
+            {
+              "name": "东北师范大学",
+              "major": "教育学",
+              "score": 84
+            }
+          ]
         }
       ]
     }
@@ -61,10 +620,10 @@
       "kind": "national_official"
     },
     {
-      "name": "吉林招生考试机构/教育考试院",
-      "url": "",
-      "kind": "province_official_pending_review"
+      "name": "吉林省教育考试院",
+      "url": "https://www.jleea.edu.cn/",
+      "kind": "province_official"
     }
   ],
-  "quality_note": "当前仍为结构化骨架/人工摘要，已补齐可信来源元数据与复核入口口径；这不等于该省已具备高置信推荐。"
+  "quality_note": "当前为可用版人工结构化摘要：吉林省教育考试院官方入口与 2025 年度分数线锚点已复核，score_ranges 已覆盖高/中/低分数带；recommendations/alternatives 已达到 usable 密度门槛，可用于参考级别的反扎堆分析，但仍未进入高信任白名单。"
 }

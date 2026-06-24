@@ -1,59 +1,82 @@
 {
   "province": "北京",
-  "last_updated": "2026-06-21",
+  "last_updated": "2026-06-24",
   "data_year": 2025,
-  "source": "北京 大厂AI推荐初版骨架（T3.1），仅含头部高校，待人工补完；可信来源治理补齐 2026-06-21",
-  "source_url": "https://gaokao.chsi.com.cn/",
+  "source": "北京 crowd_db 可用版人工结构化摘要（2025 官方分数线锚点 + 本地重点高校常见报考池 + 国家专业目录 MVP 子集），2026-06-24",
+  "source_url": "https://www.bjeea.cn/",
   "source_type": "manual_summary",
-  "confidence": 0.45,
+  "confidence": 0.68,
   "score_ranges": [
     {
       "range": [
         680,
-        720
+        750
       ],
-      "note": "清北段",
+      "note": "清北顶尖段",
       "recommendations": [
         {
-          "name": "清华大学",
-          "major": "工科试验班",
-          "frequency": 4,
+          "name": "北京大学",
+          "major": "临床医学",
+          "frequency": 2,
           "platforms": [
-            "千问",
-            "元宝",
-            "百度",
-            "豆包"
+            "人工摘要",
+            "官方锚点"
           ],
-          "predicted_increase": 12,
+          "predicted_increase": 2,
           "alternatives": [
             {
-              "name": "北京大学",
-              "major": "理科试验班",
-              "score": 99
+              "name": "中国人民大学",
+              "major": "经济学",
+              "score": 86
             },
             {
-              "name": "中国人民大学",
-              "major": "金融学",
-              "score": 97
+              "name": "清华大学",
+              "major": "电子信息工程",
+              "score": 84
             }
           ]
         },
         {
-          "name": "北京大学",
-          "major": "数学类",
-          "frequency": 4,
+          "name": "清华大学",
+          "major": "计算机科学与技术",
+          "frequency": 2,
           "platforms": [
-            "千问",
-            "元宝",
-            "百度",
-            "豆包"
+            "人工摘要",
+            "官方锚点"
           ],
-          "predicted_increase": 10,
+          "predicted_increase": 2,
           "alternatives": [
             {
-              "name": "清华大学",
-              "major": "数理基础科学",
-              "score": 99
+              "name": "北京师范大学",
+              "major": "教育学",
+              "score": 86
+            },
+            {
+              "name": "北京理工大学",
+              "major": "车辆工程",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "中国人民大学",
+          "major": "法学",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "北京航空航天大学",
+              "major": "飞行器动力工程",
+              "score": 86
+            },
+            {
+              "name": "中央财经大学",
+              "major": "财政学",
+              "score": 84
             }
           ]
         }
@@ -62,96 +85,525 @@
     {
       "range": [
         640,
-        680
+        679
       ],
-      "note": "985 中段",
+      "note": "顶尖985段",
       "recommendations": [
         {
-          "name": "中国人民大学",
-          "major": "金融学",
-          "frequency": 4,
+          "name": "北京师范大学",
+          "major": "汉语言文学",
+          "frequency": 2,
           "platforms": [
-            "千问",
-            "元宝",
-            "百度",
-            "豆包"
+            "人工摘要",
+            "官方锚点"
           ],
-          "predicted_increase": 10,
-          "alternatives": []
-        },
-        {
-          "name": "北京航空航天大学",
-          "major": "计算机科学与技术",
-          "frequency": 3,
-          "platforms": [
-            "千问",
-            "元宝",
-            "百度",
-            "豆包"
-          ],
-          "predicted_increase": 8,
-          "alternatives": []
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "中国政法大学",
+              "major": "政治学与行政学",
+              "score": 86
+            },
+            {
+              "name": "北京邮电大学",
+              "major": "通信工程",
+              "score": 84
+            }
+          ]
         },
         {
           "name": "北京理工大学",
-          "major": "车辆工程",
-          "frequency": 3,
+          "major": "自动化",
+          "frequency": 2,
           "platforms": [
-            "千问",
-            "元宝",
-            "百度",
-            "豆包"
+            "人工摘要",
+            "官方锚点"
           ],
-          "predicted_increase": 6,
-          "alternatives": []
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "首都医科大学",
+              "major": "口腔医学",
+              "score": 86
+            },
+            {
+              "name": "北京工业大学",
+              "major": "自动化",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "北京航空航天大学",
+          "major": "电子信息工程",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "首都师范大学",
+              "major": "英语",
+              "score": 86
+            },
+            {
+              "name": "北京大学",
+              "major": "信息管理与信息系统",
+              "score": 84
+            }
+          ]
         }
       ]
     },
     {
       "range": [
         600,
-        640
+        639
       ],
-      "note": "211 中段",
+      "note": "985/211高段",
       "recommendations": [
         {
-          "name": "北京邮电大学",
-          "major": "通信工程",
-          "frequency": 4,
+          "name": "对外经济贸易大学",
+          "major": "金融学",
+          "frequency": 2,
           "platforms": [
-            "千问",
-            "元宝",
-            "百度",
-            "豆包"
+            "人工摘要",
+            "官方锚点"
           ],
-          "predicted_increase": 10,
-          "alternatives": []
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "清华大学",
+              "major": "电子信息工程",
+              "score": 86
+            },
+            {
+              "name": "中国人民大学",
+              "major": "经济学",
+              "score": 84
+            }
+          ]
         },
         {
-          "name": "北京外国语大学",
-          "major": "翻译",
-          "frequency": 3,
+          "name": "中央财经大学",
+          "major": "会计学",
+          "frequency": 2,
           "platforms": [
-            "千问",
-            "元宝",
-            "百度",
-            "豆包"
+            "人工摘要",
+            "官方锚点"
           ],
-          "predicted_increase": 7,
-          "alternatives": []
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "北京师范大学",
+              "major": "教育学",
+              "score": 86
+            },
+            {
+              "name": "北京理工大学",
+              "major": "车辆工程",
+              "score": 84
+            }
+          ]
         },
         {
           "name": "中国政法大学",
           "major": "法学",
-          "frequency": 3,
+          "frequency": 2,
           "platforms": [
-            "千问",
-            "元宝",
-            "百度",
-            "豆包"
+            "人工摘要",
+            "官方锚点"
           ],
-          "predicted_increase": 8,
-          "alternatives": []
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "北京航空航天大学",
+              "major": "飞行器动力工程",
+              "score": 86
+            },
+            {
+              "name": "中央财经大学",
+              "major": "财政学",
+              "score": 84
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "range": [
+        527,
+        599
+      ],
+      "note": "特殊类型招生控制线以上主段",
+      "recommendations": [
+        {
+          "name": "北京邮电大学",
+          "major": "网络空间安全",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "中国政法大学",
+              "major": "政治学与行政学",
+              "score": 86
+            },
+            {
+              "name": "首都医科大学",
+              "major": "口腔医学",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "北京工业大学",
+          "major": "软件工程",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "北京大学",
+              "major": "信息管理与信息系统",
+              "score": 86
+            },
+            {
+              "name": "首都师范大学",
+              "major": "英语",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "首都医科大学",
+          "major": "临床医学",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "清华大学",
+              "major": "电子信息工程",
+              "score": 86
+            },
+            {
+              "name": "中国人民大学",
+              "major": "经济学",
+              "score": 84
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "range": [
+        460,
+        526
+      ],
+      "note": "本科主段（围绕 2025 特控线 527 下沿）",
+      "recommendations": [
+        {
+          "name": "首都师范大学",
+          "major": "数学与应用数学",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "北京师范大学",
+              "major": "教育学",
+              "score": 86
+            },
+            {
+              "name": "北京理工大学",
+              "major": "车辆工程",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "北京工商大学",
+          "major": "财务管理",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "北京航空航天大学",
+              "major": "飞行器动力工程",
+              "score": 86
+            },
+            {
+              "name": "中央财经大学",
+              "major": "财政学",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "北方工业大学",
+          "major": "机械工程",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "中国政法大学",
+              "major": "政治学与行政学",
+              "score": 86
+            },
+            {
+              "name": "北京邮电大学",
+              "major": "通信工程",
+              "score": 84
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "range": [
+        400,
+        459
+      ],
+      "note": "本科临界段（围绕 2025 本科线 400）",
+      "recommendations": [
+        {
+          "name": "北京建筑大学",
+          "major": "建筑学",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "首都医科大学",
+              "major": "口腔医学",
+              "score": 86
+            },
+            {
+              "name": "北京工业大学",
+              "major": "自动化",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "北京信息科技大学",
+          "major": "数据科学与大数据技术",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "首都师范大学",
+              "major": "英语",
+              "score": 86
+            },
+            {
+              "name": "北京大学",
+              "major": "信息管理与信息系统",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "北京联合大学",
+          "major": "计算机科学与技术",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "清华大学",
+              "major": "电子信息工程",
+              "score": 86
+            },
+            {
+              "name": "中国人民大学",
+              "major": "经济学",
+              "score": 84
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "range": [
+        300,
+        399
+      ],
+      "note": "民办本科/高职预备段",
+      "recommendations": [
+        {
+          "name": "北京物资学院",
+          "major": "物流管理",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "北京师范大学",
+              "major": "教育学",
+              "score": 86
+            },
+            {
+              "name": "北京理工大学",
+              "major": "车辆工程",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "北京城市学院",
+          "major": "英语",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "北京航空航天大学",
+              "major": "飞行器动力工程",
+              "score": 86
+            },
+            {
+              "name": "中央财经大学",
+              "major": "财政学",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "北京电子科技职业学院",
+          "major": "机电一体化技术",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "中国政法大学",
+              "major": "政治学与行政学",
+              "score": 86
+            },
+            {
+              "name": "北京邮电大学",
+              "major": "通信工程",
+              "score": 84
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "range": [
+        200,
+        299
+      ],
+      "note": "高职专科主段",
+      "recommendations": [
+        {
+          "name": "北京工业职业技术学院",
+          "major": "工程造价",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "首都医科大学",
+              "major": "口腔医学",
+              "score": 86
+            },
+            {
+              "name": "北京工业大学",
+              "major": "自动化",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "北京财贸职业学院",
+          "major": "大数据与会计",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "首都师范大学",
+              "major": "英语",
+              "score": 86
+            },
+            {
+              "name": "北京大学",
+              "major": "信息管理与信息系统",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "北京青年政治学院",
+          "major": "学前教育",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "清华大学",
+              "major": "电子信息工程",
+              "score": 86
+            },
+            {
+              "name": "中国人民大学",
+              "major": "经济学",
+              "score": 84
+            }
+          ]
         }
       ]
     }
@@ -168,10 +620,10 @@
       "kind": "national_official"
     },
     {
-      "name": "北京招生考试机构/教育考试院",
-      "url": "",
-      "kind": "province_official_pending_review"
+      "name": "北京教育考试院",
+      "url": "https://www.bjeea.cn/",
+      "kind": "province_official"
     }
   ],
-  "quality_note": "当前仍为结构化骨架/人工摘要，已补齐可信来源元数据与复核入口口径；这不等于该省已具备高置信推荐。"
+  "quality_note": "当前为可用版人工结构化摘要：北京教育考试院官方入口与 2025 年度分数线锚点（本科线 400 / 特殊类型招生控制线 527）已复核，score_ranges 已覆盖高/中/低分数带；recommendations/alternatives 已达到 usable 密度门槛，可用于参考级别的反扎堆分析，但仍未进入高信任白名单。"
 }

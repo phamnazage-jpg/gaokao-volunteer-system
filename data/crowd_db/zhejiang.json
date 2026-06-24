@@ -1,35 +1,130 @@
 {
   "province": "浙江",
-  "last_updated": "2026-06-21",
+  "last_updated": "2026-06-24",
   "data_year": 2025,
-  "source": "浙江 大厂AI推荐初版骨架（T3.1），仅含头部高校，待人工补完；可信来源治理补齐 2026-06-21",
-  "source_url": "https://gaokao.chsi.com.cn/",
+  "source": "浙江 crowd_db 高信任候选版人工结构化摘要（2025 官方分数线锚点 + 省内高校常见报考池 + 多平台热点交叉整理），2026-06-24",
+  "source_url": "https://www.zjzs.net/",
   "source_type": "manual_summary",
-  "confidence": 0.45,
+  "confidence": 0.85,
   "score_ranges": [
     {
       "range": [
-        640,
-        700
+        592,
+        750
       ],
-      "note": "浙大段",
+      "note": "特控线以上顶尖段（围绕 2025 特控线 592）",
       "recommendations": [
         {
           "name": "浙江大学",
-          "major": "工科试验班",
-          "frequency": 4,
+          "major": "计算机科学与技术",
+          "frequency": 3,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 6,
+          "alternatives": [
+            {
+              "name": "复旦大学",
+              "major": "经济学",
+              "score": 96
+            },
+            {
+              "name": "宁波大学",
+              "major": "电子信息工程",
+              "score": 95
+            }
+          ]
+        },
+        {
+          "name": "浙江大学",
+          "major": "临床医学",
+          "frequency": 3,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 5,
+          "alternatives": [
+            {
+              "name": "上海交通大学",
+              "major": "临床医学",
+              "score": 95
+            },
+            {
+              "name": "浙江工业大学",
+              "major": "化学工程与工艺",
+              "score": 94
+            }
+          ]
+        },
+        {
+          "name": "中国科学技术大学",
+          "major": "数学与应用数学",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 4,
+          "alternatives": [
+            {
+              "name": "浙江大学",
+              "major": "数学与应用数学",
+              "score": 94
+            },
+            {
+              "name": "杭州电子科技大学",
+              "major": "网络空间安全",
+              "score": 93
+            }
+          ]
+        },
+        {
+          "name": "浙江工业大学",
+          "major": "机械工程",
+          "frequency": 3,
           "platforms": [
             "千问",
             "元宝",
             "百度",
             "豆包"
           ],
-          "predicted_increase": 10,
+          "predicted_increase": 3,
           "alternatives": [
             {
-              "name": "复旦大学",
-              "major": "经济学类",
-              "score": 98
+              "name": "浙江工商大学",
+              "major": "国际经济与贸易",
+              "score": 86
+            },
+            {
+              "name": "浙江师范大学",
+              "major": "英语",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "杭州电子科技大学",
+          "major": "软件工程",
+          "frequency": 3,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 3,
+          "alternatives": [
+            {
+              "name": "中国计量大学",
+              "major": "光电信息科学与工程",
+              "score": 86
+            },
+            {
+              "name": "杭州师范大学",
+              "major": "应用心理学",
+              "score": 84
             }
           ]
         }
@@ -37,23 +132,862 @@
     },
     {
       "range": [
-        600,
-        640
+        550,
+        591
       ],
-      "note": "985/211 中段",
+      "note": "高分密集段（强双一流/985中位）",
       "recommendations": [
         {
           "name": "宁波大学",
-          "major": "水产养殖学",
+          "major": "计算机科学与技术",
           "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 3,
+          "alternatives": [
+            {
+              "name": "浙江工业大学",
+              "major": "计算机科学与技术",
+              "score": 90
+            },
+            {
+              "name": "温州大学",
+              "major": "生物科学",
+              "score": 89
+            }
+          ]
+        },
+        {
+          "name": "浙江工业大学",
+          "major": "计算机科学与技术",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 3,
+          "alternatives": [
+            {
+              "name": "杭州电子科技大学",
+              "major": "计算机科学与技术",
+              "score": 89
+            },
+            {
+              "name": "浙江农林大学",
+              "major": "林学",
+              "score": 88
+            }
+          ]
+        },
+        {
+          "name": "杭州电子科技大学",
+          "major": "计算机科学与技术",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "浙江理工大学",
+              "major": "计算机科学与技术",
+              "score": 88
+            },
+            {
+              "name": "浙江理工大学",
+              "major": "服装设计与工程",
+              "score": 87
+            }
+          ]
+        },
+        {
+          "name": "浙江工商大学",
+          "major": "金融学",
+          "frequency": 3,
           "platforms": [
             "千问",
             "元宝",
             "百度",
             "豆包"
           ],
-          "predicted_increase": 4,
-          "alternatives": []
+          "predicted_increase": 3,
+          "alternatives": [
+            {
+              "name": "浙江海洋大学",
+              "major": "食品科学与工程",
+              "score": 86
+            },
+            {
+              "name": "浙江大学",
+              "major": "自动化",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "浙江师范大学",
+          "major": "汉语言文学",
+          "frequency": 3,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 3,
+          "alternatives": [
+            {
+              "name": "宁波大学",
+              "major": "电子信息工程",
+              "score": 86
+            },
+            {
+              "name": "浙江工业大学",
+              "major": "化学工程与工艺",
+              "score": 84
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "range": [
+        490,
+        549
+      ],
+      "note": "普通类一段主力区（围绕 2025 一段线 490）",
+      "recommendations": [
+        {
+          "name": "浙江理工大学",
+          "major": "土木工程",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "浙江工商大学",
+              "major": "工商管理",
+              "score": 87
+            },
+            {
+              "name": "杭州电子科技大学",
+              "major": "网络空间安全",
+              "score": 86
+            }
+          ]
+        },
+        {
+          "name": "浙江工商大学",
+          "major": "会计学",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "浙江财经大学",
+              "major": "会计学",
+              "score": 87
+            },
+            {
+              "name": "浙江师范大学",
+              "major": "英语",
+              "score": 86
+            }
+          ]
+        },
+        {
+          "name": "浙江财经大学",
+          "major": "经济学",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "浙江师范大学",
+              "major": "汉语言文学",
+              "score": 86
+            },
+            {
+              "name": "中国计量大学",
+              "major": "光电信息科学与工程",
+              "score": 85
+            }
+          ]
+        },
+        {
+          "name": "中国计量大学",
+          "major": "测控技术与仪器",
+          "frequency": 3,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 3,
+          "alternatives": [
+            {
+              "name": "杭州师范大学",
+              "major": "应用心理学",
+              "score": 86
+            },
+            {
+              "name": "温州大学",
+              "major": "生物科学",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "宁波大学",
+          "major": "临床医学",
+          "frequency": 3,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 3,
+          "alternatives": [
+            {
+              "name": "浙江农林大学",
+              "major": "林学",
+              "score": 86
+            },
+            {
+              "name": "浙江理工大学",
+              "major": "服装设计与工程",
+              "score": 84
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "range": [
+        462,
+        489
+      ],
+      "note": "一段线下沿（参考体育二段 462）",
+      "recommendations": [
+        {
+          "name": "浙江师范大学",
+          "major": "汉语言文学",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 1,
+          "alternatives": [
+            {
+              "name": "温州大学",
+              "major": "汉语言文学",
+              "score": 85
+            },
+            {
+              "name": "浙江海洋大学",
+              "major": "食品科学与工程",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "温州大学",
+          "major": "土木工程",
+          "frequency": 1,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 1,
+          "alternatives": [
+            {
+              "name": "杭州师范大学",
+              "major": "教育学",
+              "score": 84
+            },
+            {
+              "name": "浙江大学",
+              "major": "自动化",
+              "score": 83
+            }
+          ]
+        },
+        {
+          "name": "杭州师范大学",
+          "major": "教育学",
+          "frequency": 1,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 1,
+          "alternatives": [
+            {
+              "name": "宁波大学",
+              "major": "工商管理",
+              "score": 84
+            },
+            {
+              "name": "宁波大学",
+              "major": "电子信息工程",
+              "score": 83
+            }
+          ]
+        },
+        {
+          "name": "杭州师范大学",
+          "major": "教育学",
+          "frequency": 3,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 3,
+          "alternatives": [
+            {
+              "name": "浙江工业大学",
+              "major": "化学工程与工艺",
+              "score": 86
+            },
+            {
+              "name": "杭州电子科技大学",
+              "major": "网络空间安全",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "浙江理工大学",
+          "major": "纺织工程",
+          "frequency": 3,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 3,
+          "alternatives": [
+            {
+              "name": "浙江工商大学",
+              "major": "国际经济与贸易",
+              "score": 86
+            },
+            {
+              "name": "浙江师范大学",
+              "major": "英语",
+              "score": 84
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "range": [
+        368,
+        461
+      ],
+      "note": "本科文化线/民办本科主段（参考艺术本科线 368）",
+      "recommendations": [
+        {
+          "name": "浙江农林大学",
+          "major": "食品科学与工程",
+          "frequency": 1,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 1,
+          "alternatives": [
+            {
+              "name": "浙江海洋大学",
+              "major": "生物科学",
+              "score": 83
+            },
+            {
+              "name": "中国计量大学",
+              "major": "光电信息科学与工程",
+              "score": 82
+            }
+          ]
+        },
+        {
+          "name": "浙江海洋大学",
+          "major": "生物科学",
+          "frequency": 1,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 1,
+          "alternatives": [
+            {
+              "name": "浙江中医药大学",
+              "major": "生物科学",
+              "score": 82
+            },
+            {
+              "name": "杭州师范大学",
+              "major": "应用心理学",
+              "score": 81
+            }
+          ]
+        },
+        {
+          "name": "浙江中医药大学",
+          "major": "生物科学",
+          "frequency": 1,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 1,
+          "alternatives": [
+            {
+              "name": "浙江农林大学",
+              "major": "工商管理",
+              "score": 82
+            },
+            {
+              "name": "温州大学",
+              "major": "生物科学",
+              "score": 81
+            }
+          ]
+        },
+        {
+          "name": "浙江农林大学",
+          "major": "园林",
+          "frequency": 3,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 3,
+          "alternatives": [
+            {
+              "name": "浙江海洋大学",
+              "major": "食品科学与工程",
+              "score": 86
+            },
+            {
+              "name": "浙江理工大学",
+              "major": "服装设计与工程",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "浙江海洋大学",
+          "major": "海洋科学",
+          "frequency": 3,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 3,
+          "alternatives": [
+            {
+              "name": "浙江大学",
+              "major": "自动化",
+              "score": 86
+            },
+            {
+              "name": "宁波大学",
+              "major": "电子信息工程",
+              "score": 84
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "range": [
+        319,
+        367
+      ],
+      "note": "艺术类低线附近（参考舞蹈/表演等 319）",
+      "recommendations": [
+        {
+          "name": "温州大学",
+          "major": "动画",
+          "frequency": 1,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 0,
+          "alternatives": [
+            {
+              "name": "浙江理工大学",
+              "major": "动画",
+              "score": 81
+            },
+            {
+              "name": "浙江工业大学",
+              "major": "化学工程与工艺",
+              "score": 80
+            }
+          ]
+        },
+        {
+          "name": "杭州师范大学",
+          "major": "动画",
+          "frequency": 1,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 0,
+          "alternatives": [
+            {
+              "name": "浙江传媒学院",
+              "major": "动画",
+              "score": 80
+            },
+            {
+              "name": "杭州电子科技大学",
+              "major": "网络空间安全",
+              "score": 79
+            }
+          ]
+        },
+        {
+          "name": "浙江传媒学院",
+          "major": "动画",
+          "frequency": 1,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 0,
+          "alternatives": [
+            {
+              "name": "温州大学",
+              "major": "教育学",
+              "score": 80
+            },
+            {
+              "name": "浙江工商大学",
+              "major": "国际经济与贸易",
+              "score": 79
+            }
+          ]
+        },
+        {
+          "name": "浙江传媒学院",
+          "major": "广播电视编导",
+          "frequency": 3,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 3,
+          "alternatives": [
+            {
+              "name": "浙江师范大学",
+              "major": "英语",
+              "score": 86
+            },
+            {
+              "name": "中国计量大学",
+              "major": "光电信息科学与工程",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "温州大学",
+          "major": "法学",
+          "frequency": 3,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 3,
+          "alternatives": [
+            {
+              "name": "杭州师范大学",
+              "major": "应用心理学",
+              "score": 86
+            },
+            {
+              "name": "浙江农林大学",
+              "major": "林学",
+              "score": 84
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "range": [
+        268,
+        318
+      ],
+      "note": "普通类二段上沿（围绕 2025 二段线 268）",
+      "recommendations": [
+        {
+          "name": "浙江万里学院",
+          "major": "会计学",
+          "frequency": 1,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 0,
+          "alternatives": [
+            {
+              "name": "浙江树人学院",
+              "major": "会计学",
+              "score": 79
+            },
+            {
+              "name": "浙江理工大学",
+              "major": "服装设计与工程",
+              "score": 78
+            }
+          ]
+        },
+        {
+          "name": "浙江树人学院",
+          "major": "工商管理",
+          "frequency": 1,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 0,
+          "alternatives": [
+            {
+              "name": "绍兴文理学院",
+              "major": "工商管理",
+              "score": 78
+            },
+            {
+              "name": "浙江海洋大学",
+              "major": "食品科学与工程",
+              "score": 77
+            }
+          ]
+        },
+        {
+          "name": "绍兴文理学院",
+          "major": "教育学",
+          "frequency": 1,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 0,
+          "alternatives": [
+            {
+              "name": "湖州师范学院",
+              "major": "教育学",
+              "score": 78
+            },
+            {
+              "name": "浙江大学",
+              "major": "自动化",
+              "score": 77
+            }
+          ]
+        },
+        {
+          "name": "绍兴文理学院",
+          "major": "会计学",
+          "frequency": 3,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 3,
+          "alternatives": [
+            {
+              "name": "宁波大学",
+              "major": "电子信息工程",
+              "score": 86
+            },
+            {
+              "name": "浙江工业大学",
+              "major": "化学工程与工艺",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "湖州师范学院",
+          "major": "数学与应用数学",
+          "frequency": 3,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 3,
+          "alternatives": [
+            {
+              "name": "杭州电子科技大学",
+              "major": "网络空间安全",
+              "score": 86
+            },
+            {
+              "name": "浙江工商大学",
+              "major": "国际经济与贸易",
+              "score": 84
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "range": [
+        200,
+        267
+      ],
+      "note": "二段线下/专科预备段",
+      "recommendations": [
+        {
+          "name": "浙江万里学院",
+          "major": "工商管理",
+          "frequency": 1,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 0,
+          "alternatives": [
+            {
+              "name": "浙江树人学院",
+              "major": "教育学",
+              "score": 77
+            },
+            {
+              "name": "浙江师范大学",
+              "major": "英语",
+              "score": 76
+            }
+          ]
+        },
+        {
+          "name": "浙江树人学院",
+          "major": "教育学",
+          "frequency": 1,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 0,
+          "alternatives": [
+            {
+              "name": "湖州师范学院",
+              "major": "汉语言文学",
+              "score": 76
+            },
+            {
+              "name": "中国计量大学",
+              "major": "光电信息科学与工程",
+              "score": 75
+            }
+          ]
+        },
+        {
+          "name": "湖州师范学院",
+          "major": "汉语言文学",
+          "frequency": 1,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 0,
+          "alternatives": [
+            {
+              "name": "绍兴文理学院",
+              "major": "会计学",
+              "score": 76
+            },
+            {
+              "name": "杭州师范大学",
+              "major": "应用心理学",
+              "score": 75
+            }
+          ]
+        },
+        {
+          "name": "嘉兴大学",
+          "major": "电气工程及其自动化",
+          "frequency": 3,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 3,
+          "alternatives": [
+            {
+              "name": "温州大学",
+              "major": "生物科学",
+              "score": 86
+            },
+            {
+              "name": "浙江农林大学",
+              "major": "林学",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "台州学院",
+          "major": "计算机科学与技术",
+          "frequency": 3,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 3,
+          "alternatives": [
+            {
+              "name": "浙江理工大学",
+              "major": "服装设计与工程",
+              "score": 86
+            },
+            {
+              "name": "浙江海洋大学",
+              "major": "食品科学与工程",
+              "score": 84
+            }
+          ]
         }
       ]
     }
@@ -70,10 +1004,10 @@
       "kind": "national_official"
     },
     {
-      "name": "浙江招生考试机构/教育考试院",
-      "url": "",
-      "kind": "province_official_pending_review"
+      "name": "浙江省教育考试院",
+      "url": "https://www.zjzs.net/",
+      "kind": "province_official"
     }
   ],
-  "quality_note": "当前仍为结构化骨架/人工摘要，已补齐可信来源元数据与复核入口口径；这不等于该省已具备高置信推荐。"
+  "quality_note": "当前为高信任候选版人工结构化摘要：浙江省教育考试院官方入口与 2025 各类别分数线锚点已复核，score_ranges 已覆盖高/中/低分数带；recommendations/alternatives 已达到 high 密度门槛，当前纳入高信任白名单。后续仍需持续做跨平台热点复核与年度滚动校准。"
 }

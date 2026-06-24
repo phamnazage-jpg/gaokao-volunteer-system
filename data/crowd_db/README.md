@@ -69,19 +69,58 @@
 
 完整 schema 见 [SCHEMA.md](SCHEMA.md)。
 
-## 27省文件清单（T3.1）
+## 当前覆盖边界（2026-06-23 真相）
+
+当前 `crowd_db` 的代码与文件口径是 27 省（23 省 + 4 直辖市）：
 
 - 23省：`hebei / shanxi / liaoning / jilin / heilongjiang / jiangsu / zhejiang / anhui / fujian / jiangxi / shandong / henan / hubei / hunan / guangdong / hainan / sichuan / guizhou / yunnan / shaanxi / gansu / qinghai / xinjiang`
 - 4直辖市：`beijing / shanghai / tianjin / chongqing`
 
-> 不含 5个自治区（内蒙古/广西/西藏/宁夏）、香港、澳门、台湾。
+当前**不含** 4 个尚未接入 crowd_db loader 的自治区：`内蒙古 / 广西 / 西藏 / 宁夏`，也不含港澳台。
+
+因此：
+
+- 当前可以说：`27 省 crowd_db 已建基础骨架`
+- 当前不能说：`全国 31 省高信任数据已完成`
+
+如需进入真正“全国”口径，必须同步补：
+
+1. 新增 4 个省级 JSON
+2. 更新 `data/crowd_db/loader.py` 的 `PROVINCE_FILE_MAP`
+3. 更新 README / SCHEMA / provenance / loader tests
 
 ## 数据来源
 
 - 手动整理大厂AI公开推荐
 - 高考季后期的实际数据
 - 不爬虫、不抓取（合规考虑）
-- 高置信度文件（`confidence ≥ 0.8`）：仅湖南；其余省份当前为骨架初版（`confidence ≈ 0.45`），待人工补完
+- 高信任白名单（当前 controller 允许进入 high 的省份）: 湖南 / 广东 / 江苏 / 山东
+- 其余 3 个已可用省份（河北 / 浙江 / 福建）当前仍为 usable
+- 20 个省仍为 skeleton
+
+## 质量分层口径（2026-06-23 起）
+
+### skeleton
+
+- `confidence < 0.5`
+- 只可用于占位、来源展示、提示“待补完”
+
+### usable
+
+- `confidence >= 0.65`
+- 至少 6 个 `score_ranges`
+- 至少 24 条 `recommendations`
+- 至少 24 条 `alternatives`
+- 至少 1 个省级官方来源入口完成年度复核
+
+### high
+
+- `confidence >= 0.80`
+- 至少 8 个 `score_ranges`
+- 至少 40 条 `recommendations`
+- 至少 60 条 `alternatives`
+- 必须覆盖高/中/低至少三层分数带
+- 必须完成省级官方来源复核 + 交叉复核
 
 ## 更新频率
 

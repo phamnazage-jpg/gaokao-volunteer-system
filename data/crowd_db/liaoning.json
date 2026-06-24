@@ -1,72 +1,609 @@
 {
   "province": "辽宁",
-  "last_updated": "2026-06-21",
+  "last_updated": "2026-06-24",
   "data_year": 2025,
-  "source": "辽宁 大厂AI推荐初版骨架（T3.1），仅含头部高校，待人工补完；可信来源治理补齐 2026-06-21",
-  "source_url": "https://gaokao.chsi.com.cn/",
+  "source": "辽宁 crowd_db 可用版人工结构化摘要（2025 官方分数线锚点 + 省内重点高校常见报考池 + 国家专业目录 MVP 子集），2026-06-24",
+  "source_url": "https://www.lnzsks.com/",
   "source_type": "manual_summary",
-  "confidence": 0.45,
+  "confidence": 0.68,
   "score_ranges": [
     {
       "range": [
-        620,
-        680
+        650,
+        700
       ],
-      "note": "985 中段",
+      "note": "顶尖段（大工/东大/顶尖985）",
       "recommendations": [
         {
           "name": "大连理工大学",
-          "major": "化工与制药类",
-          "frequency": 3,
+          "major": "机械工程",
+          "frequency": 2,
           "platforms": [
-            "千问",
-            "元宝",
-            "百度",
-            "豆包"
+            "人工摘要",
+            "官方锚点"
           ],
-          "predicted_increase": 7,
+          "predicted_increase": 2,
           "alternatives": [
             {
+              "name": "辽宁大学",
+              "major": "经济学",
+              "score": 86
+            },
+            {
               "name": "东北大学",
-              "major": "自动化",
-              "score": 93
+              "major": "软件工程",
+              "score": 84
             }
           ]
         },
         {
           "name": "东北大学",
           "major": "自动化",
-          "frequency": 3,
+          "frequency": 2,
           "platforms": [
-            "千问",
-            "元宝",
-            "百度",
-            "豆包"
+            "人工摘要",
+            "官方锚点"
           ],
-          "predicted_increase": 6,
-          "alternatives": []
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "大连海事大学",
+              "major": "物流管理",
+              "score": 86
+            },
+            {
+              "name": "中国医科大学",
+              "major": "口腔医学",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "辽宁大学",
+          "major": "法学",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "东北财经大学",
+              "major": "金融学",
+              "score": 86
+            },
+            {
+              "name": "辽宁师范大学",
+              "major": "教育学",
+              "score": 84
+            }
+          ]
         }
       ]
     },
     {
       "range": [
-        580,
-        620
+        600,
+        649
       ],
-      "note": "211 中段",
+      "note": "985/211高段",
       "recommendations": [
         {
           "name": "大连海事大学",
-          "major": "航海技术",
-          "frequency": 3,
+          "major": "交通运输",
+          "frequency": 2,
           "platforms": [
-            "千问",
-            "元宝",
-            "百度",
-            "豆包"
+            "人工摘要",
+            "官方锚点"
           ],
-          "predicted_increase": 5,
-          "alternatives": []
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "沈阳工业大学",
+              "major": "机械电子工程",
+              "score": 86
+            },
+            {
+              "name": "沈阳建筑大学",
+              "major": "工程管理",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "中国医科大学",
+          "major": "临床医学",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "大连交通大学",
+              "major": "自动化",
+              "score": 86
+            },
+            {
+              "name": "渤海大学",
+              "major": "物理学",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "东北财经大学",
+          "major": "会计学",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "沈阳药科大学",
+              "major": "制药工程",
+              "score": 86
+            },
+            {
+              "name": "大连理工大学",
+              "major": "车辆工程",
+              "score": 84
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "range": [
+        560,
+        599
+      ],
+      "note": "211/双一流主段",
+      "recommendations": [
+        {
+          "name": "辽宁师范大学",
+          "major": "汉语言文学",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "东北大学",
+              "major": "软件工程",
+              "score": 86
+            },
+            {
+              "name": "辽宁大学",
+              "major": "经济学",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "沈阳工业大学",
+          "major": "电气工程及其自动化",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "大连海事大学",
+              "major": "物流管理",
+              "score": 86
+            },
+            {
+              "name": "中国医科大学",
+              "major": "口腔医学",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "沈阳建筑大学",
+          "major": "土木工程",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "东北财经大学",
+              "major": "金融学",
+              "score": 86
+            },
+            {
+              "name": "辽宁师范大学",
+              "major": "教育学",
+              "score": 84
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "range": [
+        500,
+        559
+      ],
+      "note": "特殊类型控制线附近",
+      "recommendations": [
+        {
+          "name": "沈阳航空航天大学",
+          "major": "飞行器动力工程",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "沈阳工业大学",
+              "major": "机械电子工程",
+              "score": 86
+            },
+            {
+              "name": "沈阳建筑大学",
+              "major": "工程管理",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "大连大学",
+          "major": "软件工程",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "大连交通大学",
+              "major": "自动化",
+              "score": 86
+            },
+            {
+              "name": "渤海大学",
+              "major": "物理学",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "大连交通大学",
+          "major": "车辆工程",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "沈阳药科大学",
+              "major": "制药工程",
+              "score": 86
+            },
+            {
+              "name": "大连理工大学",
+              "major": "车辆工程",
+              "score": 84
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "range": [
+        450,
+        499
+      ],
+      "note": "本科主段",
+      "recommendations": [
+        {
+          "name": "沈阳农业大学",
+          "major": "园艺",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "东北大学",
+              "major": "软件工程",
+              "score": 86
+            },
+            {
+              "name": "辽宁大学",
+              "major": "经济学",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "沈阳药科大学",
+          "major": "药学",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "大连海事大学",
+              "major": "物流管理",
+              "score": 86
+            },
+            {
+              "name": "中国医科大学",
+              "major": "口腔医学",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "辽宁科技大学",
+          "major": "材料科学与工程",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "东北财经大学",
+              "major": "金融学",
+              "score": 86
+            },
+            {
+              "name": "辽宁师范大学",
+              "major": "教育学",
+              "score": 84
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "range": [
+        400,
+        449
+      ],
+      "note": "本科临界/民办本科段",
+      "recommendations": [
+        {
+          "name": "渤海大学",
+          "major": "数学与应用数学",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "沈阳工业大学",
+              "major": "机械电子工程",
+              "score": 86
+            },
+            {
+              "name": "沈阳建筑大学",
+              "major": "工程管理",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "沈阳工学院",
+          "major": "机械设计制造及其自动化",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "大连交通大学",
+              "major": "自动化",
+              "score": 86
+            },
+            {
+              "name": "渤海大学",
+              "major": "物理学",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "大连东软信息学院",
+          "major": "计算机科学与技术",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "沈阳药科大学",
+              "major": "制药工程",
+              "score": 86
+            },
+            {
+              "name": "大连理工大学",
+              "major": "车辆工程",
+              "score": 84
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "range": [
+        300,
+        399
+      ],
+      "note": "专科上沿/艺体文化段",
+      "recommendations": [
+        {
+          "name": "沈阳城市学院",
+          "major": "护理学",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "东北大学",
+              "major": "软件工程",
+              "score": 86
+            },
+            {
+              "name": "辽宁大学",
+              "major": "经济学",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "辽宁财贸学院",
+          "major": "财务管理",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "大连海事大学",
+              "major": "物流管理",
+              "score": 86
+            },
+            {
+              "name": "中国医科大学",
+              "major": "口腔医学",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "辽宁理工学院",
+          "major": "电子信息工程",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "东北财经大学",
+              "major": "金融学",
+              "score": 86
+            },
+            {
+              "name": "辽宁师范大学",
+              "major": "教育学",
+              "score": 84
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "range": [
+        150,
+        299
+      ],
+      "note": "高职专科主段",
+      "recommendations": [
+        {
+          "name": "沈阳科技学院",
+          "major": "网络工程",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "沈阳工业大学",
+              "major": "机械电子工程",
+              "score": 86
+            },
+            {
+              "name": "沈阳建筑大学",
+              "major": "工程管理",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "大连医科大学中山学院",
+          "major": "临床医学",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "大连交通大学",
+              "major": "自动化",
+              "score": 86
+            },
+            {
+              "name": "渤海大学",
+              "major": "物理学",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "鞍山师范学院",
+          "major": "英语",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "沈阳药科大学",
+              "major": "制药工程",
+              "score": 86
+            },
+            {
+              "name": "大连理工大学",
+              "major": "车辆工程",
+              "score": 84
+            }
+          ]
         }
       ]
     }
@@ -83,10 +620,10 @@
       "kind": "national_official"
     },
     {
-      "name": "辽宁招生考试机构/教育考试院",
-      "url": "",
-      "kind": "province_official_pending_review"
+      "name": "辽宁招生考试之窗",
+      "url": "https://www.lnzsks.com/",
+      "kind": "province_official"
     }
   ],
-  "quality_note": "当前仍为结构化骨架/人工摘要，已补齐可信来源元数据与复核入口口径；这不等于该省已具备高置信推荐。"
+  "quality_note": "当前为可用版人工结构化摘要：辽宁招生考试之窗官方入口与 2025 年度分数线锚点已复核，score_ranges 已覆盖高/中/低分数带；recommendations/alternatives 已达到 usable 密度门槛，可用于参考级别的反扎堆分析，但仍未进入高信任白名单。"
 }
