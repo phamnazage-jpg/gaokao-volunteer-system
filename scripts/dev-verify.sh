@@ -112,6 +112,9 @@ run_checks() {
 
   log "running mypy"
   python -m mypy .
+
+  log "crowd_db quality summary (防漂移监控)"
+  python -m data.crowd_db.quality_summary --human
 }
 
 main() {

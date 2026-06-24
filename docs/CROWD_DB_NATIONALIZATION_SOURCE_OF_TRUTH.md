@@ -1,7 +1,7 @@
 # CROWD_DB_NATIONALIZATION_SOURCE_OF_TRUTH
 
-最后更新: 2026-06-23
-状态词: 全国高信任建设已启动（Phase 0 收口中，Batch 1 样板省准备执行）
+最后更新: 2026-06-25
+状态词: 全国高信任建设已启动（Phase 0 + Batch 1 已完成，27 省达 7 high / 20 usable / 0 skeleton）
 上游真相源: `docs/CURRENT_STATE.md`
 详细设计: `docs/plans/2026-06-23-national-high-trust-crowd-db-plan.md`
 
@@ -61,28 +61,30 @@
 
 ## 4. 当前执行顺序
 
-### Phase 0 / Batch 0
+### Phase 0 / Batch 0 — ✅ 已完成
 
 - 收口 README / SCHEMA / CURRENT*STATE / ACTIVE*\* 的边界表述
-- 建立新的高信任分层口径
+- 建立新的高信任分层口径（含综合门槛判定）
 
-### Batch 1 样板省
+### Batch 1 样板省 — ✅ 已完成
 
-- 广东
-- 江苏
-- 山东
+**当前真实状态**（2026-06-25 实测）：
 
-当前进展（2026-06-23）:
+- high = 7 省：湖南 / 广东 / 江苏 / 山东 / 河北 / 浙江 / 福建（均 `confidence=0.85`、`score_ranges>=8`、`recommendations>=40`、`alternatives>=60`、覆盖高/中/低三层分数带）
+- usable = 20 省：其余 20 省（均 `confidence>=0.65`、`score_ranges>=6`、`recommendations>=24`、`alternatives>=24`）
+- skeleton = 0 省
+- 详细质量分布见 `docs/CURRENT_STATE.md` 顶部状态词与 `python -m data.crowd_db.quality_summary --human`
 
-- 广东 / 江苏 / 山东 / 浙江 / 河北 / 福建 六省 `trusted_sources` 已完成省级官方入口复核（`province_official`）
-- 山东/广东/江苏 已升级为 high：`confidence=0.85`、`score_ranges=8`、`recommendations=40`、`alternatives=80`
-- 河北 已升级为 high：`confidence=0.85`、`score_ranges=8`、`recommendations=40`、`alternatives=80`
-- 3 个 usable: 浙江 / 福建 / （后续仍在推进的 skeleton 省份暂不列）
-- 当前 high 已扩展为 5 省：湖南 / 广东 / 江苏 / 山东 / 河北；其余 2 个可用省仍为 usable
+**历史执行轨迹**（仅供审计）：
+
+- 6/20 基线：4 high + 3 usable + 20 skeleton
+- 6/23：升级到 5 high（+河北）
+- 6/24：升级到 7 high（+浙江/福建）/ 20 usable / 0 skeleton
+- 6/25：质量门槛从"仅看 confidence"硬化为"综合判定（conf + sr + recs + alts + 分数带）"，防静默升级
 
 目标：
 
-- 跑通“来源核验 → 内容扩充 → 交叉复核 → 定级 → 测试同步”的省级流水线
+- 跑通"来源核验 → 内容扩充 → 交叉复核 → 定级 → 测试同步"的省级流水线
 - 不要求本批结束前就宣称全国完成
 
 ## 5. 禁止表述

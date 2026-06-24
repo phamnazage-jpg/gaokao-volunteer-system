@@ -82,7 +82,54 @@
 
 骨架文件 `confidence=0.0`，loader 应在 `confidence < 0.5` 时打印 WARN 但不抛错（避免阻断运行）。
 
-## 6. 当前覆盖范围与全国化边界
+## 6. 质量等级门槛定义
+
+质量等级判定采用**综合门槛**（confidence + score_ranges + recommendations + alternatives + 分数带覆盖），而非仅依赖 confidence。
+
+门槛来源：`docs/plans/2026-06-23-national-high-trust-crowd-db-plan.md` §4
+
+### 6.1 skeleton（骨架）
+
+- `confidence < 0.5`
+- 用途：UI 占位、provenance 展示、告知"该省数据仍待人工补完"
+- **不允许**驱动反扎堆强结论
+
+### 6.2 low（建设中）
+
+- `confidence >= 0.5` 但未达 usable 门槛
+- 或 `confidence >= 0.65` 但 recommendations / alternatives 不达标
+- 用途：标识"已脱离骨架但未达可用"，区别于 skeleton
+
+### 6.3 usable（可用）
+
+必须**同时满足**：
+- `confidence >= 0.65`
+- `score_ranges >= 6` 个分数段
+- `recommendations >= 24` 条
+- `alternatives >= 24` 条
+- 至少 1 个省级官方来源入口完成年度复核
+
+用途：普通省份的基础反扎堆分析、用户侧展示"中等信任"标签
+
+### 6.4 high（高置信）
+
+必须**同时满足**：
+- `confidence >= 0.80`
+- `score_ranges >= 8` 个分数段
+- `recommendations >= 40` 条
+- `alternatives >= 60` 条
+- 覆盖高/中/低**至少三层分数带**（而非只覆盖头部段）
+- 省级官方入口已完成年度复核
+
+用途：核心省份的反扎堆强结论、用户侧展示"高信任"标签
+
+### 6.5 防静默升级
+
+判定逻辑位于 `data/crowd_db/risk_report.py::_compute_quality_level`。
+
+**禁止**仅修改 confidence 值就升级 quality_level；必须同时补齐 score_ranges / recommendations / alternatives。
+
+## 7. 当前覆盖范围与全国化边界
 
 ### 当前代码兼容口径（27 省）
 

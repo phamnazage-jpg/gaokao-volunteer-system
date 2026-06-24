@@ -138,8 +138,8 @@ def test_high_population_provinces_not_yet_high_remain_non_high(summary):
 
 
 def test_quality_levels_are_valid_enum(summary):
-    """所有 province 的 quality_level 必须是 high / usable / skeleton 之一。"""
-    valid_levels = {"high", "usable", "skeleton"}
+    """所有 province 的 quality_level 必须是 high / usable / low / skeleton 之一。"""
+    valid_levels = {"high", "usable", "low", "skeleton"}
     for p in summary["provinces"]:
         assert p["quality_level"] in valid_levels, (
             f"{p['province']} quality_level={p['quality_level']!r} 不在合法集合"

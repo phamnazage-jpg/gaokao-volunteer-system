@@ -91,7 +91,87 @@ def _alternative_to_template(alt: Dict[str, Any]) -> Dict[str, Any]:
     return {"school": school, "score": score, "major": alt.get("major", "")}
 
 
-def _normalize_provenance(metadata: Optional[Dict[str, Any]]) -> Dict[str, Any]:
+def _classify_score_bands(score_ranges: List[Dict[str, Any]]) -> set:
+    """分类分数带覆盖情况（用于 high 门槛检查）。
+
+    返回集合可能包含：{'high', 'mid', 'low'}
+    - high: 分数带中值 >= 580
+    - mid:  480 <= 分数带中值 < 580
+    - low:  分数带中值 < 480
+    """
+    bands = set()
+    for sr in score_ranges:
+        rng = sr.get("range", [0, 0])
+        if not rng or len(rng) < 2:
+            continue
+        mid = (rng[0] + rng[1]) / 2
+        if mid >= 580:
+            bands.add("high")
+        elif mid >= 480:
+            bands.add("mid")
+        else:
+            bands.add("low")
+    return bands
+
+
+def _compute_quality_level(metadata: Optional[Dict[str, Any]]) -> tuple[str, str]:
+    """综合判定质量等级（防止静默升级）。
+
+    门槛来源：docs/plans/2026-06-23-national-high-trust-crowd-db-plan.md §4
+
+    Returns:
+        (quality_level, quality_label)
+    """
+    if not metadata:
+        return "unknown", "未知"
+
+    confidence = metadata.get("confidence")
+    try:
+        confidence = float(confidence) if confidence is not None else None
+    except (TypeError, ValueError):
+        confidence = None
+
+    if confidence is None:
+        return "unknown", "未知"
+
+    score_ranges = metadata.get("score_ranges", [])
+
+    # 统计 recs / alts
+    recs = sum(len(r.get("recommendations", [])) for r in score_ranges)
+    alts = sum(
+        len(rec.get("alternatives", []))
+        for r in score_ranges
+        for rec in r.get("recommendations", [])
+    )
+
+    # 统计分数带覆盖
+    bands = _classify_score_bands(score_ranges)
+
+    # high 门槛（plan §4.3）
+    if (
+        confidence >= 0.80
+        and len(score_ranges) >= 8
+        and recs >= 40
+        and alts >= 60
+        and len(bands) >= 3
+    ):
+        return "high", "A级（高置信）"
+
+    # usable 门槛（plan §4.2）
+    if confidence >= 0.65 and len(score_ranges) >= 6 and recs >= 24 and alts >= 24:
+        return "usable", "B级（可用）"
+
+    # low: 已脱离 skeleton 但未达 usable
+    if confidence >= 0.5:
+        return "low", "D级（建设中）"
+
+    # skeleton（plan §4.1）
+    return "skeleton", "C级（骨架）"
+
+
+def _normalize_provenance(
+    metadata: Optional[Dict[str, Any]], full_data: Optional[Dict[str, Any]] = None
+) -> Dict[str, Any]:
     metadata = metadata or {}
     public_source_type = metadata.get("source_type") or "estimated"
     raw_source_type = (
@@ -103,23 +183,17 @@ def _normalize_provenance(metadata: Optional[Dict[str, Any]]) -> Dict[str, Any]:
             public_source_type,
             PUBLIC_SOURCE_TYPE_DISPLAY_META["estimated"],
         )
+
+    # 使用综合判定；优先用 full_data（含 score_ranges），否则退到 metadata
+    quality_data = full_data or metadata
+    quality_level, quality_label = _compute_quality_level(quality_data)
+
     confidence = metadata.get("confidence")
     try:
         confidence = float(confidence) if confidence is not None else None
     except (TypeError, ValueError):
         confidence = None
-    if confidence is None:
-        quality_level = "unknown"
-        quality_label = "未知"
-    elif confidence >= 0.8:
-        quality_level = "high"
-        quality_label = "A级（高置信）"
-    elif confidence >= 0.5:
-        quality_level = "usable"
-        quality_label = "B级（可用）"
-    else:
-        quality_level = "skeleton"
-        quality_label = "C级（骨架）"
+
     data_year = metadata.get("data_year")
     try:
         data_year = int(data_year) if data_year is not None else None
@@ -148,6 +222,15 @@ def _load_provenance_metadata(
         from data.crowd_db.loader import CrowdDBLoader
 
         loader = CrowdDBLoader()  # type: ignore[assignment]
+
+    # 优先尝试加载完整数据（含 score_ranges）用于综合质量判定
+    load_province = getattr(loader, "load_province", None)
+    if callable(load_province):
+        full_data = load_province(province)
+        if isinstance(full_data, dict):
+            return _normalize_provenance(full_data, full_data=full_data)
+
+    # 退化路径：只加载 metadata
     load_metadata = getattr(loader, "load_metadata", None)
     if callable(load_metadata):
         metadata = load_metadata(province)
@@ -163,6 +246,9 @@ def finding_to_risk_dict(
 
     若 risk_level 不在 RISK_LEVEL_META 中（crowd_detector 不会返回 none，
     因为 frequency=0 已被跳过），fallback 到 low + 🟢。
+
+    provenance 已是 _normalize_provenance 的输出（含 quality_level），
+    直接合并即可，不再二次规范化。
     """
     meta = RISK_LEVEL_META.get(finding.risk_level, RISK_LEVEL_META["low"])
     risk = {
@@ -176,7 +262,8 @@ def finding_to_risk_dict(
         "platforms": list(finding.platforms),
         "alternatives": [_alternative_to_template(a) for a in finding.alternatives],
     }
-    risk.update(_normalize_provenance(provenance))
+    if provenance:
+        risk.update(provenance)
     return risk
 
 

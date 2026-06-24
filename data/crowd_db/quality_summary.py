@@ -13,8 +13,10 @@ def build_quality_summary(loader: CrowdDBLoader | None = None) -> dict[str, Any]
     loader = loader or CrowdDBLoader(warn_low_confidence=False)
     provinces: list[dict[str, Any]] = []
     for province in loader.list_supported_provinces():
+        # 加载完整数据（含 score_ranges）用于质量判定
+        full_data = loader.load_province(province)
         metadata = loader.load_metadata(province) or {"province": province}
-        normalized = _normalize_provenance(metadata)
+        normalized = _normalize_provenance(metadata, full_data=full_data)
         provinces.append({
             "province": province,
             "confidence": normalized["confidence"],
@@ -28,6 +30,7 @@ def build_quality_summary(loader: CrowdDBLoader | None = None) -> dict[str, Any]
     by_quality_level = {
         "high": counts.get("high", 0),
         "usable": counts.get("usable", 0),
+        "low": counts.get("low", 0),
         "skeleton": counts.get("skeleton", 0),
         "unknown": counts.get("unknown", 0),
     }

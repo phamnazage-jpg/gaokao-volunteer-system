@@ -622,8 +622,8 @@
     {
       "name": "四川省教育考试院",
       "url": "https://www.sceea.cn/",
-      "kind": "province_official_pending_review"
+      "kind": "province_official"
     }
   ],
-  "quality_note": "当前为可用版人工结构化摘要：四川省教育考试院官方入口与 2025 年度分数线锚点已复核，score_ranges 已覆盖高/中/低分数带；recommendations/alternatives 已补足到 usable 密度，可用于参考级别的反扎堆分析，但仍未进入高信任白名单。"
+  "quality_note": "可用版人工结构化摘要；四川省教育考试院官方入口与 2025 年度分数线锚点已完成复核；score_ranges 已覆盖高/中/低分数带；后续随录取数据公布做密度升级。"
 }

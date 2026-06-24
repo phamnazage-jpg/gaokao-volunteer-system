@@ -1682,8 +1682,8 @@
     {
       "name": "湖南省教育考试院",
       "url": "https://jyt.hunan.gov.cn/jyt/sjyt/hnsjyksy/",
-      "kind": "province_official_pending_review"
+      "kind": "province_official"
     }
   ],
-  "quality_note": "当前为高置信人工整理推荐，已补齐可信来源元数据；后续仍需按年度招生章程与考试院公告复核。"
+  "quality_note": "高置信人工整理推荐；省级官方入口（湖南省教育考试院）已完成 2025 年度复核。后续每年招生章程发布后做增量更新。"
 }

@@ -1,7 +1,7 @@
 # CURRENT_STATE
 
-最后更新: 2026-06-23
-状态词: 本地验证完成（v2.1 主链与 6/20/6/21 增量仍成立；crowd_db 27省口径已全部达到 usable 及以上，当前 live 基线为 7 high / 20 usable / 0 skeleton；31 省真正全国口径仍缺 4 个自治区）
+最后更新: 2026-06-25
+状态词: 本地验证完成（v2.1 主链与 6/20/6/21 增量仍成立；crowd_db 27省口径已全部达到 usable 及以上，当前 live 基线为 7 high / 20 usable / 0 skeleton；31 省真正全国口径仍缺 4 个自治区；crowd_db 质量门槛已硬化为综合判定，防静默升级）
 
 真相源优先级:
 
@@ -89,14 +89,14 @@
 - 新增 `data/crowd_db/tests/test_crowd_db_data_quality.py` (CROWD_DB_DATA_QUALITY
   §7 承诺的锁死文件，仓库此前缺失)：
   - 27 省总数 (23 省 + 4 直辖市)
-  - 4 个 high (湖南 / 广东 / 江苏 / 山东)
-  - 3 个 usable (河北 / 浙江 / 福建)
-  - 20 个省仍为 skeleton
-  - 高考生源大省 (北京/上海/河南/四川/湖北) 不在 high 集合
+  - **当前真实状态**（2026-06-25 实测）：7 high / 20 usable / 0 skeleton
+  - high 白名单：湖南/广东/江苏/山东/河北/浙江/福建
+  - 高考生源大省 (北京/上海/河南/四川/湖北) 当前为 usable，不在 high 集合
   - 所有 confidence ∈ [0, 1]
-  - 所有 data_year = 2025 (6/25 后需显式更新)
+  - 所有 data_year = 2025 (待 2026 录取数据正式公布后显式更新)
 - 防止"27 省 crowd_db 均为高置信强推荐数据"合规假象回归
-- 27 省 crowd_db 中已完成 4 个 high：湖南 / 广东 / 江苏 / 山东；3 个 usable：河北 / 浙江 / 福建；其余 20 省仍为 skeleton
+- **历史轨迹**（仅供审计）：6/20 基线为 4 high + 3 usable + 20 skeleton；6/23 升级到 5 high；6/24 升级到当前 7 high / 20 usable / 0 skeleton
+- 详细质量分布与升级轨迹见 `docs/CROWD_DB_NATIONALIZATION_SOURCE_OF_TRUTH.md`
 
 ### 0.6 crowd_db 可信来源元数据补齐（2026-06-21）
 
