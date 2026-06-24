@@ -599,13 +599,13 @@ def test_cross_province_hunan_hit_guangdong_miss():
 
 
 def test_cross_province_beijing_at_690(monkeypatch):
-    """用例3: 跨省分数段差异（清华大学 在北京 690 命中"工科试验班"）"""
-    # Beijing 690 段: 清华大学-工科试验班 freq=4; 湖南 690 段无清华-工科试验班记录
-    plan = [plan_entry("清华大学", "工科试验班")]
+    """用例3: 跨省分数段差异（北京大学-临床医学 在北京 690 命中，湖南 690 段无此组合）"""
+    # Beijing 690 段: 北京大学-临床医学 出现; 湖南 690 段无此组合（跨省分布差异）
+    plan = [plan_entry("北京大学", "临床医学")]
     beijing = detect_crowd_risk(plan, user_score=690, province="北京")
     hunan = detect_crowd_risk(plan, user_score=690, province="湖南")
     assert len(beijing) >= 1
-    # 湖南 690 段无 "工科试验班" major → 不命中（专业严格匹配）
+    # 湖南 690 段无 "北京大学-临床医学" 组合 → 不命中（专业严格匹配）
     assert hunan == []
 
 

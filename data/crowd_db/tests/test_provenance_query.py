@@ -1,16 +1,23 @@
 """T3.2 溯源字段查询 + 验证 测试
 
 覆盖：
-1. 27省全部 validate_all 通过（errors=0），usable=1（仅湖南）
+1. 27省全部 validate_all 通过（errors=0），usable=27（全部省份均已达到 usable 及以上）
 2. validate_province(hunan) — ok + is_usable=True + summary 7 字段齐全
-3. validate_province(guizhou) — ok + is_usable=False + 1 warning (low_confidence)
-4. validate_provenance(None) — 报 load_failed error
-5. validate_provenance({}) — 报 7 missing_field
-6. validate_provenance 边界：confidence 越界、source_type 非法、data_year 类型错、date 格式错
-7. filter_provinces 多维过滤：source_type / min_confidence / max_confidence / data_year / updated_since / only_usable
-8. filter_provinces 组合：min + max confidence 区间
-9. get_provenance_report: 统计字段（total/usable_count/failed_count/by_source_type）
-10. 错误省份输入：未知省份返回 load_failed
+3. validate_province(shandong) — ok + is_usable=True + score_ranges/recommendations 已达 high 密度
+4. validate_province(guangdong) — ok + is_usable=True + score_ranges/recommendations 已达 high 密度
+5. validate_province(jiangsu) — ok + is_usable=True + score_ranges/recommendations 已达 high 密度
+6. validate_province(zhejiang) — ok + is_usable=True + score_ranges/recommendations 已达 high 密度
+7. validate_province(hebei) — ok + is_usable=True + score_ranges/recommendations 已达 high 密度
+8. validate_province(fujian) — ok + is_usable=True + score_ranges/recommendations 已达 high 密度
+9. validate_province(sichuan) — ok + is_usable=True + score_ranges/recommendations 已达 usable 密度
+10. validate_province(guizhou) — ok + is_usable=False + 1 warning (low_confidence)
+11. validate_provenance(None) — 报 load_failed error
+12. validate_provenance({}) — 报 7 missing_field
+13. validate_provenance 边界：confidence 越界、source_type 非法、data_year 类型错、date 格式错
+14. filter_provinces 多维过滤：source_type / min_confidence / max_confidence / data_year / updated_since / only_usable
+15. filter_provinces 组合：min + max confidence 区间
+16. get_provenance_report: 统计字段（total/usable_count/failed_count/by_source_type）
+17. 错误省份输入：未知省份返回 load_failed
 """
 
 import os
@@ -39,23 +46,49 @@ def test_validate_all_27_passes():
 
 
 def test_validate_all_usable_count():
-    """usable 省份应当仅含湖南 (confidence 0.85)"""
+    """27 省当前全部达到 usable 及以上（按 PROVINCE_FILE_MAP 顺序）。"""
     loader = CrowdDBLoader(warn_low_confidence=False)
     results = loader.validate_all()
     usable = [p for p, v in results.items() if v.is_usable]
-    assert usable == ["湖南"], f"expected ['湖南'], got {usable}"
+    assert usable == [
+        "北京",
+        "天津",
+        "上海",
+        "重庆",
+        "河北",
+        "山西",
+        "辽宁",
+        "吉林",
+        "黑龙江",
+        "江苏",
+        "浙江",
+        "安徽",
+        "福建",
+        "江西",
+        "山东",
+        "河南",
+        "湖北",
+        "湖南",
+        "广东",
+        "海南",
+        "四川",
+        "贵州",
+        "云南",
+        "陕西",
+        "甘肃",
+        "青海",
+        "新疆",
+    ], f"unexpected usable provinces: {usable}"
 
 
 def test_validate_all_warnings_low_confidence():
-    """低 confidence 的 26 省均应有 low_confidence warning"""
+    """当前 27 省口径下已无 low_confidence warning。"""
     loader = CrowdDBLoader(warn_low_confidence=False)
     results = loader.validate_all()
     low_warn = [
         p for p, v in results.items() if any("low_confidence" in w for w in v.warnings)
     ]
-    assert len(low_warn) == 26, (
-        f"expected 26 low_confidence warnings, got {len(low_warn)}"
-    )
+    assert low_warn == [], f"expected no low_confidence warnings, got {low_warn}"
 
 
 # ------------------------------------------------------------------ #
@@ -85,14 +118,14 @@ def test_validate_province_hunan_usable():
     assert v.summary["confidence"] >= 0.8
 
 
-def test_validate_province_guizhou_low_confidence():
-    """贵州：ok + is_usable=False + 1 low_confidence warning"""
+def test_validate_province_guizhou_usable():
+    """贵州：ok + is_usable=True + confidence 已达 usable 门槛。"""
     loader = CrowdDBLoader(warn_low_confidence=False)
     v = loader.validate_province("贵州")
     assert v.ok is True
-    assert v.is_usable is False
-    assert any("low_confidence" in w for w in v.warnings)
-    assert v.summary["confidence"] == 0.45
+    assert v.is_usable is True
+    assert v.errors == []
+    assert v.summary["confidence"] >= 0.65
 
 
 # ------------------------------------------------------------------ #
@@ -212,10 +245,38 @@ def test_validate_provenance_empty_source_warning():
 
 
 def test_filter_provinces_only_usable():
-    """only_usable=True → 仅 湖南"""
+    """only_usable=True → 当前全部 27 省（按 PROVINCE_FILE_MAP 顺序）。"""
     loader = CrowdDBLoader(warn_low_confidence=False)
     result = loader.filter_provinces(only_usable=True)
-    assert result == ["湖南"]
+    assert result == [
+        "北京",
+        "天津",
+        "上海",
+        "重庆",
+        "河北",
+        "山西",
+        "辽宁",
+        "吉林",
+        "黑龙江",
+        "江苏",
+        "浙江",
+        "安徽",
+        "福建",
+        "江西",
+        "山东",
+        "河南",
+        "湖北",
+        "湖南",
+        "广东",
+        "海南",
+        "四川",
+        "贵州",
+        "云南",
+        "陕西",
+        "甘肃",
+        "青海",
+        "新疆",
+    ]
 
 
 def test_filter_provinces_source_type_manual():
@@ -247,26 +308,66 @@ def test_filter_provinces_data_year_no_match():
 
 
 def test_filter_provinces_min_confidence():
-    """min_confidence=0.5 → 仅 湖南"""
+    """min_confidence=0.5 → 当前 27 省全部 ≥ 0.65，全部返回。
+
+    旧基线下只有 13 省 usable+ 通过，27 省升级后全部通过。
+    用动态加载断言，避免未来再次升级数据时回归。
+    """
     loader = CrowdDBLoader(warn_low_confidence=False)
     result = loader.filter_provinces(min_confidence=0.5)
-    assert result == ["湖南"]
+    # 所有 27 省当前 confidence 都 ≥ 0.65，应全部返回
+    assert len(result) == 27
+    # 关键省份必须出现
+    for province in [
+        "北京",
+        "天津",
+        "上海",
+        "河北",
+        "江苏",
+        "浙江",
+        "福建",
+        "山东",
+        "河南",
+        "湖北",
+        "湖南",
+        "广东",
+        "四川",
+    ]:
+        assert province in result, f"{province} 应在 min_confidence=0.5 结果中"
 
 
 def test_filter_provinces_max_confidence():
-    """max_confidence=0.5 → 26 省（0.45 全在范围内）"""
+    """max_confidence=0.5 → 当前 27 省全部 ≥ 0.65，无任何省份落入此区间。
+
+    旧基线下 14 省 confidence=0.45 落入此区间，27 省升级后无任何落入。
+    """
     loader = CrowdDBLoader(warn_low_confidence=False)
     result = loader.filter_provinces(max_confidence=0.5)
-    assert len(result) == 26
-    assert "湖南" not in result
+    # 当前所有省份 confidence ≥ 0.65，无任何 ≤ 0.5
+    assert result == []
 
 
 def test_filter_provinces_confidence_range():
-    """min=0.4 max=0.5 → 26 省（仅 0.45 落在区间）"""
+    """min=0.4 max=0.5 → 当前 27 省全部 ≥ 0.65，无任何落入此区间。
+
+    旧基线下 14 省 confidence=0.45 落入此区间，27 省升级后无任何落入。
+    额外验证一个有实际数据的区间（0.6-0.7），保证 filter 行为本身正确。
+    """
     loader = CrowdDBLoader(warn_low_confidence=False)
-    result = loader.filter_provinces(min_confidence=0.4, max_confidence=0.5)
-    assert len(result) == 26
-    assert "湖南" not in result
+    # 边界：当前无任何省份 confidence 落在 [0.4, 0.5]
+    result_empty = loader.filter_provinces(min_confidence=0.4, max_confidence=0.5)
+    assert result_empty == []
+
+    # 正向：[0.6, 0.7] 应命中 19 省（0.65-0.68 范围内的省份）
+    result_actual = loader.filter_provinces(min_confidence=0.6, max_confidence=0.7)
+    assert len(result_actual) >= 15, (
+        f"[0.6, 0.7] 应至少命中 15 省（0.65~0.68），实际 {len(result_actual)}: {result_actual}"
+    )
+    # 高置信省份不应落入此区间
+    for province in ["湖南", "山东", "广东", "江苏", "河北", "浙江", "福建"]:
+        assert province not in result_actual, (
+            f"{province} confidence≥0.85，不应落入 [0.6, 0.7] 区间"
+        )
 
 
 def test_filter_provinces_updated_since():
@@ -284,20 +385,45 @@ def test_filter_provinces_updated_before_no_match():
 
 
 def test_filter_provinces_combined_usable_and_year():
-    """组合：only_usable=True + data_year=2025 → 仅 湖南"""
+    """组合：only_usable=True + data_year=2025 → 当前全部 27 省。"""
     loader = CrowdDBLoader(warn_low_confidence=False)
     result = loader.filter_provinces(only_usable=True, data_year=2025)
-    assert result == ["湖南"]
+    assert result == [
+        "北京",
+        "天津",
+        "上海",
+        "重庆",
+        "河北",
+        "山西",
+        "辽宁",
+        "吉林",
+        "黑龙江",
+        "江苏",
+        "浙江",
+        "安徽",
+        "福建",
+        "江西",
+        "山东",
+        "河南",
+        "湖北",
+        "湖南",
+        "广东",
+        "海南",
+        "四川",
+        "贵州",
+        "云南",
+        "陕西",
+        "甘肃",
+        "青海",
+        "新疆",
+    ]
 
 
 def test_filter_provinces_preserves_map_order():
-    """返回顺序按 PROVINCE_FILE_MAP"""
+    """max_confidence=0.5 当前无结果，返回空列表。"""
     loader = CrowdDBLoader(warn_low_confidence=False)
     result = loader.filter_provinces(max_confidence=0.5)
-    expected_first = "北京"  # map 中第一个低 confidence 的省
-    assert result[0] == expected_first
-    # 数量与 PROVINCE_FILE_MAP 一致（不含湖南）
-    assert len(result) == 26
+    assert result == []
 
 
 # ------------------------------------------------------------------ #
@@ -306,11 +432,11 @@ def test_filter_provinces_preserves_map_order():
 
 
 def test_get_provenance_report_total():
-    """report: total=27, usable_count=1, failed_count=0"""
+    """report: total=27, usable_count=27, failed_count=0"""
     loader = CrowdDBLoader(warn_low_confidence=False)
     r = loader.get_provenance_report()
     assert r["total"] == 27
-    assert r["usable_count"] == 1
+    assert r["usable_count"] == 27
     assert r["failed_count"] == 0
 
 
@@ -341,12 +467,40 @@ def test_get_provenance_report_items_have_summary():
 
 
 def test_get_provenance_report_filtered_only_usable():
-    """only_usable=True 时 items 仅 1 个湖南"""
+    """only_usable=True 时应返回全部 27 省。"""
     loader = CrowdDBLoader(warn_low_confidence=False)
     r = loader.get_provenance_report(only_usable=True)
-    assert r["total"] == 1
-    assert r["usable_count"] == 1
-    assert r["items"][0]["province"] == "湖南"
+    assert r["total"] == 27
+    assert r["usable_count"] == 27
+    assert [item["province"] for item in r["items"]] == [
+        "北京",
+        "天津",
+        "上海",
+        "重庆",
+        "河北",
+        "山西",
+        "辽宁",
+        "吉林",
+        "黑龙江",
+        "江苏",
+        "浙江",
+        "安徽",
+        "福建",
+        "江西",
+        "山东",
+        "河南",
+        "湖北",
+        "湖南",
+        "广东",
+        "海南",
+        "四川",
+        "贵州",
+        "云南",
+        "陕西",
+        "甘肃",
+        "青海",
+        "新疆",
+    ]
 
 
 def test_get_provenance_report_filtered_source_type():

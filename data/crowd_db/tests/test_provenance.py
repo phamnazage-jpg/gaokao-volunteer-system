@@ -124,12 +124,26 @@ def test_loader_metadata_hunan():
     assert isinstance(meta["trusted_sources"], list) and meta["trusted_sources"]
 
 
-def test_loader_low_confidence_warning():
-    """confidence<0.5 的省份加载时发出 UserWarning"""
+def test_loader_low_confidence_warning(monkeypatch):
+    """confidence<0.5 的省份加载时发出 UserWarning。
+
+    27 省均已升级到 ≥0.66 confidence，无法通过真实数据触发 warning。
+    通过 monkeypatch _load_json_file 注入 0.45 的虚构数据来验证 warn_low_confidence 路径。
+    """
     loader = CrowdDBLoader(warn_low_confidence=True)
+    monkeypatch.setattr(
+        loader,
+        "_load_json_file",
+        lambda path: {
+            "province": "新疆",
+            "confidence": 0.45,
+            "data_year": 2025,
+            "source_url": "https://example.com/",
+        },
+    )
     with warnings.catch_warnings(record=True) as caught:
         warnings.simplefilter("always")
-        loader.load_province("贵州")  # 0.45
+        loader.load_province("新疆")
     user_warns = [w for w in caught if issubclass(w.category, UserWarning)]
     assert user_warns, "应至少发出 1 个 UserWarning"
     assert any("置信度" in str(w.message) for w in user_warns), (
