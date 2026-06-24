@@ -10,6 +10,7 @@ import pytest
 os.environ.setdefault("GAOKAO_ORDERS_FERNET_KEY", "test-secret-for-unit-tests")
 
 from data.orders.schema import apply_schema, get_schema_version, SCHEMA_SQL
+from data.orders.intake_schema import IntakePayload
 
 
 @pytest.fixture
@@ -242,3 +243,25 @@ def test_get_schema_version_returns_1_after_apply(tmp_db):
 def test_schema_sql_is_nonempty():
     assert "CREATE TABLE IF NOT EXISTS orders" in SCHEMA_SQL
     assert "CREATE TABLE IF NOT EXISTS order_status_history" in SCHEMA_SQL
+
+
+def test_intake_payload_submit_accepts_minimal_step1_payload(tmp_db):
+    payload = IntakePayload.model_validate(
+        {
+            "mode": "submit",
+            "candidate_province": "湖南",
+            "candidate_subjects": ["物理", "化学", "生物"],
+            "candidate_score": 578,
+            "candidate_rank": 12345,
+            "consent_version": "portal-v1",
+            "consent_scope": "step1",
+            "privacy_accepted": True,
+            "service_terms_accepted": True,
+            "guardian_confirmed": True,
+        }
+    )
+
+    assert payload.candidate_province == "湖南"
+    assert payload.candidate_subjects == ["物理", "化学", "生物"]
+    assert payload.candidate_score == 578
+    assert payload.candidate_rank == 12345

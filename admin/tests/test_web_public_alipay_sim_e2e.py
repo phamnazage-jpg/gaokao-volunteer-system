@@ -90,6 +90,7 @@ def test_alipay_sim_public_user_e2e_flow(tmp_path, monkeypatch):
             portal_info_url,
             json={
                 "mode": "submit",
+                "candidate_province": "湖南",
                 "candidate_score": 578,
                 "candidate_rank": 12034,
                 "candidate_subjects": ["物理", "化学", "生物"],

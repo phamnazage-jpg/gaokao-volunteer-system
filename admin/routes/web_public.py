@@ -11,7 +11,7 @@ from datetime import datetime, timedelta, timezone
 from typing import Any, Literal
 from urllib.parse import parse_qsl
 
-from fastapi import APIRouter, Depends, File, HTTPException, Request, UploadFile
+from fastapi import APIRouter, Depends, File, Form, HTTPException, Request, UploadFile
 from fastapi.responses import (
     FileResponse,
     HTMLResponse,
@@ -26,13 +26,14 @@ from data.customer_portal.token import (
     issue_portal_token,
     verify_portal_token,
 )
+from data.crowd_db.loader import CrowdDBLoader
 from data.notifications.email_service import DeliveryNotificationService
 from data.orders import crypto
 from data.orders.dao import OrderNotFound, OrdersDAO
 from data.orders.deletion_service import RETENTION_GUARDED_STATUSES
 from data.orders.intake_schema import IntakePayload
 from data.orders.intake_store import IntakeStore
-from data.orders.models import Order
+from data.orders.models import Order, utc_now_iso
 from data.orders.public_flow import (
     PublicOrderCreate,
     create_public_order,
@@ -94,6 +95,8 @@ class PortalIntakeResponse(BaseModel):
     intake_status: str
     stage: str
     order_id: str
+    profile_minimum_complete: bool
+    profile_missing_fields: list[str]
 
 
 class PortalAttachmentUploaded(BaseModel):
@@ -101,6 +104,30 @@ class PortalAttachmentUploaded(BaseModel):
     intake_status: str
     stage: str
     attachments: list[dict[str, Any]]
+
+
+class ReviewResultContract(BaseModel):
+    review_result_id: str
+    risk_level: Literal["high", "medium", "low"]
+    top_findings: list[str]
+    recommended_action: Literal["go_cwb", "go_step1", "go_full_plan"]
+    available_actions: list[Literal["go_cwb", "go_step1", "go_full_plan"]]
+    review_entry_source: Literal["home", "status", "report", "direct"]
+    review_followup_action: Literal["cwb", "step1", "full_plan", "none"]
+    review_input_summary: str = ""
+    review_input_attachments: list[str] = Field(default_factory=list)
+    review_constraints: dict[str, Any] = Field(default_factory=dict)
+
+
+class ReviewActionRequest(BaseModel):
+    token: str
+    action: Literal["cwb", "step1", "full_plan"]
+
+
+class ReviewActionResponse(BaseModel):
+    review_result_id: str
+    review_followup_action: Literal["cwb", "step1", "full_plan"]
+    next_href: str
 
 
 class DeletionRequestCreate(BaseModel):
@@ -178,8 +205,10 @@ def _assert_simulated_payment_routes_allowed(settings: Settings) -> None:
 
 
 @router.get("/", include_in_schema=False)
-def landing_page(request: Request) -> HTMLResponse:
-    return HTMLResponse(_render_landing_page(request))
+def landing_page(
+    request: Request, settings: Settings = Depends(get_settings_dep)
+) -> HTMLResponse:
+    return HTMLResponse(_render_landing_page(request, settings))
 
 
 @router.get("/pricing", include_in_schema=False)
@@ -331,9 +360,63 @@ def payment_return_page(
     payment = service.get_payment(payment_id)
     if payment is None:
         raise HTTPException(status_code=404, detail="payment not found")
+    if payment.status != "paid":
+        raise HTTPException(status_code=409, detail="payment not ready")
     portal_token = issue_portal_token(payment.order_id, settings.portal_token_secret)
     return RedirectResponse(
         url=f"/portal/{portal_token}/payment-success", status_code=303
+    )
+
+
+@router.get("/review/start", include_in_schema=False)
+def review_start_page(
+    source: Literal["home", "status", "report", "direct"] = "direct",
+    token: str | None = None,
+    province: str | None = None,
+    score: str | None = None,
+    goal: str | None = None,
+    consult: str | None = None,
+    settings: Settings = Depends(get_settings_dep),
+) -> HTMLResponse:
+    review_input_summary = (consult or goal or "").strip() or None
+    review_constraints: dict[str, Any] = {}
+    if province:
+        review_constraints["candidate_province"] = province.strip()
+    if score:
+        parts = [part.strip() for part in score.replace("／", "/").split("/", 1)]
+        if parts and parts[0]:
+            review_constraints["candidate_score"] = parts[0]
+        if len(parts) > 1 and parts[1]:
+            review_constraints["candidate_rank"] = parts[1]
+    contract = _start_review_result(
+        source=source,
+        token=token,
+        settings=settings,
+        review_input_summary=review_input_summary,
+        review_constraints=review_constraints or None,
+    )
+    return HTMLResponse(_render_review_start_page(contract, token))
+
+
+@router.get("/portal/{token}/cwb", include_in_schema=False)
+def cwb_placeholder_page(
+    token: str, settings: Settings = Depends(get_settings_dep)
+) -> HTMLResponse:
+    order = _resolve_order_from_token(token, settings)
+    contract = _load_latest_review_result(order.id, settings)
+    context = _build_portal_context(order, settings)
+    return HTMLResponse(_render_cwb_placeholder_page(token, order, contract, context))
+
+
+@router.get("/portal/{token}/full-plan", include_in_schema=False)
+def full_plan_placeholder_page(
+    token: str, settings: Settings = Depends(get_settings_dep)
+) -> HTMLResponse:
+    order = _resolve_order_from_token(token, settings)
+    context = _build_portal_context(order, settings)
+    contract = _load_latest_review_result(order.id, settings)
+    return HTMLResponse(
+        _render_full_plan_placeholder_page(token, order, context, contract)
     )
 
 
@@ -419,7 +502,6 @@ def _store_portal_attachment(
         "stored_name": stored_name,
         "content_type": content_type or "application/octet-stream",
         "size_bytes": len(payload),
-        "storage_path": str(target),
         "kind": "portal_attachment",
     }
 
@@ -486,15 +568,21 @@ def submit_order_info(
     _assert_portal_info_mutable(context["stage"])
     intake_store = IntakeStore.for_db(settings.orders_db_path)
     try:
+        current = intake_store.get(order.id)
+        base_payload = dict(current.payload) if current is not None else {}
+        base_payload.update(payload.model_dump())
+        saved_payload = _ensure_profile_version_metadata(base_payload)
         record = intake_store.save(
             order_id=order.id,
-            payload=payload.model_dump(),
+            payload=saved_payload,
             submit=payload.mode == "submit",
         )
     finally:
         intake_store.close()
 
     updates: dict[str, Any] = {}
+    if payload.candidate_province is not None:
+        updates["candidate_province"] = payload.candidate_province
     if payload.candidate_score is not None:
         updates["candidate_score"] = payload.candidate_score
     if payload.candidate_rank is not None:
@@ -524,7 +612,19 @@ def submit_order_info(
         intake_status=record.status,
         stage=refreshed_context["stage"],
         order_id=order.id,
+        profile_minimum_complete=_is_profile_minimum_complete(record.payload),
+        profile_missing_fields=_profile_missing_fields(record.payload),
     )
+
+
+@router.post("/review/action", include_in_schema=False)
+def review_action_endpoint(
+    token: str = Form(...),
+    action: Literal["cwb", "step1", "full_plan"] = Form(...),
+    settings: Settings = Depends(get_settings_dep),
+) -> RedirectResponse:
+    result = _apply_review_followup_action(token, action, settings)
+    return RedirectResponse(url=result.next_href, status_code=303)
 
 
 @router.get("/portal/{token}/deletion-request", include_in_schema=False)
@@ -703,6 +803,16 @@ def _build_portal_context(order: Order, settings: Settings) -> dict[str, Any]:
     intake_summary = None
     attachment_count = 0
     attachment_items: list[dict[str, Any]] = []
+    profile_payload = (
+        intake.payload
+        if intake is not None
+        else {
+            "candidate_province": order.candidate_province,
+            "candidate_score": order.candidate_score,
+            "candidate_rank": order.candidate_rank,
+            "candidate_subjects": order.candidate_subjects,
+        }
+    )
     if intake is not None:
         attachment_items = [
             item
@@ -711,6 +821,8 @@ def _build_portal_context(order: Order, settings: Settings) -> dict[str, Any]:
         ]
         attachment_count = len(attachment_items)
         intake_summary = {
+            "candidate_province": intake.payload.get("candidate_province")
+            or order.candidate_province,
             "candidate_score": intake.payload.get("candidate_score"),
             "candidate_rank": intake.payload.get("candidate_rank"),
             "candidate_subjects": intake.payload.get("candidate_subjects") or [],
@@ -743,6 +855,8 @@ def _build_portal_context(order: Order, settings: Settings) -> dict[str, Any]:
         "report_pdf_ready": report_pdf_ready,
         "order": order,
         "station_notice": latest_station_notice,
+        "profile_minimum_complete": _is_profile_minimum_complete(profile_payload),
+        "profile_missing_fields": _profile_missing_fields(profile_payload),
     }
 
 
@@ -764,66 +878,514 @@ def _render_footer_links(token: str | None = None) -> str:
     )
 
 
-@router.get("/privacy", include_in_schema=False)
-def privacy_page(token: str | None = None) -> HTMLResponse:
-    body = (
+def _render_basic_page(
+    *,
+    title: str,
+    eyebrow: str,
+    lead: str,
+    sections_html: str,
+    footer_token: str | None = None,
+) -> str:
+    return (
         "<!doctype html><html lang='zh-CN'><head><meta charset='utf-8' />"
         "<meta name='viewport' content='width=device-width, initial-scale=1' />"
-        "<title>隐私政策</title>"
+        f"<title>{escape(title)}</title>"
         "<link rel='stylesheet' href='/static/portal-ui.css' />"
-        '<style>body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f4f7fb;padding:32px 20px;color:#172033;margin:0}.wrap{max-width:920px;margin:0 auto;display:grid;gap:18px}.panel{background:#fff;border:1px solid #dbe3f0;border-radius:20px;padding:24px;box-shadow:0 18px 42px rgba(20,34,53,.08)}.eyebrow{display:inline-flex;padding:6px 10px;border-radius:999px;background:#dff7f1;color:#0f766e;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}.lead{color:#5b6b88;line-height:1.8}.checklist{margin:0;padding-left:18px;color:#5b6b88;line-height:1.8}</style></head>'
+        '<style>body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f4f7fb;padding:32px 20px;color:#172033;margin:0}.wrap{max-width:920px;margin:0 auto;display:grid;gap:18px}.panel{background:#fff;border:1px solid #dbe3f0;border-radius:20px;padding:24px;box-shadow:0 18px 42px rgba(20,34,53,.08)}.eyebrow{display:inline-flex;padding:6px 10px;border-radius:999px;background:#eef6ff;color:#194fb6;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}.lead{color:#5b6b88;line-height:1.8}.checklist{margin:0;padding-left:18px;color:#5b6b88;line-height:1.8}.meta{color:#5b6b88;line-height:1.8}</style></head>'
         "<body><main class='wrap'>"
-        "<section class='panel'><span class='eyebrow'>隐私说明</span><h1>隐私政策</h1>"
-        "<p class='lead'>我们只收集下单、资料填写、支付与交付所需的最小信息，用于志愿服务流程，不用于营销出售或无关用途。</p></section>"
-        "<section class='panel'><h2>你可以预期什么</h2><ul class='checklist'><li>支付前只收必要下单信息</li><li>详细资料在支付后通过资料向导分步补充</li><li>隐私政策、服务说明与删除申请入口全程可见</li><li>如需撤回资料或申请删除，可通过删除申请入口提交请求</li></ul>"
-        + _render_footer_links(token)
-        + "</section></main></body></html>"
+        f"<section class='panel'><span class='eyebrow'>{escape(eyebrow)}</span><h1>{escape(title)}</h1><p class='lead'>{lead}</p></section>"
+        f"{sections_html}"
+        f"{_render_footer_links(footer_token)}"
+        "</main></body></html>"
     )
-    return HTMLResponse(body)
+
+
+def _render_placeholder_shell(
+    *,
+    title: str,
+    max_width: int,
+    body_html: str,
+) -> str:
+    return f"""<!doctype html><html lang=\"zh-CN\"><head><meta charset=\"utf-8\" /><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" /><title>{escape(title)}</title><link rel=\"stylesheet\" href=\"/static/portal-ui.css\" /><style>body{{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f3f7fb;margin:0;padding:32px 20px;color:#142235}}.wrap{{max-width:{max_width}px;margin:0 auto;display:grid;gap:16px}}.panel{{background:#fff;border:1px solid #d7e3f1;border-radius:20px;padding:24px;box-shadow:0 18px 42px rgba(20,34,53,.08)}}.meta{{color:#5b6b88;line-height:1.8}}.actions{{display:flex;gap:12px;flex-wrap:wrap;margin-top:12px}}.btn{{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border-radius:12px;text-decoration:none;font-weight:700}}.btn-primary{{background:#1f6feb;color:#fff}}.btn-secondary{{background:#edf3ff;color:#194fb6}}</style></head><body><main class=\"wrap\">{body_html}</main></body></html>"""
+
+
+@router.get("/privacy", include_in_schema=False)
+def privacy_page(token: str | None = None) -> HTMLResponse:
+    sections_html = "<section class='panel'><h2>你可以预期什么</h2><ul class='checklist'><li>支付前只收必要下单信息</li><li>详细资料在支付后通过资料向导分步补充</li><li>隐私政策、服务说明与删除申请入口全程可见</li><li>如需撤回资料或申请删除，可通过删除申请入口提交请求</li></ul></section>"
+    return HTMLResponse(
+        _render_basic_page(
+            title="隐私政策",
+            eyebrow="隐私说明",
+            lead="我们只收集下单、资料填写、支付与交付所需的最小信息，用于志愿服务流程，不用于营销出售或无关用途。",
+            sections_html=sections_html,
+            footer_token=token,
+        )
+    )
 
 
 @router.get("/service-terms", include_in_schema=False)
 def service_terms_page(token: str | None = None) -> HTMLResponse:
-    body = (
-        "<!doctype html><html lang='zh-CN'><head><meta charset='utf-8' />"
-        "<meta name='viewport' content='width=device-width, initial-scale=1' />"
-        "<title>服务说明与免责声明</title>"
-        "<link rel='stylesheet' href='/static/portal-ui.css' />"
-        '<style>body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f4f7fb;padding:32px 20px;color:#172033;margin:0}.wrap{max-width:920px;margin:0 auto;display:grid;gap:18px}.panel{background:#fff;border:1px solid #dbe3f0;border-radius:20px;padding:24px;box-shadow:0 18px 42px rgba(20,34,53,.08)}.eyebrow{display:inline-flex;padding:6px 10px;border-radius:999px;background:#eef5ff;color:#1f6feb;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}.lead{color:#5b6b88;line-height:1.8}.checklist{margin:0;padding-left:18px;color:#5b6b88;line-height:1.8}</style></head>'
-        "<body><main class='wrap'>"
-        "<section class='panel'><span class='eyebrow'>服务边界</span><h1>服务说明与免责声明</h1>"
-        "<p class='lead'>本服务提供志愿填报辅助建议、方案审计与交付支持，不承诺录取结果；提交资料前请确认监护人与考生已知情。</p></section>"
-        "<section class='panel'><h2>下单前请了解</h2><ul class='checklist'><li>我们优先帮助你审计现有方案与风险点</li><li>支付后可继续补充详细资料与附件</li><li>交付状态、通知与报告入口会在站内持续更新</li><li>如需撤回资料或删除交付物，可通过删除申请入口提交请求</li></ul>"
-        + _render_footer_links(token)
-        + "</section></main></body></html>"
+    sections_html = "<section class='panel'><h2>下单前请了解</h2><ul class='checklist'><li>我们优先帮助你审计现有方案与风险点</li><li>支付后可继续补充详细资料与附件</li><li>交付状态、通知与报告入口会在站内持续更新</li><li>如需撤回资料或删除交付物，可通过删除申请入口提交请求</li></ul></section>"
+    return HTMLResponse(
+        _render_basic_page(
+            title="服务说明与免责声明",
+            eyebrow="服务边界",
+            lead="本服务提供志愿填报辅助建议、方案审计与交付支持，不承诺录取结果；提交资料前请确认监护人与考生已知情。",
+            sections_html=sections_html,
+            footer_token=token,
+        )
     )
+
+
+def _normalized_profile_snapshot(payload: dict[str, Any]) -> dict[str, Any]:
+    def _clean_list(value: Any) -> list[str]:
+        return [str(item).strip() for item in list(value or []) if str(item).strip()]
+
+    return {
+        "candidate_province": str(payload.get("candidate_province") or "").strip(),
+        "candidate_subjects": _clean_list(payload.get("candidate_subjects")),
+        "candidate_score": payload.get("candidate_score"),
+        "candidate_rank": payload.get("candidate_rank"),
+        "target_cities": _clean_list(payload.get("target_cities")),
+        "target_majors": _clean_list(payload.get("target_majors")),
+        "target_schools": _clean_list(payload.get("target_schools")),
+        "school_region_preferences": _clean_list(
+            payload.get("school_region_preferences")
+        ),
+        "school_preference_types": _clean_list(payload.get("school_preference_types")),
+        "disliked_majors": _clean_list(payload.get("disliked_majors")),
+        "employment_region_preferences": _clean_list(
+            payload.get("employment_region_preferences")
+        ),
+        "candidate_interests": str(payload.get("candidate_interests") or "").strip(),
+        "university_preferences": str(
+            payload.get("university_preferences") or ""
+        ).strip(),
+        "priority_strategy": str(payload.get("priority_strategy") or "").strip(),
+        "graduation_plan": str(payload.get("graduation_plan") or "").strip(),
+        "tuition_preference": str(payload.get("tuition_preference") or "").strip(),
+        "family_background": str(payload.get("family_background") or "").strip(),
+        "industry_resources": str(payload.get("industry_resources") or "").strip(),
+        "extra_notes": str(payload.get("extra_notes") or "").strip(),
+        "interest_assessment_type": str(
+            payload.get("interest_assessment_type") or ""
+        ).strip(),
+        "interest_assessment_result": str(
+            payload.get("interest_assessment_result") or ""
+        ).strip(),
+        "interest_assessment_notes": str(
+            payload.get("interest_assessment_notes") or ""
+        ).strip(),
+        "existing_plan_summary": str(
+            payload.get("existing_plan_summary") or ""
+        ).strip(),
+        "guardian_notes": str(payload.get("guardian_notes") or "").strip(),
+    }
+
+
+def _profile_stage_label(index: int) -> str:
+    labels = ["初始档案方案", "查分后校准方案", "正式填报前调整方案"]
+    if index < len(labels):
+        return labels[index]
+    return f"第 {index + 1} 次档案快照"
+
+
+def _profile_version_id(index: int) -> str:
+    return f"profile_v{index + 1}"
+
+
+def _ensure_profile_version_metadata(
+    payload: dict[str, Any], *, source: str = "portal"
+) -> dict[str, Any]:
+    updated = dict(payload)
+    snapshot = _normalized_profile_snapshot(updated)
+    versions = [
+        item
+        for item in list(updated.get("profile_versions") or [])
+        if isinstance(item, dict)
+    ]
+    if versions and versions[-1].get("snapshot_payload") == snapshot:
+        updated["profile_versions"] = versions
+        updated["latest_profile_version_id"] = str(
+            versions[-1].get("profile_version_id")
+            or _profile_version_id(len(versions) - 1)
+        )
+        return updated
+    version = {
+        "profile_version_id": _profile_version_id(len(versions)),
+        "stage_label": _profile_stage_label(len(versions)),
+        "snapshot_payload": snapshot,
+        "created_at": utc_now_iso(),
+        "source": source,
+    }
+    versions.append(version)
+    updated["profile_versions"] = versions
+    updated["latest_profile_version_id"] = version["profile_version_id"]
+    return updated
+
+
+def _latest_profile_version(payload: dict[str, Any]) -> dict[str, Any] | None:
+    versions = [
+        item
+        for item in list(payload.get("profile_versions") or [])
+        if isinstance(item, dict)
+    ]
+    latest_id = str(payload.get("latest_profile_version_id") or "").strip()
+    for item in versions:
+        if str(item.get("profile_version_id") or "") == latest_id:
+            return item
+    return versions[-1] if versions else None
+
+
+def _profile_version_label_from_payload(payload: dict[str, Any]) -> str:
+    latest = _latest_profile_version(payload)
+    if latest is not None:
+        return str(latest.get("profile_version_id") or "profile-step1-incomplete")
+    return _profile_version_label(
+        {
+            "intake_summary": payload,
+            "profile_minimum_complete": _is_profile_minimum_complete(payload),
+        }
+    )
+
+
+def _report_version_profile_reference(
+    payload: dict[str, Any], *, report_version_id: str, fallback_profile_version_id: str
+) -> str:
+    for item in list(payload.get("report_versions") or []):
+        if not isinstance(item, dict):
+            continue
+        if str(item.get("report_version_id") or "") != report_version_id:
+            continue
+        referenced = str(item.get("profile_version_id") or "").strip()
+        if referenced:
+            return referenced
+    return fallback_profile_version_id
+
+
+def _ensure_report_version_metadata(
+    payload: dict[str, Any],
+    *,
+    report_version_id: str,
+    profile_version_id: str,
+    review_result_version_id: str | None,
+    artifact_refs: dict[str, Any],
+) -> dict[str, Any]:
+    updated = dict(payload)
+    versions = [
+        item
+        for item in list(updated.get("report_versions") or [])
+        if isinstance(item, dict)
+    ]
+    for item in versions:
+        if str(item.get("report_version_id") or "") == report_version_id:
+            updated["latest_report_version_id"] = report_version_id
+            return updated
+    versions.append(
+        {
+            "report_version_id": report_version_id,
+            "profile_version_id": profile_version_id,
+            "review_result_version_id": review_result_version_id,
+            "artifact_refs": artifact_refs,
+            "created_at": utc_now_iso(),
+        }
+    )
+    updated["report_versions"] = versions
+    updated["latest_report_version_id"] = report_version_id
+    return updated
+
+
+def _current_intake_payload(context: dict[str, Any]) -> dict[str, Any]:
+    intake = context.get("intake")
+    if intake is not None and isinstance(getattr(intake, "payload", None), dict):
+        return dict(intake.payload)
+    summary = context.get("intake_summary")
+    if isinstance(summary, dict):
+        return dict(summary)
+    return {}
+
+
+def _render_trust_banner_html(
+    *,
+    province: str,
+    official_source: str,
+    last_updated: str,
+    scope: str,
+    confidence_label: str,
+    boundary_note: str,
+) -> str:
+    return (
+        '<div class="trust-banner">'
+        f'<p class="meta">可信度说明：官方来源：{escape(official_source)} · 更新时间：{escape(last_updated or "未公布")}</p>'
+        f'<p class="meta">适用范围：{escape(scope)} · 适用省份：{escape(province)} · 置信等级：{escape(confidence_label)}</p>'
+        f'<p class="meta">{escape(boundary_note)}</p>'
+        "</div>"
+    )
+
+
+def _helper_entry_hrefs(payload: dict[str, Any], order: Order) -> tuple[str, str]:
+    province = (
+        str(
+            payload.get("candidate_province") or order.candidate_province or "湖南"
+        ).strip()
+        or "湖南"
+    )
+    score = payload.get("candidate_score") or order.candidate_score or 0
+    return (
+        f"/policy-center?province={escape(province)}",
+        f"/same-score-reference?province={escape(province)}&score={escape(str(score))}",
+    )
+
+
+def _profile_version_state(payload: dict[str, Any], profile_version_id: str) -> str:
+    latest_profile_version = str(
+        payload.get("latest_profile_version_id") or profile_version_id
+    )
+    if profile_version_id == latest_profile_version:
+        return "基于最新档案生成"
+    return "基于历史档案版本生成，建议刷新"
+
+
+def _render_auxiliary_factor_section(payload: dict[str, Any]) -> str:
+    rows: list[str] = []
+    if payload.get("interest_assessment_result"):
+        rows.append(
+            f"<li>测评结果：{escape(str(payload.get('interest_assessment_result') or ''))}</li>"
+        )
+    if payload.get("family_background"):
+        rows.append(
+            f"<li>家庭背景：{escape(str(payload.get('family_background') or ''))}</li>"
+        )
+    if payload.get("industry_resources"):
+        rows.append(
+            f"<li>行业资源：{escape(str(payload.get('industry_resources') or ''))}</li>"
+        )
+    if payload.get("extra_notes"):
+        rows.append(
+            f"<li>补充说明：{escape(str(payload.get('extra_notes') or ''))}</li>"
+        )
+    if not rows:
+        return ""
+    return (
+        '<section class="panel"><h2>辅助判断因子</h2>'
+        '<p class="meta">这些内容只用于辅助解释，不作为唯一判断。</p>'
+        f"<ul>{''.join(rows)}</ul></section>"
+    )
+
+
+def _sync_report_version_metadata(
+    order_id: str,
+    settings: Settings,
+    *,
+    report_version_id: str,
+    profile_version_id: str,
+    review_result_version_id: str | None,
+    artifact_refs: dict[str, Any],
+) -> None:
+    intake_store = IntakeStore.for_db(settings.orders_db_path)
+    try:
+        current = intake_store.get(order_id)
+        if current is None:
+            return
+        updated_payload = _ensure_report_version_metadata(
+            current.payload,
+            report_version_id=report_version_id,
+            profile_version_id=profile_version_id,
+            review_result_version_id=review_result_version_id,
+            artifact_refs=artifact_refs,
+        )
+        if updated_payload != current.payload:
+            intake_store.save(
+                order_id=order_id,
+                payload=updated_payload,
+                submit=(current.status == "submitted"),
+            )
+    finally:
+        intake_store.close()
+
+
+def _public_supported_provinces() -> set[str]:
+    return {
+        "北京",
+        "天津",
+        "上海",
+        "重庆",
+        "河北",
+        "河南",
+        "山东",
+        "山西",
+        "陕西",
+        "辽宁",
+        "吉林",
+        "黑龙江",
+        "江苏",
+        "浙江",
+        "安徽",
+        "福建",
+        "江西",
+        "湖北",
+        "湖南",
+        "广东",
+        "海南",
+        "四川",
+        "贵州",
+        "云南",
+        "甘肃",
+        "青海",
+        "新疆",
+    }
+
+
+@router.get("/policy-center", include_in_schema=False)
+def policy_center_page(province: str = "湖南") -> HTMLResponse:
+    safe_province = province or "湖南"
+    supported = safe_province in _public_supported_provinces()
+    trust_banner = _render_trust_banner_html(
+        province=safe_province,
+        official_source=f"{safe_province}省教育考试院",
+        last_updated="2026-06-22",
+        scope="政策摘要与填报提醒",
+        confidence_label="参考" if supported else "暂不支持",
+        boundary_note=(
+            "未覆盖内容必须显式标注；页面仅提供摘要，不替代官方全文。"
+            if supported
+            else "当前省份尚未进入公开支持集，请不要把本页内容视为可用填报依据。"
+        ),
+    )
+    support_notice = (
+        ""
+        if supported
+        else "<section class='panel'><h2>当前省份暂不支持</h2><p class='meta'>公开政策摘要与同分段参考当前未覆盖该省份，请勿继续使用本页作为填报依据。</p></section>"
+    )
+    same_score_href = f"/same-score-reference?province={escape(safe_province)}&score=0"
+    body = f"""<!doctype html><html lang=\"zh-CN\"><head><meta charset=\"utf-8\" /><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" /><title>政策中心</title><link rel=\"stylesheet\" href=\"/static/portal-ui.css\" /><style>body{{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f4f7fb;padding:32px 20px;color:#172033;margin:0}}.wrap{{max-width:980px;margin:0 auto;display:grid;gap:18px}}.panel{{background:#fff;border:1px solid #dbe3f0;border-radius:20px;padding:24px;box-shadow:0 18px 42px rgba(20,34,53,.08)}}.eyebrow{{display:inline-flex;padding:6px 10px;border-radius:999px;background:#eef6ff;color:#194fb6;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}}.meta{{color:#5b6b88;line-height:1.8}}.actions{{display:flex;gap:12px;flex-wrap:wrap}}a{{color:#1f6feb;text-decoration:none}}</style></head><body><main class=\"wrap\"><section class=\"panel\"><span class=\"eyebrow\">政策中心</span><h1>政策中心</h1><p class=\"meta\">适用省份：{escape(safe_province)}</p>{trust_banner}<div class=\"actions\"><a href=\"{same_score_href}\">查看同分段参考</a><a href=\"/\">返回首页</a></div></section>{support_notice}<section class=\"panel\"><h2>时间节点</h2><ul><li>查分后先核对成绩、位次与选科要求。</li><li>正式填报前再次确认批次与专业组选科约束。</li></ul></section><section class=\"panel\"><h2>批次规则</h2><p class=\"meta\">当前只整理普通类主链的关键规则；特殊批次、艺体类等未覆盖内容需另行核对。</p></section><section class=\"panel\"><h2>选科要求</h2><p class=\"meta\">先核对目标专业组选科要求，再判断是否要调整冲稳保结构。</p></section><section class=\"panel\"><h2>常见误区</h2><ul><li>不要把同分段参考当成最终结论。</li><li>不要用去年的批次规则替代当年正式发布口径。</li></ul><p class=\"meta\">以{escape(safe_province)}省教育考试院官方信息为准。</p></section>{_render_footer_links()}</main></body></html>"""
+    return HTMLResponse(body)
+
+
+@router.get("/same-score-reference", include_in_schema=False)
+def same_score_reference_page(province: str = "湖南", score: int = 0) -> HTMLResponse:
+    safe_province = province or "湖南"
+    supported = safe_province in _public_supported_provinces()
+    loader = CrowdDBLoader(warn_low_confidence=False)
+    metadata = loader.load_metadata(safe_province) if supported else None
+    metadata = metadata or {
+        "province": safe_province,
+        "last_updated": "",
+        "source": "",
+        "confidence": None,
+    }
+    recommendations = (
+        loader.find_recommendations(safe_province, score)
+        if (score and supported)
+        else []
+    )
+    schools = [
+        rec.get("name", "") for rec in recommendations[:5] if isinstance(rec, dict)
+    ]
+    majors = [
+        rec.get("major", "") for rec in recommendations[:5] if isinstance(rec, dict)
+    ]
+    cities: list[str] = []
+    for rec in recommendations[:5]:
+        if not isinstance(rec, dict):
+            continue
+        for alt in rec.get("alternatives", []) or []:
+            if isinstance(alt, dict) and alt.get("name"):
+                cities.append(str(alt.get("name")))
+    confidence = metadata.get("confidence")
+    confidence_label = (
+        "高"
+        if supported and isinstance(confidence, (int, float)) and confidence >= 0.8
+        else ("参考" if supported else "暂不支持")
+    )
+    trust_banner = _render_trust_banner_html(
+        province=safe_province,
+        official_source=str(
+            metadata.get("source") or f"{safe_province}省公开同分段参考整理"
+        ),
+        last_updated=str(metadata.get("last_updated") or "未公布"),
+        scope="同分段参考与扎堆风险提示",
+        confidence_label=confidence_label,
+        boundary_note=(
+            "仅作参考，不替代正式填报判断；非高置信数据不得作为强推荐依据。当前高置信省份以数据质量白名单为准。"
+            if supported
+            else "当前省份暂不支持公开同分段参考，请不要把“暂无”理解为普通空数据。"
+        ),
+    )
+    unsupported_notice = (
+        ""
+        if supported
+        else "<section class='panel'><h2>当前省份暂不支持</h2><p class='meta'>公开同分段参考当前未覆盖该省份；请勿把当前页面的“暂无”视为普通空数据。</p></section>"
+    )
+    policy_href = f"/policy-center?province={escape(safe_province)}"
+    body = f"""<!doctype html><html lang=\"zh-CN\"><head><meta charset=\"utf-8\" /><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" /><title>同分段参考</title><link rel=\"stylesheet\" href=\"/static/portal-ui.css\" /><style>body{{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f4f7fb;padding:32px 20px;color:#172033;margin:0}}.wrap{{max-width:1000px;margin:0 auto;display:grid;gap:18px}}.panel{{background:#fff;border:1px solid #dbe3f0;border-radius:20px;padding:24px;box-shadow:0 18px 42px rgba(20,34,53,.08)}}.eyebrow{{display:inline-flex;padding:6px 10px;border-radius:999px;background:#eef6ff;color:#194fb6;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}}.meta{{color:#5b6b88;line-height:1.8}}.actions{{display:flex;gap:12px;flex-wrap:wrap}}a{{color:#1f6feb;text-decoration:none}}</style></head><body><main class=\"wrap\"><section class=\"panel\"><span class=\"eyebrow\">同分段参考</span><h1>同分段参考</h1><p class=\"meta\">适用省份：{escape(safe_province)} · 置信等级：{escape(confidence_label)} · 数据说明：仅作参考，不替代正式填报判断</p>{trust_banner}<div class=\"actions\"><a href=\"{policy_href}\">查看政策中心</a><a href=\"/\">返回首页</a></div></section>{unsupported_notice}<section class=\"panel\"><h2>同分段热门学校</h2><p>{escape("、".join([item for item in schools if item]) or "暂无")}</p></section><section class=\"panel\"><h2>同分段热门专业</h2><p>{escape("、".join([item for item in majors if item]) or "暂无")}</p></section><section class=\"panel\"><h2>同分段热门城市</h2><p>{escape("、".join([item for item in cities if item]) or "暂无")}</p></section><section class=\"panel\"><h2>扎堆风险提示</h2><p class=\"meta\">若热门学校/专业高度集中，建议回到审核页或冲稳保页重新看梯度风险。</p></section>{_render_footer_links()}</main></body></html>"""
     return HTMLResponse(body)
 
 
 @router.get("/deletion-policy", include_in_schema=False)
 def deletion_policy_page() -> HTMLResponse:
-    body = (
-        "<!doctype html><html lang='zh-CN'><head><meta charset='utf-8' />"
-        "<meta name='viewport' content='width=device-width, initial-scale=1' />"
-        "<title>删除申请 / 数据删除说明</title>"
-        "<link rel='stylesheet' href='/static/portal-ui.css' />"
-        '<style>body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f4f7fb;padding:32px 20px;color:#172033;margin:0}.wrap{max-width:920px;margin:0 auto;display:grid;gap:18px}.panel{background:#fff;border:1px solid #dbe3f0;border-radius:20px;padding:24px;box-shadow:0 18px 42px rgba(20,34,53,.08)}.eyebrow{display:inline-flex;padding:6px 10px;border-radius:999px;background:#fff7e6;color:#8a5a00;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}.lead{color:#5b6b88;line-height:1.8}.checklist{margin:0;padding-left:18px;color:#5b6b88;line-height:1.8}</style></head>'
-        "<body><main class='wrap'>"
-        "<section class='panel'><span class='eyebrow'>数据删除</span><h1>删除申请 / 数据删除说明</h1>"
-        "<p class='lead'>如需申请删除订单资料、附件或交付物，可在支付后的 Portal 中提交删除申请；系统会保留必要的审计记录，并由人工核验后处理。</p></section>"
-        "<section class='panel'><h2>你可以怎么做</h2><ul class='checklist'><li>在 Portal 中提交删除申请</li><li>填写申请人姓名、联系方式、删除范围与原因</li><li>确认监护人已知情并同意发起删除申请</li><li>处理结果会回到站内状态链路中查看</li></ul>"
-        + _render_footer_links()
-        + "</section></main></body></html>"
+    sections_html = "<section class='panel'><h2>你可以怎么做</h2><ul class='checklist'><li>在 Portal 中提交删除申请</li><li>填写申请人姓名、联系方式、删除范围与原因</li><li>确认监护人已知情并同意发起删除申请</li><li>处理结果会回到站内状态链路中查看</li></ul></section>"
+    return HTMLResponse(
+        _render_basic_page(
+            title="删除申请 / 数据删除说明",
+            eyebrow="数据删除",
+            lead="如需申请删除订单资料、附件或交付物，可在支付后的 Portal 中提交删除申请；系统会保留必要的审计记录，并由人工核验后处理。",
+            sections_html=sections_html,
+        )
     )
-    return HTMLResponse(body)
 
 
-def _render_landing_page(request: Request) -> str:
+def _render_landing_page(request: Request, settings: Settings) -> str:
     query = dict(request.query_params)
     consult_text = escape(str(query.get("consult") or ""))
     consult_province = escape(str(query.get("province") or ""))
     consult_score = escape(str(query.get("score") or ""))
     consult_goal = escape(str(query.get("goal") or ""))
+    portal_token = str(query.get("token") or "").strip()
+    latest_review_href = (
+        f"/review/start?source=home&amp;token={escape(portal_token)}"
+        if portal_token
+        else ""
+    )
+    latest_review_version_html = ""
+    latest_contract: ReviewResultContract | None = None
+    workspace_context: dict[str, Any] | None = None
+    if portal_token:
+        try:
+            order = _resolve_order_from_token(portal_token, settings)
+            latest_contract = _load_latest_review_result(order.id, settings)
+            workspace_context = _build_portal_context(order, settings)
+            if latest_contract is not None:
+                latest_review_version_html = f'<p class="hero-note" style="margin-top:10px;">最新版本：{escape(latest_contract.review_result_id)}</p>'
+        except HTTPException:
+            latest_contract = None
+            workspace_context = None
+            latest_review_version_html = ""
+    latest_review_html = (
+        f'<div class="consult-card" style="margin-top:14px;"><h2>最近一次复核结果</h2><p class="hero-note" style="margin-top:0;">如果你刚完成过复核，可以从这里继续回到复核入口，决定是去冲稳保、补 Step 1，还是进入完整规划。</p>{latest_review_version_html}<div class="consult-actions"><a class="btn btn-secondary" href="{latest_review_href}">查看最近一次复核结果</a></div></div>'
+        if latest_contract is not None
+        else ""
+    )
+
+    workspace_primary_label = "先做方案复核"
+    workspace_primary_href = "/review/start?source=home"
+    if portal_token:
+        workspace_primary_label = "继续补充 Step 1"
+        workspace_primary_href = f"/portal/{escape(portal_token)}/info"
+        if latest_contract is not None:
+            workspace_primary_label = "继续查看最近一次复核"
+            workspace_primary_href = latest_review_href
+        elif workspace_context is not None and workspace_context.get(
+            "profile_minimum_complete"
+        ):
+            workspace_primary_label = "开始方案复核"
+            workspace_primary_href = latest_review_href
+    workspace_card_html = (
+        f'<div class="consult-card" style="margin-top:14px;"><h2>工作台主动作</h2><p class="hero-note" style="margin-top:0;">根据当前资料完整度与最近一次复核结果，给出默认下一步。</p><div class="consult-actions"><a class="btn btn-secondary" href="{workspace_primary_href}">{workspace_primary_label}</a></div></div>'
+        if portal_token
+        else ""
+    )
+
     return f"""<!doctype html>
 <html lang=\"zh-CN\">
   <head>
@@ -929,7 +1491,7 @@ def _render_landing_page(request: Request) -> str:
           <h1>高考志愿填报智能规划服务</h1>
           <p class=\"sub\">先审计现有志愿方案，再判断是否踩线、扎堆或梯度失衡，再决定要不要进入完整规划。先完成线上下单，再进入资料向导补充详细信息，后续可在站内查看报告与交付进度。</p>
           <div class="hero-actions">
-            <a class="btn btn-primary" href="#consult-box">立即咨询</a>
+            <a class="btn btn-primary" href="/review/start?source=home">先做方案复核</a>
             <a class="btn btn-primary" href="/pricing">查看套餐</a>
             <a class="btn btn-text" href="#service-flow">了解服务流程 →</a>
           </div>
@@ -938,7 +1500,9 @@ def _render_landing_page(request: Request) -> str:
             <h2>告诉我们你的基本情况</h2>
             <p class="hero-note" style="margin-top:0;">我们先判断你的现有方案是否需要复核，并说明后续可走的步骤。复核本身免费；新方案生成与深度辅导在支付后启动。</p>
             <p class="consult-privacy" aria-label="隐私说明">🔒 这些输入只用于判断要不要复核你的方案，<strong>不会留底、不会用于生成方案、不会发邮件推销</strong>。如果你决定不进入付费方案，提交的资料不会保存到我们的数据库。</p>
-            <form action="/pricing" method="get">
+            <form action="/review/start" method="get">
+              <input type="hidden" name="source" value="home" />
+              {f'<input type="hidden" name="token" value="{escape(portal_token)}" />' if portal_token else ""}
               <div class="consult-grid">
                 <div class="consult-field"><label>考试省份</label><input name="province" value="{consult_province}" placeholder="例如：湖南" /></div>
                 <div class="consult-field"><label>分数 / 位次</label><input name="score" value="{consult_score}" placeholder="例如：578 / 12034" /></div>
@@ -950,8 +1514,10 @@ def _render_landing_page(request: Request) -> str:
                 <a class="btn btn-secondary" href="/pricing">直接看付费套餐</a>
               </div>
             </form>
+
             <p class="consult-privacy-tail">不会收到营销短信，提交后你也可以随时要求删除已填资料。</p>
           </div>
+          {workspace_card_html}{latest_review_html}
           <div class="hero-trust">
             <article class="hero-trust-item"><strong>复核免费 / 方案付费</strong><span>免费帮你审现有方案的风险；新方案生成和深度辅导在支付后启动。</span></article>
             <article class="hero-trust-item"><strong>风险重点可解释</strong><span>重点识别踩线、扎堆、梯度失衡和结构异常，不只给结果。</span></article>
@@ -1607,6 +2173,68 @@ def _render_simulated_payment_html(
 """
 
 
+def _is_profile_minimum_complete(payload: dict[str, Any]) -> bool:
+    return bool(
+        payload.get("candidate_province")
+        and payload.get("candidate_subjects")
+        and payload.get("candidate_score") is not None
+        and payload.get("candidate_rank") is not None
+    )
+
+
+def _profile_missing_fields(payload: dict[str, Any]) -> list[str]:
+    missing: list[str] = []
+    if not payload.get("candidate_province"):
+        missing.append("candidate_province")
+    if payload.get("candidate_score") is None:
+        missing.append("candidate_score")
+    if payload.get("candidate_rank") is None:
+        missing.append("candidate_rank")
+    if not payload.get("candidate_subjects"):
+        missing.append("candidate_subjects")
+    return missing
+
+
+def _province_options_html(selected: str) -> str:
+    province_options = [
+        "",
+        "北京",
+        "上海",
+        "天津",
+        "重庆",
+        "河北",
+        "河南",
+        "山东",
+        "山西",
+        "陕西",
+        "辽宁",
+        "吉林",
+        "黑龙江",
+        "江苏",
+        "浙江",
+        "安徽",
+        "福建",
+        "江西",
+        "湖北",
+        "湖南",
+        "广东",
+        "海南",
+        "四川",
+        "贵州",
+        "云南",
+        "甘肃",
+        "青海",
+        "新疆",
+    ]
+
+    return "".join(
+        f'<option value="{escape(p)}"'
+        + (" selected" if p == selected else "")
+        + f">{escape(p) or '请选择考试省份（可稍后补充）'}</option>"
+        for p in province_options
+    )
+
+
 def _render_simulated_payment_page(
     payment_id: str,
     settings: Settings,
@@ -1678,18 +2306,14 @@ def _render_info_page(
     guardian_checked = "checked" if payload.get("guardian_confirmed") else ""
     attachments = payload.get("attachments") or []
     missing_items: list[str] = []
+    if not payload.get("candidate_province"):
+        missing_items.append("省份")
     if not payload.get("candidate_score"):
         missing_items.append("分数")
     if not payload.get("candidate_rank"):
         missing_items.append("位次")
     if not payload.get("candidate_subjects"):
         missing_items.append("选科")
-    if (
-        not payload.get("target_cities")
-        and not payload.get("target_majors")
-        and not payload.get("university_preferences")
-    ):
-        missing_items.append("至少一个偏好目标")
     attachment_items = []
     for item in attachments:
         if not isinstance(item, dict):
@@ -1802,69 +2426,99 @@ def _render_info_page(
           <p class=\"lead\">支付完成后，请按向导逐步补充分数、位次、偏好与已有方案信息。我们会把这份资料作为后续方案分析与交付的基础。</p>
           <section class=\"progress-box\"><strong>当前还需要补充：</strong><span>{escape("、".join(missing_items) or "资料已基本完整，可以继续提交")}</span></section>
 
-          <section class=\"wizard-head\">
-            <h2>四步资料向导</h2>
-            <p>你不需要一次性完成所有内容。可以先保存草稿，再回来继续补充；最后一步同时完成协议确认与提交。</p>
-            <ol class=\"wizard-steps\">
-              <li data-step-badge=\"1\">基础信息</li>
-              <li data-step-badge=\"2\">偏好与目标</li>
-              <li data-step-badge=\"3\">已有方案与附件</li>
-              <li data-step-badge=\"4\">确认并提交</li>
+          <section class="wizard-head">
+            <h2>五步资料向导</h2>
+            <p>你不需要一次性完成所有内容。可以先保存草稿，再回来继续补充；第 4 步完成偏好与协议确认，第 5 步补已有方案与附件。</p>
+            <ol class="wizard-steps">
+              <li data-step-badge="1">基础信息</li>
+              <li data-step-badge="2">院校偏好</li>
+              <li data-step-badge="3">专业偏好</li>
+              <li data-step-badge="4">其他偏好与确认</li>
+              <li data-step-badge="5">已有方案与附件</li>
             </ol>
           </section>
 
-          <form id=\"intake-form\">
-            <section class=\"step-panel\" data-step=\"1\">
+          <form id="intake-form">
+            <section class="step-panel" data-step="1">
               <h3>基础信息</h3>
-              <p>先确认最影响志愿方案判断的基本数据：分数、位次、选科。</p>
-              <div class=\"field-grid\">
-                <div class=\"field\"><label>高考分数</label><input name=\"candidate_score\" value=\"{escape(str(payload.get("candidate_score") or ""))}\" /><span class=\"helper\">如暂未最终确认，也可先保存草稿。</span></div>
-                <div class=\"field\"><label>位次</label><input name=\"candidate_rank\" value=\"{escape(str(payload.get("candidate_rank") or ""))}\" /><span class=\"helper\">建议填写与成绩单一致的最新位次。</span></div>
+              <p>先确认最影响志愿方案判断的基本数据：省份、分数、位次、选科。</p>
+              <div class="field-grid">
+                <div class="field"><label>考试省份</label><select name="candidate_province">{_province_options_html(str(payload.get("candidate_province") or order.candidate_province or ""))}</select><span class="helper">这是 Step 1 的第一项，先选省份再继续。</span></div>
+                <div class="field"><label>高考分数</label><input name="candidate_score" value="{escape(str(payload.get("candidate_score") or ""))}" /><span class="helper">如暂未最终确认，也可先保存草稿。</span></div>
+                <div class="field"><label>位次</label><input name="candidate_rank" value="{escape(str(payload.get("candidate_rank") or ""))}" /><span class="helper">建议填写与成绩单一致的最新位次。</span></div>
               </div>
-              <div class=\"field\"><label>选科（逗号分隔）</label><input name=\"candidate_subjects\" value=\"{escape(",".join(payload.get("candidate_subjects") or []))}\" /><span class=\"helper\">例如：物理,化学,生物</span></div>
+              <div class="field"><label>选科（逗号分隔）</label><input name="candidate_subjects" value="{escape(",".join(payload.get("candidate_subjects") or []))}" /><span class="helper">例如：物理,化学,生物</span></div>
             </section>
 
-            <section class=\"step-panel\" data-step=\"2\" style=\"display:none;\">
-              <h3>偏好与目标</h3>
-              <p>告诉我们你更看重什么，后续方案会围绕这些目标来解释选择逻辑。</p>
-              <div class=\"field\"><label>兴趣方向</label><input name=\"candidate_interests\" value=\"{escape(str(payload.get("candidate_interests") or ""))}\" /></div>
-              <div class=\"field-grid\">
-                <div class=\"field\"><label>目标城市（逗号分隔）</label><input name=\"target_cities\" value=\"{escape(",".join(payload.get("target_cities") or []))}\" /></div>
-                <div class=\"field\"><label>目标专业（逗号分隔）</label><input name=\"target_majors\" value=\"{escape(",".join(payload.get("target_majors") or []))}\" /></div>
+            <section class="step-panel" data-step="2" style="display:none;">
+              <h3>院校偏好</h3>
+              <p>用于判断你更偏向哪些地区、哪些学校层次，以及是否已经有明确目标院校。</p>
+              <div class="field-grid">
+                <div class="field"><label>院校地域偏好（逗号分隔）</label><input name="school_region_preferences" value="{escape(",".join(payload.get("school_region_preferences") or []))}" /></div>
+                <div class="field"><label>院校类型偏好（逗号分隔）</label><input name="school_preference_types" value="{escape(",".join(payload.get("school_preference_types") or []))}" /></div>
               </div>
-              <div class=\"field\"><label>院校偏好说明</label><textarea name=\"university_preferences\">{escape(str(payload.get("university_preferences") or ""))}</textarea></div>
+              <div class="field-grid">
+                <div class="field"><label>目标院校（逗号分隔）</label><input name="target_schools" value="{escape(",".join(payload.get("target_schools") or []))}" /></div>
+                <div class="field"><label>目标城市（逗号分隔）</label><input name="target_cities" value="{escape(",".join(payload.get("target_cities") or []))}" /></div>
+              </div>
+              <div class="field"><label>院校偏好说明</label><textarea name="university_preferences">{escape(str(payload.get("university_preferences") or ""))}</textarea></div>
             </section>
 
-            <section class=\"step-panel\" data-step=\"3\" style=\"display:none;\">
+            <section class="step-panel" data-step="3" style="display:none;">
+              <h3>专业偏好</h3>
+              <p>用于判断你的专业方向、明确排斥项，以及优先策略更偏学校还是专业。</p>
+              <div class="field"><label>兴趣方向</label><input name="candidate_interests" value="{escape(str(payload.get("candidate_interests") or ""))}" /></div>
+              <div class="field-grid">
+                <div class="field"><label>目标专业（逗号分隔）</label><input name="target_majors" value="{escape(",".join(payload.get("target_majors") or []))}" /></div>
+                <div class="field"><label>不接受专业（逗号分隔）</label><input name="disliked_majors" value="{escape(",".join(payload.get("disliked_majors") or []))}" /></div>
+              </div>
+              <div class="field"><label>优先策略</label><input name="priority_strategy" value="{escape(str(payload.get("priority_strategy") or ""))}" placeholder="例如：major_first" /></div>
+            </section>
+
+            <section class="step-panel" data-step="4" style="display:none;">
+              <h3>其他偏好与确认</h3>
+              <p>用于补充毕业规划、预算、就业区域和家庭背景，不强制提交，也不会阻塞审核入口。</p>
+              <div class="field-grid">
+                <div class="field"><label>毕业规划</label><input name="graduation_plan" value="{escape(str(payload.get("graduation_plan") or ""))}" /></div>
+                <div class="field"><label>学费倾向</label><input name="tuition_preference" value="{escape(str(payload.get("tuition_preference") or ""))}" /></div>
+              </div>
+              <div class="field"><label>就业地域偏好（逗号分隔）</label><input name="employment_region_preferences" value="{escape(",".join(payload.get("employment_region_preferences") or []))}" /></div>
+              <div class="field"><label>家庭背景</label><textarea name="family_background">{escape(str(payload.get("family_background") or ""))}</textarea></div>
+              <div class="field"><label>行业资源</label><textarea name="industry_resources">{escape(str(payload.get("industry_resources") or ""))}</textarea></div>
+              <div class="field"><label>深层补充说明</label><textarea name="extra_notes">{escape(str(payload.get("extra_notes") or ""))}</textarea></div>
+              <div class="field-grid">
+                <div class="field"><label>测评类型</label><input name="interest_assessment_type" value="{escape(str(payload.get("interest_assessment_type") or ""))}" placeholder="例如：holland / mbti" /></div>
+                <div class="field"><label>测评结果</label><input name="interest_assessment_result" value="{escape(str(payload.get("interest_assessment_result") or ""))}" placeholder="例如：R型+I型" /></div>
+              </div>
+              <div class="field"><label>测评补充说明</label><textarea name="interest_assessment_notes">{escape(str(payload.get("interest_assessment_notes") or ""))}</textarea></div>
+              <div class="compliance-note">测评结果只作为辅助因子，不作为唯一判断依据。</div>
+              <div class="field"><label>补充说明</label><textarea name="guardian_notes">{escape(str(payload.get("guardian_notes") or ""))}</textarea></div>
+              <input type="hidden" name="consent_version" value="{escape(consent_version)}" />
+              <input type="hidden" name="consent_scope" value="{escape(consent_scope)}" />
+              <div class="check-list">
+                <label><input type="checkbox" name="privacy_accepted" {privacy_checked} /> <span>我已阅读并同意隐私政策草案</span></label>
+                <label><input type="checkbox" name="service_terms_accepted" {service_terms_checked} /> <span>我已阅读并同意服务说明与免责声明</span></label>
+                <label><input type="checkbox" name="guardian_confirmed" {guardian_checked} /> <span>我确认监护人已知情并同意提交资料</span></label>
+              </div>
+              <div class="compliance-note">当前资料状态会随提交结果同步更新；未勾选必要同意项时，系统不会进入正式处理阶段。</div>
+              <div id="confirm-summary" class="summary-box"></div>
+            </section>
+
+            <section class="step-panel" data-step="5" style="display:none;">
               <h3>已有方案与附件</h3>
               <p>如果你已经拿到其他平台、老师或 AI 生成的方案，可以在这里上传并说明担心点。</p>
-              <div class=\"field\"><label>已有方案说明</label><textarea name=\"existing_plan_summary\">{escape(str(payload.get("existing_plan_summary") or ""))}</textarea></div>
-              <div class=\"field\"><label>备注</label><textarea name=\"guardian_notes\">{escape(str(payload.get("guardian_notes") or ""))}</textarea></div>
-              <section class=\"upload-box\">
-                <h4 style=\"margin:0 0 10px; font-size:18px;\">已上传附件</h4>
-                <p class=\"helper\" style=\"margin:0 0 12px;\">支持继续补充方案附件、成绩截图或其他参考资料。</p>
-                <div id=\"attachment-panel\">
-                  <input type=\"file\" name=\"files\" multiple />
-                  <div class=\"actions\" style=\"margin-top:12px;\">
-                    <button type=\"button\" onclick=\"uploadAttachment()\">上传方案与资料附件</button>
+              <div class="field"><label>已有方案说明</label><textarea name="existing_plan_summary">{escape(str(payload.get("existing_plan_summary") or ""))}</textarea></div>
+              <section class="upload-box">
+                <h4 style="margin:0 0 10px; font-size:18px;">已上传附件</h4>
+                <p class="helper" style="margin:0 0 12px;">支持继续补充方案附件、成绩截图或其他参考资料。</p>
+                <div id="attachment-panel">
+                  <input type="file" name="files" multiple />
+                  <div class="actions" style="margin-top:12px;">
+                    <button type="button" onclick="uploadAttachment()">上传方案与资料附件</button>
                   </div>
                 </div>
-                <ul class=\"attachment-list\">{attachments_html}</ul>
+                <ul class="attachment-list">{attachments_html}</ul>
               </section>
-            </section>
-
-            <section class=\"step-panel\" data-step=\"4\" style=\"display:none;\">
-              <h3>确认并提交</h3>
-              <p>请确认监护人已知情并同意将资料用于志愿填报服务，并在下方快速复核关键信息后提交。</p>
-              <input type=\"hidden\" name=\"consent_version\" value=\"{escape(consent_version)}\" />
-              <input type=\"hidden\" name=\"consent_scope\" value=\"{escape(consent_scope)}\" />
-              <div class=\"check-list\">
-                <label><input type=\"checkbox\" name=\"privacy_accepted\" {privacy_checked} /> <span>我已阅读并同意隐私政策草案</span></label>
-                <label><input type=\"checkbox\" name=\"service_terms_accepted\" {service_terms_checked} /> <span>我已阅读并同意服务说明与免责声明</span></label>
-                <label><input type=\"checkbox\" name=\"guardian_confirmed\" {guardian_checked} /> <span>我确认监护人已知情并同意提交资料</span></label>
-              </div>
-              <div class=\"compliance-note\">当前资料状态会随提交结果同步更新；未勾选必要同意项时，系统不会进入正式处理阶段。</div>
-              <div id=\"confirm-summary\" class=\"summary-box\"></div>
             </section>
           </form>
           <div class="wizard-actions">
@@ -1895,15 +2549,21 @@ def _render_info_page(
     </main>
     <script>
       let currentStep = 1;
-      const totalSteps = 4;
+      const totalSteps = 5;
 
       function collectPayload(mode) {{
         const form = new FormData(document.getElementById('intake-form'));
         const subjects = String(form.get('candidate_subjects') || '').split(',').map(s => s.trim()).filter(Boolean);
         const targetCities = String(form.get('target_cities') || '').split(',').map(s => s.trim()).filter(Boolean);
         const targetMajors = String(form.get('target_majors') || '').split(',').map(s => s.trim()).filter(Boolean);
+        const schoolRegions = String(form.get('school_region_preferences') || '').split(',').map(s => s.trim()).filter(Boolean);
+        const schoolTypes = String(form.get('school_preference_types') || '').split(',').map(s => s.trim()).filter(Boolean);
+        const targetSchools = String(form.get('target_schools') || '').split(',').map(s => s.trim()).filter(Boolean);
+        const dislikedMajors = String(form.get('disliked_majors') || '').split(',').map(s => s.trim()).filter(Boolean);
+        const employmentRegions = String(form.get('employment_region_preferences') || '').split(',').map(s => s.trim()).filter(Boolean);
         return {{
           mode,
+          candidate_province: form.get('candidate_province') || null,
           candidate_score: form.get('candidate_score') ? Number(form.get('candidate_score')) : null,
           candidate_rank: form.get('candidate_rank') ? Number(form.get('candidate_rank')) : null,
           candidate_subjects: subjects,
@@ -1911,6 +2571,20 @@ def _render_info_page(
           target_cities: targetCities,
           target_majors: targetMajors,
           university_preferences: form.get('university_preferences') || null,
+          school_region_preferences: schoolRegions,
+          school_preference_types: schoolTypes,
+          target_schools: targetSchools,
+          disliked_majors: dislikedMajors,
+          priority_strategy: form.get('priority_strategy') || null,
+          graduation_plan: form.get('graduation_plan') || null,
+          tuition_preference: form.get('tuition_preference') || null,
+          employment_region_preferences: employmentRegions,
+          family_background: form.get('family_background') || null,
+          industry_resources: form.get('industry_resources') || null,
+          extra_notes: form.get('extra_notes') || null,
+          interest_assessment_type: form.get('interest_assessment_type') || null,
+          interest_assessment_result: form.get('interest_assessment_result') || null,
+          interest_assessment_notes: form.get('interest_assessment_notes') || null,
           existing_plan_summary: form.get('existing_plan_summary') || null,
           guardian_notes: form.get('guardian_notes') || null,
           consent_version: form.get('consent_version') || null,
@@ -1924,6 +2598,7 @@ def _render_info_page(
       function renderConfirmSummary() {{
         const payload = collectPayload('draft');
         const list = [
+          ['考试省份', payload.candidate_province || '待补充'],
           ['高考分数', payload.candidate_score ?? '待补充'],
           ['位次', payload.candidate_rank ?? '待补充'],
           ['选科', (payload.candidate_subjects || []).join('、') || '待补充'],
@@ -2014,18 +2689,6 @@ def _render_info_page(
 def _render_status_page(token: str, context: dict[str, Any]) -> str:
     order = context["order"]
     stage = str(context["stage"])
-    primary_action_label = "继续补充资料"
-    primary_action_href = f"/portal/{escape(token)}/info"
-    if stage in {"processing", "info_submitted"}:
-        primary_action_label = "查看当前进度"
-        primary_action_href = f"/portal/{escape(token)}/status#delivery-status"
-    elif stage in {"report_ready", "completed"}:
-        if context["report_html_ready"]:
-            primary_action_label = "查看报告"
-            primary_action_href = f"/portal/{escape(token)}/report"
-        else:
-            primary_action_label = "下载 PDF"
-            primary_action_href = f"/portal/{escape(token)}/report.pdf"
     report_links = ""
     can_access_delivery = stage in {"report_ready", "completed"}
     if can_access_delivery and context["report_html_ready"]:
@@ -2162,14 +2825,15 @@ def _render_status_page(token: str, context: dict[str, Any]) -> str:
           <h1>{escape(context["stage_title"])}</h1>
           <p class=\"lead\">{escape(context["stage_subtitle"])}</p>
           <span class=\"stage-pill\">当前阶段：{escape(context["stage"])}</span>
-          <div class=\"hero-actions\">
-            <a class=\"hero-btn hero-btn-primary\" href=\"{primary_action_href}\">{escape(primary_action_label)}</a>
-            <a class=\"hero-btn hero-btn-secondary\" href=\"/portal/{escape(token)}/info\">填写 / 更新资料</a>
+          <div class="hero-actions">
+            <a class="hero-btn hero-btn-primary" href="/review/start?source=status&amp;token={escape(token)}">查看当前进度 / 先复核当前方案</a>
+            <a class="hero-btn hero-btn-secondary" href="/portal/{escape(token)}/info">继续补充资料</a>
           </div>
-          <div class=\"hero-meta\">
-            <div class=\"hero-meta-item\"><strong>订单号</strong><span>{escape(order.id)}</span></div>
-            <div class=\"hero-meta-item\"><strong>服务版本</strong><span>{escape(order.service_version)}</span></div>
-            <div class=\"hero-meta-item\"><strong>当前订单状态</strong><span>{escape(order.status)}</span></div>
+          <div class="hero-meta">
+            <div class="hero-meta-item"><strong>订单号</strong><span>{escape(order.id)}</span></div>
+            <div class="hero-meta-item"><strong>服务版本</strong><span>{escape(order.service_version)}</span></div>
+            <div class="hero-meta-item"><strong>当前订单状态</strong><span>{escape(order.status)}</span></div>
+            <div class="hero-meta-item"><strong>Step 1 最小建档</strong><span>{"已完成" if context["profile_minimum_complete"] else "未完成"}</span></div>
           </div>
         </section>
         <aside class=\"panel\">
@@ -2186,11 +2850,19 @@ def _render_status_page(token: str, context: dict[str, Any]) -> str:
         {summary_html}
         <div id=\"delivery-status\">{delivery_html}</div>
         {station_notice_html}
+        <section class="panel">
+          <h2>Step 1 最小建档状态</h2>
+          <ul class="action-list">
+            <li>Step 1 最小建档：{"已完成" if context["profile_minimum_complete"] else "未完成"}</li>
+            <li>缺失字段：{escape("、".join(context["profile_missing_fields"]) or "无")}</li>
+          </ul>
+        </section>
         <section class=\"panel\">
           <h2>下一步操作</h2>
           <ul class=\"action-list\">
-            <li><a href=\"/portal/{escape(token)}/info\">填写 / 更新资料</a></li>
-            <li><a href=\"/portal/{escape(token)}/notifications\">查看通知记录</a></li>
+            <li><a href="/portal/{escape(token)}/info">填写 / 更新资料</a></li>
+            <li><a href="/review/start?source=status&amp;token={escape(token)}">从状态页进入方案复核</a></li>
+            <li><a href="/portal/{escape(token)}/notifications">查看通知记录</a></li>
             {report_links}
           </ul>
         </section>
@@ -2240,7 +2912,101 @@ def _render_notification_audit_page(token: str, order: Order, events: list[Any])
 """
 
 
+def _report_version_label(order: Order) -> str:
+    timestamp = (
+        order.delivered_at or order.completed_at or order.paid_at or order.created_at
+    )
+    return f"report-{timestamp}" if timestamp else f"report-{order.id}"
+
+
+def _profile_version_label(context: dict[str, Any]) -> str:
+    intake_summary = context.get("intake_summary") or {}
+    if context.get("profile_minimum_complete"):
+        province = intake_summary.get("candidate_province") or "unknown"
+        score = intake_summary.get("candidate_score") or "x"
+        rank = intake_summary.get("candidate_rank") or "x"
+        return f"profile-step1-{province}-{score}-{rank}"
+    return "profile-step1-incomplete"
+
+
+def _review_version_label(contract: ReviewResultContract | None) -> str:
+    if contract is None:
+        return "review-none"
+    return contract.review_result_id
+
+
+def _review_history_summary(order_id: str, settings: Settings) -> str:
+    intake_store = IntakeStore.for_db(settings.orders_db_path)
+    try:
+        current = intake_store.get(order_id)
+    finally:
+        intake_store.close()
+    if current is None:
+        return "暂无版本历史"
+    review_map = dict(current.payload.get("review_results") or {})
+    if not review_map:
+        return "暂无版本历史"
+    return f"版本历史：{len(review_map)} 个版本，最新 {escape(str(current.payload.get('latest_review_result_id') or 'unknown'))}"
+
+
+def _render_report_shell(
+    token: str,
+    order: Order,
+    context: dict[str, Any],
+    report_body_html: str,
+    settings: Settings,
+) -> str:
+    contract = _load_latest_review_result(order.id, settings)
+    payload = _current_intake_payload(context)
+    report_version = _report_version_label(order)
+    latest_profile_version = (
+        _profile_version_label_from_payload(payload)
+        if payload
+        else _profile_version_label(context)
+    )
+    profile_version = _report_version_profile_reference(
+        payload,
+        report_version_id=report_version,
+        fallback_profile_version_id=latest_profile_version,
+    )
+    review_version = _review_version_label(contract)
+    history_summary = _review_history_summary(order.id, settings)
+    _sync_report_version_metadata(
+        order.id,
+        settings,
+        report_version_id=report_version,
+        profile_version_id=profile_version,
+        review_result_version_id=(review_version if contract is not None else None),
+        artifact_refs={
+            "audit_report": order.audit_report,
+            "pdf_path": order.pdf_path,
+            "plan_file": order.plan_file,
+        },
+    )
+    next_href_map = {
+        "cwb": f"/portal/{escape(token)}/cwb",
+        "step1": f"/portal/{escape(token)}/info",
+        "full_plan": f"/portal/{escape(token)}/full-plan",
+        "none": f"/portal/{escape(token)}/full-plan",
+    }
+    next_href = next_href_map.get(
+        (contract.review_followup_action if contract is not None else "none"),
+        f"/portal/{escape(token)}/full-plan",
+    )
+    review_summary = (
+        f"<pre>{escape(json.dumps(contract.model_dump(), ensure_ascii=False, indent=2))}</pre>"
+        if contract is not None
+        else "<p class='meta'>当前暂无复核结果，可先从状态页或首页进入方案复核。</p>"
+    )
+    policy_href, same_score_href = _helper_entry_hrefs(payload, order)
+    auxiliary_html = _render_auxiliary_factor_section(payload)
+    version_state = _profile_version_state(payload, profile_version)
+    return f"""<!doctype html><html lang=\"zh-CN\"><head><meta charset=\"utf-8\" /><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" /><title>志愿报告资产页</title><link rel=\"stylesheet\" href=\"/static/portal-ui.css\" /><style>body{{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f3f7fb;margin:0;padding:32px 20px;color:#142235}}.wrap{{max-width:1100px;margin:0 auto;display:grid;gap:16px}}.panel{{background:#fff;border:1px solid #d7e3f1;border-radius:20px;padding:24px;box-shadow:0 18px 42px rgba(20,34,53,.08)}}.meta{{color:#5b6b88;line-height:1.8}}.actions{{display:flex;gap:12px;flex-wrap:wrap;margin-top:12px}}.btn{{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border-radius:14px;text-decoration:none;font-weight:700;background:#1f6feb;color:#fff}}.btn.secondary{{background:#eef6ff;color:#1f4fb6}}ul{{padding-left:20px;line-height:1.8}}pre{{white-space:pre-wrap;background:#f8fbff;border:1px solid #d7e3f1;border-radius:16px;padding:16px;overflow:auto}}</style></head><body><main class=\"wrap\"><section class=\"panel\"><h1>志愿报告资产页</h1><p class=\"meta\">报告版本：{escape(report_version)} · 基于哪个档案版本：{escape(profile_version)} · 当前复核版本：{escape(review_version)}</p><p class=\"meta\">{escape(version_state)} · {history_summary}</p><div class=\"actions\"><a class=\"btn\" href=\"{next_href}\">继续下一步</a><a class=\"btn secondary\" href=\"{policy_href}\">查看政策中心</a><a class=\"btn secondary\" href=\"{same_score_href}\">查看同分段参考</a></div></section><section class=\"panel\"><h2>当前复核摘要</h2>{review_summary}</section>{auxiliary_html}<section class=\"panel\"><h2>原始报告内容</h2>{report_body_html}</section><section class=\"panel\"><h2>下一步建议</h2><ul><li><a href=\"/portal/{escape(token)}/info\">回到资料页继续补充</a></li><li><a href=\"{next_href}\">继续当前主路径</a></li><li><a href=\"/review/start?source=report&amp;token={escape(token)}\">重新发起方案复核</a></li></ul></section>{_render_footer_links(token)}</main></body></html>"""
+
+
 def _render_report_page(order: Order, settings: Settings) -> str:
+    token = issue_portal_token(order.id, settings.portal_token_secret)
+    context = _build_portal_context(order, settings)
     if (
         order.audit_report
         and _is_trusted_report_path(order.audit_report, settings)
@@ -2249,19 +3015,276 @@ def _render_report_page(order: Order, settings: Settings) -> str:
         path = Path(order.audit_report)
         content = path.read_text(encoding="utf-8")
         if path.suffix.lower() == ".html":
-            return content
+            return _render_report_shell(token, order, context, content, settings)
         if path.suffix.lower() == ".json":
             pretty = json.dumps(json.loads(content), ensure_ascii=False, indent=2)
-            return f"<html><body><h1>志愿方案报告</h1><pre>{escape(pretty)}</pre></body></html>"
-        return f"<html><body><h1>志愿方案报告</h1><pre>{escape(content)}</pre></body></html>"
+            return _render_report_shell(
+                token, order, context, f"<pre>{escape(pretty)}</pre>", settings
+            )
+        return _render_report_shell(
+            token, order, context, f"<pre>{escape(content)}</pre>", settings
+        )
     if (
         order.plan_file
         and _is_trusted_report_path(order.plan_file, settings)
         and Path(order.plan_file).is_file()
     ):
         content = Path(order.plan_file).read_text(encoding="utf-8")
-        return f"<html><body><h1>志愿方案报告</h1><pre>{escape(content)}</pre></body></html>"
-    raise HTTPException(status_code=404, detail="report not found")
+        return _render_report_shell(
+            token, order, context, f"<pre>{escape(content)}</pre>", settings
+        )
+    raise HTTPException(status_code=409, detail="report not ready")
+
+
+def _review_payload_key() -> str:
+    return "review_result_contract"
+
+
+def _review_constraints_subjects_text(value: Any) -> str:
+    if isinstance(value, list):
+        parts = [str(item).strip() for item in value if str(item).strip()]
+        return " / ".join(parts) or "待补充"
+    text = str(value or "").strip()
+    return text or "待补充"
+
+
+def _review_constraints_display(value: Any) -> str:
+    text = str(value or "").strip()
+    return text or "待补充"
+
+
+def _start_review_result(
+    *,
+    source: Literal["home", "status", "report", "direct"],
+    token: str | None,
+    settings: Settings,
+    review_input_summary: str | None = None,
+    review_constraints: dict[str, Any] | None = None,
+) -> ReviewResultContract:
+    review_result_id = f"rvw_{secrets.token_hex(4)}"
+    resolved_summary = (review_input_summary or "").strip()
+    resolved_constraints = dict(review_constraints or {})
+    resolved_attachments: list[str] = []
+    if token:
+        order = _resolve_order_from_token(token, settings)
+        context = _build_portal_context(order, settings)
+        intake_summary = context.get("intake_summary") or {}
+        if not resolved_summary:
+            resolved_summary = str(
+                intake_summary.get("existing_plan_summary") or ""
+            ).strip()
+        if not resolved_constraints:
+            resolved_constraints = {
+                "candidate_province": intake_summary.get("candidate_province")
+                or order.candidate_province
+                or "",
+                "candidate_subjects": intake_summary.get("candidate_subjects")
+                or order.candidate_subjects
+                or [],
+                "candidate_score": intake_summary.get("candidate_score")
+                or order.candidate_score,
+                "candidate_rank": intake_summary.get("candidate_rank")
+                or order.candidate_rank,
+            }
+        resolved_attachments = [
+            str(item.get("original_name") or item.get("stored_name") or "").strip()
+            for item in list(context.get("attachments") or [])
+            if isinstance(item, dict)
+            and (item.get("original_name") or item.get("stored_name"))
+        ]
+    profile_ready = _is_profile_minimum_complete(resolved_constraints)
+    recommended_action: Literal["go_cwb", "go_step1", "go_full_plan"] = (
+        "go_cwb" if profile_ready else "go_step1"
+    )
+    top_finding = (
+        "Step 1 已齐全，可直接进入冲稳保微调，再决定是否进入完整规划。"
+        if profile_ready
+        else "当前方案建议先补充 Step 1 后再继续判断梯度风险。"
+    )
+    contract = ReviewResultContract(
+        review_result_id=review_result_id,
+        risk_level="medium",
+        top_findings=[top_finding],
+        recommended_action=recommended_action,
+        available_actions=["go_cwb", "go_step1", "go_full_plan"],
+        review_entry_source=source,
+        review_followup_action="none",
+        review_input_summary=resolved_summary or "未提供现有方案说明",
+        review_input_attachments=resolved_attachments,
+        review_constraints=resolved_constraints,
+    )
+    if token:
+        order = _resolve_order_from_token(token, settings)
+        intake_store = IntakeStore.for_db(settings.orders_db_path)
+        try:
+            current = intake_store.get(order.id)
+            payload = dict(current.payload) if current is not None else {}
+            payload["latest_review_result_id"] = contract.review_result_id
+            review_map = dict(payload.get("review_results") or {})
+            review_map[contract.review_result_id] = contract.model_dump()
+            payload["review_results"] = review_map
+            intake_store.save(
+                order_id=order.id,
+                payload=payload,
+                submit=(current.status == "submitted")
+                if current is not None
+                else False,
+            )
+        finally:
+            intake_store.close()
+    return contract
+
+
+def _render_review_start_page(contract: ReviewResultContract, token: str | None) -> str:
+    token_input = (
+        f'<input type="hidden" name="token" value="{escape(token)}" />' if token else ""
+    )
+    findings_html = (
+        "".join(f"<li>{escape(str(item))}</li>" for item in contract.top_findings)
+        or "<li>暂无核心问题</li>"
+    )
+    attachment_html = (
+        "、".join(
+            escape(str(item))
+            for item in contract.review_input_attachments
+            if str(item).strip()
+        )
+        or "无附件"
+    )
+    constraints = contract.review_constraints or {}
+    recommended_label = {
+        "go_cwb": "去冲稳保",
+        "go_step1": "去补 Step 1",
+        "go_full_plan": "去完整规划",
+    }[contract.recommended_action]
+    body_html = f"""<section class=\"panel\"><h1>方案复核入口</h1><p class=\"meta\">先看当前方案有什么问题，再决定是去冲稳保、补 Step 1，还是进入完整规划。</p></section><section class=\"panel\"><h2>审核输入</h2><ul><li>已有方案说明：{escape(contract.review_input_summary or "未提供现有方案说明")}</li><li>附件：{attachment_html}</li></ul></section><section class=\"panel\"><h2>最小约束</h2><ul><li>考试省份：{escape(_review_constraints_display(constraints.get("candidate_province")))}</li><li>选科组合：{escape(_review_constraints_subjects_text(constraints.get("candidate_subjects")))}</li><li>高考分数：{escape(_review_constraints_display(constraints.get("candidate_score")))}</li><li>位次：{escape(_review_constraints_display(constraints.get("candidate_rank")))}</li></ul></section><section class=\"panel\"><h2>审核输出摘要</h2><ul><li>风险等级：{escape(contract.risk_level)}</li><li>默认推荐动作：{recommended_label}</li></ul><h3>核心问题</h3><ul>{findings_html}</ul></section><section class=\"panel\"><h2>下一步分流</h2><p class=\"meta\">默认推荐：{recommended_label}。你也可以根据当前情况改走其他路径。</p><div class=\"actions\"><form action=\"/review/action\" method=\"post\">{token_input}<input type=\"hidden\" name=\"action\" value=\"cwb\" /><button class=\"btn btn-primary\" type=\"submit\">去冲稳保</button></form><form action=\"/review/action\" method=\"post\">{token_input}<input type=\"hidden\" name=\"action\" value=\"step1\" /><button class=\"btn btn-secondary\" type=\"submit\">去补 Step 1</button></form><form action=\"/review/action\" method=\"post\">{token_input}<input type=\"hidden\" name=\"action\" value=\"full_plan\" /><button class=\"btn btn-secondary\" type=\"submit\">去完整规划</button></form></div></section><section class=\"panel\"><pre>{escape(json.dumps(contract.model_dump(), ensure_ascii=False, indent=2))}</pre></section>"""
+    return _render_placeholder_shell(
+        title="方案复核入口", max_width=960, body_html=body_html
+    )
+
+
+def _apply_review_followup_action(
+    token: str, action: Literal["cwb", "step1", "full_plan"], settings: Settings
+) -> ReviewActionResponse:
+    order = _resolve_order_from_token(token, settings)
+    intake_store = IntakeStore.for_db(settings.orders_db_path)
+    try:
+        current = intake_store.get(order.id)
+        if current is None:
+            raise HTTPException(status_code=404, detail="review result not found")
+        payload = dict(current.payload)
+        review_id = payload.get("latest_review_result_id")
+        review_map = dict(payload.get("review_results") or {})
+        contract_raw = review_map.get(review_id) if review_id else None
+        if not isinstance(contract_raw, dict):
+            raise HTTPException(status_code=404, detail="review result not found")
+        contract = ReviewResultContract.model_validate(contract_raw)
+        updated = contract.model_copy(update={"review_followup_action": action})
+        review_map[updated.review_result_id] = updated.model_dump()
+        payload["review_results"] = review_map
+        intake_store.save(
+            order_id=order.id,
+            payload=payload,
+            submit=(current.status == "submitted"),
+        )
+    finally:
+        intake_store.close()
+    next_href = {
+        "cwb": f"/portal/{token}/cwb",
+        "step1": f"/portal/{token}/info",
+        "full_plan": f"/portal/{token}/full-plan",
+    }[action]
+    return ReviewActionResponse(
+        review_result_id=updated.review_result_id,
+        review_followup_action=action,
+        next_href=next_href,
+    )
+
+
+def _load_latest_review_result(
+    order_id: str, settings: Settings
+) -> ReviewResultContract | None:
+    intake_store = IntakeStore.for_db(settings.orders_db_path)
+    try:
+        current = intake_store.get(order_id)
+    finally:
+        intake_store.close()
+    if current is None:
+        return None
+    review_id = current.payload.get("latest_review_result_id")
+    review_map = dict(current.payload.get("review_results") or {})
+    contract_raw = review_map.get(review_id) if review_id else None
+    if not isinstance(contract_raw, dict):
+        return None
+    return ReviewResultContract.model_validate(contract_raw)
+
+
+def _render_cwb_placeholder_page(
+    token: str,
+    order: Order,
+    contract: ReviewResultContract | None,
+    context: dict[str, Any],
+) -> str:
+    payload = (
+        contract.model_dump()
+        if contract is not None
+        else {"review_followup_action": "cwb"}
+    )
+    intake_payload = _current_intake_payload(context)
+    policy_href, same_score_href = _helper_entry_hrefs(intake_payload, order)
+    auxiliary_html = _render_auxiliary_factor_section(intake_payload)
+    findings = contract.top_findings if contract is not None else []
+    findings_html = (
+        "".join(f"<li>{escape(str(item))}</li>" for item in findings)
+        or "<li>当前暂无复核摘要，请先回到复核入口。</li>"
+    )
+    recommendation = {
+        "go_cwb": "优先微调冲稳保梯度，先补齐冲刺 / 稳妥 / 保底三档，再决定是否进入完整规划。",
+        "go_step1": "先补齐 Step 1 的省份 / 分数 / 位次 / 选科，再回到冲稳保判断。",
+        "go_full_plan": "当前资料已可进入完整规划，建议继续补学校、专业与家庭约束。",
+    }.get(
+        (contract.recommended_action if contract is not None else "go_step1"),
+        "先补齐关键信息再继续。",
+    )
+    body_html = f"""<section class=\"panel\"><h1>冲稳保建议页</h1><p class=\"meta\">订单号：{escape(order.id)}。这里给出当前复核后的三档策略建议，供你决定下一步是微调梯度还是转入完整规划。</p><div class=\"actions\"><a href=\"{policy_href}\">查看政策中心</a><a href=\"{same_score_href}\">查看同分段参考</a></div></section><section class=\"panel\"><h2>当前建议</h2><p class=\"meta\">{escape(recommendation)}</p><ul>{findings_html}</ul></section><section class=\"panel\"><div style=\"display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;\"><article style=\"padding:16px;border-radius:14px;background:#f8fbff;border:1px solid #d7e3f1;\"><h2>冲刺建议</h2><p class=\"meta\">优先放入最看重但梯度更高的志愿，并保留风险提示。</p></article><article style=\"padding:16px;border-radius:14px;background:#f8fbff;border:1px solid #d7e3f1;\"><h2>稳妥建议</h2><p class=\"meta\">围绕当前位次与政策约束，建立主力可落地选择。</p></article><article style=\"padding:16px;border-radius:14px;background:#f8fbff;border:1px solid #d7e3f1;\"><h2>保底建议</h2><p class=\"meta\">保留最低风险去向，避免出现无可填报结果。</p></article></div></section><section class=\"panel\"><h2>当前复核摘要</h2><pre>{escape(json.dumps(payload, ensure_ascii=False, indent=2))}</pre></section>{auxiliary_html}<section class=\"panel\"><h2>下一步建议</h2><ul><li><a href=\"/portal/{escape(token)}/full-plan\">进入完整规划</a></li><li><a href=\"/portal/{escape(token)}/status\">返回订单状态页</a></li></ul></section>"""
+    return _render_placeholder_shell(
+        title="冲稳保建议页", max_width=1080, body_html=body_html
+    )
+
+
+def _render_full_plan_placeholder_page(
+    token: str,
+    order: Order,
+    context: dict[str, Any],
+    contract: ReviewResultContract | None,
+) -> str:
+    payload = (
+        contract.model_dump()
+        if contract is not None
+        else {"review_followup_action": "full_plan"}
+    )
+    missing = "、".join(context.get("profile_missing_fields") or []) or "无"
+    intake_payload = _current_intake_payload(context)
+    versions = [
+        item
+        for item in list(intake_payload.get("profile_versions") or [])
+        if isinstance(item, dict)
+    ]
+    version_lines = (
+        "".join(
+            f"<li>{escape(str(item.get('stage_label') or item.get('profile_version_id') or '未知版本'))}</li>"
+            for item in versions
+        )
+        or "<li>暂无版本历史</li>"
+    )
+    auxiliary_html = _render_auxiliary_factor_section(intake_payload)
+    planning_summary = (
+        "当前资料已进入完整规划阶段，可继续围绕学校、专业、预算与家庭约束做结构化取舍。"
+    )
+    body_html = f"""<section class=\"panel\"><h1>完整规划建议页</h1><p class=\"meta\">订单号：{escape(order.id)}。这里承接复核后的完整规划建议，不再只是入口说明。</p><p class=\"meta\">{escape(planning_summary)}</p><ul><li>Step 1 最小建档：{"已完成" if context.get("profile_minimum_complete") else "未完成"}</li><li>缺失字段：{escape(missing)}</li></ul></section><section class=\"panel\"><h2>方案优先级</h2><ul><li>先按省份 / 分数 / 位次确认基本梯度</li><li>再按院校偏好、专业偏好与家庭约束收敛方案</li><li>最后结合已有方案与附件做增量修订</li></ul></section><section class=\"panel\"><h2>版本历史</h2><ul>{version_lines}</ul></section>{auxiliary_html}<section class=\"panel\"><h2>当前复核摘要</h2><pre>{escape(json.dumps(payload, ensure_ascii=False, indent=2))}</pre></section><section class=\"panel\"><a href=\"/portal/{escape(token)}/info\">继续补充资料</a></section>"""
+    return _render_placeholder_shell(
+        title="完整规划建议页", max_width=960, body_html=body_html
+    )
 
 
 def _render_deletion_request_page(token: str, order: Order, settings: Settings) -> str:

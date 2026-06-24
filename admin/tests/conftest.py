@@ -14,7 +14,7 @@ import json
 import sys
 from dataclasses import dataclass
 from pathlib import Path
-from typing import cast
+from typing import cast, Literal
 from urllib.parse import parse_qsl, urlsplit
 
 import pytest
@@ -62,7 +62,9 @@ class RouteClient:
         return False
 
     @staticmethod
-    def _request(path: str, *, method: str = "GET", headers: dict[str, str] | None = None):
+    def _request(
+        path: str, *, method: str = "GET", headers: dict[str, str] | None = None
+    ):
         split = urlsplit(path)
         raw_headers = [
             (key.lower().encode("utf-8"), value.encode("utf-8"))
@@ -149,7 +151,6 @@ class RouteClient:
             ServiceVersion,
             checkout_page,
             deletion_policy_page,
-            landing_page,
             order_info_page,
             order_status_page,
             payment_return_page,
@@ -158,6 +159,7 @@ class RouteClient:
             privacy_page,
             report_pdf_download,
             report_view_page,
+            review_start_page,
             service_terms_page,
         )
 
@@ -167,13 +169,13 @@ class RouteClient:
 
         try:
             if route_path == "/":
-                return self._html_response(
-                    landing_page(self._request(path, method="GET"))
-                )
+                request = self._request(path, method="GET")
+                from admin.routes.web_public import landing_page
+
+                return self._html_response(landing_page(request, settings))
             if route_path == "/pricing":
-                return self._html_response(
-                    pricing_page(self._request(path, method="GET"))
-                )
+                request = self._request(path, method="GET")
+                return self._html_response(pricing_page(request))
             if route_path.startswith("/checkout/"):
                 service_version = cast(
                     ServiceVersion, route_path.split("/checkout/", 1)[1]
@@ -184,8 +186,28 @@ class RouteClient:
                 return self._redirect_response(
                     payment_return_page(query["payment_id"], settings)
                 )
-            if route_path.startswith("/portal/") and route_path.endswith("/payment-success"):
-                token = route_path.split("/portal/", 1)[1].rsplit("/payment-success", 1)[0]
+            if route_path == "/review/start":
+                query = dict(parse_qsl(split.query, keep_blank_values=True))
+                return self._html_response(
+                    review_start_page(
+                        cast(
+                            Literal["home", "status", "report", "direct"],
+                            query.get("source") or "direct",
+                        ),
+                        query.get("token"),
+                        query.get("province"),
+                        query.get("score"),
+                        query.get("goal"),
+                        query.get("consult"),
+                        settings,
+                    )
+                )
+            if route_path.startswith("/portal/") and route_path.endswith(
+                "/payment-success"
+            ):
+                token = route_path.split("/portal/", 1)[1].rsplit(
+                    "/payment-success", 1
+                )[0]
                 return self._html_response(payment_success_page(token, settings))
             if route_path.startswith("/portal/") and route_path.endswith("/status"):
                 token = route_path.split("/portal/", 1)[1].rsplit("/status", 1)[0]
@@ -193,6 +215,16 @@ class RouteClient:
             if route_path.startswith("/portal/") and route_path.endswith("/info"):
                 token = route_path.split("/portal/", 1)[1].rsplit("/info", 1)[0]
                 return self._html_response(order_info_page(token, settings))
+            if route_path.startswith("/portal/") and route_path.endswith("/cwb"):
+                token = route_path.split("/portal/", 1)[1].rsplit("/cwb", 1)[0]
+                from admin.routes.web_public import cwb_placeholder_page
+
+                return self._html_response(cwb_placeholder_page(token, settings))
+            if route_path.startswith("/portal/") and route_path.endswith("/full-plan"):
+                token = route_path.split("/portal/", 1)[1].rsplit("/full-plan", 1)[0]
+                from admin.routes.web_public import full_plan_placeholder_page
+
+                return self._html_response(full_plan_placeholder_page(token, settings))
             if route_path.startswith("/portal/") and route_path.endswith("/report.pdf"):
                 token = route_path.split("/portal/", 1)[1].rsplit("/report.pdf", 1)[0]
                 response = report_pdf_download(token, settings)
@@ -210,6 +242,21 @@ class RouteClient:
             if route_path == "/service-terms":
                 query = dict(parse_qsl(split.query, keep_blank_values=True))
                 return self._html_response(service_terms_page(query.get("token")))
+            if route_path == "/policy-center":
+                query = dict(parse_qsl(split.query, keep_blank_values=True))
+                from admin.routes.web_public import policy_center_page
+
+                return self._html_response(
+                    policy_center_page(query.get("province") or "湖南")
+                )
+            if route_path == "/same-score-reference":
+                query = dict(parse_qsl(split.query, keep_blank_values=True))
+                from admin.routes.web_public import same_score_reference_page
+
+                score = int(query.get("score") or 0)
+                return self._html_response(
+                    same_score_reference_page(query.get("province") or "湖南", score)
+                )
             if route_path == "/deletion-policy":
                 return self._html_response(deletion_policy_page())
         except HTTPException as exc:
@@ -222,6 +269,7 @@ class RouteClient:
             complete_mock_payment,
             create_public_order_endpoint,
             mock_payment_webhook,
+            review_action_endpoint,
         )
         from data.orders.public_flow import PublicOrderCreate
 
@@ -229,7 +277,7 @@ class RouteClient:
         route_path = split.path
         settings = self.app.state.settings
         payload = kwargs.get("json")
-        headers = kwargs.get("headers") or {}
+        form_data = kwargs.get("data") or {}
 
         try:
             if route_path == "/api/public/orders":
@@ -240,13 +288,33 @@ class RouteClient:
                 created = create_public_order_endpoint(model, settings)
                 return self._json_response(created.model_dump(), status_code=201)
             if route_path.startswith("/pay/mock/") and route_path.endswith("/complete"):
-                payment_id = route_path.split("/pay/mock/", 1)[1].rsplit("/complete", 1)[0]
+                payment_id = route_path.split("/pay/mock/", 1)[1].rsplit(
+                    "/complete", 1
+                )[0]
                 redirect = complete_mock_payment(payment_id, settings)
                 return self._redirect_response(redirect)
             if route_path == "/api/public/payments/mock/webhook":
-                request = self._request(path, method="POST", headers=headers)
+                request = self._request(
+                    path, method="POST", headers=kwargs.get("headers")
+                )
                 ack = mock_payment_webhook(payload or {}, request, settings)
                 return self._json_response(ack.model_dump())
+            if route_path == "/review/action":
+                result = review_action_endpoint(
+                    token=str(
+                        (payload or {}).get("token") or form_data.get("token") or ""
+                    ),
+                    action=cast(
+                        Literal["cwb", "step1", "full_plan"],
+                        str(
+                            (payload or {}).get("action")
+                            or form_data.get("action")
+                            or ""
+                        ),
+                    ),
+                    settings=settings,
+                )
+                return self._redirect_response(result)
         except HTTPException as exc:
             return self._http_exception_response(exc)
 
