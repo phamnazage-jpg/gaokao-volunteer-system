@@ -1,6 +1,6 @@
 {
   "province": "湖南",
-  "last_updated": "2026-06-21",
+  "last_updated": "2026-06-24",
   "data_year": 2025,
   "source": "千问/元宝/百度/豆包 公开推荐汇总（手动整理），T2.1 扩展覆盖专科批与省外顶尖段；可信来源治理补齐 2026-06-21",
   "source_url": "https://gaokao.chsi.com.cn/",
@@ -1680,8 +1680,8 @@
       "kind": "national_official"
     },
     {
-      "name": "湖南招生考试机构/教育考试院",
-      "url": "",
+      "name": "湖南省教育考试院",
+      "url": "https://jyt.hunan.gov.cn/jyt/sjyt/hnsjyksy/",
       "kind": "province_official_pending_review"
     }
   ],

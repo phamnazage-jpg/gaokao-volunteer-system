@@ -41,49 +41,55 @@
 
 ### 📘 核心文档（docs/）
 
-| 文档                                                                                           | 用途                           |
-| ---------------------------------------------------------------------------------------------- | ------------------------------ |
-| [TUTORIAL.md](TUTORIAL.md)                                                                     | 使用教程、API参考              |
-| [DEVELOPMENT.md](DEVELOPMENT.md)                                                               | 开发规范、贡献流程             |
-| [ARCHITECTURE.md](ARCHITECTURE.md)                                                             | 系统架构、设计原则             |
-| [API.md](API.md)                                                                               | API接口文档                    |
-| [RELEASE.md](RELEASE.md)                                                                       | 版本发布说明                   |
-| [AUTHORS.md](AUTHORS.md)                                                                       | 作者与贡献者                   |
-| [NAVIGATION.md](NAVIGATION.md)                                                                 | 文档导航索引                   |
-| [UX_DESIGN.md](UX_DESIGN.md)                                                                   | 用户体验设计                   |
-| [SHARING_DESIGN.md](SHARING_DESIGN.md)                                                         | 分享功能设计                   |
-| [ADMIN_DESIGN.md](ADMIN_DESIGN.md)                                                             | 管理后台设计                   |
-| [BUSINESS_SCENE.md](BUSINESS_SCENE.md)                                                         | 业务场景与推广                 |
-| [COMPETITIVE_ANALYSIS.md](COMPETITIVE_ANALYSIS.md)                                             | 竞品分析(大厂AI)               |
-| [TECH_ARCHITECTURE.md](TECH_ARCHITECTURE.md)                                                   | 技术架构设计 🆕                |
-| [CURRENT_STATE.md](CURRENT_STATE.md)                                                           | 当前真相源 🆕                  |
-| [ACTIVE_REMEDIATION_2026-06-13.md](ACTIVE_REMEDIATION_2026-06-13.md)                           | 当前仍有效问题清单 🆕          |
-| [ACTIVE_EXECUTION_BOARD_2026-06-13.md](ACTIVE_EXECUTION_BOARD_2026-06-13.md)                   | 历史执行板（6/13快照）         |
-| [ACTIVE_EXECUTION_BOARD_2026-06-17.md](ACTIVE_EXECUTION_BOARD_2026-06-17.md)                   | 当前执行板（6/17口径） 🆕      |
-| [P0_P1_P2_REMEDIATION_PLAN_2026-06-14.md](P0_P1_P2_REMEDIATION_PLAN_2026-06-14.md)             | 历史整改板（以 CURRENT_STATE 为准） |
-| [PRODUCTION_DEPLOYMENT_CHECKLIST_2026-06-15.md](PRODUCTION_DEPLOYMENT_CHECKLIST_2026-06-15.md) | 线上部署与真实配置注入清单 🆕  |
-| [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md)                                               | v2.1实施计划 v1.0              |
-| [IMPLEMENTATION_PLAN_v2.md](IMPLEMENTATION_PLAN_v2.md)                                         | v2.1实施计划 v2.0（修订版）🆕  |
-| [plans/](plans/)                                                                               | 详细任务计划 🆕                |
+| 文档                                                                                                                                           | 用途                                |
+| ---------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------- |
+| [TUTORIAL.md](TUTORIAL.md)                                                                                                                     | 使用教程、API参考                   |
+| [DEVELOPMENT.md](DEVELOPMENT.md)                                                                                                               | 开发规范、贡献流程                  |
+| [ARCHITECTURE.md](ARCHITECTURE.md)                                                                                                             | 系统架构、设计原则                  |
+| [API.md](API.md)                                                                                                                               | API接口文档                         |
+| [RELEASE.md](RELEASE.md)                                                                                                                       | 版本发布说明                        |
+| [AUTHORS.md](AUTHORS.md)                                                                                                                       | 作者与贡献者                        |
+| [NAVIGATION.md](NAVIGATION.md)                                                                                                                 | 文档导航索引                        |
+| [UX_DESIGN.md](UX_DESIGN.md)                                                                                                                   | 用户体验设计                        |
+| [SHARING_DESIGN.md](SHARING_DESIGN.md)                                                                                                         | 分享功能设计                        |
+| [ADMIN_DESIGN.md](ADMIN_DESIGN.md)                                                                                                             | 管理后台设计                        |
+| [BUSINESS_SCENE.md](BUSINESS_SCENE.md)                                                                                                         | 业务场景与推广                      |
+| [COMPETITIVE_ANALYSIS.md](COMPETITIVE_ANALYSIS.md)                                                                                             | 竞品分析(大厂AI)                    |
+| [TECH_ARCHITECTURE.md](TECH_ARCHITECTURE.md)                                                                                                   | 技术架构设计 🆕                     |
+| [CURRENT_STATE.md](CURRENT_STATE.md)                                                                                                           | 当前真相源 🆕                       |
+| [STRICT_SYSTEM_REVIEW_2026-06-24.md](../reports/STRICT_SYSTEM_REVIEW_2026-06-24.md)                                                           | 最新严格系统审查汇总版 🆕           |
+| [ACTIVE_REMEDIATION_2026-06-13.md](ACTIVE_REMEDIATION_2026-06-13.md)                                                                           | 当前仍有效问题清单 🆕               |
+| [ACTIVE_EXECUTION_BOARD_2026-06-13.md](ACTIVE_EXECUTION_BOARD_2026-06-13.md)                                                                   | 历史执行板（6/13快照）              |
+| [ACTIVE_EXECUTION_BOARD_2026-06-17.md](ACTIVE_EXECUTION_BOARD_2026-06-17.md)                                                                   | 当前执行板（6/17口径） 🆕           |
+| [UPGRADE_EXECUTION_BOARD_2026-06-22.md](UPGRADE_EXECUTION_BOARD_2026-06-22.md)                                                                 | 升级优化执行板（P0/P1/P2） 🆕       |
+| [REPORT_PROFILE_VERSION_RELATION_2026-06-22.md](REPORT_PROFILE_VERSION_RELATION_2026-06-22.md)                                                 | 报告/档案/复核版本关系 🆕           |
+| [PAGE_REDESIGN_CHECKLIST_2026-06-21.md](PAGE_REDESIGN_CHECKLIST_2026-06-21.md)                                                                 | 用户端页面重构验收清单 🆕           |
+| [P0_P1_P2_REMEDIATION_PLAN_2026-06-14.md](P0_P1_P2_REMEDIATION_PLAN_2026-06-14.md)                                                             | 历史整改板（以 CURRENT_STATE 为准） |
+| [PRODUCTION_DEPLOYMENT_CHECKLIST_2026-06-15.md](PRODUCTION_DEPLOYMENT_CHECKLIST_2026-06-15.md)                                                 | 线上部署与真实配置注入清单 🆕       |
+| [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md)                                                                                               | v2.1实施计划 v1.0                   |
+| [IMPLEMENTATION_PLAN_v2.md](IMPLEMENTATION_PLAN_v2.md)                                                                                         | v2.1实施计划 v2.0（修订版）🆕       |
+| [plans/2026-06-23-national-high-trust-crowd-db-plan.md](plans/2026-06-23-national-high-trust-crowd-db-plan.md)                                 | crowd_db 全国高信任建设详细计划 🆕  |
+| [plans/2026-06-24-crowd-db-national-high-trust-subagent-work-orders.md](plans/2026-06-24-crowd-db-national-high-trust-subagent-work-orders.md) | crowd_db 全国高信任子代理派工单 🆕  |
+| [plans/](plans/)                                                                                                                               | 详细任务计划 🆕                     |
 
 ### 🗃️ 历史归档（docs/archive/）
 
-| 文档                                                         | 用途                         |
-| ------------------------------------------------------------ | ---------------------------- |
-| [archive/README.md](archive/README.md)                       | 历史归档总索引               |
-| [archive/2026-06-historical-snapshots/README.md](archive/2026-06-historical-snapshots/README.md) | 6 月历史快照索引             |
-| [archive/2026-06-historical-snapshots/AUDIT_REPORT_2026-06-11.md](archive/2026-06-historical-snapshots/AUDIT_REPORT_2026-06-11.md) | 历史审核报告（6/11快照）     |
-| [archive/2026-06-historical-snapshots/REMEDIATION_TASK_BOARD_2026-06-11.md](archive/2026-06-historical-snapshots/REMEDIATION_TASK_BOARD_2026-06-11.md) | 历史修复任务板（6/11快照）   |
-| [archive/2026-06-historical-snapshots/FINAL_COMPLETION_REPORT_2026-06-13.md](archive/2026-06-historical-snapshots/FINAL_COMPLETION_REPORT_2026-06-13.md) | 历史完成报告（6/13口径）     |
-| [archive/2026-06-18-rules-cleanup/README.md](archive/2026-06-18-rules-cleanup/README.md) | 417 文件整理与规则清理记录   |
+| 文档                                                                                                                                                     | 用途                       |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------- |
+| [archive/README.md](archive/README.md)                                                                                                                   | 历史归档总索引             |
+| [archive/2026-06-historical-snapshots/README.md](archive/2026-06-historical-snapshots/README.md)                                                         | 6 月历史快照索引           |
+| [archive/2026-06-historical-snapshots/AUDIT_REPORT_2026-06-11.md](archive/2026-06-historical-snapshots/AUDIT_REPORT_2026-06-11.md)                       | 历史审核报告（6/11快照）   |
+| [archive/2026-06-historical-snapshots/REMEDIATION_TASK_BOARD_2026-06-11.md](archive/2026-06-historical-snapshots/REMEDIATION_TASK_BOARD_2026-06-11.md)   | 历史修复任务板（6/11快照） |
+| [archive/2026-06-historical-snapshots/FINAL_COMPLETION_REPORT_2026-06-13.md](archive/2026-06-historical-snapshots/FINAL_COMPLETION_REPORT_2026-06-13.md) | 历史完成报告（6/13口径）   |
+| [archive/2026-06-18-rules-cleanup/README.md](archive/2026-06-18-rules-cleanup/README.md)                                                                 | 417 文件整理与规则清理记录 |
 
 ### 🔍 规则文档（rules/）
 
-| 文档                                                | 用途         |
-| --------------------------------------------------- | ------------ |
-| [provinces/README.md](../rules/provinces/README.md) | 省份规则目录入口 |
+| 文档                                                | 用途                               |
+| --------------------------------------------------- | ---------------------------------- |
+| [provinces/README.md](../rules/provinces/README.md) | 省份规则目录入口                   |
 | [provinces.md](../rules/provinces.md)               | 省份规则索引与 truth/evidence 入口 |
-| [errors/ERRORS.md](../rules/errors/ERRORS.md)       | 错误模式库   |
+| [errors/ERRORS.md](../rules/errors/ERRORS.md)       | 错误模式库                         |
 
 ### 📖 案例文档（docs/case-studies/）
 
@@ -94,10 +100,12 @@
 
 ### 📋 优化日志（docs/optimization-log/）
 
-| 文档                                              | 用途         |
-| ------------------------------------------------- | ------------ |
-| [LOG.md](optimization-log/LOG.md)                 | 优化过程记录 |
-| [future-plan.md](optimization-log/future-plan.md) | 未来规划     |
+| 文档                                                                                | 用途                              |
+| ----------------------------------------------------------------------------------- | --------------------------------- |
+| [LOG.md](optimization-log/LOG.md)                                                   | 优化过程记录                      |
+| [TEST_CLIENT_COVERAGE_2026-06-23.md](../reports/TEST_CLIENT_COVERAGE_2026-06-23.md)                                                          | 用户端真实 TestClient 覆盖现状 🆕  |
+| [STRICT_SYSTEM_REVIEW_2026-06-24.md](../reports/STRICT_SYSTEM_REVIEW_2026-06-24.md)                                                          | 最新严格系统审查汇总版 🆕          |
+| [future-plan.md](optimization-log/future-plan.md)                                   | 未来规划                          |
 
 ### 📄 Skill文档
 

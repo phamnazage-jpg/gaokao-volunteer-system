@@ -1,38 +1,34 @@
 # CURRENT_STATE
 
-最后更新: 2026-06-21
-状态词: 本地验证完成（6/19 复审 + 6/19 整改计划 + A1 保留期门禁 + B1 支付失败持久化
-
-- A2/B2 文档与执行板校准 + 6/20 T12-D retention cleanup conn ownership 修复
-- 端到端本地 acceptance 步骤落地 + 6/20 A-2 admin/外部渠道补录同意审计统一化
-- 6/20 生产加固 (`/health` checks + JWT/admin password fail-closed) + 6/20
-  L-A 送审前修复 (admin footer + baseline §6/§7 同步) + 6/20 crowd_db 质量契约
-  锁死 + 6/20 v2.1.4 四维验证脚本（性能/集成/用户模拟/部署运维）已落地，2026-06-21
-  复跑仍通过；下一阶段 = 推进 T12 真实支付 acceptance + 隐私政策正式审定 +
-  备份恢复异机演练）
+最后更新: 2026-06-23
+状态词: 本地验证完成（v2.1 主链与 6/20/6/21 增量仍成立；crowd_db 27省口径已全部达到 usable 及以上，当前 live 基线为 7 high / 20 usable / 0 skeleton；31 省真正全国口径仍缺 4 个自治区）
 
 真相源优先级:
 
 1. 本文件
-2. `docs/ACTIVE_REMEDIATION_2026-06-20.md`（6/20 当前整改清单，**取代 6/19 历史快照**）
-3. `docs/ACTIVE_EXECUTION_BOARD_2026-06-20.md`（6/20 当前执行板，**取代 6/19 历史快照**）
-4. `docs/ACTIVE_REMEDIATION_2026-06-19.md`（**已降级为历史快照**）
-5. `docs/ACTIVE_EXECUTION_BOARD_2026-06-19.md`（**已降级为历史快照**）
-6. `docs/plans/2026-06-19-production-readiness-remediation-plan.md`（6/19 整改计划）
-7. `reports/PRODUCTION_STRICT_REVIEW_2026-06-19.md`（6/19 复审报告）
-8. `docs/plans/2026-06-17-phase2-majors-catalog-implementation-plan.md`（Phase 2 已收口快照）
-9. `docs/DESIGN_RULES_TRUSTED_CLI_2026-06-16.md`（设计快照；Phase 编号需与执行口径消歧）
-10. `docs/PROJECT_PLANNING_REALIGNMENT_2026-06-16.md`（历史规划/实现漂移审计）
-11. `docs/RULES_SOURCE_OF_TRUTH.md`（规则真相源索引；待补建）
-12. `docs/MAJOR_DATA_SOURCE_OF_TRUTH.md`（专业目录真相源索引）
-13. `docs/CLI_API_MAPPING.md`（CLI/API 映射索引）
-14. `docs/P0_P1_P2_REMEDIATION_PLAN_2026-06-14.md`（历史整改板；§4 卡片以 §2.1 状态归一为准）
-15. `docs/FRONTEND_UI_AUDIT_2026-06-16.md` / `docs/FRONTEND_UI_EXECUTION_BOARD_2026-06-16.md`
-16. `docs/ACTIVE_REMEDIATION_2026-06-13.md`（**已降级为历史快照**）
-17. `docs/ACTIVE_EXECUTION_BOARD_2026-06-13.md`（**已降级为历史快照**）
-18. `product/PRD.md` / `product/ROADMAP.md` / `docs/IMPLEMENTATION_PLAN_v2.md`
-19. `docs/PRODUCTION_DEPLOYMENT_CHECKLIST_2026-06-15.md`
-20. `reports/PRODUCT_PLANNING_TECH_ALIGNMENT_REVIEW_2026-06-13.md`（历史评审快照）
+2. `reports/STRICT_SYSTEM_REVIEW_2026-06-24.md`（6/24 最新严格系统复审汇总版；149 passed, 1 warning，当前建议作为最新审查结论）
+3. `reports/STRICT_SYSTEM_REVIEW_2026-06-23.md`（6/23~6/24 历史滚动审查过程稿，保留发现/修复轨迹）
+4. `docs/CROWD_DB_NATIONALIZATION_SOURCE_OF_TRUTH.md`（全国高信任建设当前口径与批次真相）
+5. `docs/ACTIVE_REMEDIATION_2026-06-20.md`（6/20 当前整改清单，**取代 6/19 历史快照**）
+6. `docs/ACTIVE_EXECUTION_BOARD_2026-06-20.md`（6/20 当前执行板，**取代 6/19 历史快照**）
+7. `docs/ACTIVE_REMEDIATION_2026-06-19.md`（**已降级为历史快照**）
+8. `docs/ACTIVE_EXECUTION_BOARD_2026-06-19.md`（**已降级为历史快照**）
+9. `docs/plans/2026-06-23-national-high-trust-crowd-db-plan.md`（全国高信任建设详细计划）
+10. `docs/plans/2026-06-19-production-readiness-remediation-plan.md`（6/19 整改计划）
+11. `reports/PRODUCTION_STRICT_REVIEW_2026-06-19.md`（6/19 复审报告）
+12. `docs/plans/2026-06-17-phase2-majors-catalog-implementation-plan.md`（Phase 2 已收口快照）
+13. `docs/DESIGN_RULES_TRUSTED_CLI_2026-06-16.md`（设计快照；Phase 编号需与执行口径消歧）
+14. `docs/PROJECT_PLANNING_REALIGNMENT_2026-06-16.md`（历史规划/实现漂移审计）
+15. `docs/RULES_SOURCE_OF_TRUTH.md`（规则真相源索引；待补建）
+16. `docs/MAJOR_DATA_SOURCE_OF_TRUTH.md`（专业目录真相源索引）
+17. `docs/CLI_API_MAPPING.md`（CLI/API 映射索引）
+18. `docs/P0_P1_P2_REMEDIATION_PLAN_2026-06-14.md`（历史整改板；§4 卡片以 §2.1 状态归一为准）
+19. `docs/FRONTEND_UI_AUDIT_2026-06-16.md` / `docs/FRONTEND_UI_EXECUTION_BOARD_2026-06-16.md`
+20. `docs/ACTIVE_REMEDIATION_2026-06-13.md`（**已降级为历史快照**）
+21. `docs/ACTIVE_EXECUTION_BOARD_2026-06-13.md`（**已降级为历史快照**）
+22. `product/PRD.md` / `product/ROADMAP.md` / `docs/IMPLEMENTATION_PLAN_v2.md`
+23. `docs/PRODUCTION_DEPLOYMENT_CHECKLIST_2026-06-15.md`
+24. `reports/PRODUCT_PLANNING_TECH_ALIGNMENT_REVIEW_2026-06-13.md`（历史评审快照）
 
 ---
 
@@ -93,12 +89,14 @@
 - 新增 `data/crowd_db/tests/test_crowd_db_data_quality.py` (CROWD_DB_DATA_QUALITY
   §7 承诺的锁死文件，仓库此前缺失)：
   - 27 省总数 (23 省 + 4 直辖市)
-  - 仅湖南为 high
-  - 其它 26 省 quality_level ∈ {usable, skeleton}
-  - 高考生源大省 (广东/江苏/北京/上海/山东/河南/四川/湖北) 不在 high 集合
+  - 4 个 high (湖南 / 广东 / 江苏 / 山东)
+  - 3 个 usable (河北 / 浙江 / 福建)
+  - 20 个省仍为 skeleton
+  - 高考生源大省 (北京/上海/河南/四川/湖北) 不在 high 集合
   - 所有 confidence ∈ [0, 1]
   - 所有 data_year = 2025 (6/25 后需显式更新)
 - 防止"27 省 crowd_db 均为高置信强推荐数据"合规假象回归
+- 27 省 crowd_db 中已完成 4 个 high：湖南 / 广东 / 江苏 / 山东；3 个 usable：河北 / 浙江 / 福建；其余 20 省仍为 skeleton
 
 ### 0.6 crowd_db 可信来源元数据补齐（2026-06-21）
 
@@ -113,7 +111,25 @@
 - 6/20 新建 `docs/ACTIVE_REMEDIATION_2026-06-20.md` + `docs/ACTIVE_EXECUTION_BOARD_2026-06-20.md`
 - 本节作为 6/20 增量叠加在 6/19 真相源之上
 
-### 0.8 法务协议与 crowd_db 可信来源补齐（2026-06-21）
+### 0.8 用户端主链路真实 TestClient 覆盖收口（2026-06-23）
+
+- 公开页与主流程已用真实 `TestClient` 证明：
+  - `/` / `/pricing` / `/checkout/*`
+  - `POST /api/public/orders`
+  - `POST /review/action`（真实 form + 303 redirect）
+  - `/review/start`
+  - `/portal/{token}/info` / `/status` / `/report` / `/report.pdf`
+  - `/portal/{token}/cwb` / `/full-plan` / `/payment-success`
+  - `POST /pay/mock/{payment_id}/complete`
+- `RouteClient` 已降级为辅助：
+  - 临时 app / 特殊 env（缺 key、provider unavailable、prod 隐藏 mock）
+  - `submit_order_info(...)` 这类直接函数级持久化断言
+  - 少量流程搭台用途
+- 现状口径：主链路正确性不再依赖 `RouteClient` 自证，真实页面 / 真实协议 / 真实重定向已可回归验证
+- 证据：`reports/TEST_CLIENT_COVERAGE_2026-06-23.md`
+- 验证：`./.venv/bin/python -m pytest -q admin/tests/test_order_status_page.py admin/tests/test_web_public.py admin/tests/test_web_public_content_pages.py admin/tests/test_web_public_review_flow.py admin/tests/test_web_public_portal_info.py data/orders/tests/test_schema.py` → `89 passed, 1 warning`
+
+### 0.9 法务协议与 crowd_db 可信来源补齐（2026-06-21）
 
 - `docs/PRIVACY_POLICY_DRAFT.md` 补齐：未成年人、委托处理、用户权利、存储与删除、投诉联系方式、版本生效等条款
 - `docs/SERVICE_TERMS.md` 补齐：服务边界、支付退款、知识产权、免责、争议解决、版本更新等条款
