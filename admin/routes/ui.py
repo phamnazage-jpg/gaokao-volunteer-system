@@ -5,9 +5,11 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any, Callable, Optional, cast
 
-from fastapi import APIRouter, Query, Request
+from fastapi import APIRouter, Depends, Query, Request
 from fastapi.responses import FileResponse, HTMLResponse
 
+from admin.auth import require_role
+from admin.db import AdminUser
 from admin.config import Settings, get_settings_dep
 from admin.share_page import (
     load_report_from_directory,
@@ -25,14 +27,15 @@ _DASHBOARD_HTML = _STATIC_DIR / "dashboard.html"
 
 @router.get("/dashboard", include_in_schema=False)
 @router.get("/admin/dashboard", include_in_schema=False)
-def dashboard_page() -> FileResponse:
+def dashboard_page(_: AdminUser = Depends(require_role("admin"))) -> FileResponse:
     """返回最小仪表盘页面壳。"""
     return FileResponse(_DASHBOARD_HTML)
 
 
 @router.get("/admin/orders/new", include_in_schema=False)
-def admin_new_order_page() -> HTMLResponse:
+def admin_new_order_page(_: AdminUser = Depends(require_role("admin"))) -> HTMLResponse:
     return HTMLResponse(_render_admin_new_order_page())
+
 
 
 @router.get("/s/{code}", include_in_schema=False)
@@ -146,6 +149,9 @@ button {{ border:none;border-radius:14px;background:#1f6feb;color:#fff;font-weig
 <div class='field'><label>微信</label><input name='customer_wechat' /></div>
 <div class='field'><label>考生姓名</label><input name='candidate_name' /></div>
 <div class='field'><label>考试省份</label><select name='candidate_province'>{province_html}</select></div>
+<div class='grid'>
+<div class='field'><label>同意方式</label><select name='consent_method'><option value='verbal_chat' selected>verbal_chat</option><option value='phone_recording'>phone_recording</option><option value='screenshot'>screenshot</option><option value='written_form'>written_form</option><option value='self_declared'>self_declared</option></select></div>
+<div class='field'><label>同意备注</label><input name='consent_note' placeholder='例如：微信沟通后家长口头同意' /></div>
 </div>
 <div class='field'><label>备注</label><textarea name='notes'></textarea></div>
 <button type='submit'>创建订单</button>
@@ -168,6 +174,10 @@ document.getElementById('order-form').addEventListener('submit', async function(
     candidate_name: form.get('candidate_name') || null,
     candidate_province: form.get('candidate_province') || null,
     notes: form.get('notes') || null,
+    consent: {{
+      consent_method: form.get('consent_method') || 'verbal_chat',
+      consent_note: form.get('consent_note') || null,
+    }},
   }};
   const resultNode = document.getElementById('result');
   resultNode.textContent = '正在创建订单…';

@@ -264,10 +264,7 @@ def compute_summary(
                 *_REVENUE_STATUSES,
             ),
         ).fetchone()
-        with open("/tmp/debug_stats.txt", "a") as _f:
-            _f.write(f"ROW_AFTER_QUERY={dict(row)}\n")
-        # Cleanup
-        _ = None
+
 
     # 用户数 (单独连接 admin DB,避免在 orders DB 上去找可能不存在的表)
     total_users = 0

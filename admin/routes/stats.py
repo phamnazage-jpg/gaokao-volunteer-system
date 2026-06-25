@@ -16,7 +16,7 @@ from __future__ import annotations
 from fastapi import APIRouter, Depends, Request
 from pydantic import BaseModel
 
-from admin.auth import get_current_user
+from admin.auth import require_role
 from admin.config import Settings, get_settings_dep
 from admin.db import AdminUser
 from admin.stats import (
@@ -73,7 +73,7 @@ class OrderStatsResponse(BaseModel):
 def get_dashboard(
     request: Request,
     settings: Settings = Depends(get_settings_dep),
-    _: AdminUser = Depends(get_current_user),
+    _: AdminUser = Depends(require_role("admin")),
 ) -> dict:
     """仪表盘端点 — T6.2 真实聚合。
 
@@ -112,7 +112,7 @@ def get_dashboard(
 def get_order_stats(
     request: Request,
     settings: Settings = Depends(get_settings_dep),
-    _: AdminUser = Depends(get_current_user),
+    _: AdminUser = Depends(require_role("admin")),
 ) -> dict:
     """订单维度统计端点 — T6.2 真实聚合。"""
     return build_order_stats_payload(settings.orders_db_path)

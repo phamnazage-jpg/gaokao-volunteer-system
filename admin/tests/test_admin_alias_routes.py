@@ -1,11 +1,12 @@
 from __future__ import annotations
 
 
-def test_admin_dashboard_alias_served(client):
-    resp = client.get("/admin/dashboard")
+def test_admin_dashboard_alias_served(client, auth_headers):
+    resp = client.get("/admin/dashboard", headers=auth_headers)
     assert resp.status_code == 200
     assert "仪表盘" in resp.text
     assert "/static/dashboard.js" in resp.text
+
 
 
 def test_admin_orders_alias_list_and_detail(client, auth_headers):

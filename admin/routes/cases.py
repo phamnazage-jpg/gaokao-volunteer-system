@@ -8,7 +8,7 @@ from typing import Any, Literal, Optional
 from fastapi import APIRouter, Depends, Path, Query, Response, status
 from pydantic import BaseModel, Field
 
-from admin.auth import get_current_user
+from admin.auth import require_role
 from admin.config import Settings, get_settings_dep
 from admin.db import AdminUser, utc_now_iso
 from admin.errors import DATA_NOT_FOUND
@@ -72,7 +72,7 @@ def list_cases(
     category: Optional[CaseCategory] = Query(None),
     review_status: Optional[CaseReviewStatus] = Query(None),
     settings: Settings = Depends(get_settings_dep),
-    _: AdminUser = Depends(get_current_user),
+    _: AdminUser = Depends(require_role("admin")),
 ) -> dict[str, Any]:
     with CasesDAO.connect(settings.db_path) as dao:
         items, total = dao.list(
@@ -104,7 +104,7 @@ def list_cases(
 def create_case(
     payload: CaseBasePayload,
     settings: Settings = Depends(get_settings_dep),
-    _: AdminUser = Depends(get_current_user),
+    _: AdminUser = Depends(require_role("admin")),
 ) -> dict[str, Any]:
     record = CaseRecord(
         id=0,
@@ -132,7 +132,7 @@ def create_case(
 def get_case(
     case_id: int = Path(..., ge=1),
     settings: Settings = Depends(get_settings_dep),
-    _: AdminUser = Depends(get_current_user),
+    _: AdminUser = Depends(require_role("admin")),
 ) -> dict[str, Any]:
     with CasesDAO.connect(settings.db_path) as dao:
         try:
@@ -156,7 +156,7 @@ def update_case(
     payload: CaseBasePayload,
     case_id: int = Path(..., ge=1),
     settings: Settings = Depends(get_settings_dep),
-    _: AdminUser = Depends(get_current_user),
+    _: AdminUser = Depends(require_role("admin")),
 ) -> dict[str, Any]:
     with CasesDAO.connect(settings.db_path) as dao:
         try:
@@ -189,7 +189,7 @@ def review_case(
     payload: ReviewCaseRequest,
     case_id: int = Path(..., ge=1),
     settings: Settings = Depends(get_settings_dep),
-    current_user: AdminUser = Depends(get_current_user),
+    current_user: AdminUser = Depends(require_role("admin")),
 ) -> dict[str, Any]:
     with CasesDAO.connect(settings.db_path) as dao:
         try:
@@ -222,7 +222,7 @@ def review_case(
 def delete_case(
     case_id: int = Path(..., ge=1),
     settings: Settings = Depends(get_settings_dep),
-    _: AdminUser = Depends(get_current_user),
+    _: AdminUser = Depends(require_role("admin")),
 ) -> Response:
     with CasesDAO.connect(settings.db_path) as dao:
         try:

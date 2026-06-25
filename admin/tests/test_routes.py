@@ -203,8 +203,10 @@ def test_meta_full_enums(client, auth_headers):
     assert resp.status_code == 200
     body = resp.json()
 
-    assert len(body["supported_provinces"]) >= 27
+    assert len(body["supported_provinces"]) == 27
     assert "湖南" in body["supported_provinces"]
+    assert "内蒙古" not in body["supported_provinces"]
+
 
     assert set(body["order_statuses"]) == {
         "pending",

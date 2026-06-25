@@ -16,6 +16,24 @@ def test_cases_requires_auth(client):
     assert resp.status_code == 401
 
 
+def test_viewer_cannot_create_case(client, viewer_headers):
+    resp = client.post(
+        "/api/cases",
+        headers=viewer_headers,
+        json={
+            "title": "viewer forbidden",
+            "category": "success",
+            "summary": "should fail",
+            "content": "viewer should not write",
+            "tags": ["forbidden"],
+        },
+    )
+    assert resp.status_code == 403
+    body = resp.json()
+    assert body["code"] == "E01301"
+
+
+
 def test_case_crud_review_and_filters(client, auth_headers):
     created = client.post(
         "/api/cases",

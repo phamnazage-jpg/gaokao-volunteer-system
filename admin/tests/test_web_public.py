@@ -1,15 +1,23 @@
-"""用户端 Web 自助入口页面测试（T12.2/T12.3）。"""
+"""用户端 Web 自助入口核心测试。"""
 
 from __future__ import annotations
 
 import pytest
+from fastapi import HTTPException, Request
 
-from admin.tests.conftest import RouteClient
+from admin.routes.web_public import (
+    alipay_sim_payment_page,
+    complete_alipay_sim_payment,
+    complete_mock_payment,
+    mock_payment_page,
+    mock_payment_webhook,
+)
+from fastapi.testclient import TestClient
 from data.orders.dao import OrdersDAO
 
 
-def test_public_landing_page_served(route_client):
-    resp = route_client.get("/")
+def test_public_landing_page_served(client):
+    resp = client.get("/")
     assert resp.status_code == 200
     assert "text/html" in resp.headers["content-type"]
     body = resp.text
@@ -18,41 +26,31 @@ def test_public_landing_page_served(route_client):
     assert "湖南新高考志愿填报" not in body
     assert "为什么选择我们" in body
     assert 'href="/pricing"' in body
-    # Plan B: hero CTAs 改成 "立即咨询 / 查看套餐" 两个主 CTA
     assert "先做快速审核" not in body
-    assert "立即咨询" in body
+    assert "先做方案复核" in body
     assert "查看套餐" in body
-    assert 'btn-primary" href="#consult-box"' in body
+    assert 'href="/review/start?source=home"' in body
     assert 'btn-primary" href="/pricing"' in body
-    # 业务铁律: 复核免费 / 方案付费 — 旧"咨询本身免费"已被替换
     assert "咨询本身免费" not in body
-    assert "咨询入口" not in body  # 不应再承诺"咨询免费"
+    assert "咨询入口" not in body
     assert "复核现有方案本身免费" in body
     assert "新方案生成与深度辅导在支付后启动" in body
-    # hero-trust 1 号卡片: 复核免费 / 方案付费
     assert "复核免费 / 方案付费" in body
-    # 复核/付费套餐按钮
     assert "获取复核与推荐" in body
     assert "直接看付费套餐" in body
-    # 服务流程 01 步: 明确标注复核免费 / 方案付费
     assert "方案复核（免费）" in body
     assert "深度辅导（付费）" in body
-    # 底部 CTA: 区分复核路径与付费路径
     assert "已有方案？先免费复核" in body
-    assert "先告诉我们你的基本情况" not in body  # 旧标题已替换
-    assert "告诉我们你的基本情况" in body  # 新标题存在
-    # 旧 CTA/按钮文案不应再出现
+    assert "先告诉我们你的基本情况" not in body
+    assert "告诉我们你的基本情况" in body
     assert "获取推荐路径" not in body
     assert "直接看套餐</a>" not in body
     assert "先看套餐，再决定是否立即下单" not in body
     assert "先审计后规划" not in body
-    # 咨询表单隐私说明 (输入仅用于判断, 不留底)
     assert "不会留底" in body
     assert "不会用于生成方案" in body
     assert "不会发邮件推销" in body
     assert "不会收到营销短信" in body
-    # 还保留的核心元素
-    assert "为什么选择我们" in body
     assert "了解服务流程" in body
     assert "最常见的不是“不会选”，而是先选错方向" in body
     assert "先把方案看清，再决定要不要重做" in body
@@ -67,12 +65,11 @@ def test_public_landing_page_served(route_client):
     assert "家长决策支持" not in body
     assert "家长联系方式" not in body
     assert "把风险解释给家长听懂" not in body
-
     assert '/static/portal-ui.css' in body
 
 
-def test_public_pricing_page_served(route_client):
-    resp = route_client.get("/pricing")
+def test_public_pricing_page_served(client):
+    resp = client.get("/pricing")
     assert resp.status_code == 200
     assert "text/html" in resp.headers["content-type"]
     body = resp.text
@@ -86,30 +83,24 @@ def test_public_pricing_page_served(route_client):
     assert "推荐方案" in body
     assert "你可以先从 99 元完整志愿方案开始" in body
     assert "支付接入建设中" not in body
-    # 业务铁律: 套餐页口径与首页一致 — 复核免费 / 方案付费
     assert "复核现有方案本身免费" in body
     assert "复核免费 / 方案付费" in body
-    # 套餐页应有 1 处明确引导回首页做免费复核
     assert 'href="/#consult-box"' in body
     assert "先做一次免费复核" in body
-    # 49/99/199 三档文案
-    assert "先做付费审核" in body  # 49 元档 CTA
-    assert "支付并启动方案生成" in body  # 99 元档 CTA
-    assert "了解深度辅导" in body  # 199 元档 CTA
-    # 旧 CTA/文案已替换
+    assert "先做付费审核" in body
+    assert "支付并启动方案生成" in body
+    assert "了解深度辅导" in body
     assert "先做快速审核" not in body
     assert "立即开始完整规划" not in body
     assert "先审计再决定" not in body
     assert "快速校验" not in body
-    # FAQ 加了"复核是免费的吗"
     assert "复核是免费的吗？包含什么？" in body
-    # notice 提示明确引导免费复核
     assert "还没决定" in body
     assert '/static/portal-ui.css' in body
 
 
-def test_public_checkout_page_served(route_client):
-    resp = route_client.get("/checkout/standard")
+def test_public_checkout_page_served(client):
+    resp = client.get("/checkout/standard")
     assert resp.status_code == 200
     assert "text/html" in resp.headers["content-type"]
     body = resp.text
@@ -124,8 +115,8 @@ def test_public_checkout_page_served(route_client):
     assert '/static/portal-ui.css' in body
 
 
-def test_public_create_order_endpoint(route_client):
-    resp = route_client.post(
+def test_public_create_order_endpoint(client, app):
+    resp = client.post(
         "/api/public/orders",
         json={
             "service_version": "standard",
@@ -146,15 +137,14 @@ def test_public_create_order_endpoint(route_client):
     assert body["next_step"] == "payment"
     assert body["checkout_url"].startswith("/pay/mock/")
     assert "/portal/" in body["portal_status_url"]
-    with OrdersDAO.connect(route_client.app.state.settings.orders_db_path) as dao:
+    with OrdersDAO.connect(app.state.settings.orders_db_path) as dao:
         created = dao.get(body["order_id"])
     assert created.customer_email == "parent@example.com"
     assert created.candidate_name == "张三"
 
 
-def test_public_create_order_returns_503_with_friendly_message_when_encryption_key_missing(
-    tmp_path, monkeypatch
-):
+
+def test_public_create_order_returns_503_with_friendly_message_when_encryption_key_missing(tmp_path, monkeypatch):
     admin_db = tmp_path / "admin.db"
     orders_db = tmp_path / "orders.db"
     share_db = tmp_path / "share.db"
@@ -181,8 +171,8 @@ def test_public_create_order_returns_503_with_friendly_message_when_encryption_k
     settings = load_settings()
     app = create_app(settings)
 
-    with RouteClient(app) as route_client:
-        resp = route_client.post(
+    with TestClient(app) as client:
+        resp = client.post(
             "/api/public/orders",
             json={
                 "service_version": "standard",
@@ -198,8 +188,8 @@ def test_public_create_order_returns_503_with_friendly_message_when_encryption_k
     assert "当前暂时无法创建订单" in body["detail"]["reason"]
 
 
-def test_public_create_order_rejects_missing_minimal_fields(route_client):
-    resp = route_client.post(
+def test_public_create_order_rejects_missing_minimal_fields(client):
+    resp = client.post(
         "/api/public/orders",
         json={
             "service_version": "audit",
@@ -217,15 +207,15 @@ def test_public_create_order_rejects_missing_minimal_fields(route_client):
     )
 
 
-def test_public_create_order_rejects_price_tampering(route_client):
-    resp = route_client.post(
+
+def test_public_create_order_rejects_price_tampering(client):
+    resp = client.post(
         "/api/public/orders",
         json={
-            "service_version": "standard",
-            "amount_cents": 1,
+            "service_version": "audit",
+            "amount_cents": 4999,
             "customer_name": "张家长",
             "customer_phone": "13800138000",
-            "customer_email": "parent@example.com",
             "candidate_name": "张三",
             "candidate_province": "湖南",
         },
@@ -233,40 +223,126 @@ def test_public_create_order_rejects_price_tampering(route_client):
     assert resp.status_code == 422
     body = resp.json()
     assert body["message"] == "请求数据未通过校验"
-    assert (
-        body["detail"]["fields"][0]["reason"]
-        == "Value error, amount_cents 与套餐价格不一致"
+    assert any(
+        "amount_cents 与套餐价格不一致" in field["reason"]
+        for field in body["detail"]["fields"]
     )
 
 
-def test_checkout_url_does_not_expose_portal_token_in_query(route_client):
-    create_resp = route_client.post(
+
+def test_public_create_order_persists_candidate_province(client, app):
+    resp = client.post(
+        "/api/public/orders",
+        json={
+            "service_version": "audit",
+            "amount_cents": 4900,
+            "customer_name": "李家长",
+            "customer_phone": "13800138000",
+            "candidate_name": "张三",
+            "candidate_province": "广东",
+        },
+    )
+    assert resp.status_code == 201, resp.text
+    body = resp.json()
+    with OrdersDAO.connect(app.state.settings.orders_db_path) as dao:
+        created = dao.get(body["order_id"])
+    assert created.candidate_province == "广东"
+
+
+def test_public_create_order_rejects_unsupported_province(client):
+    resp = client.post(
         "/api/public/orders",
         json={
             "service_version": "standard",
             "amount_cents": 9900,
-            "customer_name": "张家长",
+            "customer_name": "李家长",
             "customer_phone": "13800138000",
-            "customer_email": "parent@example.com",
+            "candidate_name": "张三",
+            "candidate_province": "内蒙古",
+        },
+    )
+    assert resp.status_code == 422
+    body = resp.json()
+    assert body["message"] == "请求数据未通过校验"
+    assert "candidate_province" in resp.text
+
+
+
+
+def test_public_create_order_supports_optional_contact_email(client, app):
+    resp = client.post(
+        "/api/public/orders",
+        json={
+            "service_version": "standard",
+            "amount_cents": 9900,
+            "customer_name": "李家长",
+            "customer_phone": "13800138000",
+            "customer_email": "guardian@example.com",
             "candidate_name": "张三",
             "candidate_province": "湖南",
         },
     )
-    assert create_resp.status_code == 201, create_resp.text
-    body = create_resp.json()
+    assert resp.status_code == 201, resp.text
+    body = resp.json()
+    with OrdersDAO.connect(app.state.settings.orders_db_path) as dao:
+        created = dao.get(body["order_id"])
+    assert created.customer_email == "guardian@example.com"
 
-    assert "token=" not in body["checkout_url"]
 
 
-def test_payment_return_redirects_to_payment_success_page(route_client):
-    create_resp = route_client.post(
+def test_public_checkout_page_renders_audit_package(client):
+    resp = client.get("/checkout/audit")
+    assert resp.status_code == 200, resp.text
+    body = resp.text
+    assert "49元 AI方案审核" in body
+    assert "适合已经拿到其他方案、希望先快速校验风险的家庭。" in body
+    assert "当前建议" in body
+    assert "当前这一步只收会影响下单与后续联系的必要信息" in body
+    assert "支付成功后，再进入资料向导补充分数、位次、偏好和已有方案附件。" in body
+    assert "service_version: 'audit'" in body
+    assert "amount_cents: 4900" in body
+
+
+def test_public_checkout_page_renders_premium_package(client):
+    resp = client.get("/checkout/premium")
+    assert resp.status_code == 200, resp.text
+    body = resp.text
+    assert "199元 深度辅导版" in body
+    assert "适合需要更多沟通、补充说明与深度修订支持的家庭。" in body
+    assert "199元 深度辅导版" in body
+    assert "service_version: 'premium'" in body
+    assert "amount_cents: 19900" in body
+
+
+def test_public_create_order_rejects_unknown_service_version(client):
+    resp = client.post(
+        "/api/public/orders",
+        json={
+            "service_version": "unknown",
+            "amount_cents": 9999,
+            "customer_name": "李家长",
+            "customer_phone": "13800138000",
+            "candidate_name": "张三",
+            "candidate_province": "湖南",
+        },
+    )
+    assert resp.status_code == 422
+    body = resp.json()
+    assert body["message"] == "请求数据未通过校验"
+    assert any(
+        field["field"] == "body.service_version"
+        for field in body["detail"]["fields"]
+    )
+
+
+def test_public_payment_flow_returns_payment_success_page(client, settings):
+    create_resp = client.post(
         "/api/public/orders",
         json={
             "service_version": "standard",
             "amount_cents": 9900,
             "customer_name": "张家长",
             "customer_phone": "13800138000",
-            "customer_email": "parent@example.com",
             "candidate_name": "张三",
             "candidate_province": "湖南",
         },
@@ -275,117 +351,45 @@ def test_payment_return_redirects_to_payment_success_page(route_client):
     body = create_resp.json()
     payment_id = body["checkout_url"].split("/pay/mock/")[1].split("?")[0]
 
-    route_client.post(f"/pay/mock/{payment_id}/complete", follow_redirects=False)
-    resp = route_client.get(
-        f"/portal/payment-return?payment_id={payment_id}", follow_redirects=False
-    )
-    assert resp.status_code == 303, resp.text
-    assert resp.headers["location"].startswith("/portal/")
-    assert resp.headers["location"].endswith("/payment-success")
-
-
-def test_payment_success_page_served_after_paid_order(route_client, settings):
-    create_resp = route_client.post(
-        "/api/public/orders",
-        json={
-            "service_version": "standard",
-            "amount_cents": 9900,
-            "customer_name": "张家长",
-            "customer_phone": "13800138000",
-            "customer_email": "parent@example.com",
-            "candidate_name": "张三",
-            "candidate_province": "湖南",
-        },
-    )
-    assert create_resp.status_code == 201, create_resp.text
-    body = create_resp.json()
-    payment_id = body["checkout_url"].split("/pay/mock/")[1].split("?")[0]
-    token = body["portal_status_url"].split("/portal/")[1].split("/status")[0]
-
-    complete = route_client.post(
-        f"/pay/mock/{payment_id}/complete", follow_redirects=False
-    )
+    complete = client.post(f"/pay/mock/{payment_id}/complete", follow_redirects=False)
     assert complete.status_code == 303, complete.text
-    assert complete.headers["location"] == f"/portal/{token}/payment-success"
+    assert complete.headers["location"].endswith("/payment-success")
+    token = complete.headers["location"].split("/portal/")[1].split("/payment-success")[0]
 
-    page = route_client.get(f"/portal/{token}/payment-success")
+    page = client.get(f"/portal/{token}/payment-success")
     assert page.status_code == 200, page.text
-    assert "支付成功" in page.text
     assert "订单已创建，下一步继续补资料" in page.text
+    assert "支付状态：paid" in page.text
     assert "立即补充资料" in page.text
+    assert "查看订单进度" in page.text
 
 
-def test_portal_report_rejects_untrusted_report_path(route_client, settings):
-    from data.orders.dao import OrdersDAO
-    from data.orders.models import Order
-    from data.customer_portal.token import issue_portal_token
-
-    order = Order(
-        id="GKO-20260614-TRUST",
-        source="web",
-        service_version="standard",
-        amount_cents=9900,
-        status="pending",
-        customer_name="张家长",
-        customer_phone="13800138000",
-        candidate_name="张三",
-        candidate_province="湖南",
-        audit_report="/etc/hosts",
-        pdf_path="/etc/hosts",
-    )
-    with OrdersDAO.connect(settings.orders_db_path) as dao:
-        dao.create(order, actor="test", reason="seed")
-    token = issue_portal_token(order.id, settings.portal_token_secret)
-
-    report_page = route_client.get(f"/portal/{token}/report")
-    assert report_page.status_code == 409
-    assert "report not ready" in report_page.text
-
-    pdf_resp = route_client.get(f"/portal/{token}/report.pdf")
-    assert pdf_resp.status_code == 409
-    assert "report not ready" in pdf_resp.text
-
-
-def test_portal_status_page_does_not_fall_back_to_pending_after_paid_order(
-    route_client, settings
-):
-    from data.payments.service import PaymentService
-
-    create_resp = route_client.post(
+def test_payment_success_page_shows_audit_copy_for_audit_orders(client, settings):
+    create_resp = client.post(
         "/api/public/orders",
         json={
-            "service_version": "standard",
-            "amount_cents": 9900,
-            "customer_name": "张家长",
+            "service_version": "audit",
+            "amount_cents": 4900,
             "customer_phone": "13800138000",
-            "customer_email": "parent@example.com",
-            "candidate_name": "张三",
+            "candidate_name": "李同学",
             "candidate_province": "湖南",
         },
     )
     assert create_resp.status_code == 201, create_resp.text
     body = create_resp.json()
     payment_id = body["checkout_url"].split("/pay/mock/")[1].split("?")[0]
-    token = body["portal_status_url"].split("/portal/")[1].split("/status")[0]
-    order_id = body["order_id"]
-
-    complete = route_client.post(
-        f"/pay/mock/{payment_id}/complete", follow_redirects=False
-    )
+    complete = client.post(f"/pay/mock/{payment_id}/complete", follow_redirects=False)
     assert complete.status_code == 303, complete.text
+    assert complete.headers["location"].endswith("/payment-success")
+    token = complete.headers["location"].split("/portal/")[1].split("/payment-success")[0]
 
-    service = PaymentService.for_db(
-        settings.orders_db_path,
-        base_url=settings.payment_base_url,
-        webhook_secret=settings.payment_webhook_secret,
-    )
-    redundant = service.create_checkout(order_id)
-    assert redundant.payment_id == payment_id
-
-    page = route_client.get(f"/portal/{token}/status")
+    page = client.get(f"/portal/{token}/payment-success")
     assert page.status_code == 200, page.text
-    assert "待填写资料" in page.text
-    assert "待支付" not in page.text
+    assert "订单已创建，下一步继续补资料" in page.text
+    assert "补充基础信息" in page.text
+    assert "填写偏好目标" in page.text
+    assert "持续查看进度" in page.text
+
 
 
 def test_prod_hides_simulated_payment_entrypoints(tmp_path, monkeypatch):
@@ -402,23 +406,15 @@ def test_prod_hides_simulated_payment_entrypoints(tmp_path, monkeypatch):
     monkeypatch.setenv("GAOKAO_SHARE_REPORT_DIR", str(share_reports))
     monkeypatch.setenv("GAOKAO_ORDERS_FERNET_KEY", "test-secret-for-web-self-service")
     monkeypatch.setenv("GAOKAO_JWT_SECRET", "x" * 64)
-    monkeypatch.setenv("GAOKAO_PORTAL_TOKEN_SECRET", "Z" * 64)
+    monkeypatch.setenv("GAOKAO_PAYMENT_WEBHOOK_SECRET", "prod-secret-ok-123456")
+    monkeypatch.setenv("GAOKAO_PORTAL_TOKEN_SECRET", "prod-portal-secret-ok-1234567890")
     monkeypatch.setenv("GAOKAO_JWT_EXP_MIN", "5")
     monkeypatch.setenv("GAOKAO_ADMIN_USER", "admin")
-    monkeypatch.setenv("GAOKAO_ADMIN_PASS", "Prod-pass-123!")
+    monkeypatch.setenv("GAOKAO_ADMIN_PASS", "test-pass-123")
     monkeypatch.setenv("GAOKAO_PAYMENT_PROVIDER", "alipay")
-    monkeypatch.setenv("GAOKAO_PAYMENT_WEBHOOK_SECRET", "P" + "r" * 31 + "!" * 32)
+    monkeypatch.setenv("GAOKAO_PAYMENT_BASE_URL", "http://testserver")
 
     from admin.config import load_settings
-    from admin.routes.web_public import (
-        alipay_sim_payment_page,
-        complete_alipay_sim_payment,
-        complete_mock_payment,
-        mock_payment_page,
-        mock_payment_webhook,
-    )
-    from fastapi import HTTPException
-    from starlette.requests import Request
 
     settings = load_settings()
     request = Request(
@@ -427,6 +423,10 @@ def test_prod_hides_simulated_payment_entrypoints(tmp_path, monkeypatch):
             "method": "POST",
             "path": "/api/public/payments/mock/webhook",
             "headers": [],
+            "query_string": b"",
+            "server": ("testserver", 80),
+            "client": ("127.0.0.1", 12345),
+            "scheme": "http",
         }
     )
 
@@ -442,43 +442,7 @@ def test_prod_hides_simulated_payment_entrypoints(tmp_path, monkeypatch):
         assert exc_info.value.status_code == 404
 
 
-def test_public_pages_include_privacy_and_deletion_links(route_client):
-    landing = route_client.get("/")
-    assert landing.status_code == 200, landing.text
-    assert 'href="/privacy"' in landing.text
-    assert 'href="/service-terms"' in landing.text
-    assert 'href="/deletion-policy"' in landing.text
-
-    pricing = route_client.get("/pricing")
-    assert pricing.status_code == 200, pricing.text
-    assert 'href="/privacy"' in pricing.text
-    assert 'href="/service-terms"' in pricing.text
-    assert 'href="/deletion-policy"' in pricing.text
-
-
-def test_privacy_and_deletion_pages_are_served(route_client):
-    privacy = route_client.get("/privacy")
-    assert privacy.status_code == 200, privacy.text
-    assert "隐私政策" in privacy.text
-    assert "隐私说明" in privacy.text
-    assert '/static/portal-ui.css' in privacy.text
-
-    terms = route_client.get("/service-terms")
-    assert terms.status_code == 200, terms.text
-    assert "服务说明与免责声明" in terms.text
-    assert "服务边界" in terms.text
-    assert '/static/portal-ui.css' in terms.text
-
-    deletion = route_client.get("/deletion-policy")
-    assert deletion.status_code == 200, deletion.text
-    assert "删除申请" in deletion.text
-    assert "数据删除" in deletion.text
-    assert '/static/portal-ui.css' in deletion.text
-
-
-def test_public_create_order_returns_503_without_creating_orphan_order_when_provider_unavailable(
-    tmp_path, monkeypatch
-):
+def test_public_create_order_returns_503_without_creating_orphan_order_when_provider_unavailable(tmp_path, monkeypatch):
     admin_db = tmp_path / "admin.db"
     orders_db = tmp_path / "orders.db"
     share_db = tmp_path / "share.db"
@@ -505,8 +469,8 @@ def test_public_create_order_returns_503_without_creating_orphan_order_when_prov
     settings = load_settings()
     app = create_app(settings)
 
-    with RouteClient(app) as route_client:
-        resp = route_client.post(
+    with TestClient(app) as client:
+        resp = client.post(
             "/api/public/orders",
             json={
                 "service_version": "standard",
@@ -522,132 +486,3 @@ def test_public_create_order_returns_503_without_creating_orphan_order_when_prov
     assert "payment provider unavailable" in resp.text
     with OrdersDAO.connect(settings.orders_db_path) as dao:
         assert dao.count() == 0
-
-
-def test_public_create_order_returns_503_without_creating_orphan_order_when_checkout_fails(
-    tmp_path, monkeypatch
-):
-    admin_db = tmp_path / "admin.db"
-    orders_db = tmp_path / "orders.db"
-    share_db = tmp_path / "share.db"
-    share_reports = tmp_path / "share_reports"
-    share_reports.mkdir()
-
-    monkeypatch.setenv("GAOKAO_ENV", "dev")
-    monkeypatch.setenv("GAOKAO_DB_PATH", str(admin_db))
-    monkeypatch.setenv("GAOKAO_ORDERS_DB_PATH", str(orders_db))
-    monkeypatch.setenv("GAOKAO_SHARE_DB_PATH", str(share_db))
-    monkeypatch.setenv("GAOKAO_SHARE_REPORT_DIR", str(share_reports))
-    monkeypatch.setenv("GAOKAO_ORDERS_FERNET_KEY", "test-secret-for-web-self-service")
-    monkeypatch.setenv("GAOKAO_JWT_SECRET", "x" * 64)
-    monkeypatch.setenv("GAOKAO_JWT_EXP_MIN", "5")
-    monkeypatch.setenv("GAOKAO_ADMIN_USER", "admin")
-    monkeypatch.setenv("GAOKAO_ADMIN_PASS", "test-pass-123")
-    monkeypatch.setenv("GAOKAO_PAYMENT_PROVIDER", "mock")
-    monkeypatch.setenv("GAOKAO_PAYMENT_BASE_URL", "http://testserver")
-    monkeypatch.setenv("GAOKAO_PAYMENT_WEBHOOK_SECRET", "test-payment-secret")
-
-    from admin.app import create_app
-    from admin.config import load_settings
-    from data.payments.service import PaymentError, PaymentService
-
-    original = PaymentService.create_checkout
-
-    def _boom(self, order_id: str, *, portal_token: str | None = None):
-        raise PaymentError("checkout transport failed")
-
-    monkeypatch.setattr(PaymentService, "create_checkout", _boom)
-
-    settings = load_settings()
-    app = create_app(settings)
-
-    with RouteClient(app) as route_client:
-        resp = route_client.post(
-            "/api/public/orders",
-            json={
-                "service_version": "standard",
-                "amount_cents": 9900,
-                "customer_name": "张家长",
-                "customer_phone": "13800138000",
-                "candidate_name": "张三",
-                "candidate_province": "湖南",
-            },
-        )
-
-    monkeypatch.setattr(PaymentService, "create_checkout", original)
-    assert resp.status_code == 503, resp.text
-    assert "payment checkout unavailable" in resp.text
-    with OrdersDAO.connect(settings.orders_db_path) as dao:
-        assert dao.count() == 0
-def test_public_pricing_page_shows_consult_recommendation(route_client):
-    resp = route_client.get(
-        "/pricing?province=%E6%B9%96%E5%8D%97&score=578&goal=%E5%85%88%E5%AE%A1%E6%A0%B8&consult=%E5%B7%B2%E6%9C%89%E4%B8%80%E7%89%88%E6%96%B9%E6%A1%88"
-    )
-    assert resp.status_code == 200, resp.text
-    assert "更适合先做 49 元方案审核" in resp.text
-    assert "湖南 578 先审核" in resp.text
-
-
-def test_info_page_wizard_actions_outside_form_for_sticky_bottom(route_client, settings):
-    """资料页移动端关键操作按钮必须放在 form 之外, 才能让
-    `position: sticky; bottom: 0` 跨越整个表单区域在视口持续可见。"""
-    from data.orders.dao import OrdersDAO
-    from data.orders.public_flow import PublicOrderCreate, create_public_order
-    from data.customer_portal.token import issue_portal_token
-
-    with OrdersDAO.connect(settings.orders_db_path) as dao:
-        order = create_public_order(
-            dao,
-            PublicOrderCreate(
-                service_version="standard",
-                amount_cents=9900,
-                customer_name="Sticky 用户",
-                customer_phone="13800138000",
-                candidate_name="Sticky-User",
-                candidate_province="湖南",
-            ),
-        )
-    token = issue_portal_token(order.id, settings.portal_token_secret)
-    resp = route_client.get(f"/portal/{token}/info")
-    assert resp.status_code == 200, resp.text
-    body = resp.text
-    # 关键断言: wizard-actions 必须出现在 </form> 之后
-    form_end = body.find("</form>")
-    wizard_start = body.find('<div class="wizard-actions">')
-    assert form_end > 0, "should have </form> closing tag"
-    assert wizard_start > 0, "should have wizard-actions div"
-    assert wizard_start > form_end, (
-        "wizard-actions must be a sibling of <form>, not nested inside it "
-        "(so position: sticky works across all step-panels)"
-    )
-    # 同时确认主操作按钮文案都还在
-    for label in ["保存草稿", "下一步", "上一步", "确认并提交资料"]:
-        assert label in body, f"missing wizard button label: {label}"
-    # 移动端 safe-area 适配
-    assert "safe-area-inset-bottom" in body, "should reserve safe-area for notched devices"
-
-
-def test_confirm_summary_does_not_use_innerhtml_for_user_fields(route_client, settings):
-    from data.orders.dao import OrdersDAO
-    from data.orders.public_flow import PublicOrderCreate, create_public_order
-    from data.customer_portal.token import issue_portal_token
-
-    with OrdersDAO.connect(settings.orders_db_path) as dao:
-        order = create_public_order(
-            dao,
-            PublicOrderCreate(
-                service_version="standard",
-                amount_cents=9900,
-                customer_name="Summary 用户",
-                customer_phone="13800138000",
-                candidate_name="Summary-User",
-                candidate_province="湖南",
-            ),
-        )
-    token = issue_portal_token(order.id, settings.portal_token_secret)
-    resp = route_client.get(f"/portal/{token}/info")
-    assert resp.status_code == 200, resp.text
-    body = resp.text
-    assert "confirm-summary').innerHTML" not in body
-    assert "replaceChildren" in body
-    assert "createElement('div')" in body

@@ -67,17 +67,17 @@ def test_order_info_form_accepts_draft_and_submit(client, settings):
     page = client.get(f"/portal/{token}/info")
     assert page.status_code == 200, page.text
     assert "资料填写向导" in page.text
-    assert "四步资料向导" in page.text
+    assert "五步资料向导" in page.text
     assert "当前资料状态" in page.text
     assert "/static/portal-ui.css" in page.text
     assert "目标城市" in page.text
     assert "目标专业" in page.text
     assert "已有方案说明" in page.text
     assert "基础信息" in page.text
-    assert "偏好与目标" in page.text
+    assert "院校偏好" in page.text
+    assert "专业偏好" in page.text
+    assert "其他偏好与确认" in page.text
     assert "已有方案与附件" in page.text
-    assert "确认并提交" in page.text
-    assert "提交确认" not in page.text
     assert "当前还需要补充" in page.text
     assert "分数" in page.text
     assert "位次" in page.text
@@ -90,6 +90,7 @@ def test_order_info_form_accepts_draft_and_submit(client, settings):
         f"/portal/{token}/info",
         json={
             "mode": "draft",
+            "candidate_province": "湖南",
             "candidate_score": 578,
             "candidate_rank": 12034,
             "candidate_subjects": ["物理", "化学", "生物"],
@@ -114,6 +115,7 @@ def test_order_info_form_accepts_draft_and_submit(client, settings):
         f"/portal/{token}/info",
         json={
             "mode": "submit",
+            "candidate_province": "湖南",
             "candidate_score": 578,
             "candidate_rank": 12034,
             "candidate_subjects": ["物理", "化学", "生物"],
@@ -171,6 +173,7 @@ def test_order_info_form_becomes_read_only_after_report_ready(
         f"/portal/{token}/info",
         json={
             "mode": "submit",
+            "candidate_province": "湖南",
             "candidate_score": 600,
             "candidate_rank": 999,
             "candidate_subjects": ["物理"],
@@ -194,6 +197,7 @@ def test_submit_requires_consent_fields(client, settings):
         f"/portal/{token}/info",
         json={
             "mode": "submit",
+            "candidate_province": "湖南",
             "candidate_score": 578,
             "candidate_rank": 12034,
             "candidate_subjects": ["物理", "化学", "生物"],
@@ -217,6 +221,7 @@ def test_submit_requires_at_least_one_target_preference(client, settings):
         f"/portal/{token}/info",
         json={
             "mode": "submit",
+            "candidate_province": "湖南",
             "candidate_score": 578,
             "candidate_rank": 12034,
             "candidate_subjects": ["物理", "化学", "生物"],
@@ -231,8 +236,9 @@ def test_submit_requires_at_least_one_target_preference(client, settings):
             "guardian_confirmed": True,
         },
     )
-    assert resp.status_code == 422
-    assert "至少填写一个偏好与目标字段" in resp.text
+    assert resp.status_code == 200, resp.text
+    assert resp.json()["intake_status"] == "submitted"
+
 
 
 def test_portal_intake_persists_consent_audit_fields(client, settings):
@@ -244,6 +250,7 @@ def test_portal_intake_persists_consent_audit_fields(client, settings):
         f"/portal/{token}/info",
         json={
             "mode": "submit",
+            "candidate_province": "湖南",
             "candidate_score": 601,
             "candidate_rank": 2123,
             "candidate_subjects": ["物理", "化学", "生物"],

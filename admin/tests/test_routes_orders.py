@@ -154,16 +154,15 @@ def test_create_order_writes_intake_record_with_consent_audit(
         intake_store.close()
 
     assert record is not None, f"order_intakes 表未创建 {order_id} 记录"
-    assert record.status == "submitted"
-    assert record.submitted_at is not None
-    # 同意审计字段必须落库, 与 portal 路径同口径
+    assert record.status == "draft"
+    assert record.submitted_at is None
+    # 同意审计字段必须落库, 与 portal 路径字段同口径
     assert record.payload.get("consent_channel") == "xianyu"
     assert record.payload.get("consent_operator") == "admin_import"
     assert record.payload.get("consent_method") == "phone_recording"
-    assert record.payload.get("consent_given_at") == record.submitted_at
+    assert record.payload.get("consent_given_at") is not None
     assert record.payload.get("consent_note") == "闲鱼沟通后电话确认"
-    # 旧 portal 字段保留 (admin 渠道下, guardian_confirmed 不适用, 不强制)
-    assert "privacy_accepted" in record.payload or "consent_note" in record.payload
+
 
 
 def test_create_order_external_channel_marks_consent_operator_as_admin(
@@ -290,6 +289,62 @@ def test_detail_exposes_submitted_intake_state(client, auth_headers, settings):
     detail = detail_resp.json()
     assert detail["order"]["intake_status"] == "submitted"
     assert detail["order"]["intake_submitted_at"] == record.submitted_at
+
+
+
+def test_detail_exposes_structured_intake_payload(client, auth_headers, settings):
+    created = _seed_order(settings, id="GKO-20260624-INTAKE-STRUCT")
+    intake_store = IntakeStore.for_db(settings.orders_db_path)
+    try:
+        intake_store.save(
+            order_id=created.id,
+            payload={
+                "candidate_score": 578,
+                "target_cities": ["长沙", "深圳"],
+                "target_schools": ["湖南大学"],
+                "family_background": "家长更希望省内优先",
+                "interest_assessment_result": "INTJ",
+            },
+            submit=True,
+        )
+    finally:
+        intake_store.close()
+
+    detail_resp = client.get(f"/api/orders/{created.id}", headers=auth_headers)
+    assert detail_resp.status_code == 200, detail_resp.text
+    detail = detail_resp.json()
+    assert detail["order"]["intake_status"] == "submitted"
+    assert detail["order"]["intake"] is not None
+    assert detail["order"]["intake"]["target_cities"] == ["长沙", "深圳"]
+    assert detail["order"]["intake"]["target_schools"] == ["湖南大学"]
+    assert detail["order"]["intake"]["family_background"] == "家长更希望省内优先"
+    assert detail["order"]["intake"]["interest_assessment_result"] == "INTJ"
+
+
+def test_admin_create_order_defaults_to_draft_intake_state(client, auth_headers, settings):
+    resp = client.post(
+        "/api/orders",
+        headers=auth_headers,
+        json={
+            "source": "wechat",
+            "external_id": "ADMIN-DRAFT-001",
+            "service_version": "standard",
+            "amount_cents": 9900,
+            "customer_name": "张家长",
+            "customer_phone": "13800138000",
+            "candidate_name": "张三",
+            "candidate_province": "湖南",
+            "consent": {
+                "consent_method": "verbal_chat",
+                "consent_note": "后台补录同意",
+            },
+        },
+    )
+    assert resp.status_code == 201, resp.text
+    body = resp.json()
+    assert body["order"]["intake_status"] == "draft"
+    assert body["order"]["intake_submitted_at"] is None
+
 
 
 def test_patch_updates_business_fields_and_status_transition(

@@ -63,9 +63,9 @@ def test_redoc_served(client):
     assert "text/html" in resp.headers["content-type"]
 
 
-def test_dashboard_page_served(client):
-    """/dashboard 提供运营后台页面骨架，并避免技术细节直出。"""
-    resp = client.get("/dashboard")
+def test_dashboard_page_served(client, auth_headers):
+    """/dashboard 需要鉴权,鉴权后返回运营后台页面骨架。"""
+    resp = client.get("/dashboard", headers=auth_headers)
     assert resp.status_code == 200
     assert "text/html" in resp.headers["content-type"]
     body = resp.text
@@ -117,6 +117,7 @@ def test_dashboard_page_served(client):
     assert "最小仪表盘" not in body
     assert "admin_users 总数" not in body
     assert "接口: <code>/api/stats/dashboard</code>" not in body
+
 
 
 def test_dashboard_static_js_served(client):

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from pathlib import Path
 
 from data.customer_portal.token import issue_portal_token
 from data.orders.dao import OrdersDAO
@@ -62,13 +61,29 @@ def test_portal_attachment_upload_persists_metadata_and_file(client, settings):
     assert metas[1]["original_name"] == "doubao-plan.json"
     for meta in metas:
         assert meta["size_bytes"] > 0
-        assert Path(meta["storage_path"]).is_file()
+        assert "storage_path" not in meta
+
 
     page = client.get(f"/portal/{token}/info")
     assert page.status_code == 200, page.text
     assert "已上传附件" in page.text
     assert "qianwen-plan.txt" in page.text
     assert "doubao-plan.json" in page.text
+
+
+def test_portal_attachment_response_does_not_expose_storage_path(client, settings):
+    order = _seed_order(settings.orders_db_path, order_id="GKO-20260624-UPLOAD-HIDE")
+    _mark_paid(settings, order)
+    token = issue_portal_token(order.id, settings.portal_token_secret)
+
+    upload = client.post(
+        f"/portal/{token}/attachments",
+        files={"files": ("a.txt", b"alpha", "text/plain")},
+    )
+    assert upload.status_code == 200, upload.text
+    meta = upload.json()["attachments"][0]
+    assert "storage_path" not in meta
+
 
 
 def test_portal_attachment_upload_rejects_before_payment(client, settings):

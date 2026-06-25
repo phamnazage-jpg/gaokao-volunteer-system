@@ -291,7 +291,9 @@ def _attach_intake_fields(order_payload: dict[str, Any], intake: Any) -> dict[st
     enriched = dict(order_payload)
     enriched["intake_status"] = getattr(intake, "status", None)
     enriched["intake_submitted_at"] = getattr(intake, "submitted_at", None)
+    enriched["intake"] = dict(getattr(intake, "payload", {}) or {}) if intake is not None else None
     return enriched
+
 
 
 def _csv_safe_value(value: Any) -> Any:
@@ -632,11 +634,6 @@ def create_order(
         # 避免退出 with-block 后再调 dao.get_status_history 等接口
         detail = _detail_payload(dao, created)
 
-    # A-2: 同步写 order_intakes 记录, 与 portal 路径同口径
-    # (consent_channel/operator/given_at/method/note)
-    # 走独立 IntakeStore.for_db(), 不复用 OrdersDAO 的 conn — T12-D 修过
-    # OrdersDAO.__exit__ 不再 close 外部传入的 conn, 但这里用独立 conn 更清晰
-    # (admin_create 是低频写操作, 多开一个 sqlite conn 无性能影响)
     intake_store = IntakeStore.for_db(settings.orders_db_path)
     try:
         intake_payload: dict[str, Any] = {
@@ -647,7 +644,6 @@ def create_order(
             "customer_name": payload.customer_name,
             "customer_phone": payload.customer_phone,
             "customer_wechat": payload.customer_wechat,
-            # 同意审计字段(与 web_public.py + intake_store.save 默认值同源)
             "consent_version": "t12-web-mvp-v1",
             "consent_scope": f"{payload.source}-channel-intake",
             "consent_channel": payload.source,
@@ -657,9 +653,15 @@ def create_order(
         }
         if payload.consent.consent_note:
             intake_payload["consent_note"] = payload.consent.consent_note
-        intake_store.save(order_id=order_id, payload=intake_payload, submit=True)
+        if payload.customer_phone:
+            intake_payload["privacy_accepted"] = False
+        intake_record = intake_store.save(order_id=order_id, payload=intake_payload, submit=False)
     finally:
         intake_store.close()
+
+    with OrdersDAO.connect(settings.orders_db_path) as dao:
+        refreshed = dao.get(order_id)
+        detail = _detail_payload(dao, refreshed, intake=intake_record)
 
     return {"action": "created", **detail}
 
@@ -813,7 +815,11 @@ def delete_or_anonymize_order(
             raise _business_error_for_lookup(order_id) from exc
         _assert_retention_expired(order, retention_days=settings.retention_days)
 
-    service = OrderDeletionService.for_db(settings.orders_db_path)
+    service = OrderDeletionService.for_db(
+        settings.orders_db_path,
+        portal_upload_root=Path(settings.portal_upload_dir),
+        artifact_roots=_trusted_report_roots(settings),
+    )
     try:
         try:
             if mode == "delete":

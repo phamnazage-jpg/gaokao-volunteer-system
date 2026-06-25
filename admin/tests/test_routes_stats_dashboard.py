@@ -1,3 +1,4 @@
+
 """T6.2 仪表盘端点测试。
 
 覆盖目标
@@ -19,6 +20,8 @@
 """
 
 from __future__ import annotations
+from pathlib import Path
+
 
 from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, List
@@ -87,6 +90,13 @@ def test_dashboard_requires_auth(client):
 def test_dashboard_with_token_returns_200(client, auth_headers):
     resp = client.get("/api/stats/dashboard", headers=auth_headers)
     assert resp.status_code == 200
+
+
+def test_viewer_cannot_read_order_stats(client, viewer_headers):
+    resp = client.get("/api/stats/orders", headers=viewer_headers)
+    assert resp.status_code == 403
+    body = resp.json()
+    assert body["code"] == "E01301"
 
 
 # ---------------------------------------------------------------------------
@@ -528,6 +538,17 @@ def test_dashboard_summary_pending_missing_intake(client, auth_headers, settings
     assert s["pending_orders"] == 3
     assert s["pending_missing_intake"] == 2  # P-B + P-C
     assert body["by_status"]["pending"] == 3
+
+
+
+def test_dashboard_request_does_not_write_debug_stats_file(client, auth_headers):
+    debug_path = Path("/tmp/debug_stats.txt")
+    if debug_path.exists():
+        debug_path.unlink()
+
+    resp = client.get("/api/stats/dashboard", headers=auth_headers)
+    assert resp.status_code == 200, resp.text
+    assert not debug_path.exists()
 
 
 # ---------------------------------------------------------------------------

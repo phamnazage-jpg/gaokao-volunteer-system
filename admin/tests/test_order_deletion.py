@@ -66,8 +66,10 @@ def _expire_retention_window(db_path: str, order_id: str, days: int = 200) -> No
 def _prepare_order_with_artifacts(
     settings, tmp_path: Path, order_id: str
 ) -> tuple[Path, Path]:
-    report_path = tmp_path / f"{order_id}-report.html"
-    pdf_path = tmp_path / f"{order_id}-report.pdf"
+    report_root = Path(settings.share_report_dir)
+    report_root.mkdir(parents=True, exist_ok=True)
+    report_path = report_root / f"{order_id}-report.html"
+    pdf_path = report_root / f"{order_id}-report.pdf"
     report_path.write_text("<h1>report</h1>", encoding="utf-8")
     pdf_path.write_bytes(b"%PDF-1.4\ndelete\n")
     with OrdersDAO.connect(settings.orders_db_path) as dao:
@@ -82,6 +84,7 @@ def _prepare_order_with_artifacts(
             order_id, "delivered", actor="test", reason="report_ready"
         )
     return report_path, pdf_path
+
 
 
 def _prepare_portal_attachment(settings, order_id: str) -> Path:
@@ -244,6 +247,69 @@ def test_admin_anonymize_order_removes_portal_attachments(
     assert intake is not None
     assert intake.payload == {}
 
+
+def test_admin_anonymize_order_skips_untrusted_attachment_paths(
+    client, auth_headers, settings, tmp_path
+):
+    order = _seed_order(settings.orders_db_path, order_id="GKO-20260623-ANON-TRUST")
+    _mark_paid(settings, order)
+    _expire_retention_window(settings.orders_db_path, order.id)
+    sentinel = tmp_path / "outside.txt"
+    sentinel.write_text("keep-me", encoding="utf-8")
+    IntakeStore.for_db(settings.orders_db_path).save(
+        order_id=order.id,
+        payload={
+            "attachments": [
+                {
+                    "original_name": "outside.txt",
+                    "stored_name": "outside.txt",
+                    "content_type": "text/plain",
+                    "size_bytes": sentinel.stat().st_size,
+                    "storage_path": str(sentinel),
+                    "kind": "portal_attachment",
+                }
+            ]
+        },
+        submit=True,
+    )
+
+    resp = client.delete(
+        f"/api/orders/{order.id}?mode=anonymize&reason=retention_expired",
+        headers=auth_headers,
+    )
+    assert resp.status_code == 200, resp.text
+    body = resp.json()
+    assert body["action"] == "anonymized"
+    assert body["files_deleted"] == 0
+    assert sentinel.exists()
+
+
+
+def test_admin_delete_order_skips_untrusted_report_artifacts(
+    client, auth_headers, settings, tmp_path
+):
+    order = _seed_order(settings.orders_db_path, order_id="GKO-20260623-DEL-TRUST")
+    _mark_paid(settings, order)
+    _expire_retention_window(settings.orders_db_path, order.id)
+    sentinel = tmp_path / "outside-report.html"
+    sentinel.write_text("keep-me", encoding="utf-8")
+    with OrdersDAO.connect(settings.orders_db_path) as dao:
+        dao.update(
+            order.id,
+            {"audit_report": str(sentinel), "pdf_path": None},
+            actor="test",
+            reason="seed_untrusted_artifact",
+        )
+
+    resp = client.delete(
+        f"/api/orders/{order.id}?mode=delete&reason=user_request",
+        headers=auth_headers,
+    )
+    assert resp.status_code == 200, resp.text
+    body = resp.json()
+    assert body["action"] == "deleted"
+    assert body["files_deleted"] == 0
+    assert sentinel.exists()
 
 def test_admin_anonymize_order_scrubs_delivery_notifications_payload(
     client, auth_headers, settings
