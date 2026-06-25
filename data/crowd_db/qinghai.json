@@ -183,6 +183,23 @@
             }
           ],
           "program_type": "师范教育类"
+        },
+        {
+          "name": "青海民族大学",
+          "major": "民族学",
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史"
+          },
+          "program_type": "民族类特色",
+          "frequency": 2,
+          "platforms": [
+            "千问",
+            "百度"
+          ],
+          "predicted_increase": 0,
+          "alternatives": []
         }
       ]
     },
