@@ -289,6 +289,23 @@
           ],
           "predicted_increase": 0,
           "alternatives": []
+        },
+        {
+          "name": "三亚学院",
+          "major": "旅游管理",
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史"
+          },
+          "program_type": null,
+          "frequency": 2,
+          "platforms": [
+            "元宝",
+            "豆包"
+          ],
+          "predicted_increase": 0,
+          "alternatives": []
         }
       ]
     },

@@ -221,6 +221,23 @@
           ],
           "predicted_increase": 0,
           "alternatives": []
+        },
+        {
+          "name": "天水师范学院",
+          "major": "学前教育",
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史"
+          },
+          "program_type": "师范教育类",
+          "frequency": 2,
+          "platforms": [
+            "千问",
+            "百度"
+          ],
+          "predicted_increase": 0,
+          "alternatives": []
         }
       ]
     },

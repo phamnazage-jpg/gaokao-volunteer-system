@@ -241,6 +241,23 @@
           ],
           "predicted_increase": 0,
           "alternatives": []
+        },
+        {
+          "name": "玉林师范学院",
+          "major": "汉语言文学",
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史"
+          },
+          "program_type": "师范教育类",
+          "frequency": 2,
+          "platforms": [
+            "千问",
+            "元宝"
+          ],
+          "predicted_increase": 0,
+          "alternatives": []
         }
       ]
     },
