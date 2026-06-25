@@ -3,6 +3,14 @@
 最后更新: 2026-06-25
 状态词: 本地验证完成（v2.1 主链与 6/20/6/21 增量仍成立；crowd_db 全国 31 省口径全部达 high，当前 live 基线为 31 high / 0 usable / 0 skeleton；crowd_db 质量门槛已硬化为综合判定，防静默升级）
 
+本轮增量（2026-06-25 commit cad7894）:
+
+- dev-verify 全绿（1279 passed / coverage 85.51% / ruff / mypy 通过）
+- 修复 9 个回归测试失败（admin conftest RouteClient.post headers bug + crowd_db 27省升级后测试期望过时 + intake candidate_province 必填）
+- 修正山西/天津 source_url http→https + 北京 690 段测试用例对齐真实数据分布
+- 删除 web_public.py 未使用的 primary_action_label/href 死代码
+- 工作区从 84 文件未提交收口到 clean，三仓同步到 cad7894
+
 真相源优先级:
 
 1. 本文件
