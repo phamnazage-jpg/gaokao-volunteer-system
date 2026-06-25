@@ -3039,5 +3039,25 @@
       "kind": "province_official"
     }
   ],
-  "quality_note": "高置信 S 级人工整理推荐（基于福建现有院校池 + 2025 招生章程深度复核）；省级官方入口已完成 2025 年度复核。"
+  "quality_note": "高置信 S 级人工整理推荐（基于福建现有院校池 + 2025 招生章程深度复核）；省级官方入口已完成 2025 年度复核。",
+  "score_distribution": {
+    "data_year": 2026,
+    "source_url": "https://www.eeafj.cn/",
+    "source_type": "official_release",
+    "last_updated": "2026-06-25",
+    "subjects": {
+      "物理": {
+        "benchmarks": [],
+        "score_line_at_600": 0,
+        "total_above_bachelor_line": 0,
+        "bachelor_score_line": 446
+      },
+      "历史": {
+        "benchmarks": [],
+        "score_line_at_600": 0,
+        "total_above_bachelor_line": 0,
+        "bachelor_score_line": 458
+      }
+    }
+  }
 }
