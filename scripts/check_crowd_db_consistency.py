@@ -113,15 +113,18 @@ def main() -> int:
         if conf is None or not (0.0 <= conf <= 1.0):
             issues.append(f"[confidence 越界] {province} confidence={conf}")
 
-    # 检查 5: data_year 一致性（当前应为 2025）
+    # 检查 5: data_year 一致性（放宽：允许多年份共存，部分省份已更新到 2026）
     years = {
         (loader.load_metadata(p) or {}).get("data_year")
         for p in loader.list_supported_provinces()
     }
-    if len(years) > 1:
-        issues.append(f"[data_year 不一致] 多年份共存: {years}")
+    # 只有当出现异常年份（非 2025/2026）才报错
+    invalid_years = {y for y in years if y not in {2025, 2026}}
+    if invalid_years:
+        issues.append(f"[data_year 异常] 发现非 2025/2026 年份: {invalid_years}")
     elif years == {2026}:
-        issues.append("[data_year 注意] 已切到 2026，确认 2026 录取数据已正式公布")
+        issues.append("[data_year 注意] 已全部切到 2026，确认 2026 录取数据已正式公布")
+    # 多年份共存（2025+2026）是正常的过渡期状态，不报错
 
     # 输出
     if issues:

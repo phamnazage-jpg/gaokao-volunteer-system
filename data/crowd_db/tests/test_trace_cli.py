@@ -36,7 +36,7 @@ def test_trace_cli_json_output_contains_matches() -> None:
     hunan_match = next(
         match for match in payload["matches"] if match["province"] == "湖南"
     )
-    assert hunan_match["data_year"] == 2025
+    assert hunan_match["data_year"] in (2025, 2026)  # 过渡期：湖南已切到 2026
     assert hunan_match["source_url"].startswith("https://")
     assert 0 <= hunan_match["confidence"] <= 1
     assert hunan_match["source_type"] == "report"
@@ -51,7 +51,7 @@ def test_trace_cli_human_output_contains_required_lines(
 
     assert exit_code == 0
     assert "query: 长沙理工大学" in captured.out
-    assert "湖南 / 2025年数据 / 长沙理工大学 / 会计学" in captured.out
+    assert "湖南 / 2026年数据 / 长沙理工大学 / 会计学" in captured.out
     assert "source_url: https://" in captured.out
     assert "confidence: 0.85" in captured.out
     assert "quality_level: high (A级（高置信）)" in captured.out

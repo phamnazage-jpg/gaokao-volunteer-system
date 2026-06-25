@@ -168,7 +168,7 @@ def test_risk_dict_includes_provenance_fields():
     assert r["source_type_icon"] == "⚠️"
     assert r["source_url"].startswith("https://")
     assert r["last_updated"]  # 非空即可，避免数据日期更新导致测试脆弱
-    assert r["data_year"] == 2025
+    assert r["data_year"] in (2025, 2026)  # 过渡期：湖南已切到 2026
     assert 0 <= r["confidence"] <= 1
     assert r["quality_level"] == "high"
     assert r["quality_label"] == "A级（高置信）"

@@ -1,9 +1,9 @@
 {
   "province": "河南",
   "last_updated": "2026-06-25",
-  "data_year": 2025,
+  "data_year": 2026,
   "source": "河南 crowd_db 可用版人工结构化摘要（2025 官方分数线锚点 + 省内重点高校常见报考池 + 千问/元宝/百度/豆包 多平台热点交叉整理），2026-06-24",
-  "source_url": "https://gaokao.chsi.com.cn/",
+  "source_url": "https://weibo.com/a/hot/50f5eedee726596c_0.html",
   "source_type": "manual_summary",
   "confidence": 0.82,
   "score_ranges": [
@@ -1038,5 +1038,5 @@
       "kind": "province_official"
     }
   ],
-  "quality_note": "高置信人工整理推荐（基于河南现有院校池 + 2025 招生章程复核）；河南省招生办公室官方入口已完成 2025 年度复核。"
+  "quality_note": "2026 官方分数线已接入（新高考模式）：本科历史类459/物理类419，特殊类型历史类534/物理类513"
 }

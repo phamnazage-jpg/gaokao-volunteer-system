@@ -52,7 +52,10 @@ HIGH_TRUST_PROVINCES = frozenset({
     "天津",
     "新疆",
     "云南",
-    "内蒙古", "广西", "西藏", "宁夏",
+    "内蒙古",
+    "广西",
+    "西藏",
+    "宁夏",
 })
 
 # 仍不允许进入 high 的高考生源大省（除已进入白名单者外）
@@ -176,15 +179,29 @@ def test_confidence_values_in_valid_range(summary):
 
 
 def test_data_year_is_2025_until_2026_published(summary):
-    """6/20 处于 2026 高考季真空期: 所有文件 data_year=2025。
+    """data_year 约定：部分省份已公布 2026 分数线可更新为 2026，其他仍为 2025。
 
-    6/25 后真实 2026 录取数据公布, 本测试需同步更新。
-    锁住这一点防止:
-    1. 有人用 2024 旧数据假装 2026 (招生政策已变)
-    2. 有人提前编造 2026 模拟数据 (合规风险)
+    过渡期规则（2026-06）：
+    - 已公布 2026 分数线的省份：data_year=2026
+    - 待公布省份：data_year=2025
+    - 不得出现非 2025/2026 的年份
+
+    已确认 2026 分数线公布省份（2026-06-25）：
+    - 湖南 / 江苏 / 广东 / 山东 / 河北 / 河南
     """
+    invalid_provinces = []
+    valid_provinces_2026 = {"湖南", "江苏", "广东", "山东", "河北", "河南"}
+
     for p in summary["provinces"]:
-        assert p["data_year"] == 2025, (
-            f"{p['province']} data_year={p['data_year']} 偏离 2025 基线。"
-            "如 6/25 后 2026 数据已公布, 显式更新本测试。"
-        )
+        year = p["data_year"]
+        prov = p["province"]
+        if year not in {2025, 2026}:
+            invalid_provinces.append((prov, year))
+        # 已确认 2026 的省份必须为 2026
+        if prov in valid_provinces_2026 and year != 2026:
+            invalid_provinces.append((prov, year))
+
+    assert invalid_provinces == [], (
+        f"data_year 仅允许 2025/2026，且已公布省份必须为 2026。"
+        f"发现异常: {invalid_provinces}"
+    )
