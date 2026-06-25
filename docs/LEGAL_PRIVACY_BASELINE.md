@@ -220,7 +220,7 @@
 - 前台正式入口挂载（隐私政策 / 服务条款）
 - `consent_version` 升级机制（当前仍需版本化管理）
 - `consent_scope` 命名空间进一步统一
-- 第三方 SDK/插件接入后的隐私披露流程
+- 第三方 SDK/插件接入后的隐私披露流程（模板已建：`docs/THIRD_PARTY_DISCLOSURE_TEMPLATE.md`）
 
 ---
 
