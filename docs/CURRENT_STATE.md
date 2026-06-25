@@ -3,13 +3,15 @@
 最后更新: 2026-06-25
 状态词: 本地验证完成（v2.1 主链与 6/20/6/21 增量仍成立；crowd_db 全国 31 省口径全部达 high，当前 live 基线为 31 high / 0 usable / 0 skeleton；crowd_db 质量门槛已硬化为综合判定，防静默升级）
 
-本轮增量（2026-06-25 commit cad7894）:
+本轮增量（当前工作区，基于 HEAD `dbb8fb7` 继续深度升级）:
 
-- dev-verify 全绿（1279 passed / coverage 85.51% / ruff / mypy 通过）
-- 修复 9 个回归测试失败（admin conftest RouteClient.post headers bug + crowd_db 27省升级后测试期望过时 + intake candidate_province 必填）
-- 修正山西/天津 source_url http→https + 北京 690 段测试用例对齐真实数据分布
-- 删除 web_public.py 未使用的 primary_action_label/href 死代码
-- 工作区从 84 文件未提交收口到 clean，三仓同步到 cad7894
+- crowd_db 当前 live 基线已实测为 `31 high / 0 usable / 0 skeleton`
+- `data/crowd_db/*.json` 实存 31 个文件；`loader.py` 已支持全国 31 省级行政区
+- `python -m data.crowd_db.quality_summary --human` 已确认最后 4 省（新疆 / 广西 / 西藏 / 宁夏）已落地并进入 high
+- `pytest -q data/crowd_db/tests/test_score_distribution.py data/crowd_db/tests/test_subject_requirements.py data/crowd_db/tests/test_program_type.py data/crowd_db/tests/test_crowd_db_data_quality.py data/crowd_db/tests/test_provenance_query.py` → `57 passed`
+- 2026-06-26 新增深度接入：`广西` / `宁夏` 已补 `score_distribution`（官方一分一档/一分段统计 + 本科线）
+- 当前 `score_distribution` 覆盖已达 **29/31 省**，仅剩 `新疆` / `西藏`
+- 当前工作区未提交修改：`data/crowd_db/guangxi.json`、`data/crowd_db/ningxia.json`、`docs/CURRENT_STATE.md`、`docs/CROWD_DB_NATIONALIZATION_SOURCE_OF_TRUTH.md`
 
 真相源优先级:
 

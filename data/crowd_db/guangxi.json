@@ -6,7 +6,7 @@
   "source_url": "https://gaokao.chsi.com.cn/",
   "source_type": "manual_summary",
   "confidence": 0.82,
-  "quality_note": "高置信人工整理推荐（基于广西现有院校池 + 2025 招生章程复核）；广西招生考试院官方入口已完成 2025 年度复核。",
+  "quality_note": "高置信人工整理推荐（基于广西现有院校池 + 2025 招生章程复核）；广西招生考试院官方入口已完成 2025 年度复核。；2026 官方一分一档表与本科线已接入（物理/历史）。",
   "trusted_sources": [
     {
       "name": "教育部阳光高考",
@@ -1520,5 +1520,43 @@
         }
       ]
     }
-  ]
+  ],
+  "score_distribution": {
+    "data_year": 2026,
+    "source_url": "https://www.gxeea.cn/2026yfyd/index.html",
+    "source_type": "official_release",
+    "last_updated": "2026-06-25",
+    "subjects": {
+      "物理": {
+        "benchmarks": [
+          {
+            "score": 600,
+            "cumulative_count": 10818
+          },
+          {
+            "score": 550,
+            "cumulative_count": 34040
+          }
+        ],
+        "score_line_at_600": 10818,
+        "total_above_bachelor_line": 179539,
+        "bachelor_score_line": 368
+      },
+      "历史": {
+        "benchmarks": [
+          {
+            "score": 600,
+            "cumulative_count": 1455
+          },
+          {
+            "score": 550,
+            "cumulative_count": 6255
+          }
+        ],
+        "score_line_at_600": 1455,
+        "total_above_bachelor_line": 49420,
+        "bachelor_score_line": 398
+      }
+    }
+  }
 }
