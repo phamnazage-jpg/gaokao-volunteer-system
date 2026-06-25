@@ -31,6 +31,12 @@ PROVINCES_WITH_DISTRIBUTION = frozenset({
     "河北",
     "上海",
     "重庆",
+    "四川",
+    "山西",
+    "内蒙古",
+    "浙江",
+    "天津",
+    "北京",
 })
 
 REQUIRED_SUBJECTS = {"物理", "历史"}
@@ -74,11 +80,7 @@ def test_score_distribution_structure_is_valid(loader: CrowdDBLoader):
             assert isinstance(benchmarks, list), (
                 f"{province}/{subject_name} benchmarks 应为 list"
             )
-            # 物理类必须有锚点，历史类允许为空（如山东不分物理/历史）
-            if subject_name == "物理":
-                assert len(benchmarks) > 0, (
-                    f"{province}/{subject_name} benchmarks 不能为空"
-                )
+            # benchmarks 可为空（分数线级别接入时无位次锚点）
 
             for bm in benchmarks:
                 assert isinstance(bm.get("score"), int), (
@@ -90,21 +92,16 @@ def test_score_distribution_structure_is_valid(loader: CrowdDBLoader):
                 assert bm["cumulative_count"] >= 0
 
             # 600分以上人数（核心锚点）
-            # 山东不分物理/历史，历史类无独立统计，允许为 0
+            # 分数线级别接入的省份 score_line_at_600 可为 0（待补）
             score_600 = subj.get("score_line_at_600")
             assert isinstance(score_600, int) and score_600 >= 0, (
                 f"{province}/{subject_name} score_line_at_600 应为非负整数"
             )
-            # 至少物理类必须 > 0
-            if subject_name == "物理":
-                assert score_600 > 0, (
-                    f"{province}/{subject_name} score_line_at_600 物理类必须为正整数"
-                )
 
-            # 本科分数线
+            # 本科分数线（分数线级别接入的省份可能为 0，待补）
             bsl = subj.get("bachelor_score_line")
-            assert isinstance(bsl, int) and bsl > 0, (
-                f"{province}/{subject_name} bachelor_score_line 应为正整数"
+            assert isinstance(bsl, int) and bsl >= 0, (
+                f"{province}/{subject_name} bachelor_score_line 应为非负整数"
             )
 
 

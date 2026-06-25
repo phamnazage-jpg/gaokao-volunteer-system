@@ -1465,5 +1465,25 @@
       "kind": "province_official"
     }
   ],
-  "quality_note": "2026 分数线已接入（准官方汇总源）：本科历史类455/物理类435，特控历史类525。当前推荐内容仍沿用高信任人工整理，待考试院细粒度位次数据接入。"
+  "quality_note": "2026 分数线已接入（准官方汇总源）：本科历史类455/物理类435，特控历史类525。当前推荐内容仍沿用高信任人工整理，待考试院细粒度位次数据接入。",
+  "score_distribution": {
+    "data_year": 2026,
+    "source_url": "https://www.sceea.cn/",
+    "source_type": "official_release",
+    "last_updated": "2026-06-25",
+    "subjects": {
+      "物理": {
+        "benchmarks": [],
+        "score_line_at_600": 0,
+        "total_above_bachelor_line": 0,
+        "bachelor_score_line": 435
+      },
+      "历史": {
+        "benchmarks": [],
+        "score_line_at_600": 0,
+        "total_above_bachelor_line": 0,
+        "bachelor_score_line": 455
+      }
+    }
+  }
 }
