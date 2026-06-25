@@ -34,7 +34,8 @@
               "major": "教育学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "青海师范大学",
@@ -56,7 +57,8 @@
               "major": "自动化",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         },
         {
           "name": "青海民族大学",
@@ -78,7 +80,8 @@
               "major": "药学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "民族类特色"
         },
         {
           "name": "青海大学",
@@ -100,7 +103,8 @@
               "major": "生态学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "青海师范大学",
@@ -122,7 +126,8 @@
               "major": "教育学",
               "score": 83
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         }
       ]
     },
@@ -153,7 +158,8 @@
               "major": "新能源汽车工程技术",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "青海理工学院",
@@ -175,7 +181,8 @@
               "major": "司法警务",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "青海民族大学旅游学院",
@@ -197,7 +204,8 @@
               "major": "药学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "民族类特色"
         },
         {
           "name": "青海民族大学",
@@ -220,7 +228,8 @@
               "major": "民族学",
               "score": 83
             }
-          ]
+          ],
+          "program_type": "民族类特色"
         },
         {
           "name": "青海大学昆仑学院",
@@ -242,7 +251,8 @@
               "major": "经济学",
               "score": 82
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -273,7 +283,8 @@
               "major": "英语",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "西宁城市职业技术学院",
@@ -295,7 +306,8 @@
               "major": "自动化",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "青海职业技术大学",
@@ -317,7 +329,8 @@
               "major": "药学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "青海大学",
@@ -339,7 +352,8 @@
               "major": "临床医学",
               "score": 80
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "青海师范大学",
@@ -361,7 +375,8 @@
               "major": "计算机科学与技术",
               "score": 81
             }
-          ]
+          ],
+          "program_type": "师范院校特色类"
         }
       ]
     },
@@ -392,7 +407,8 @@
               "major": "新能源汽车工程技术",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "青海警官职业学院",
@@ -414,7 +430,8 @@
               "major": "工程造价",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "公安院校"
         },
         {
           "name": "青海建筑职业技术学院",
@@ -436,7 +453,8 @@
               "major": "教育学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "青海民族大学",
@@ -458,7 +476,8 @@
               "major": "法学",
               "score": 79
             }
-          ]
+          ],
+          "program_type": "民族类特色"
         },
         {
           "name": "青海大学昆仑学院",
@@ -480,7 +499,8 @@
               "major": "工商管理",
               "score": 78
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -511,7 +531,8 @@
               "major": "土木工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "青海工贸职业技术学院",
@@ -533,7 +554,8 @@
               "major": "酒店管理",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "青海高等职业技术学院",
@@ -555,7 +577,8 @@
               "major": "护理",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "青海师范大学",
@@ -577,7 +600,8 @@
               "major": "英语",
               "score": 77
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         },
         {
           "name": "青海民族大学",
@@ -599,7 +623,8 @@
               "major": "旅游管理",
               "score": 76
             }
-          ]
+          ],
+          "program_type": "民族类特色"
         }
       ]
     },
@@ -630,7 +655,8 @@
               "major": "机电一体化技术",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "海东学院",
@@ -652,7 +678,8 @@
               "major": "工程造价",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "玉树师范学校",
@@ -674,7 +701,8 @@
               "major": "教育学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         },
         {
           "name": "青海大学昆仑学院",
@@ -696,7 +724,8 @@
               "major": "土木工程",
               "score": 75
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "青海建筑职业技术学院",
@@ -718,7 +747,8 @@
               "major": "建筑工程技术",
               "score": 73
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -749,7 +779,8 @@
               "major": "土木工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "青海商贸职业学校",
@@ -771,7 +802,8 @@
               "major": "酒店管理",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "青海畜牧兽医职业技术学院",
@@ -793,7 +825,8 @@
               "major": "护理",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "青海交通职业技术学院",
@@ -815,7 +848,8 @@
               "major": "道路桥梁工程技术",
               "score": 73
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "青海农牧职业技术学院",
@@ -837,7 +871,8 @@
               "major": "畜牧兽医",
               "score": 74
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -868,7 +903,8 @@
               "major": "司法警务",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "海西州职业技术学校",
@@ -890,7 +926,8 @@
               "major": "药学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "海南州职业技术学校",
@@ -912,7 +949,8 @@
               "major": "英语",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "青海卫生职业技术学院",
@@ -934,7 +972,8 @@
               "major": "护理",
               "score": 73
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "青海职业技术学院",
@@ -956,7 +995,8 @@
               "major": "机电一体化技术",
               "score": 72
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     }

@@ -34,7 +34,8 @@
               "major": "新闻学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "山西大学",
@@ -56,7 +57,8 @@
               "major": "金融学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "中北大学",
@@ -78,7 +80,8 @@
               "major": "车辆工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "山西医科大学",
@@ -101,7 +104,8 @@
               "major": "临床医学",
               "score": 86
             }
-          ]
+          ],
+          "program_type": "医学类特色"
         },
         {
           "name": "山西财经大学",
@@ -124,7 +128,8 @@
               "major": "工程管理",
               "score": 85
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -155,7 +160,8 @@
               "major": "针灸推拿学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "医学类特色"
         },
         {
           "name": "山西财经大学",
@@ -177,7 +183,8 @@
               "major": "英语",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "山西师范大学",
@@ -199,7 +206,8 @@
               "major": "机械工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         },
         {
           "name": "太原理工大学",
@@ -222,7 +230,8 @@
               "major": "自动化",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "山西大学",
@@ -245,7 +254,8 @@
               "major": "物理学",
               "score": 82
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -276,7 +286,8 @@
               "major": "自动化",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "艺体类"
         },
         {
           "name": "山西农业大学",
@@ -298,7 +309,8 @@
               "major": "金融学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "农林类特色"
         },
         {
           "name": "山西中医药大学",
@@ -320,7 +332,8 @@
               "major": "车辆工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "医学类特色"
         },
         {
           "name": "中北大学",
@@ -343,7 +356,8 @@
               "major": "电子信息工程",
               "score": 83
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "山西师范大学",
@@ -365,7 +379,8 @@
               "major": "数学与应用数学",
               "score": 81
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         }
       ]
     },
@@ -396,7 +411,8 @@
               "major": "针灸推拿学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         },
         {
           "name": "长治医学院",
@@ -418,7 +434,8 @@
               "major": "英语",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "医学类特色"
         },
         {
           "name": "运城学院",
@@ -440,7 +457,8 @@
               "major": "机械工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "国际涉外导向"
         },
         {
           "name": "山西大同大学",
@@ -462,7 +480,8 @@
               "major": "汉语言文学",
               "score": 82
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "太原工业学院",
@@ -484,7 +503,8 @@
               "major": "机械电子工程",
               "score": 80
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -515,7 +535,8 @@
               "major": "自动化",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         },
         {
           "name": "太原学院",
@@ -537,7 +558,8 @@
               "major": "金融学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "晋中学院",
@@ -559,7 +581,8 @@
               "major": "车辆工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "山西农业大学",
@@ -581,7 +604,8 @@
               "major": "动物医学",
               "score": 78
             }
-          ]
+          ],
+          "program_type": "农林类特色"
         },
         {
           "name": "吕梁学院",
@@ -603,7 +627,8 @@
               "major": "计算机科学与技术",
               "score": 80
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -634,7 +659,8 @@
               "major": "针灸推拿学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "吕梁学院",
@@ -656,7 +682,8 @@
               "major": "英语",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "太原工业学院",
@@ -678,7 +705,8 @@
               "major": "机械工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "长治学院",
@@ -700,7 +728,8 @@
               "major": "汉语言文学",
               "score": 79
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "运城学院",
@@ -722,7 +751,8 @@
               "major": "数学与应用数学",
               "score": 77
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -753,7 +783,8 @@
               "major": "自动化",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "山西职业技术学院",
@@ -775,7 +806,8 @@
               "major": "金融学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "山西省财政税务专科学校",
@@ -797,7 +829,8 @@
               "major": "车辆工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "山西旅游职业学院",
@@ -819,7 +852,8 @@
               "major": "旅游管理",
               "score": 76
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "山西建筑职业技术学院",
@@ -841,7 +875,8 @@
               "major": "工程管理",
               "score": 77
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -872,7 +907,8 @@
               "major": "针灸推拿学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "山西工程职业学院",
@@ -894,7 +930,8 @@
               "major": "英语",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "山西机电职业技术学院",
@@ -916,7 +953,8 @@
               "major": "机械工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "山西交通职业技术学院",
@@ -938,7 +976,8 @@
               "major": "交通工程",
               "score": 75
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "山西林业职业技术学院",
@@ -960,7 +999,8 @@
               "major": "生态学",
               "score": 76
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     }

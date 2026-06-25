@@ -321,7 +321,7 @@
             "reselect_subject": [],
             "note": "首选历史，无强制再选"
           },
-          "program_type": null
+          "program_type": "师范教育类"
         },
         {
           "name": "华北电力大学(保定)",
@@ -382,7 +382,7 @@
             ],
             "note": "首选物理，再选化学/生物"
           },
-          "program_type": null
+          "program_type": "医学类特色"
         },
         {
           "name": "华北理工大学",
@@ -510,7 +510,7 @@
             "reselect_subject": [],
             "note": "首选历史，无强制再选"
           },
-          "program_type": null
+          "program_type": "师范教育类"
         },
         {
           "name": "燕山大学",
@@ -569,7 +569,7 @@
             ],
             "note": "首选物理，再选化学/生物"
           },
-          "program_type": null
+          "program_type": "医学类特色"
         },
         {
           "name": "石家庄铁道大学",
@@ -727,7 +727,7 @@
             ],
             "note": "首选物理，再选化学/生物"
           },
-          "program_type": null
+          "program_type": "医学类特色"
         },
         {
           "name": "河北师范大学",
@@ -757,7 +757,7 @@
             "reselect_subject": [],
             "note": "首选历史，无强制再选"
           },
-          "program_type": null
+          "program_type": "师范教育类"
         },
         {
           "name": "石家庄铁道大学",
@@ -886,7 +886,7 @@
             ],
             "note": "首选物理，再选化学"
           },
-          "program_type": null
+          "program_type": "农林类特色"
         },
         {
           "name": "河北大学",
@@ -942,7 +942,7 @@
             "reselect_subject": [],
             "note": "首选历史，无强制再选"
           },
-          "program_type": null
+          "program_type": "师范教育类"
         },
         {
           "name": "河北经贸大学",
@@ -1005,7 +1005,7 @@
             ],
             "note": "首选物理，再选化学/生物"
           },
-          "program_type": null
+          "program_type": "医学类特色"
         },
         {
           "name": "河北地质大学",
@@ -1128,7 +1128,7 @@
             "reselect_subject": [],
             "note": "首选物理，无强制再选"
           },
-          "program_type": null
+          "program_type": "医学院校特色类"
         },
         {
           "name": "河北农业大学",
@@ -1156,7 +1156,7 @@
             "reselect_subject": [],
             "note": "首选物理，无强制再选"
           },
-          "program_type": null
+          "program_type": "农林院校特色类"
         },
         {
           "name": "河北科技大学",
@@ -1405,7 +1405,7 @@
             ],
             "note": "首选物理，再选化学"
           },
-          "program_type": null
+          "program_type": "农林类特色"
         },
         {
           "name": "河北工程大学",
@@ -1535,7 +1535,7 @@
             "reselect_subject": [],
             "note": "首选历史，艺体类无强制再选"
           },
-          "program_type": null
+          "program_type": "师范院校特色类"
         },
         {
           "name": "河北大学",
@@ -1563,7 +1563,7 @@
             "reselect_subject": [],
             "note": "首选历史，艺体类无强制再选"
           },
-          "program_type": null
+          "program_type": "艺体类"
         },
         {
           "name": "河北经贸大学",
@@ -1713,7 +1713,7 @@
             "reselect_subject": [],
             "note": "首选历史，艺体类无强制再选"
           },
-          "program_type": null
+          "program_type": "艺体类"
         }
       ]
     },
@@ -1750,7 +1750,7 @@
             "reselect_subject": [],
             "note": "首选历史，无强制再选"
           },
-          "program_type": null
+          "program_type": "农林院校特色类"
         },
         {
           "name": "河北师范大学",
@@ -1778,7 +1778,7 @@
             "reselect_subject": [],
             "note": "首选物理，无强制再选"
           },
-          "program_type": null
+          "program_type": "师范教育类"
         },
         {
           "name": "河北大学",
@@ -1938,7 +1938,7 @@
             ],
             "note": "首选物理，再选化学/生物"
           },
-          "program_type": null
+          "program_type": "医学类特色"
         },
         {
           "name": "唐山学院",
@@ -2026,7 +2026,7 @@
             "reselect_subject": [],
             "note": "首选历史，无强制再选"
           },
-          "program_type": null
+          "program_type": "国际涉外导向"
         },
         {
           "name": "保定职业技术学院",

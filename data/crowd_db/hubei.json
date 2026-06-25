@@ -36,7 +36,8 @@
               "major": "遥感科学与技术",
               "score": 96
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "武汉大学",
@@ -59,7 +60,8 @@
               "major": "临床医学",
               "score": 97
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "华中科技大学",
@@ -83,7 +85,8 @@
               "major": "人工智能",
               "score": 96
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "武汉理工大学",
@@ -105,7 +108,8 @@
               "major": "材料科学与工程",
               "score": 91
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "华中农业大学",
@@ -127,7 +131,8 @@
               "major": "生物科学",
               "score": 88
             }
-          ]
+          ],
+          "program_type": "农林院校特色类"
         }
       ]
     },
@@ -160,7 +165,8 @@
               "major": "法学",
               "score": 94
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "华中科技大学",
@@ -183,7 +189,8 @@
               "major": "自动化",
               "score": 93
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "武汉理工大学",
@@ -207,7 +214,8 @@
               "major": "无机非金属材料工程",
               "score": 91
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "中南财经政法大学",
@@ -230,7 +238,8 @@
               "major": "会计学",
               "score": 89
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "中国地质大学(武汉)",
@@ -252,7 +261,8 @@
               "major": "地质学",
               "score": 82
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -285,7 +295,8 @@
               "major": "汉语言文学",
               "score": 95
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         },
         {
           "name": "中南财经政法大学",
@@ -309,7 +320,8 @@
               "major": "会计学",
               "score": 96
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "中国地质大学(武汉)",
@@ -331,7 +343,8 @@
               "major": "地质学",
               "score": 89
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "武汉理工大学",
@@ -354,7 +367,8 @@
               "major": "车辆工程",
               "score": 95
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "湖北大学",
@@ -377,7 +391,8 @@
               "major": "汉语言文学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "武汉工程大学",
@@ -399,7 +414,8 @@
               "major": "化学工程与工艺",
               "score": 83
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -430,7 +446,8 @@
               "major": "农学",
               "score": 90
             }
-          ]
+          ],
+          "program_type": "农林类特色"
         },
         {
           "name": "中南财经政法大学",
@@ -454,7 +471,8 @@
               "major": "金融学",
               "score": 95
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "华中师范大学",
@@ -476,7 +494,8 @@
               "major": "数学与应用数学",
               "score": 94
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         },
         {
           "name": "武汉理工大学",
@@ -499,7 +518,8 @@
               "major": "计算机科学与技术",
               "score": 86
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "湖北工业大学",
@@ -522,7 +542,8 @@
               "major": "机械设计制造及其自动化",
               "score": 82
             }
-          ]
+          ],
+          "program_type": "艺体类"
         },
         {
           "name": "武汉纺织大学",
@@ -544,7 +565,8 @@
               "major": "纺织工程",
               "score": 81
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -576,7 +598,8 @@
               "major": "汉语言文学",
               "score": 95
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "武汉科技大学",
@@ -600,7 +623,8 @@
               "major": "机械设计制造及其自动化",
               "score": 88
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "中南民族大学",
@@ -622,7 +646,8 @@
               "major": "电子信息工程",
               "score": 86
             }
-          ]
+          ],
+          "program_type": "民族类特色"
         },
         {
           "name": "湖北工业大学",
@@ -644,7 +669,8 @@
               "major": "电气工程及其自动化",
               "score": 91
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "武汉科技大学",
@@ -667,7 +693,8 @@
               "major": "计算机科学与技术",
               "score": 83
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "湖北经济学院",
@@ -689,7 +716,8 @@
               "major": "金融学",
               "score": 80
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -720,7 +748,8 @@
               "major": "化学工程与工艺",
               "score": 85
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "武汉纺织大学",
@@ -742,7 +771,8 @@
               "major": "服装设计",
               "score": 83
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "江汉大学",
@@ -764,7 +794,8 @@
               "major": "临床医学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "江汉大学",
@@ -786,7 +817,8 @@
               "major": "机械工程",
               "score": 78
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "武昌理工学院",
@@ -808,7 +840,8 @@
               "major": "软件工程",
               "score": 79
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -839,7 +872,8 @@
               "major": "机械设计制造及其自动化",
               "score": 78
             }
-          ]
+          ],
+          "program_type": "艺体类"
         },
         {
           "name": "武汉东湖学院",
@@ -861,7 +895,8 @@
               "major": "会计学",
               "score": 86
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "湖北经济学院",
@@ -883,7 +918,8 @@
               "major": "财务管理",
               "score": 80
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "湖北医药学院",
@@ -905,7 +941,8 @@
               "major": "临床医学",
               "score": 78
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "湖北师范大学",
@@ -927,7 +964,8 @@
               "major": "数学与应用数学",
               "score": 77
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         }
       ]
     },
@@ -960,7 +998,8 @@
               "major": "机电一体化",
               "score": 90
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "湖北职业技术学院",
@@ -982,7 +1021,8 @@
               "major": "护理学",
               "score": 82
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "武汉船舶职业技术学院",
@@ -1004,7 +1044,8 @@
               "major": "船舶工程",
               "score": 85
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "武汉职业技术学院",
@@ -1027,7 +1068,8 @@
               "major": "机电一体化技术",
               "score": 78
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "武汉铁路职业技术学院",
@@ -1049,7 +1091,8 @@
               "major": "铁道机车",
               "score": 75
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     }

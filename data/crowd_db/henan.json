@@ -35,7 +35,8 @@
               "major": "工科试验班",
               "score": 95
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "北京大学",
@@ -57,7 +58,8 @@
               "major": "经济与金融",
               "score": 96
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "上海交通大学",
@@ -80,7 +82,8 @@
               "major": "临床医学(八年制)",
               "score": 94
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "中国人民大学",
@@ -102,7 +105,8 @@
               "major": "法学",
               "score": 92
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "上海交通大学",
@@ -124,7 +128,8 @@
               "major": "电子信息类",
               "score": 91
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -156,7 +161,8 @@
               "major": "计算机科学与技术",
               "score": 92
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "同济大学",
@@ -178,7 +184,8 @@
               "major": "建筑学",
               "score": 92
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "中山大学",
@@ -201,7 +208,8 @@
               "major": "临床医学(湘雅)",
               "score": 91
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "中山大学",
@@ -223,7 +231,8 @@
               "major": "临床医学",
               "score": 90
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "天津大学",
@@ -245,7 +254,8 @@
               "major": "建筑学",
               "score": 88
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -277,7 +287,8 @@
               "major": "计算机科学与技术",
               "score": 93
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "西安交通大学",
@@ -299,7 +310,8 @@
               "major": "电气工程及其自动化",
               "score": 90
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "郑州大学",
@@ -323,7 +335,8 @@
               "major": "临床医学",
               "score": 87
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "湖南大学",
@@ -345,7 +358,8 @@
               "major": "土木工程",
               "score": 85
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "华中师范大学",
@@ -368,7 +382,8 @@
               "major": "英语",
               "score": 86
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         }
       ]
     },
@@ -401,7 +416,8 @@
               "major": "汉语言文学",
               "score": 88
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "郑州大学",
@@ -424,7 +440,8 @@
               "major": "计算机科学与技术",
               "score": 86
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "华中师范大学",
@@ -446,7 +463,8 @@
               "major": "数学与应用数学",
               "score": 88
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         },
         {
           "name": "华北水利水电大学",
@@ -469,7 +487,8 @@
               "major": "水利水电建筑工程",
               "score": 86
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "河南财经政法大学",
@@ -492,7 +511,8 @@
               "major": "会计学",
               "score": 85
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -524,7 +544,8 @@
               "major": "英语",
               "score": 89
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         },
         {
           "name": "河南科技大学",
@@ -546,7 +567,8 @@
               "major": "机械设计制造及其自动化",
               "score": 85
             }
-          ]
+          ],
+          "program_type": "艺体类"
         },
         {
           "name": "河南中医药大学",
@@ -569,7 +591,8 @@
               "major": "中医学",
               "score": 87
             }
-          ]
+          ],
+          "program_type": "医学类特色"
         },
         {
           "name": "河南工业大学",
@@ -592,7 +615,8 @@
               "major": "食品科学与工程",
               "score": 80
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "河南中医药大学",
@@ -614,7 +638,8 @@
               "major": "中医学",
               "score": 83
             }
-          ]
+          ],
+          "program_type": "医学类特色"
         }
       ]
     },
@@ -646,7 +671,8 @@
               "major": "会计学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "华北水利水电大学",
@@ -668,7 +694,8 @@
               "major": "水利工程",
               "score": 82
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "信阳师范大学",
@@ -691,7 +718,8 @@
               "major": "汉语言文学",
               "score": 88
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         },
         {
           "name": "河南科技大学",
@@ -713,7 +741,8 @@
               "major": "材料成型及控制工程",
               "score": 80
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "信阳师范大学",
@@ -735,7 +764,8 @@
               "major": "数学与应用数学",
               "score": 86
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         }
       ]
     },
@@ -766,7 +796,8 @@
               "major": "财务管理",
               "score": 81
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "河南开封科技传媒学院",
@@ -788,7 +819,8 @@
               "major": "计算机科学与技术",
               "score": 80
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "郑州工业应用技术学院",
@@ -811,7 +843,8 @@
               "major": "机械设计制造及其自动化",
               "score": 81
             }
-          ]
+          ],
+          "program_type": "艺体类"
         },
         {
           "name": "郑州科技学院",
@@ -833,7 +866,8 @@
               "major": "机械设计制造及其自动化",
               "score": 79
             }
-          ]
+          ],
+          "program_type": "艺体类"
         },
         {
           "name": "黄河科技学院",
@@ -855,7 +889,8 @@
               "major": "计算机科学与技术",
               "score": 76
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -887,7 +922,8 @@
               "major": "建筑工程技术",
               "score": 82
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "郑州铁路职业技术学院",
@@ -910,7 +946,8 @@
               "major": "城市轨道交通",
               "score": 81
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "河南工业职业技术学院",
@@ -932,7 +969,8 @@
               "major": "机械制造及自动化",
               "score": 80
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "河南交通职业技术学院",
@@ -954,7 +992,8 @@
               "major": "道路桥梁工程技术",
               "score": 76
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "河南工业职业技术学院",
@@ -976,7 +1015,8 @@
               "major": "机电一体化技术",
               "score": 75
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     }

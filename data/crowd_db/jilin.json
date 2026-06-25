@@ -34,7 +34,8 @@
               "major": "教育学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "东北师范大学",
@@ -56,7 +57,8 @@
               "major": "自动化",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         },
         {
           "name": "延边大学",
@@ -78,7 +80,8 @@
               "major": "自动化",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "国际涉外导向"
         },
         {
           "name": "吉林大学",
@@ -100,7 +103,8 @@
               "major": "法学",
               "score": 88
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "东北师范大学",
@@ -122,7 +126,8 @@
               "major": "教育学",
               "score": 85
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         }
       ]
     },
@@ -153,7 +158,8 @@
               "major": "医学影像学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "东北电力大学",
@@ -175,7 +181,8 @@
               "major": "英语",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "吉林农业大学",
@@ -197,7 +204,8 @@
               "major": "法学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "农林类特色"
         },
         {
           "name": "长春理工大学",
@@ -220,7 +228,8 @@
               "major": "光电信息科学与工程",
               "score": 86
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "延边大学",
@@ -242,7 +251,8 @@
               "major": "朝鲜语",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "国际涉外导向"
         }
       ]
     },
@@ -273,7 +283,8 @@
               "major": "法学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "长春中医药大学",
@@ -295,7 +306,8 @@
               "major": "自动化",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "医学类特色"
         },
         {
           "name": "北华大学",
@@ -317,7 +329,8 @@
               "major": "自动化",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "吉林农业大学",
@@ -340,7 +353,8 @@
               "major": "农学",
               "score": 82
             }
-          ]
+          ],
+          "program_type": "农林类特色"
         },
         {
           "name": "长春中医药大学",
@@ -362,7 +376,8 @@
               "major": "中医学",
               "score": 83
             }
-          ]
+          ],
+          "program_type": "医学类特色"
         }
       ]
     },
@@ -393,7 +408,8 @@
               "major": "医学影像学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "吉林师范大学",
@@ -415,7 +431,8 @@
               "major": "网络工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         },
         {
           "name": "长春师范大学",
@@ -437,7 +454,8 @@
               "major": "教育学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         },
         {
           "name": "吉林师范大学",
@@ -460,7 +478,8 @@
               "major": "汉语言文学",
               "score": 82
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         },
         {
           "name": "北华大学",
@@ -482,7 +501,8 @@
               "major": "林业工程",
               "score": 80
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -513,7 +533,8 @@
               "major": "电子信息工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "吉林化工学院",
@@ -535,7 +556,8 @@
               "major": "园艺",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "长春工程学院",
@@ -557,7 +579,8 @@
               "major": "针灸推拿学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "吉林化工学院",
@@ -579,7 +602,8 @@
               "major": "化学工程与工艺",
               "score": 80
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "长春工业大学",
@@ -601,7 +625,8 @@
               "major": "机械设计制造及其自动化",
               "score": 81
             }
-          ]
+          ],
+          "program_type": "艺体类"
         }
       ]
     },
@@ -632,7 +657,8 @@
               "major": "财政学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "吉林医药学院",
@@ -654,7 +680,8 @@
               "major": "网络工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "通化师范学院",
@@ -676,7 +703,8 @@
               "major": "教育学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         },
         {
           "name": "长春大学",
@@ -698,7 +726,8 @@
               "major": "会计学",
               "score": 79
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "吉林财经大学",
@@ -720,7 +749,8 @@
               "major": "经济学",
               "score": 78
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -751,7 +781,8 @@
               "major": "电子信息工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         },
         {
           "name": "吉林工商学院",
@@ -773,7 +804,8 @@
               "major": "园艺",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "长春汽车职业技术大学",
@@ -795,7 +827,8 @@
               "major": "针灸推拿学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "通化师范学院",
@@ -817,7 +850,8 @@
               "major": "学前教育",
               "score": 76
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         },
         {
           "name": "白城师范学院",
@@ -839,7 +873,8 @@
               "major": "物理学",
               "score": 80
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         }
       ]
     },
@@ -870,7 +905,8 @@
               "major": "财政学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "长春职业技术学院",
@@ -892,7 +928,8 @@
               "major": "网络工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "白城医学高等专科学校",
@@ -914,7 +951,8 @@
               "major": "教育学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "吉林铁道职业技术学院",
@@ -936,7 +974,8 @@
               "major": "铁道机车",
               "score": 74
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "长春职业技术学院",
@@ -958,7 +997,8 @@
               "major": "护理",
               "score": 73
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     }

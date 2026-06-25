@@ -34,7 +34,8 @@
               "major": "护理学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "贵州大学",
@@ -56,7 +57,8 @@
               "major": "法学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "贵州医科大学",
@@ -78,7 +80,8 @@
               "major": "临床医学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "医学类特色"
         },
         {
           "name": "贵州师范大学",
@@ -101,7 +104,8 @@
               "major": "经济学",
               "score": 88
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         },
         {
           "name": "遵义医科大学",
@@ -124,7 +128,8 @@
               "major": "中医学",
               "score": 86
             }
-          ]
+          ],
+          "program_type": "医学类特色"
         }
       ]
     },
@@ -155,7 +160,8 @@
               "major": "会计学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         },
         {
           "name": "贵州财经大学",
@@ -177,7 +183,8 @@
               "major": "小学教育",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "贵州民族大学",
@@ -199,7 +206,8 @@
               "major": "新闻学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "民族类特色"
         },
         {
           "name": "贵州大学",
@@ -221,7 +229,8 @@
               "major": "土木工程",
               "score": 82
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "贵州中医药大学",
@@ -243,7 +252,8 @@
               "major": "护理学",
               "score": 80
             }
-          ]
+          ],
+          "program_type": "医学类特色"
         }
       ]
     },
@@ -274,7 +284,8 @@
               "major": "教育学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "医学类特色"
         },
         {
           "name": "遵义医科大学",
@@ -296,7 +307,8 @@
               "major": "法学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "医学类特色"
         },
         {
           "name": "贵州理工学院",
@@ -318,7 +330,8 @@
               "major": "临床医学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "艺体类"
         },
         {
           "name": "贵州财经大学",
@@ -341,7 +354,8 @@
               "major": "电子信息工程",
               "score": 80
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "贵州医科大学",
@@ -363,7 +377,8 @@
               "major": "生物科学",
               "score": 78
             }
-          ]
+          ],
+          "program_type": "医学类特色"
         }
       ]
     },
@@ -394,7 +409,8 @@
               "major": "会计学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         },
         {
           "name": "贵州工程应用技术学院",
@@ -416,7 +432,8 @@
               "major": "小学教育",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "铜仁学院",
@@ -438,7 +455,8 @@
               "major": "新闻学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "黔南民族师范学院",
@@ -460,7 +478,8 @@
               "major": "音乐学",
               "score": 78
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         },
         {
           "name": "贵州理工学院",
@@ -482,7 +501,8 @@
               "major": "化学工程与工艺",
               "score": 77
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -513,7 +533,8 @@
               "major": "教育学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "凯里学院",
@@ -535,7 +556,8 @@
               "major": "法学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "六盘水师范学院",
@@ -557,7 +579,8 @@
               "major": "临床医学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "师范院校特色类"
         },
         {
           "name": "贵阳学院",
@@ -579,7 +602,8 @@
               "major": "汉语言文学",
               "score": 76
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "铜仁学院",
@@ -601,7 +625,8 @@
               "major": "食品科学与工程",
               "score": 75
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -632,7 +657,8 @@
               "major": "会计学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "贵州商学院",
@@ -654,7 +680,8 @@
               "major": "小学教育",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "贵州电子信息职业技术学院",
@@ -676,7 +703,8 @@
               "major": "新闻学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "遵义医科大学",
@@ -698,7 +726,8 @@
               "major": "旅游管理",
               "score": 76
             }
-          ]
+          ],
+          "program_type": "医学类特色"
         },
         {
           "name": "贵州轻工职业技术学院",
@@ -720,7 +749,8 @@
               "major": "数控技术",
               "score": 75
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -751,7 +781,8 @@
               "major": "教育学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "贵阳职业技术学院",
@@ -773,7 +804,8 @@
               "major": "法学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "贵州交通职业大学",
@@ -795,7 +827,8 @@
               "major": "临床医学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "贵州工业职业技术学院",
@@ -817,7 +850,8 @@
               "major": "电子商务",
               "score": 78
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "毕节医学高等专科学校",
@@ -839,7 +873,8 @@
               "major": "茶艺与茶叶营销",
               "score": 76
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -870,7 +905,8 @@
               "major": "会计学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "民族类特色"
         },
         {
           "name": "毕节职业技术学院",
@@ -892,7 +928,8 @@
               "major": "小学教育",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "铜仁职业技术学院",
@@ -914,7 +951,8 @@
               "major": "新闻学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "贵州财经职业学院",
@@ -936,7 +974,8 @@
               "major": "畜牧兽医",
               "score": 78
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "贵州电子信息职业技术学院",
@@ -958,7 +997,8 @@
               "major": "城市轨道交通运营管理",
               "score": 76
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     }

@@ -34,7 +34,8 @@
               "major": "车辆工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "合肥工业大学",
@@ -56,7 +57,8 @@
               "major": "教育学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "安徽大学",
@@ -78,7 +80,8 @@
               "major": "机械设计制造及其自动化",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "安徽理工大学",
@@ -101,7 +104,8 @@
               "major": "汉语言文学",
               "score": 88
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "安徽建筑大学",
@@ -124,7 +128,8 @@
               "major": "冶金工程",
               "score": 87
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -155,7 +160,8 @@
               "major": "网络工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "医学类特色"
         },
         {
           "name": "安徽师范大学",
@@ -177,7 +183,8 @@
               "major": "机械设计制造及其自动化",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         },
         {
           "name": "安徽农业大学",
@@ -199,7 +206,8 @@
               "major": "自动化",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "农林类特色"
         },
         {
           "name": "安徽工业大学",
@@ -221,7 +229,8 @@
               "major": "机械工程",
               "score": 83
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "蚌埠医科大学",
@@ -243,7 +252,8 @@
               "major": "中医学",
               "score": 82
             }
-          ]
+          ],
+          "program_type": "医学类特色"
         }
       ]
     },
@@ -274,7 +284,8 @@
               "major": "新闻学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "安徽工业大学",
@@ -296,7 +307,8 @@
               "major": "教育学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "安徽工程大学",
@@ -318,7 +330,8 @@
               "major": "机械设计制造及其自动化",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "安徽农业大学",
@@ -341,7 +354,8 @@
               "major": "电子信息工程",
               "score": 80
             }
-          ]
+          ],
+          "program_type": "农林类特色"
         },
         {
           "name": "淮北师范大学",
@@ -363,7 +377,8 @@
               "major": "英语",
               "score": 79
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         }
       ]
     },
@@ -394,7 +409,8 @@
               "major": "网络工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "合肥大学",
@@ -416,7 +432,8 @@
               "major": "医学影像学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "阜阳师范大学",
@@ -438,7 +455,8 @@
               "major": "车辆工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         },
         {
           "name": "安徽中医药大学",
@@ -460,7 +478,8 @@
               "major": "口腔医学",
               "score": 78
             }
-          ]
+          ],
+          "program_type": "医学类特色"
         },
         {
           "name": "滁州学院",
@@ -482,7 +501,8 @@
               "major": "旅游管理",
               "score": 77
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -513,7 +533,8 @@
               "major": "口腔医学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         },
         {
           "name": "皖南医学院",
@@ -535,7 +556,8 @@
               "major": "园艺",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "医学类特色"
         },
         {
           "name": "蚌埠医科大学",
@@ -557,7 +579,8 @@
               "major": "自动化",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "医学类特色"
         },
         {
           "name": "淮北师范大学",
@@ -579,7 +602,8 @@
               "major": "小学教育",
               "score": 76
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         },
         {
           "name": "皖西学院",
@@ -601,7 +625,8 @@
               "major": "机械设计制造及其自动化",
               "score": 75
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -632,7 +657,8 @@
               "major": "金融学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "黄山学院",
@@ -654,7 +680,8 @@
               "major": "医学影像学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "宿州学院",
@@ -676,7 +703,8 @@
               "major": "车辆工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "巢湖学院",
@@ -698,7 +726,8 @@
               "major": "历史学",
               "score": 75
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "淮南师范学院",
@@ -720,7 +749,8 @@
               "major": "财务管理",
               "score": 75
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         }
       ]
     },
@@ -751,7 +781,8 @@
               "major": "口腔医学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         },
         {
           "name": "安徽新华学院",
@@ -773,7 +804,8 @@
               "major": "园艺",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "安徽三联学院",
@@ -795,7 +827,8 @@
               "major": "自动化",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "安徽医学高等专科学校",
@@ -817,7 +850,8 @@
               "major": "软件技术",
               "score": 78
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "安徽工商职业学院",
@@ -839,7 +873,8 @@
               "major": "审计实务",
               "score": 76
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -870,7 +905,8 @@
               "major": "金融学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "芜湖职业技术学院",
@@ -892,7 +928,8 @@
               "major": "医学影像学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "安徽水利水电职业技术学院",
@@ -914,7 +951,8 @@
               "major": "车辆工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "安徽交通职业技术学院",
@@ -936,7 +974,8 @@
               "major": "粮食工程技术",
               "score": 78
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "安徽机电职业技术学院",
@@ -958,7 +997,8 @@
               "major": "应用电子技术",
               "score": 76
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     }

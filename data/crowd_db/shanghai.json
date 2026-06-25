@@ -34,7 +34,8 @@
               "major": "自动化",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "上海交通大学",
@@ -56,7 +57,8 @@
               "major": "财政学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "同济大学",
@@ -78,7 +80,8 @@
               "major": "服装设计与工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "上海交通大学",
@@ -100,7 +103,8 @@
               "major": "电子信息类",
               "score": 92
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "复旦大学",
@@ -122,7 +126,8 @@
               "major": "新闻学",
               "score": 88
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -153,7 +158,8 @@
               "major": "翻译",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         },
         {
           "name": "上海财经大学",
@@ -175,7 +181,8 @@
               "major": "针灸推拿学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "华东理工大学",
@@ -197,7 +204,8 @@
               "major": "经济学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "同济大学",
@@ -220,7 +228,8 @@
               "major": "土木工程",
               "score": 86
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "华东师范大学",
@@ -242,7 +251,8 @@
               "major": "心理学",
               "score": 85
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         }
       ]
     },
@@ -273,7 +283,8 @@
               "major": "土木工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "上海大学",
@@ -295,7 +306,8 @@
               "major": "财政学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "上海外国语大学",
@@ -317,7 +329,8 @@
               "major": "服装设计与工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "国际涉外导向"
         },
         {
           "name": "华东理工大学",
@@ -340,7 +353,8 @@
               "major": "化学工程与工艺",
               "score": 86
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "东华大学",
@@ -362,7 +376,8 @@
               "major": "纺织工程",
               "score": 80
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -393,7 +408,8 @@
               "major": "翻译",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "上海理工大学",
@@ -415,7 +431,8 @@
               "major": "针灸推拿学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "艺体类"
         },
         {
           "name": "上海海事大学",
@@ -437,7 +454,8 @@
               "major": "经济学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "上海财经大学",
@@ -460,7 +478,8 @@
               "major": "会计学",
               "score": 85
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "上海外国语大学",
@@ -482,7 +501,8 @@
               "major": "英语",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "国际涉外导向"
         }
       ]
     },
@@ -513,7 +533,8 @@
               "major": "土木工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         },
         {
           "name": "上海中医药大学",
@@ -535,7 +556,8 @@
               "major": "财政学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "医学类特色"
         },
         {
           "name": "上海海洋大学",
@@ -557,7 +579,8 @@
               "major": "服装设计与工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "上海大学",
@@ -580,7 +603,8 @@
               "major": "通信工程",
               "score": 83
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "上海海事大学",
@@ -602,7 +626,8 @@
               "major": "航海技术",
               "score": 80
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -633,7 +658,8 @@
               "major": "翻译",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "上海应用技术大学",
@@ -655,7 +681,8 @@
               "major": "针灸推拿学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "上海立信会计金融学院",
@@ -677,7 +704,8 @@
               "major": "经济学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "上海理工大学",
@@ -700,7 +728,8 @@
               "major": "机械设计制造及其自动化",
               "score": 81
             }
-          ]
+          ],
+          "program_type": "艺体类"
         },
         {
           "name": "上海立信会计金融学院",
@@ -722,7 +751,8 @@
               "major": "金融学",
               "score": 79
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -753,7 +783,8 @@
               "major": "土木工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "上海第二工业大学",
@@ -775,7 +806,8 @@
               "major": "财政学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "上海建桥学院",
@@ -797,7 +829,8 @@
               "major": "服装设计与工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "上海师范大学",
@@ -819,7 +852,8 @@
               "major": "小学教育",
               "score": 79
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         },
         {
           "name": "上海应用技术大学",
@@ -841,7 +875,8 @@
               "major": "电气工程及其自动化",
               "score": 78
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -872,7 +907,8 @@
               "major": "翻译",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "上海东海职业技术学院",
@@ -894,7 +930,8 @@
               "major": "针灸推拿学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "上海出版印刷高等专科学校",
@@ -916,7 +953,8 @@
               "major": "经济学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "上海出版印刷高等专科学校",
@@ -938,7 +976,8 @@
               "major": "印刷媒体技术",
               "score": 75
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "上海东海职业技术学院",
@@ -960,7 +999,8 @@
               "major": "机电一体化技术",
               "score": 78
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     }

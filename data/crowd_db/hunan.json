@@ -254,7 +254,7 @@
             "reselect_subject": [],
             "note": "首选历史，无强制再选"
           },
-          "program_type": null
+          "program_type": "国际涉外导向"
         },
         {
           "name": "湖南第一师范学院",
@@ -284,7 +284,7 @@
             "reselect_subject": [],
             "note": "首选历史，无强制再选"
           },
-          "program_type": null
+          "program_type": "师范教育类"
         },
         {
           "name": "长沙师范学院",
@@ -313,7 +313,7 @@
             "reselect_subject": [],
             "note": "首选历史，无强制再选"
           },
-          "program_type": null
+          "program_type": "师范教育类"
         }
       ]
     },
@@ -383,7 +383,7 @@
             ],
             "note": "首选物理，再选化学"
           },
-          "program_type": null
+          "program_type": "艺体类"
         },
         {
           "name": "湖南工程学院",
@@ -474,7 +474,7 @@
             ],
             "note": "首选物理，再选化学"
           },
-          "program_type": null
+          "program_type": "农林类特色"
         },
         {
           "name": "湖南中医药大学",
@@ -507,7 +507,7 @@
             ],
             "note": "首选物理，再选化学/生物"
           },
-          "program_type": null
+          "program_type": "医学类特色"
         },
         {
           "name": "湖南第一师范学院",
@@ -535,7 +535,7 @@
             "reselect_subject": [],
             "note": "首选历史，无强制再选"
           },
-          "program_type": null
+          "program_type": "师范教育类"
         },
         {
           "name": "吉首大学",
@@ -563,7 +563,7 @@
             "reselect_subject": [],
             "note": "首选历史，艺体类无强制再选"
           },
-          "program_type": null
+          "program_type": "艺体类"
         }
       ]
     },
@@ -663,7 +663,7 @@
             "reselect_subject": [],
             "note": "首选历史，无强制再选"
           },
-          "program_type": null
+          "program_type": "师范教育类"
         },
         {
           "name": "中南林业科技大学",
@@ -784,7 +784,7 @@
             ],
             "note": "首选物理，再选化学"
           },
-          "program_type": null
+          "program_type": "农林类特色"
         },
         {
           "name": "吉首大学",
@@ -884,7 +884,7 @@
             "reselect_subject": [],
             "note": "首选历史，无强制再选"
           },
-          "program_type": null
+          "program_type": "师范院校特色类"
         },
         {
           "name": "中南大学",
@@ -1041,7 +1041,7 @@
             ],
             "note": "首选物理，再选化学"
           },
-          "program_type": null
+          "program_type": "艺体类"
         },
         {
           "name": "中南林业科技大学",
@@ -1201,7 +1201,7 @@
             "reselect_subject": [],
             "note": "首选历史，无强制再选"
           },
-          "program_type": null
+          "program_type": "师范教育类"
         },
         {
           "name": "中南大学",
@@ -1322,7 +1322,7 @@
             "reselect_subject": [],
             "note": "首选历史，无强制再选"
           },
-          "program_type": null
+          "program_type": "师范教育类"
         }
       ]
     },
@@ -1574,7 +1574,7 @@
             "reselect_subject": [],
             "note": "首选历史，无强制再选"
           },
-          "program_type": null
+          "program_type": "师范教育类"
         }
       ]
     },
@@ -1706,7 +1706,7 @@
             "reselect_subject": [],
             "note": "首选物理，无强制再选"
           },
-          "program_type": null
+          "program_type": "军校"
         },
         {
           "name": "湖南大学",
@@ -1809,7 +1809,7 @@
             ],
             "note": "首选物理，再选化学"
           },
-          "program_type": null
+          "program_type": "军校"
         },
         {
           "name": "国防科技大学",
@@ -1841,7 +1841,7 @@
             ],
             "note": "首选物理，再选化学"
           },
-          "program_type": null
+          "program_type": "军校"
         },
         {
           "name": "中南大学",
@@ -1964,7 +1964,7 @@
             ],
             "note": "首选物理，再选化学"
           },
-          "program_type": null
+          "program_type": "军校"
         }
       ]
     },

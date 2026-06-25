@@ -36,7 +36,8 @@
               "major": "数学类",
               "score": 97
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "天津大学",
@@ -59,7 +60,8 @@
               "major": "化学工程与工艺",
               "score": 96
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "南开大学",
@@ -82,7 +84,8 @@
               "major": "经济学类",
               "score": 97
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "天津医科大学",
@@ -105,7 +108,8 @@
               "major": "生物医学工程",
               "score": 90
             }
-          ]
+          ],
+          "program_type": "医学类特色"
         },
         {
           "name": "河北工业大学",
@@ -128,7 +132,8 @@
               "major": "自动化",
               "score": 91
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -161,7 +166,8 @@
               "major": "工商管理类",
               "score": 94
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "天津大学",
@@ -184,7 +190,8 @@
               "major": "计算机科学与技术",
               "score": 96
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "南开大学",
@@ -206,7 +213,8 @@
               "major": "临床医学",
               "score": 94
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "天津医科大学",
@@ -229,7 +237,8 @@
               "major": "生物科学",
               "score": 88
             }
-          ]
+          ],
+          "program_type": "医学院校特色类"
         },
         {
           "name": "天津中医药大学",
@@ -252,7 +261,8 @@
               "major": "药学",
               "score": 85
             }
-          ]
+          ],
+          "program_type": "医学类特色"
         }
       ]
     },
@@ -285,7 +295,8 @@
               "major": "临床医学",
               "score": 91
             }
-          ]
+          ],
+          "program_type": "医学类特色"
         },
         {
           "name": "河北工业大学",
@@ -308,7 +319,8 @@
               "major": "电气工程及其自动化",
               "score": 94
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "天津医科大学",
@@ -330,7 +342,8 @@
               "major": "口腔医学",
               "score": 95
             }
-          ]
+          ],
+          "program_type": "医学类特色"
         },
         {
           "name": "天津工业大学",
@@ -353,7 +366,8 @@
               "major": "计算机科学与技术",
               "score": 88
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "天津师范大学",
@@ -375,7 +389,8 @@
               "major": "应用心理学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         }
       ]
     },
@@ -408,7 +423,8 @@
               "major": "汉语言文学",
               "score": 90
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         },
         {
           "name": "天津工业大学",
@@ -430,7 +446,8 @@
               "major": "纺织工程",
               "score": 85
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "天津财经大学",
@@ -453,7 +470,8 @@
               "major": "会计学",
               "score": 94
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "天津理工大学",
@@ -476,7 +494,8 @@
               "major": "计算机科学与技术",
               "score": 85
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "中国民航大学",
@@ -498,7 +517,8 @@
               "major": "飞行器设计与工程",
               "score": 85
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -531,7 +551,8 @@
               "major": "英语",
               "score": 91
             }
-          ]
+          ],
+          "program_type": "国际涉外导向"
         },
         {
           "name": "天津理工大学",
@@ -553,7 +574,8 @@
               "major": "机械设计制造及其自动化",
               "score": 93
             }
-          ]
+          ],
+          "program_type": "艺体类"
         },
         {
           "name": "中国民航大学",
@@ -576,7 +598,8 @@
               "major": "交通运输",
               "score": 93
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "天津城建大学",
@@ -598,7 +621,8 @@
               "major": "土木工程",
               "score": 83
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "天津商业大学",
@@ -620,7 +644,8 @@
               "major": "金融学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -651,7 +676,8 @@
               "major": "工商管理",
               "score": 85
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "天津职业技术师范大学",
@@ -673,7 +699,8 @@
               "major": "机械工艺技术",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "师范院校特色类"
         },
         {
           "name": "天津体育学院",
@@ -695,7 +722,8 @@
               "major": "体育教育",
               "score": 86
             }
-          ]
+          ],
+          "program_type": "艺体类"
         },
         {
           "name": "天津农学院",
@@ -717,7 +745,8 @@
               "major": "生物科学",
               "score": 79
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "天津中德应用技术大学",
@@ -739,7 +768,8 @@
               "major": "车辆工程",
               "score": 78
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -770,7 +800,8 @@
               "major": "工商管理",
               "score": 83
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "天津滨海学院",
@@ -792,7 +823,8 @@
               "major": "计算机科学与技术",
               "score": 82
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "天津仁爱学院",
@@ -814,7 +846,8 @@
               "major": "财务管理",
               "score": 80
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "北京科技大学天津学院",
@@ -836,7 +869,8 @@
               "major": "机械工程",
               "score": 79
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "天津理工大学中环信息学院",
@@ -858,7 +892,8 @@
               "major": "自动化",
               "score": 77
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -889,7 +924,8 @@
               "major": "计算机应用技术",
               "score": 78
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "天津渤海职业技术学院",
@@ -911,7 +947,8 @@
               "major": "机械制造及自动化",
               "score": 80
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "天津现代职业技术学院",
@@ -933,7 +970,8 @@
               "major": "护理",
               "score": 80
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "天津轻工职业技术学院",
@@ -955,7 +993,8 @@
               "major": "机械工程",
               "score": 75
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "天津铁道职业技术学院",
@@ -977,7 +1016,8 @@
               "major": "交通运输",
               "score": 83
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     }

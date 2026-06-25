@@ -34,7 +34,8 @@
               "major": "教育学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "兰州大学",
@@ -56,7 +57,8 @@
               "major": "园艺",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "西北师范大学",
@@ -78,7 +80,8 @@
               "major": "金融学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         },
         {
           "name": "兰州理工大学",
@@ -101,7 +104,8 @@
               "major": "教育学",
               "score": 86
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "西北民族大学",
@@ -124,7 +128,8 @@
               "major": "中医学",
               "score": 85
             }
-          ]
+          ],
+          "program_type": "民族类特色"
         }
       ]
     },
@@ -155,7 +160,8 @@
               "major": "知识产权",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "兰州理工大学",
@@ -177,7 +183,8 @@
               "major": "医学影像技术",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "艺体类"
         },
         {
           "name": "甘肃农业大学",
@@ -199,7 +206,8 @@
               "major": "经济学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "农林类特色"
         },
         {
           "name": "兰州大学",
@@ -221,7 +229,8 @@
               "major": "中西医临床医学",
               "score": 82
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "西北师范大学",
@@ -243,7 +252,8 @@
               "major": "民族学",
               "score": 80
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         }
       ]
     },
@@ -274,7 +284,8 @@
               "major": "土木工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "医学类特色"
         },
         {
           "name": "兰州财经大学",
@@ -296,7 +307,8 @@
               "major": "园艺",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "西北民族大学",
@@ -318,7 +330,8 @@
               "major": "金融学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "民族类特色"
         },
         {
           "name": "兰州理工大学",
@@ -341,7 +354,8 @@
               "major": "动物医学",
               "score": 80
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "甘肃政法大学",
@@ -363,7 +377,8 @@
               "major": "数学与应用数学",
               "score": 78
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -394,7 +409,8 @@
               "major": "知识产权",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         },
         {
           "name": "陇东学院",
@@ -416,7 +432,8 @@
               "major": "医学影像技术",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "河西学院",
@@ -438,7 +455,8 @@
               "major": "经济学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "兰州文理学院",
@@ -460,7 +478,8 @@
               "major": "会计学",
               "score": 78
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "甘肃医学院",
@@ -482,7 +501,8 @@
               "major": "农学",
               "score": 77
             }
-          ]
+          ],
+          "program_type": "医学类特色"
         }
       ]
     },
@@ -513,7 +533,8 @@
               "major": "土木工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "甘肃政法大学",
@@ -535,7 +556,8 @@
               "major": "园艺",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "甘肃民族师范学院",
@@ -557,7 +579,8 @@
               "major": "金融学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         },
         {
           "name": "兰州石化职业技术大学",
@@ -579,7 +602,8 @@
               "major": "园林技术",
               "score": 76
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "天水师范学院",
@@ -601,7 +625,8 @@
               "major": "藏语言文学",
               "score": 75
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         }
       ]
     },
@@ -632,7 +657,8 @@
               "major": "知识产权",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "医学类特色"
         },
         {
           "name": "兰州石化职业技术大学",
@@ -654,7 +680,8 @@
               "major": "医学影像技术",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "甘肃农业职业技术学院",
@@ -676,7 +703,8 @@
               "major": "经济学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "兰州城市学院",
@@ -698,7 +726,8 @@
               "major": "旅游管理",
               "score": 76
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "甘肃工业职业技术学院",
@@ -720,7 +749,8 @@
               "major": "建筑工程技术",
               "score": 75
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -751,7 +781,8 @@
               "major": "土木工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "甘肃工业职业技术学院",
@@ -773,7 +804,8 @@
               "major": "园艺",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "兰州资源环境职业技术大学",
@@ -795,7 +827,8 @@
               "major": "金融学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "定西师范高等专科学校",
@@ -817,7 +850,8 @@
               "major": "机电一体化技术",
               "score": 78
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         },
         {
           "name": "甘肃交通职业技术学院",
@@ -839,7 +873,8 @@
               "major": "物流管理",
               "score": 76
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -870,7 +905,8 @@
               "major": "知识产权",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         },
         {
           "name": "甘肃卫生职业学院",
@@ -892,7 +928,8 @@
               "major": "医学影像技术",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "酒泉职业技术学院",
@@ -914,7 +951,8 @@
               "major": "经济学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "甘肃林业职业技术大学",
@@ -936,7 +974,8 @@
               "major": "石油化工技术",
               "score": 78
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "武威职业学院",
@@ -958,7 +997,8 @@
               "major": "石油工程技术",
               "score": 76
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     }

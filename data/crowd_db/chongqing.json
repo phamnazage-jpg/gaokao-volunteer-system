@@ -34,7 +34,8 @@
               "major": "教育学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "西南大学",
@@ -56,7 +57,8 @@
               "major": "网络空间安全",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "重庆医科大学",
@@ -78,7 +80,8 @@
               "major": "金融学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "医学类特色"
         },
         {
           "name": "西南政法大学",
@@ -101,7 +104,8 @@
               "major": "土木工程",
               "score": 88
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "重庆邮电大学",
@@ -124,7 +128,8 @@
               "major": "经济学",
               "score": 87
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -155,7 +160,8 @@
               "major": "自动化",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "重庆邮电大学",
@@ -177,7 +183,8 @@
               "major": "材料成型及控制工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "重庆交通大学",
@@ -199,7 +206,8 @@
               "major": "自动化",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "重庆大学",
@@ -221,7 +229,8 @@
               "major": "口腔医学",
               "score": 83
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "四川美术学院",
@@ -243,7 +252,8 @@
               "major": "数学与应用数学",
               "score": 82
             }
-          ]
+          ],
+          "program_type": "艺体类"
         }
       ]
     },
@@ -274,7 +284,8 @@
               "major": "口腔医学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "重庆师范大学",
@@ -296,7 +307,8 @@
               "major": "网络空间安全",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         },
         {
           "name": "重庆理工大学",
@@ -318,7 +330,8 @@
               "major": "金融学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "重庆医科大学",
@@ -341,7 +354,8 @@
               "major": "软件工程",
               "score": 80
             }
-          ]
+          ],
+          "program_type": "医学类特色"
         },
         {
           "name": "四川外国语大学",
@@ -363,7 +377,8 @@
               "major": "石油工程",
               "score": 79
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -394,7 +409,8 @@
               "major": "自动化",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "国际涉外导向"
         },
         {
           "name": "重庆科技大学",
@@ -416,7 +432,8 @@
               "major": "网络工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "重庆文理学院",
@@ -438,7 +455,8 @@
               "major": "教育学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "重庆工商大学",
@@ -460,7 +478,8 @@
               "major": "教育学",
               "score": 78
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "长江师范学院",
@@ -482,7 +501,8 @@
               "major": "小学教育",
               "score": 77
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         }
       ]
     },
@@ -513,7 +533,8 @@
               "major": "知识产权",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         },
         {
           "name": "重庆三峡学院",
@@ -535,7 +556,8 @@
               "major": "土木工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "重庆第二师范学院",
@@ -557,7 +579,8 @@
               "major": "英语",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         },
         {
           "name": "重庆人文科技学院",
@@ -579,7 +602,8 @@
               "major": "金融学",
               "score": 76
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "重庆对外经贸学院",
@@ -601,7 +625,8 @@
               "major": "通信工程",
               "score": 75
             }
-          ]
+          ],
+          "program_type": "国际涉外导向"
         }
       ]
     },
@@ -632,7 +657,8 @@
               "major": "翻译",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "重庆移通学院",
@@ -654,7 +680,8 @@
               "major": "网络工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "重庆外语外事学院",
@@ -676,7 +703,8 @@
               "major": "教育学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "国际涉外导向"
         },
         {
           "name": "重庆工程学院",
@@ -698,7 +726,8 @@
               "major": "社会工作",
               "score": 76
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "重庆智能工程职业学院",
@@ -720,7 +749,8 @@
               "major": "建筑工程技术",
               "score": 75
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -751,7 +781,8 @@
               "major": "知识产权",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "重庆电子工程职业学院",
@@ -773,7 +804,8 @@
               "major": "土木工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "重庆工程职业技术学院",
@@ -795,7 +827,8 @@
               "major": "英语",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "重庆医药高等专科学校",
@@ -817,7 +850,8 @@
               "major": "早期教育",
               "score": 78
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "重庆商务职业学院",
@@ -839,7 +873,8 @@
               "major": "舞蹈表演",
               "score": 76
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -870,7 +905,8 @@
               "major": "翻译",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "重庆航天职业技术学院",
@@ -892,7 +928,8 @@
               "major": "网络工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "重庆城市管理职业学院",
@@ -914,7 +951,8 @@
               "major": "教育学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "重庆青年职业技术学院",
@@ -936,7 +974,8 @@
               "major": "新能源汽车技术",
               "score": 78
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "重庆建筑科技职业学院",
@@ -958,7 +997,8 @@
               "major": "城市轨道交通工程技术",
               "score": 76
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     }

@@ -226,7 +226,7 @@
             ],
             "note": "首选物理，再选化学/生物"
           },
-          "program_type": null
+          "program_type": "医学类特色"
         }
       ]
     },
@@ -417,7 +417,7 @@
             "reselect_subject": [],
             "note": "首选历史，无强制再选"
           },
-          "program_type": null
+          "program_type": "师范教育类"
         },
         {
           "name": "南京理工大学",
@@ -484,7 +484,7 @@
             "reselect_subject": [],
             "note": "首选历史，无强制再选"
           },
-          "program_type": null
+          "program_type": "师范教育类"
         },
         {
           "name": "苏州大学",
@@ -736,7 +736,7 @@
             ],
             "note": "首选物理，再选化学/生物"
           },
-          "program_type": null
+          "program_type": "医学类特色"
         },
         {
           "name": "江苏大学",
@@ -829,7 +829,7 @@
             ],
             "note": "首选物理，再选化学/生物"
           },
-          "program_type": null
+          "program_type": "医学类特色"
         },
         {
           "name": "苏州大学",
@@ -1019,7 +1019,7 @@
             "reselect_subject": [],
             "note": "首选历史，无强制再选"
           },
-          "program_type": null
+          "program_type": "师范教育类"
         },
         {
           "name": "南京财经大学",
@@ -1105,7 +1105,7 @@
             "reselect_subject": [],
             "note": "首选物理，无强制再选"
           },
-          "program_type": null
+          "program_type": "医学类特色"
         }
       ]
     },
@@ -1323,7 +1323,7 @@
             ],
             "note": "首选物理，再选化学/生物"
           },
-          "program_type": null
+          "program_type": "医学类特色"
         }
       ]
     },
@@ -1360,7 +1360,7 @@
             "reselect_subject": [],
             "note": "首选物理，无强制再选"
           },
-          "program_type": null
+          "program_type": "医学院校特色类"
         },
         {
           "name": "中国药科大学",
@@ -1508,7 +1508,7 @@
             "reselect_subject": [],
             "note": "首选物理，无强制再选"
           },
-          "program_type": null
+          "program_type": "医学类特色"
         },
         {
           "name": "江南大学",
@@ -2133,7 +2133,7 @@
             "reselect_subject": [],
             "note": "首选物理，无强制再选"
           },
-          "program_type": null
+          "program_type": "医学类特色"
         },
         {
           "name": "江苏大学",

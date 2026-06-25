@@ -196,7 +196,7 @@
             ],
             "note": "首选物理，再选化学"
           },
-          "program_type": null
+          "program_type": "师范教育类"
         },
         {
           "name": "广州中医药大学",
@@ -227,7 +227,7 @@
             ],
             "note": "首选物理，再选化学/生物"
           },
-          "program_type": null
+          "program_type": "医学类特色"
         }
       ]
     },
@@ -264,7 +264,7 @@
             "reselect_subject": [],
             "note": "首选历史，无强制再选"
           },
-          "program_type": null
+          "program_type": "师范教育类"
         },
         {
           "name": "深圳大学",
@@ -385,7 +385,7 @@
             ],
             "note": "首选物理，再选化学/生物"
           },
-          "program_type": null
+          "program_type": "医学类特色"
         },
         {
           "name": "暨南大学",
@@ -543,7 +543,7 @@
             ],
             "note": "首选物理，再选化学/生物"
           },
-          "program_type": null
+          "program_type": "医学类特色"
         },
         {
           "name": "深圳技术大学",
@@ -635,7 +635,7 @@
             ],
             "note": "首选物理，再选化学"
           },
-          "program_type": null
+          "program_type": "农林类特色"
         },
         {
           "name": "广东工业大学",
@@ -732,7 +732,7 @@
             "reselect_subject": [],
             "note": "首选历史，无强制再选"
           },
-          "program_type": null
+          "program_type": "国际涉外导向"
         },
         {
           "name": "华南农业大学",
@@ -762,7 +762,7 @@
             ],
             "note": "首选物理，再选化学"
           },
-          "program_type": null
+          "program_type": "农林类特色"
         },
         {
           "name": "广州中医药大学",
@@ -793,7 +793,7 @@
             ],
             "note": "首选物理，再选化学/生物"
           },
-          "program_type": null
+          "program_type": "医学类特色"
         },
         {
           "name": "佛山大学",
@@ -924,7 +924,7 @@
             ],
             "note": "首选物理，再选化学"
           },
-          "program_type": null
+          "program_type": "农林类特色"
         },
         {
           "name": "广州医科大学",
@@ -955,7 +955,7 @@
             ],
             "note": "首选物理，再选化学/生物"
           },
-          "program_type": null
+          "program_type": "医学类特色"
         },
         {
           "name": "汕头大学",
@@ -1016,7 +1016,7 @@
             ],
             "note": "首选物理，再选化学/生物"
           },
-          "program_type": null
+          "program_type": "医学类特色"
         },
         {
           "name": "佛山大学",
@@ -1206,7 +1206,7 @@
             ],
             "note": "首选物理，再选化学/生物"
           },
-          "program_type": null
+          "program_type": "医学类特色"
         },
         {
           "name": "五邑大学",
@@ -1326,7 +1326,7 @@
             "reselect_subject": [],
             "note": "首选物理，无强制再选"
           },
-          "program_type": null
+          "program_type": "医学类特色"
         }
       ]
     },
@@ -1365,7 +1365,7 @@
             ],
             "note": "首选物理，再选化学"
           },
-          "program_type": null
+          "program_type": "师范院校特色类"
         },
         {
           "name": "东莞理工学院",
@@ -1483,7 +1483,7 @@
             "reselect_subject": [],
             "note": "首选物理，无强制再选"
           },
-          "program_type": null
+          "program_type": "医学类特色"
         },
         {
           "name": "华南农业大学",
@@ -1513,7 +1513,7 @@
             "reselect_subject": [],
             "note": "首选物理，无强制再选"
           },
-          "program_type": null
+          "program_type": "农林类特色"
         },
         {
           "name": "佛山大学",
@@ -1543,7 +1543,7 @@
             ],
             "note": "首选物理，再选化学"
           },
-          "program_type": null
+          "program_type": "艺体类"
         }
       ]
     },
@@ -1704,7 +1704,7 @@
             ],
             "note": "首选物理，再选化学"
           },
-          "program_type": null
+          "program_type": "师范院校特色类"
         },
         {
           "name": "广州大学",
@@ -1764,7 +1764,7 @@
             ],
             "note": "首选物理，再选化学"
           },
-          "program_type": null
+          "program_type": "艺体类"
         }
       ]
     },
@@ -1801,7 +1801,7 @@
             "reselect_subject": [],
             "note": "首选历史，无强制再选"
           },
-          "program_type": null
+          "program_type": "师范教育类"
         },
         {
           "name": "广东财经大学",
@@ -1921,7 +1921,7 @@
             ],
             "note": "首选物理，再选化学"
           },
-          "program_type": null
+          "program_type": "艺体类"
         },
         {
           "name": "华南农业大学",
@@ -1949,7 +1949,7 @@
             "reselect_subject": [],
             "note": "首选物理，无强制再选"
           },
-          "program_type": null
+          "program_type": "农林院校特色类"
         },
         {
           "name": "深圳大学",
@@ -2070,7 +2070,7 @@
             "reselect_subject": [],
             "note": "首选历史，无强制再选"
           },
-          "program_type": null
+          "program_type": "师范教育类"
         },
         {
           "name": "华南农业大学",
@@ -2100,7 +2100,7 @@
             "reselect_subject": [],
             "note": "首选物理，无强制再选"
           },
-          "program_type": null
+          "program_type": "农林院校特色类"
         },
         {
           "name": "深圳大学",

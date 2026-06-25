@@ -382,7 +382,7 @@
             "reselect_subject": [],
             "note": "首选历史，无强制再选"
           },
-          "program_type": null
+          "program_type": "师范教育类"
         },
         {
           "name": "福建医科大学",
@@ -413,7 +413,7 @@
             ],
             "note": "首选物理，再选化学/生物"
           },
-          "program_type": null
+          "program_type": "医学类特色"
         },
         {
           "name": "华侨大学",
@@ -512,7 +512,7 @@
             "reselect_subject": [],
             "note": "首选历史，无强制再选"
           },
-          "program_type": null
+          "program_type": "师范教育类"
         },
         {
           "name": "福建农林大学",
@@ -542,7 +542,7 @@
             ],
             "note": "首选物理，再选化学"
           },
-          "program_type": null
+          "program_type": "农林类特色"
         },
         {
           "name": "福建农林大学",
@@ -574,7 +574,7 @@
             ],
             "note": "首选物理，再选化学"
           },
-          "program_type": null
+          "program_type": "农林类特色"
         },
         {
           "name": "华侨大学",
@@ -634,7 +634,7 @@
             "reselect_subject": [],
             "note": "首选历史，无强制再选"
           },
-          "program_type": null
+          "program_type": "师范教育类"
         },
         {
           "name": "福建农林大学",
@@ -664,7 +664,7 @@
             "reselect_subject": [],
             "note": "首选物理，无强制再选"
           },
-          "program_type": null
+          "program_type": "农林院校特色类"
         }
       ]
     },
@@ -732,7 +732,7 @@
             ],
             "note": "首选物理，再选化学/生物"
           },
-          "program_type": null
+          "program_type": "医学类特色"
         },
         {
           "name": "福建中医药大学",
@@ -760,7 +760,7 @@
             "reselect_subject": [],
             "note": "首选物理，无强制再选"
           },
-          "program_type": null
+          "program_type": "医学院校特色类"
         },
         {
           "name": "集美大学",
@@ -823,7 +823,7 @@
             ],
             "note": "首选物理，再选化学/生物"
           },
-          "program_type": null
+          "program_type": "医学类特色"
         },
         {
           "name": "福建师范大学",
@@ -851,7 +851,7 @@
             "reselect_subject": [],
             "note": "首选历史，无强制再选"
           },
-          "program_type": null
+          "program_type": "师范教育类"
         },
         {
           "name": "集美大学",
@@ -946,7 +946,7 @@
             "reselect_subject": [],
             "note": "首选历史，无强制再选"
           },
-          "program_type": null
+          "program_type": "师范院校特色类"
         },
         {
           "name": "福建农林大学",
@@ -974,7 +974,7 @@
             "reselect_subject": [],
             "note": "首选历史，无强制再选"
           },
-          "program_type": null
+          "program_type": "农林院校特色类"
         },
         {
           "name": "福建中医药大学",
@@ -1007,7 +1007,7 @@
             ],
             "note": "首选物理，再选化学/生物"
           },
-          "program_type": null
+          "program_type": "医学类特色"
         },
         {
           "name": "闽南师范大学",
@@ -1037,7 +1037,7 @@
             "reselect_subject": [],
             "note": "首选历史，无强制再选"
           },
-          "program_type": null
+          "program_type": "师范教育类"
         },
         {
           "name": "福建师范大学",
@@ -1065,7 +1065,7 @@
             "reselect_subject": [],
             "note": "首选历史，无强制再选"
           },
-          "program_type": null
+          "program_type": "师范教育类"
         },
         {
           "name": "华侨大学",
@@ -1314,7 +1314,7 @@
             ],
             "note": "首选物理，再选化学"
           },
-          "program_type": null
+          "program_type": "师范教育类"
         }
       ]
     },
@@ -1379,7 +1379,7 @@
             "reselect_subject": [],
             "note": "首选历史，无强制再选"
           },
-          "program_type": null
+          "program_type": "师范教育类"
         },
         {
           "name": "福建工程学院",
@@ -1568,7 +1568,7 @@
             ],
             "note": "首选物理，再选化学"
           },
-          "program_type": null
+          "program_type": "艺体类"
         },
         {
           "name": "闽江学院",
@@ -1628,7 +1628,7 @@
             ],
             "note": "首选物理，再选化学"
           },
-          "program_type": null
+          "program_type": "师范教育类"
         },
         {
           "name": "集美大学",
@@ -1690,7 +1690,7 @@
             "reselect_subject": [],
             "note": "首选物理，无强制再选"
           },
-          "program_type": null
+          "program_type": "医学类特色"
         },
         {
           "name": "华侨大学",
@@ -1752,7 +1752,7 @@
             "reselect_subject": [],
             "note": "首选物理，无强制再选"
           },
-          "program_type": null
+          "program_type": "农林类特色"
         }
       ]
     },
@@ -1789,7 +1789,7 @@
             "reselect_subject": [],
             "note": "首选历史，艺体类无强制再选"
           },
-          "program_type": null
+          "program_type": "艺体类"
         },
         {
           "name": "集美大学",
@@ -1817,7 +1817,7 @@
             "reselect_subject": [],
             "note": "首选历史，艺体类无强制再选"
           },
-          "program_type": null
+          "program_type": "艺体类"
         },
         {
           "name": "闽南师范大学",
@@ -1845,7 +1845,7 @@
             "reselect_subject": [],
             "note": "首选历史，无强制再选"
           },
-          "program_type": null
+          "program_type": "师范教育类"
         },
         {
           "name": "武夷学院",
@@ -1935,7 +1935,7 @@
             "reselect_subject": [],
             "note": "首选历史，无强制再选"
           },
-          "program_type": null
+          "program_type": "师范院校特色类"
         },
         {
           "name": "厦门理工学院",
@@ -2060,7 +2060,7 @@
             "reselect_subject": [],
             "note": "首选历史，无强制再选"
           },
-          "program_type": null
+          "program_type": "师范院校特色类"
         },
         {
           "name": "泉州师范学院",
@@ -2092,7 +2092,7 @@
             ],
             "note": "首选物理，再选化学"
           },
-          "program_type": null
+          "program_type": "师范教育类"
         },
         {
           "name": "莆田学院",
@@ -2153,7 +2153,7 @@
             "reselect_subject": [],
             "note": "首选历史，无强制再选"
           },
-          "program_type": null
+          "program_type": "师范教育类"
         },
         {
           "name": "福建工程学院",

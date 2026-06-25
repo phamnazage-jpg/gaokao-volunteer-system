@@ -34,7 +34,8 @@
               "major": "机械设计制造及其自动化",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "西北工业大学",
@@ -56,7 +57,8 @@
               "major": "教育学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "西安电子科技大学",
@@ -78,7 +80,8 @@
               "major": "工程管理",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "西北农林科技大学",
@@ -101,7 +104,8 @@
               "major": "地质学",
               "score": 89
             }
-          ]
+          ],
+          "program_type": "农林类特色"
         },
         {
           "name": "长安大学",
@@ -124,7 +128,8 @@
               "major": "材料科学与工程",
               "score": 90
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -155,7 +160,8 @@
               "major": "采矿工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "陕西师范大学",
@@ -177,7 +183,8 @@
               "major": "包装工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         },
         {
           "name": "西北大学",
@@ -199,7 +206,8 @@
               "major": "自动化",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "西安建筑科技大学",
@@ -222,7 +230,8 @@
               "major": "建筑学",
               "score": 87
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "西安理工大学",
@@ -245,7 +254,8 @@
               "major": "冶金工程",
               "score": 85
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -276,7 +286,8 @@
               "major": "通信工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "西安理工大学",
@@ -298,7 +309,8 @@
               "major": "教育学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "艺体类"
         },
         {
           "name": "西安科技大学",
@@ -320,7 +332,8 @@
               "major": "工程管理",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "陕西中医药大学",
@@ -343,7 +356,8 @@
               "major": "中药学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "医学类特色"
         },
         {
           "name": "西安外国语大学",
@@ -365,7 +379,8 @@
               "major": "英语",
               "score": 85
             }
-          ]
+          ],
+          "program_type": "国际涉外导向"
         }
       ]
     },
@@ -396,7 +411,8 @@
               "major": "采矿工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "陕西科技大学",
@@ -418,7 +434,8 @@
               "major": "测控技术与仪器",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "西安工业大学",
@@ -440,7 +457,8 @@
               "major": "机械设计制造及其自动化",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "延安大学",
@@ -462,7 +480,8 @@
               "major": "行政管理",
               "score": 82
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "西安工程大学",
@@ -484,7 +503,8 @@
               "major": "轻化工程",
               "score": 80
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -515,7 +535,8 @@
               "major": "土木工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "宝鸡文理学院",
@@ -537,7 +558,8 @@
               "major": "汉语言文学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "渭南师范学院",
@@ -559,7 +581,8 @@
               "major": "水利水电工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         },
         {
           "name": "西安航空学院",
@@ -581,7 +604,8 @@
               "major": "航空航天工程",
               "score": 83
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "陕西学前师范学院",
@@ -603,7 +627,8 @@
               "major": "学前教育",
               "score": 80
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         }
       ]
     },
@@ -634,7 +659,8 @@
               "major": "机械工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "西安医学院",
@@ -656,7 +682,8 @@
               "major": "测控技术与仪器",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "医学类特色"
         },
         {
           "name": "咸阳师范学院",
@@ -678,7 +705,8 @@
               "major": "机械设计制造及其自动化",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         },
         {
           "name": "西安交通工程学院",
@@ -700,7 +728,8 @@
               "major": "电气工程及其自动化",
               "score": 79
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "西安培华学院",
@@ -722,7 +751,8 @@
               "major": "护理学",
               "score": 78
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -753,7 +783,8 @@
               "major": "土木工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "陕西理工大学",
@@ -775,7 +806,8 @@
               "major": "汉语言文学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "西安外事学院",
@@ -797,7 +829,8 @@
               "major": "水利水电工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "西安思源学院",
@@ -819,7 +852,8 @@
               "major": "机械设计制造及其自动化",
               "score": 77
             }
-          ]
+          ],
+          "program_type": "艺体类"
         },
         {
           "name": "西安信息职业大学",
@@ -841,7 +875,8 @@
               "major": "软件工程",
               "score": 78
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -872,7 +907,8 @@
               "major": "机械工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "陕西职业技术学院",
@@ -894,7 +930,8 @@
               "major": "测控技术与仪器",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "西安航空职业技术学院",
@@ -916,7 +953,8 @@
               "major": "机械设计制造及其自动化",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "陕西青年职业学院",
@@ -938,7 +976,8 @@
               "major": "大数据与财务管理",
               "score": 76
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "西安职业技术学院",
@@ -960,7 +999,8 @@
               "major": "机械电子工程",
               "score": 75
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     }

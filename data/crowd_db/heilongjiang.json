@@ -34,7 +34,8 @@
               "major": "能源与动力工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "哈尔滨工程大学",
@@ -56,7 +57,8 @@
               "major": "口腔医学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "东北林业大学",
@@ -78,7 +80,8 @@
               "major": "自动化",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "哈尔滨工业大学",
@@ -100,7 +103,8 @@
               "major": "计算机科学与技术",
               "score": 88
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "东北农业大学",
@@ -122,7 +126,8 @@
               "major": "农学",
               "score": 82
             }
-          ]
+          ],
+          "program_type": "农林类特色"
         }
       ]
     },
@@ -153,7 +158,8 @@
               "major": "机械工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "农林类特色"
         },
         {
           "name": "哈尔滨医科大学",
@@ -175,7 +181,8 @@
               "major": "物理学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "医学类特色"
         },
         {
           "name": "黑龙江大学",
@@ -197,7 +204,8 @@
               "major": "自动化",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "哈尔滨医科大学",
@@ -219,7 +227,8 @@
               "major": "中医学",
               "score": 87
             }
-          ]
+          ],
+          "program_type": "医学类特色"
         },
         {
           "name": "哈尔滨师范大学",
@@ -242,7 +251,8 @@
               "major": "教育学",
               "score": 80
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         }
       ]
     },
@@ -273,7 +283,8 @@
               "major": "风景园林",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "艺体类"
         },
         {
           "name": "哈尔滨师范大学",
@@ -295,7 +306,8 @@
               "major": "口腔医学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         },
         {
           "name": "东北石油大学",
@@ -317,7 +329,8 @@
               "major": "自动化",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "哈尔滨理工大学",
@@ -340,7 +353,8 @@
               "major": "机械工程",
               "score": 80
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "黑龙江大学",
@@ -362,7 +376,8 @@
               "major": "法学",
               "score": 81
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -393,7 +408,8 @@
               "major": "机械工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "佳木斯大学",
@@ -415,7 +431,8 @@
               "major": "物理学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "齐齐哈尔大学",
@@ -437,7 +454,8 @@
               "major": "自动化",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "哈尔滨商业大学",
@@ -460,7 +478,8 @@
               "major": "会计学",
               "score": 81
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "黑龙江中医药大学",
@@ -482,7 +501,8 @@
               "major": "针灸推拿学",
               "score": 78
             }
-          ]
+          ],
+          "program_type": "医学类特色"
         }
       ]
     },
@@ -513,7 +533,8 @@
               "major": "风景园林",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "医学类特色"
         },
         {
           "name": "黑龙江科技大学",
@@ -535,7 +556,8 @@
               "major": "口腔医学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "黑龙江工程学院",
@@ -557,7 +579,8 @@
               "major": "自动化",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "黑龙江八一农垦大学",
@@ -579,7 +602,8 @@
               "major": "农业机械化及其自动化",
               "score": 79
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "佳木斯大学",
@@ -601,7 +625,8 @@
               "major": "临床医学",
               "score": 77
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -632,7 +657,8 @@
               "major": "机械工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         },
         {
           "name": "哈尔滨学院",
@@ -654,7 +680,8 @@
               "major": "物理学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "绥化学院",
@@ -676,7 +703,8 @@
               "major": "自动化",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "牡丹江师范学院",
@@ -698,7 +726,8 @@
               "major": "汉语言文学",
               "score": 78
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         },
         {
           "name": "齐齐哈尔大学",
@@ -720,7 +749,8 @@
               "major": "化学工程与工艺",
               "score": 78
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -751,7 +781,8 @@
               "major": "风景园林",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "哈尔滨远东理工学院",
@@ -773,7 +804,8 @@
               "major": "口腔医学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "黑龙江职业学院",
@@ -795,7 +827,8 @@
               "major": "自动化",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "大庆师范学院",
@@ -817,7 +850,8 @@
               "major": "学前教育",
               "score": 75
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         },
         {
           "name": "哈尔滨学院",
@@ -839,7 +873,8 @@
               "major": "土木工程",
               "score": 74
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -870,7 +905,8 @@
               "major": "机械工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "黑龙江建筑职业技术学院",
@@ -892,7 +928,8 @@
               "major": "物理学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "哈尔滨铁道职业技术学院",
@@ -914,7 +951,8 @@
               "major": "自动化",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "黑龙江职业学院",
@@ -936,7 +974,8 @@
               "major": "机电一体化技术",
               "score": 74
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "哈尔滨职业技术学院",
@@ -958,7 +997,8 @@
               "major": "护理",
               "score": 73
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     }

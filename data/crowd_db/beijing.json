@@ -34,7 +34,8 @@
               "major": "电子信息工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "清华大学",
@@ -56,7 +57,8 @@
               "major": "车辆工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "中国人民大学",
@@ -78,7 +80,8 @@
               "major": "财政学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "北京航空航天大学",
@@ -100,7 +103,8 @@
               "major": "计算机科学与技术",
               "score": 95
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "北京理工大学",
@@ -122,7 +126,8 @@
               "major": "电子信息类",
               "score": 91
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -153,7 +158,8 @@
               "major": "通信工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         },
         {
           "name": "北京理工大学",
@@ -175,7 +181,8 @@
               "major": "自动化",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "北京航空航天大学",
@@ -197,7 +204,8 @@
               "major": "信息管理与信息系统",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "中国人民大学",
@@ -220,7 +228,8 @@
               "major": "经济学",
               "score": 90
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "北京师范大学",
@@ -242,7 +251,8 @@
               "major": "心理学",
               "score": 87
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         }
       ]
     },
@@ -273,7 +283,8 @@
               "major": "经济学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "中央财经大学",
@@ -295,7 +306,8 @@
               "major": "车辆工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "中国政法大学",
@@ -317,7 +329,8 @@
               "major": "财政学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "北京邮电大学",
@@ -340,7 +353,8 @@
               "major": "通信工程",
               "score": 91
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "对外经济贸易大学",
@@ -362,7 +376,8 @@
               "major": "国际经济与贸易",
               "score": 92
             }
-          ]
+          ],
+          "program_type": "国际涉外导向"
         }
       ]
     },
@@ -393,7 +408,8 @@
               "major": "口腔医学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "北京工业大学",
@@ -415,7 +431,8 @@
               "major": "英语",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "首都医科大学",
@@ -437,7 +454,8 @@
               "major": "经济学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "医学类特色"
         },
         {
           "name": "中央财经大学",
@@ -460,7 +478,8 @@
               "major": "会计学",
               "score": 83
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "中国政法大学",
@@ -483,7 +502,8 @@
               "major": "法学",
               "score": 86
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -514,7 +534,8 @@
               "major": "车辆工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         },
         {
           "name": "北京工商大学",
@@ -536,7 +557,8 @@
               "major": "财政学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "北方工业大学",
@@ -558,7 +580,8 @@
               "major": "通信工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "北京工业大学",
@@ -580,7 +603,8 @@
               "major": "土木工程",
               "score": 82
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "首都医科大学",
@@ -603,7 +627,8 @@
               "major": "生物科学",
               "score": 83
             }
-          ]
+          ],
+          "program_type": "医学类特色"
         }
       ]
     },
@@ -634,7 +659,8 @@
               "major": "自动化",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "北京信息科技大学",
@@ -656,7 +682,8 @@
               "major": "信息管理与信息系统",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "北京联合大学",
@@ -678,7 +705,8 @@
               "major": "经济学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "北京建筑大学",
@@ -700,7 +728,8 @@
               "major": "建筑学",
               "score": 80
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "北京物资学院",
@@ -722,7 +751,8 @@
               "major": "物流管理",
               "score": 79
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -753,7 +783,8 @@
               "major": "车辆工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "北京城市学院",
@@ -775,7 +806,8 @@
               "major": "财政学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "国际涉外导向"
         },
         {
           "name": "北京电子科技职业学院",
@@ -797,7 +829,8 @@
               "major": "通信工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "北方工业大学",
@@ -819,7 +852,8 @@
               "major": "机械设计制造及其自动化",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "艺体类"
         },
         {
           "name": "北京信息科技大学",
@@ -841,7 +875,8 @@
               "major": "计算机科学与技术",
               "score": 78
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -872,7 +907,8 @@
               "major": "自动化",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "北京财贸职业学院",
@@ -894,7 +930,8 @@
               "major": "信息管理与信息系统",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "北京青年政治学院",
@@ -916,7 +953,8 @@
               "major": "经济学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "北京电子科技职业学院",
@@ -938,7 +976,8 @@
               "major": "机电一体化技术",
               "score": 76
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "北京财贸职业学院",
@@ -960,7 +999,8 @@
               "major": "会计",
               "score": 77
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     }

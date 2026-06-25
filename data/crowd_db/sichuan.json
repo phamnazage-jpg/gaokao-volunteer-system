@@ -34,7 +34,8 @@
               "major": "软件工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "电子科技大学",
@@ -56,7 +57,8 @@
               "major": "会计学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "西南交通大学",
@@ -78,7 +80,8 @@
               "major": "园艺",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "西南财经大学",
@@ -100,7 +103,8 @@
               "major": "金融学",
               "score": 90
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "西南交通大学",
@@ -122,7 +126,8 @@
               "major": "轨道交通信号与控制",
               "score": 89
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -153,7 +158,8 @@
               "major": "机械工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "四川农业大学",
@@ -175,7 +181,8 @@
               "major": "数据科学与大数据技术",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "农林类特色"
         },
         {
           "name": "成都理工大学",
@@ -197,7 +204,8 @@
               "major": "自动化",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "四川农业大学",
@@ -219,7 +227,8 @@
               "major": "中草药栽培与鉴定",
               "score": 85
             }
-          ]
+          ],
+          "program_type": "农林类特色"
         },
         {
           "name": "西南民族大学",
@@ -241,7 +250,8 @@
               "major": "民族学",
               "score": 82
             }
-          ]
+          ],
+          "program_type": "民族类特色"
         }
       ]
     },
@@ -272,7 +282,8 @@
               "major": "软件工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "医学类特色"
         },
         {
           "name": "西南石油大学",
@@ -294,7 +305,8 @@
               "major": "会计学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "西南民族大学",
@@ -316,7 +328,8 @@
               "major": "园艺",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "民族类特色"
         },
         {
           "name": "成都理工大学",
@@ -339,7 +352,8 @@
               "major": "中医学",
               "score": 85
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "西南石油大学",
@@ -362,7 +376,8 @@
               "major": "石油工程",
               "score": 82
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -393,7 +408,8 @@
               "major": "机械工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "西华大学",
@@ -415,7 +431,8 @@
               "major": "数据科学与大数据技术",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "艺体类"
         },
         {
           "name": "西南科技大学",
@@ -437,7 +454,8 @@
               "major": "交通运输",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "成都中医药大学",
@@ -459,7 +477,8 @@
               "major": "针灸推拿学",
               "score": 81
             }
-          ]
+          ],
+          "program_type": "医学类特色"
         },
         {
           "name": "四川师范大学",
@@ -482,7 +501,8 @@
               "major": "汉语言文学",
               "score": 80
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         }
       ]
     },
@@ -513,7 +533,8 @@
               "major": "口腔医学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         },
         {
           "name": "成都信息工程大学",
@@ -535,7 +556,8 @@
               "major": "资源勘查工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "成都医学院",
@@ -557,7 +579,8 @@
               "major": "针灸推拿学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "医学类特色"
         },
         {
           "name": "西华大学",
@@ -579,7 +602,8 @@
               "major": "机械设计制造及其自动化",
               "score": 80
             }
-          ]
+          ],
+          "program_type": "艺体类"
         },
         {
           "name": "成都信息工程大学",
@@ -602,7 +626,8 @@
               "major": "软件工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -633,7 +658,8 @@
               "major": "社会学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "医学类特色"
         },
         {
           "name": "成都工业学院",
@@ -655,7 +681,8 @@
               "major": "车辆工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "宜宾学院",
@@ -677,7 +704,8 @@
               "major": "交通运输",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "成都大学",
@@ -699,7 +727,8 @@
               "major": "会计学",
               "score": 78
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "四川轻化工大学",
@@ -721,7 +750,8 @@
               "major": "化学工程与工艺",
               "score": 79
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -752,7 +782,8 @@
               "major": "口腔医学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         },
         {
           "name": "乐山师范学院",
@@ -774,7 +805,8 @@
               "major": "资源勘查工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         },
         {
           "name": "成都东软学院",
@@ -796,7 +828,8 @@
               "major": "针灸推拿学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "绵阳师范学院",
@@ -818,7 +851,8 @@
               "major": "小学教育",
               "score": 77
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         },
         {
           "name": "成都工业学院",
@@ -840,7 +874,8 @@
               "major": "电子信息工程技术",
               "score": 79
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -871,7 +906,8 @@
               "major": "社会学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "内江师范学院",
@@ -893,7 +929,8 @@
               "major": "车辆工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         },
         {
           "name": "攀枝花学院",
@@ -915,7 +952,8 @@
               "major": "交通运输",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "川北医学院",
@@ -937,7 +975,8 @@
               "major": "护理",
               "score": 75
             }
-          ]
+          ],
+          "program_type": "医学类特色"
         },
         {
           "name": "宜宾学院",
@@ -959,7 +998,8 @@
               "major": "旅游管理",
               "score": 76
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     }

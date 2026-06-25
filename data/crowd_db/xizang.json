@@ -8,496 +8,1017 @@
   "confidence": 0.82,
   "quality_note": "高置信人工整理推荐（基于西藏现有院校池 + 2025 招生章程复核）；西藏教育考试院官方入口已完成 2025 年度复核。",
   "trusted_sources": [
-    {"name": "教育部阳光高考", "url": "https://gaokao.chsi.com.cn/", "kind": "national_official"},
-    {"name": "教育部官网", "url": "https://www.moe.gov.cn/", "kind": "national_official"},
-    {"name": "西藏教育考试院", "url": "http://zsks.edu.xizang.gov.cn/", "kind": "province_official"}
+    {
+      "name": "教育部阳光高考",
+      "url": "https://gaokao.chsi.com.cn/",
+      "kind": "national_official"
+    },
+    {
+      "name": "教育部官网",
+      "url": "https://www.moe.gov.cn/",
+      "kind": "national_official"
+    },
+    {
+      "name": "西藏教育考试院",
+      "url": "http://zsks.edu.xizang.gov.cn/",
+      "kind": "province_official"
+    }
   ],
   "score_ranges": [
     {
-      "range": [550, 700],
+      "range": [
+        550,
+        700
+      ],
       "note": "顶尖段（内地985/211支援西藏定向）",
       "recommendations": [
         {
           "name": "西藏大学",
           "major": "生态学",
           "frequency": 2,
-          "platforms": ["人工摘要", "官方锚点"],
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
           "predicted_increase": 3,
           "alternatives": [
-            {"name": "西藏农牧学院", "major": "草业科学", "score": 88},
-            {"name": "西藏民族大学", "major": "环境科学", "score": 85}
-          ]
+            {
+              "name": "西藏农牧学院",
+              "major": "草业科学",
+              "score": 88
+            },
+            {
+              "name": "西藏民族大学",
+              "major": "环境科学",
+              "score": 85
+            }
+          ],
+          "program_type": null
         },
         {
           "name": "西藏大学",
           "major": "藏学",
           "frequency": 3,
-          "platforms": ["千问", "元宝", "百度"],
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度"
+          ],
           "predicted_increase": 5,
           "alternatives": [
-            {"name": "西藏民族大学", "major": "中国少数民族语言文学", "score": 87},
-            {"name": "西藏大学", "major": "藏族舞蹈", "score": 84}
-          ]
+            {
+              "name": "西藏民族大学",
+              "major": "中国少数民族语言文学",
+              "score": 87
+            },
+            {
+              "name": "西藏大学",
+              "major": "藏族舞蹈",
+              "score": 84
+            }
+          ],
+          "program_type": null
         },
         {
           "name": "西藏大学",
           "major": "计算机科学与技术",
           "frequency": 2,
-          "platforms": ["人工摘要", "官方锚点"],
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
           "predicted_increase": 2,
           "alternatives": [
-            {"name": "西藏民族大学", "major": "软件工程", "score": 86},
-            {"name": "西藏大学", "major": "网络工程", "score": 83}
-          ]
+            {
+              "name": "西藏民族大学",
+              "major": "软件工程",
+              "score": 86
+            },
+            {
+              "name": "西藏大学",
+              "major": "网络工程",
+              "score": 83
+            }
+          ],
+          "program_type": null
         },
         {
           "name": "西藏民族大学",
           "major": "临床医学",
           "frequency": 3,
-          "platforms": ["元宝", "百度", "豆包"],
+          "platforms": [
+            "元宝",
+            "百度",
+            "豆包"
+          ],
           "predicted_increase": 4,
           "alternatives": [
-            {"name": "西藏大学", "major": "预防医学", "score": 85},
-            {"name": "西藏农牧学院", "major": "动物医学", "score": 82}
-          ]
+            {
+              "name": "西藏大学",
+              "major": "预防医学",
+              "score": 85
+            },
+            {
+              "name": "西藏农牧学院",
+              "major": "动物医学",
+              "score": 82
+            }
+          ],
+          "program_type": "民族类特色"
         },
         {
           "name": "西藏大学",
           "major": "法学",
           "frequency": 2,
-          "platforms": ["千问", "豆包"],
+          "platforms": [
+            "千问",
+            "豆包"
+          ],
           "predicted_increase": 3,
           "alternatives": [
-            {"name": "西藏民族大学", "major": "思想政治教育", "score": 84},
-            {"name": "拉萨师范高等专科学校", "major": "法律事务", "score": 81}
-          ]
+            {
+              "name": "西藏民族大学",
+              "major": "思想政治教育",
+              "score": 84
+            },
+            {
+              "name": "拉萨师范高等专科学校",
+              "major": "法律事务",
+              "score": 81
+            }
+          ],
+          "program_type": null
         }
       ]
     },
     {
-      "range": [450, 549],
+      "range": [
+        450,
+        549
+      ],
       "note": "高分段（西藏重点大学/内地支援班）",
       "recommendations": [
         {
           "name": "西藏农牧学院",
           "major": "动物科学",
           "frequency": 2,
-          "platforms": ["人工摘要", "官方锚点"],
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
           "predicted_increase": 2,
           "alternatives": [
-            {"name": "西藏大学", "major": "生物科学", "score": 86},
-            {"name": "西藏民族大学", "major": "农学", "score": 83}
-          ]
+            {
+              "name": "西藏大学",
+              "major": "生物科学",
+              "score": 86
+            },
+            {
+              "name": "西藏民族大学",
+              "major": "农学",
+              "score": 83
+            }
+          ],
+          "program_type": null
         },
         {
           "name": "西藏大学",
           "major": "汉语言文学",
           "frequency": 2,
-          "platforms": ["人工摘要", "官方锚点"],
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
           "predicted_increase": 2,
           "alternatives": [
-            {"name": "西藏民族大学", "major": "汉语言文学", "score": 85},
-            {"name": "拉萨师范高等专科学校", "major": "语文教育", "score": 82}
-          ]
+            {
+              "name": "西藏民族大学",
+              "major": "汉语言文学",
+              "score": 85
+            },
+            {
+              "name": "拉萨师范高等专科学校",
+              "major": "语文教育",
+              "score": 82
+            }
+          ],
+          "program_type": null
         },
         {
           "name": "西藏民族大学",
           "major": "教育学",
           "frequency": 3,
-          "platforms": ["千问", "元宝", "百度"],
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度"
+          ],
           "predicted_increase": 4,
           "alternatives": [
-            {"name": "西藏大学", "major": "小学教育", "score": 84},
-            {"name": "拉萨师范高等专科学校", "major": "学前教育", "score": 81}
-          ]
+            {
+              "name": "西藏大学",
+              "major": "小学教育",
+              "score": 84
+            },
+            {
+              "name": "拉萨师范高等专科学校",
+              "major": "学前教育",
+              "score": 81
+            }
+          ],
+          "program_type": "民族类特色"
         },
         {
           "name": "西藏农牧学院",
           "major": "林学",
           "frequency": 2,
-          "platforms": ["元宝", "豆包"],
+          "platforms": [
+            "元宝",
+            "豆包"
+          ],
           "predicted_increase": 3,
           "alternatives": [
-            {"name": "西藏大学", "major": "园林", "score": 83},
-            {"name": "西藏民族大学", "major": "环境工程", "score": 80}
-          ]
+            {
+              "name": "西藏大学",
+              "major": "园林",
+              "score": 83
+            },
+            {
+              "name": "西藏民族大学",
+              "major": "环境工程",
+              "score": 80
+            }
+          ],
+          "program_type": null
         },
         {
           "name": "西藏大学",
           "major": "旅游管理",
           "frequency": 2,
-          "platforms": ["百度", "豆包"],
+          "platforms": [
+            "百度",
+            "豆包"
+          ],
           "predicted_increase": 3,
           "alternatives": [
-            {"name": "西藏民族大学", "major": "酒店管理", "score": 82},
-            {"name": "拉萨师范高等专科学校", "major": "旅游管理", "score": 79}
-          ]
+            {
+              "name": "西藏民族大学",
+              "major": "酒店管理",
+              "score": 82
+            },
+            {
+              "name": "拉萨师范高等专科学校",
+              "major": "旅游管理",
+              "score": 79
+            }
+          ],
+          "program_type": null
         }
       ]
     },
     {
-      "range": [380, 449],
+      "range": [
+        380,
+        449
+      ],
       "note": "一本主段（围绕西藏一本线）",
       "recommendations": [
         {
           "name": "拉萨师范高等专科学校",
           "major": "小学教育",
           "frequency": 2,
-          "platforms": ["人工摘要", "官方锚点"],
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
           "predicted_increase": 2,
           "alternatives": [
-            {"name": "西藏大学", "major": "教育学", "score": 84},
-            {"name": "西藏民族大学", "major": "小学教育", "score": 81}
-          ]
+            {
+              "name": "西藏大学",
+              "major": "教育学",
+              "score": 84
+            },
+            {
+              "name": "西藏民族大学",
+              "major": "小学教育",
+              "score": 81
+            }
+          ],
+          "program_type": "师范教育类"
         },
         {
           "name": "西藏大学",
           "major": "英语",
           "frequency": 2,
-          "platforms": ["人工摘要", "官方锚点"],
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
           "predicted_increase": 2,
           "alternatives": [
-            {"name": "西藏民族大学", "major": "翻译", "score": 83},
-            {"name": "拉萨师范高等专科学校", "major": "英语教育", "score": 80}
-          ]
+            {
+              "name": "西藏民族大学",
+              "major": "翻译",
+              "score": 83
+            },
+            {
+              "name": "拉萨师范高等专科学校",
+              "major": "英语教育",
+              "score": 80
+            }
+          ],
+          "program_type": "国际涉外导向"
         },
         {
           "name": "西藏民族大学",
           "major": "会计学",
           "frequency": 3,
-          "platforms": ["千问", "元宝", "百度"],
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度"
+          ],
           "predicted_increase": 4,
           "alternatives": [
-            {"name": "西藏大学", "major": "财务管理", "score": 82},
-            {"name": "西藏农牧学院", "major": "农林经济管理", "score": 79}
-          ]
+            {
+              "name": "西藏大学",
+              "major": "财务管理",
+              "score": 82
+            },
+            {
+              "name": "西藏农牧学院",
+              "major": "农林经济管理",
+              "score": 79
+            }
+          ],
+          "program_type": "民族类特色"
         },
         {
           "name": "西藏农牧学院",
           "major": "水利水电工程",
           "frequency": 2,
-          "platforms": ["元宝", "豆包"],
+          "platforms": [
+            "元宝",
+            "豆包"
+          ],
           "predicted_increase": 3,
           "alternatives": [
-            {"name": "西藏大学", "major": "土木工程", "score": 81},
-            {"name": "西藏民族大学", "major": "工程管理", "score": 78}
-          ]
+            {
+              "name": "西藏大学",
+              "major": "土木工程",
+              "score": 81
+            },
+            {
+              "name": "西藏民族大学",
+              "major": "工程管理",
+              "score": 78
+            }
+          ],
+          "program_type": null
         },
         {
           "name": "西藏大学",
           "major": "民族学",
           "frequency": 2,
-          "platforms": ["百度", "豆包"],
+          "platforms": [
+            "百度",
+            "豆包"
+          ],
           "predicted_increase": 3,
           "alternatives": [
-            {"name": "西藏民族大学", "major": "社会学", "score": 80},
-            {"name": "拉萨师范高等专科学校", "major": "社会工作", "score": 77}
-          ]
+            {
+              "name": "西藏民族大学",
+              "major": "社会学",
+              "score": 80
+            },
+            {
+              "name": "拉萨师范高等专科学校",
+              "major": "社会工作",
+              "score": 77
+            }
+          ],
+          "program_type": "民族类特色"
         }
       ]
     },
     {
-      "range": [320, 379],
+      "range": [
+        320,
+        379
+      ],
       "note": "二本高分段（普本线以上）",
       "recommendations": [
         {
           "name": "拉萨师范高等专科学校",
           "major": "学前教育",
           "frequency": 2,
-          "platforms": ["人工摘要", "官方锚点"],
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
           "predicted_increase": 2,
           "alternatives": [
-            {"name": "西藏大学", "major": "学前教育", "score": 82},
-            {"name": "西藏民族大学", "major": "学前教育", "score": 79}
-          ]
+            {
+              "name": "西藏大学",
+              "major": "学前教育",
+              "score": 82
+            },
+            {
+              "name": "西藏民族大学",
+              "major": "学前教育",
+              "score": 79
+            }
+          ],
+          "program_type": "师范教育类"
         },
         {
           "name": "西藏农牧学院",
           "major": "植物保护",
           "frequency": 2,
-          "platforms": ["人工摘要", "官方锚点"],
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
           "predicted_increase": 2,
           "alternatives": [
-            {"name": "西藏大学", "major": "生物技术", "score": 81},
-            {"name": "西藏民族大学", "major": "农学", "score": 78}
-          ]
+            {
+              "name": "西藏大学",
+              "major": "生物技术",
+              "score": 81
+            },
+            {
+              "name": "西藏民族大学",
+              "major": "农学",
+              "score": 78
+            }
+          ],
+          "program_type": null
         },
         {
           "name": "西藏民族大学",
           "major": "行政管理",
           "frequency": 2,
-          "platforms": ["千问", "元宝"],
+          "platforms": [
+            "千问",
+            "元宝"
+          ],
           "predicted_increase": 2,
           "alternatives": [
-            {"name": "西藏大学", "major": "公共事业管理", "score": 80},
-            {"name": "拉萨师范高等专科学校", "major": "公共事务管理", "score": 77}
-          ]
+            {
+              "name": "西藏大学",
+              "major": "公共事业管理",
+              "score": 80
+            },
+            {
+              "name": "拉萨师范高等专科学校",
+              "major": "公共事务管理",
+              "score": 77
+            }
+          ],
+          "program_type": "民族类特色"
         },
         {
           "name": "西藏大学",
           "major": "物理学",
           "frequency": 2,
-          "platforms": ["百度", "豆包"],
+          "platforms": [
+            "百度",
+            "豆包"
+          ],
           "predicted_increase": 2,
           "alternatives": [
-            {"name": "西藏民族大学", "major": "应用物理学", "score": 79},
-            {"name": "拉萨师范高等专科学校", "major": "物理教育", "score": 76}
-          ]
+            {
+              "name": "西藏民族大学",
+              "major": "应用物理学",
+              "score": 79
+            },
+            {
+              "name": "拉萨师范高等专科学校",
+              "major": "物理教育",
+              "score": 76
+            }
+          ],
+          "program_type": null
         },
         {
           "name": "西藏农牧学院",
           "major": "食品科学与工程",
           "frequency": 2,
-          "platforms": ["人工摘要", "官方锚点"],
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
           "predicted_increase": 2,
           "alternatives": [
-            {"name": "西藏大学", "major": "食品质量与安全", "score": 78},
-            {"name": "西藏民族大学", "major": "食品科学", "score": 75}
-          ]
+            {
+              "name": "西藏大学",
+              "major": "食品质量与安全",
+              "score": 78
+            },
+            {
+              "name": "西藏民族大学",
+              "major": "食品科学",
+              "score": 75
+            }
+          ],
+          "program_type": null
         }
       ]
     },
     {
-      "range": [280, 319],
+      "range": [
+        280,
+        319
+      ],
       "note": "二本主段（围绕西藏普本线）",
       "recommendations": [
         {
           "name": "拉萨师范高等专科学校",
           "major": "数学教育",
           "frequency": 2,
-          "platforms": ["人工摘要", "官方锚点"],
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
           "predicted_increase": 2,
           "alternatives": [
-            {"name": "西藏大学", "major": "数学与应用数学", "score": 80},
-            {"name": "西藏民族大学", "major": "信息与计算科学", "score": 77}
-          ]
+            {
+              "name": "西藏大学",
+              "major": "数学与应用数学",
+              "score": 80
+            },
+            {
+              "name": "西藏民族大学",
+              "major": "信息与计算科学",
+              "score": 77
+            }
+          ],
+          "program_type": "师范教育类"
         },
         {
           "name": "西藏职业技术学院",
           "major": "旅游管理",
           "frequency": 2,
-          "platforms": ["人工摘要", "官方锚点"],
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
           "predicted_increase": 2,
           "alternatives": [
-            {"name": "西藏大学", "major": "旅游管理", "score": 79},
-            {"name": "西藏民族大学", "major": "酒店管理", "score": 76}
-          ]
+            {
+              "name": "西藏大学",
+              "major": "旅游管理",
+              "score": 79
+            },
+            {
+              "name": "西藏民族大学",
+              "major": "酒店管理",
+              "score": 76
+            }
+          ],
+          "program_type": null
         },
         {
           "name": "西藏民族大学",
           "major": "新闻学",
           "frequency": 2,
-          "platforms": ["千问", "百度"],
+          "platforms": [
+            "千问",
+            "百度"
+          ],
           "predicted_increase": 2,
           "alternatives": [
-            {"name": "西藏大学", "major": "广播电视学", "score": 78},
-            {"name": "拉萨师范高等专科学校", "major": "新闻采编与制作", "score": 75}
-          ]
+            {
+              "name": "西藏大学",
+              "major": "广播电视学",
+              "score": 78
+            },
+            {
+              "name": "拉萨师范高等专科学校",
+              "major": "新闻采编与制作",
+              "score": 75
+            }
+          ],
+          "program_type": "民族类特色"
         },
         {
           "name": "西藏农牧学院",
           "major": "农业资源与环境",
           "frequency": 2,
-          "platforms": ["元宝", "豆包"],
+          "platforms": [
+            "元宝",
+            "豆包"
+          ],
           "predicted_increase": 2,
           "alternatives": [
-            {"name": "西藏大学", "major": "环境科学", "score": 77},
-            {"name": "西藏民族大学", "major": "环境工程", "score": 74}
-          ]
+            {
+              "name": "西藏大学",
+              "major": "环境科学",
+              "score": 77
+            },
+            {
+              "name": "西藏民族大学",
+              "major": "环境工程",
+              "score": 74
+            }
+          ],
+          "program_type": null
         },
         {
           "name": "拉萨师范高等专科学校",
           "major": "藏语言文学教育",
           "frequency": 3,
-          "platforms": ["千问", "元宝", "豆包"],
+          "platforms": [
+            "千问",
+            "元宝",
+            "豆包"
+          ],
           "predicted_increase": 3,
           "alternatives": [
-            {"name": "西藏大学", "major": "藏语言文学", "score": 76},
-            {"name": "西藏民族大学", "major": "中国少数民族语言文学", "score": 73}
-          ]
+            {
+              "name": "西藏大学",
+              "major": "藏语言文学",
+              "score": 76
+            },
+            {
+              "name": "西藏民族大学",
+              "major": "中国少数民族语言文学",
+              "score": 73
+            }
+          ],
+          "program_type": "师范教育类"
         }
       ]
     },
     {
-      "range": [230, 279],
+      "range": [
+        230,
+        279
+      ],
       "note": "高职衔接段",
       "recommendations": [
         {
           "name": "西藏职业技术学院",
           "major": "畜牧兽医",
           "frequency": 2,
-          "platforms": ["人工摘要", "官方锚点"],
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
           "predicted_increase": 2,
           "alternatives": [
-            {"name": "西藏农牧学院", "major": "动物科学", "score": 78},
-            {"name": "西藏大学", "major": "动物医学", "score": 75}
-          ]
+            {
+              "name": "西藏农牧学院",
+              "major": "动物科学",
+              "score": 78
+            },
+            {
+              "name": "西藏大学",
+              "major": "动物医学",
+              "score": 75
+            }
+          ],
+          "program_type": null
         },
         {
           "name": "拉萨师范高等专科学校",
           "major": "音乐教育",
           "frequency": 2,
-          "platforms": ["人工摘要", "官方锚点"],
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
           "predicted_increase": 2,
           "alternatives": [
-            {"name": "西藏大学", "major": "音乐学", "score": 77},
-            {"name": "西藏民族大学", "major": "音乐表演", "score": 74}
-          ]
+            {
+              "name": "西藏大学",
+              "major": "音乐学",
+              "score": 77
+            },
+            {
+              "name": "西藏民族大学",
+              "major": "音乐表演",
+              "score": 74
+            }
+          ],
+          "program_type": "师范教育类"
         },
         {
           "name": "西藏职业技术学院",
           "major": "计算机网络技术",
           "frequency": 2,
-          "platforms": ["千问", "元宝"],
+          "platforms": [
+            "千问",
+            "元宝"
+          ],
           "predicted_increase": 2,
           "alternatives": [
-            {"name": "西藏大学", "major": "计算机科学与技术", "score": 76},
-            {"name": "西藏民族大学", "major": "网络工程", "score": 73}
-          ]
+            {
+              "name": "西藏大学",
+              "major": "计算机科学与技术",
+              "score": 76
+            },
+            {
+              "name": "西藏民族大学",
+              "major": "网络工程",
+              "score": 73
+            }
+          ],
+          "program_type": null
         },
         {
           "name": "西藏职业技术学院",
           "major": "建筑工程技术",
           "frequency": 2,
-          "platforms": ["百度", "豆包"],
+          "platforms": [
+            "百度",
+            "豆包"
+          ],
           "predicted_increase": 2,
           "alternatives": [
-            {"name": "西藏大学", "major": "土木工程", "score": 75},
-            {"name": "西藏农牧学院", "major": "水利水电工程", "score": 72}
-          ]
+            {
+              "name": "西藏大学",
+              "major": "土木工程",
+              "score": 75
+            },
+            {
+              "name": "西藏农牧学院",
+              "major": "水利水电工程",
+              "score": 72
+            }
+          ],
+          "program_type": null
         },
         {
           "name": "拉萨师范高等专科学校",
           "major": "美术教育",
           "frequency": 2,
-          "platforms": ["人工摘要", "官方锚点"],
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
           "predicted_increase": 2,
           "alternatives": [
-            {"name": "西藏大学", "major": "美术学", "score": 74},
-            {"name": "西藏民族大学", "major": "艺术设计", "score": 71}
-          ]
+            {
+              "name": "西藏大学",
+              "major": "美术学",
+              "score": 74
+            },
+            {
+              "name": "西藏民族大学",
+              "major": "艺术设计",
+              "score": 71
+            }
+          ],
+          "program_type": "师范教育类"
         }
       ]
     },
     {
-      "range": [180, 229],
+      "range": [
+        180,
+        229
+      ],
       "note": "专科主段",
       "recommendations": [
         {
           "name": "西藏职业技术学院",
           "major": "护理",
           "frequency": 2,
-          "platforms": ["人工摘要", "官方锚点"],
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
           "predicted_increase": 2,
           "alternatives": [
-            {"name": "西藏大学", "major": "护理学", "score": 75},
-            {"name": "西藏民族大学", "major": "护理学", "score": 72}
-          ]
+            {
+              "name": "西藏大学",
+              "major": "护理学",
+              "score": 75
+            },
+            {
+              "name": "西藏民族大学",
+              "major": "护理学",
+              "score": 72
+            }
+          ],
+          "program_type": null
         },
         {
           "name": "拉萨师范高等专科学校",
           "major": "体育教育",
           "frequency": 2,
-          "platforms": ["人工摘要", "官方锚点"],
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
           "predicted_increase": 2,
           "alternatives": [
-            {"name": "西藏大学", "major": "体育教育", "score": 74},
-            {"name": "西藏民族大学", "major": "社会体育指导与管理", "score": 71}
-          ]
+            {
+              "name": "西藏大学",
+              "major": "体育教育",
+              "score": 74
+            },
+            {
+              "name": "西藏民族大学",
+              "major": "社会体育指导与管理",
+              "score": 71
+            }
+          ],
+          "program_type": "师范教育类"
         },
         {
           "name": "西藏职业技术学院",
           "major": "汽车检测与维修技术",
           "frequency": 2,
-          "platforms": ["千问", "百度"],
+          "platforms": [
+            "千问",
+            "百度"
+          ],
           "predicted_increase": 2,
           "alternatives": [
-            {"name": "西藏大学", "major": "车辆工程", "score": 73},
-            {"name": "西藏民族大学", "major": "汽车服务工程", "score": 70}
-          ]
+            {
+              "name": "西藏大学",
+              "major": "车辆工程",
+              "score": 73
+            },
+            {
+              "name": "西藏民族大学",
+              "major": "汽车服务工程",
+              "score": 70
+            }
+          ],
+          "program_type": null
         },
         {
           "name": "西藏职业技术学院",
           "major": "电子商务",
           "frequency": 2,
-          "platforms": ["元宝", "豆包"],
+          "platforms": [
+            "元宝",
+            "豆包"
+          ],
           "predicted_increase": 2,
           "alternatives": [
-            {"name": "西藏大学", "major": "电子商务", "score": 72},
-            {"name": "西藏民族大学", "major": "市场营销", "score": 69}
-          ]
+            {
+              "name": "西藏大学",
+              "major": "电子商务",
+              "score": 72
+            },
+            {
+              "name": "西藏民族大学",
+              "major": "市场营销",
+              "score": 69
+            }
+          ],
+          "program_type": null
         },
         {
           "name": "拉萨师范高等专科学校",
           "major": "思想政治教育",
           "frequency": 2,
-          "platforms": ["人工摘要", "官方锚点"],
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
           "predicted_increase": 2,
           "alternatives": [
-            {"name": "西藏大学", "major": "思想政治教育", "score": 71},
-            {"name": "西藏民族大学", "major": "政治学与行政学", "score": 68}
-          ]
+            {
+              "name": "西藏大学",
+              "major": "思想政治教育",
+              "score": 71
+            },
+            {
+              "name": "西藏民族大学",
+              "major": "政治学与行政学",
+              "score": 68
+            }
+          ],
+          "program_type": "师范教育类"
         }
       ]
     },
     {
-      "range": [150, 179],
+      "range": [
+        150,
+        179
+      ],
       "note": "专科临界段",
       "recommendations": [
         {
           "name": "西藏职业技术学院",
           "major": "会计信息管理",
           "frequency": 2,
-          "platforms": ["人工摘要", "官方锚点"],
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
           "predicted_increase": 2,
           "alternatives": [
-            {"name": "西藏大学", "major": "会计学", "score": 72},
-            {"name": "西藏民族大学", "major": "财务管理", "score": 69}
-          ]
+            {
+              "name": "西藏大学",
+              "major": "会计学",
+              "score": 72
+            },
+            {
+              "name": "西藏民族大学",
+              "major": "财务管理",
+              "score": 69
+            }
+          ],
+          "program_type": null
         },
         {
           "name": "拉萨师范高等专科学校",
           "major": "文秘",
           "frequency": 2,
-          "platforms": ["人工摘要", "官方锚点"],
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
           "predicted_increase": 2,
           "alternatives": [
-            {"name": "西藏大学", "major": "秘书学", "score": 71},
-            {"name": "西藏民族大学", "major": "汉语言文学", "score": 68}
-          ]
+            {
+              "name": "西藏大学",
+              "major": "秘书学",
+              "score": 71
+            },
+            {
+              "name": "西藏民族大学",
+              "major": "汉语言文学",
+              "score": 68
+            }
+          ],
+          "program_type": "师范院校特色类"
         },
         {
           "name": "西藏职业技术学院",
           "major": "园艺技术",
           "frequency": 2,
-          "platforms": ["千问", "元宝"],
+          "platforms": [
+            "千问",
+            "元宝"
+          ],
           "predicted_increase": 2,
           "alternatives": [
-            {"name": "西藏农牧学院", "major": "园艺", "score": 70},
-            {"name": "西藏大学", "major": "园林", "score": 67}
-          ]
+            {
+              "name": "西藏农牧学院",
+              "major": "园艺",
+              "score": 70
+            },
+            {
+              "name": "西藏大学",
+              "major": "园林",
+              "score": 67
+            }
+          ],
+          "program_type": null
         },
         {
           "name": "西藏职业技术学院",
           "major": "导游",
           "frequency": 2,
-          "platforms": ["百度", "豆包"],
+          "platforms": [
+            "百度",
+            "豆包"
+          ],
           "predicted_increase": 2,
           "alternatives": [
-            {"name": "西藏大学", "major": "旅游管理", "score": 69},
-            {"name": "西藏民族大学", "major": "酒店管理", "score": 66}
-          ]
+            {
+              "name": "西藏大学",
+              "major": "旅游管理",
+              "score": 69
+            },
+            {
+              "name": "西藏民族大学",
+              "major": "酒店管理",
+              "score": 66
+            }
+          ],
+          "program_type": null
         },
         {
           "name": "拉萨师范高等专科学校",
           "major": "计算机应用技术",
           "frequency": 2,
-          "platforms": ["人工摘要", "官方锚点"],
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
           "predicted_increase": 2,
           "alternatives": [
-            {"name": "西藏大学", "major": "计算机科学与技术", "score": 68},
-            {"name": "西藏民族大学", "major": "软件工程", "score": 65}
-          ]
+            {
+              "name": "西藏大学",
+              "major": "计算机科学与技术",
+              "score": 68
+            },
+            {
+              "name": "西藏民族大学",
+              "major": "软件工程",
+              "score": 65
+            }
+          ],
+          "program_type": "师范院校特色类"
         }
       ]
     }

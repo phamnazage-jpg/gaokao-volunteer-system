@@ -34,7 +34,8 @@
               "major": "软件工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "东北大学",
@@ -56,7 +57,8 @@
               "major": "口腔医学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "辽宁大学",
@@ -78,7 +80,8 @@
               "major": "教育学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "东北大学",
@@ -100,7 +103,8 @@
               "major": "控制科学与工程",
               "score": 88
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "大连理工大学",
@@ -122,7 +126,8 @@
               "major": "土木工程",
               "score": 86
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -153,7 +158,8 @@
               "major": "工程管理",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "中国医科大学",
@@ -175,7 +181,8 @@
               "major": "物理学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "医学类特色"
         },
         {
           "name": "东北财经大学",
@@ -197,7 +204,8 @@
               "major": "车辆工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "大连海事大学",
@@ -220,7 +228,8 @@
               "major": "航海技术",
               "score": 87
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "辽宁大学",
@@ -242,7 +251,8 @@
               "major": "经济学",
               "score": 85
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -273,7 +283,8 @@
               "major": "经济学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         },
         {
           "name": "沈阳工业大学",
@@ -295,7 +306,8 @@
               "major": "口腔医学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "沈阳建筑大学",
@@ -317,7 +329,8 @@
               "major": "教育学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "东北财经大学",
@@ -340,7 +353,8 @@
               "major": "会计学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "中国医科大学",
@@ -362,7 +376,8 @@
               "major": "临床医学",
               "score": 83
             }
-          ]
+          ],
+          "program_type": "医学类特色"
         }
       ]
     },
@@ -393,7 +408,8 @@
               "major": "工程管理",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "大连大学",
@@ -415,7 +431,8 @@
               "major": "物理学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "大连交通大学",
@@ -437,7 +454,8 @@
               "major": "车辆工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "辽宁师范大学",
@@ -460,7 +478,8 @@
               "major": "教育学",
               "score": 83
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         },
         {
           "name": "沈阳农业大学",
@@ -482,7 +501,8 @@
               "major": "农学",
               "score": 80
             }
-          ]
+          ],
+          "program_type": "农林类特色"
         }
       ]
     },
@@ -513,7 +533,8 @@
               "major": "经济学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "农林类特色"
         },
         {
           "name": "沈阳药科大学",
@@ -535,7 +556,8 @@
               "major": "口腔医学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "辽宁科技大学",
@@ -557,7 +579,8 @@
               "major": "教育学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "沈阳工业大学",
@@ -579,7 +602,8 @@
               "major": "机械工程",
               "score": 81
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "大连交通大学",
@@ -601,7 +625,8 @@
               "major": "交通运输",
               "score": 82
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -632,7 +657,8 @@
               "major": "工程管理",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "沈阳工学院",
@@ -654,7 +680,8 @@
               "major": "物理学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "艺体类"
         },
         {
           "name": "大连东软信息学院",
@@ -676,7 +703,8 @@
               "major": "车辆工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "辽宁中医药大学",
@@ -698,7 +726,8 @@
               "major": "中医学",
               "score": 80
             }
-          ]
+          ],
+          "program_type": "医学类特色"
         },
         {
           "name": "沈阳师范大学",
@@ -720,7 +749,8 @@
               "major": "汉语言文学",
               "score": 78
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         }
       ]
     },
@@ -751,7 +781,8 @@
               "major": "经济学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "辽宁财贸学院",
@@ -773,7 +804,8 @@
               "major": "口腔医学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "辽宁理工学院",
@@ -795,7 +827,8 @@
               "major": "教育学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "渤海大学",
@@ -817,7 +850,8 @@
               "major": "食品科学与工程",
               "score": 78
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "大连大学",
@@ -839,7 +873,8 @@
               "major": "护理学",
               "score": 77
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -870,7 +905,8 @@
               "major": "工程管理",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "大连医科大学中山学院",
@@ -892,7 +928,8 @@
               "major": "物理学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "医学类特色"
         },
         {
           "name": "鞍山师范学院",
@@ -914,7 +951,8 @@
               "major": "车辆工程",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         },
         {
           "name": "辽宁农业职业技术学院",
@@ -936,7 +974,8 @@
               "major": "园艺技术",
               "score": 73
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "辽宁职业学院",
@@ -958,7 +997,8 @@
               "major": "汽车检测与维修技术",
               "score": 74
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     }

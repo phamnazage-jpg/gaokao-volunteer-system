@@ -34,7 +34,8 @@
               "major": "教育学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "海南大学",
@@ -56,7 +57,8 @@
               "major": "财务管理",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "海南师范大学",
@@ -78,7 +80,8 @@
               "major": "学前教育",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         },
         {
           "name": "海南医科大学",
@@ -101,7 +104,8 @@
               "major": "软件工程",
               "score": 88
             }
-          ]
+          ],
+          "program_type": "医学类特色"
         },
         {
           "name": "海口经济学院",
@@ -124,7 +128,8 @@
               "major": "学前教育",
               "score": 86
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -155,7 +160,8 @@
               "major": "大数据与财务管理",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "医学类特色"
         },
         {
           "name": "三亚学院",
@@ -177,7 +183,8 @@
               "major": "应用俄语",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "海口经济学院",
@@ -199,7 +206,8 @@
               "major": "英语",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "海南大学",
@@ -221,7 +229,8 @@
               "major": "旅游管理",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "海南热带海洋学院",
@@ -243,7 +252,8 @@
               "major": "石油化工技术",
               "score": 82
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -274,7 +284,8 @@
               "major": "口腔医学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         },
         {
           "name": "海南热带海洋学院",
@@ -296,7 +307,8 @@
               "major": "财务管理",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "海南科技职业大学",
@@ -318,7 +330,8 @@
               "major": "护理",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "三亚学院",
@@ -341,7 +354,8 @@
               "major": "教育学",
               "score": 80
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "海南医科大学",
@@ -363,7 +377,8 @@
               "major": "国际贸易实务",
               "score": 78
             }
-          ]
+          ],
+          "program_type": "医学类特色"
         }
       ]
     },
@@ -394,7 +409,8 @@
               "major": "信息安全技术应用",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "海南职业技术学院",
@@ -416,7 +432,8 @@
               "major": "旅游管理",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "海南经贸职业技术学院",
@@ -438,7 +455,8 @@
               "major": "教育学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "国际涉外导向"
         },
         {
           "name": "海南科技职业大学",
@@ -460,7 +478,8 @@
               "major": "建筑工程技术",
               "score": 78
             }
-          ]
+          ],
+          "program_type": "艺体类"
         },
         {
           "name": "海南软件职业技术学院",
@@ -482,7 +501,8 @@
               "major": "法律事务",
               "score": 77
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -513,7 +533,8 @@
               "major": "海洋科学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "国际涉外导向"
         },
         {
           "name": "海南政法职业学院",
@@ -535,7 +556,8 @@
               "major": "国际经济与贸易",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "海南软件职业技术学院",
@@ -557,7 +579,8 @@
               "major": "护理",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "海南职业技术学院",
@@ -579,7 +602,8 @@
               "major": "汽车检测与维修技术",
               "score": 76
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "海南卫生健康职业学院",
@@ -601,7 +625,8 @@
               "major": "建筑工程管理",
               "score": 75
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -632,7 +657,8 @@
               "major": "信息安全技术应用",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "海南卫生健康职业学院",
@@ -654,7 +680,8 @@
               "major": "旅游管理",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "海南工商职业学院",
@@ -676,7 +703,8 @@
               "major": "教育学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "海南体育职业技术学院",
@@ -698,7 +726,8 @@
               "major": "烹饪工艺与营养",
               "score": 78
             }
-          ]
+          ],
+          "program_type": "艺体类"
         },
         {
           "name": "三亚航空旅游职业学院",
@@ -720,7 +749,8 @@
               "major": "汽车电子技术",
               "score": 76
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -751,7 +781,8 @@
               "major": "海洋科学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "海南软件职业技术学院",
@@ -773,7 +804,8 @@
               "major": "国际经济与贸易",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "海南热带海洋学院",
@@ -795,7 +827,8 @@
               "major": "护理",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "三亚城市职业学院",
@@ -817,7 +850,8 @@
               "major": "餐饮管理",
               "score": 78
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "海南财税职业学院",
@@ -839,7 +873,8 @@
               "major": "民航安全技术管理",
               "score": 76
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     },
@@ -870,7 +905,8 @@
               "major": "信息安全技术应用",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "师范教育类"
         },
         {
           "name": "海口经济学院",
@@ -892,7 +928,8 @@
               "major": "旅游管理",
               "score": 84
             }
-          ]
+          ],
+          "program_type": "艺体类"
         },
         {
           "name": "三亚学院",
@@ -914,7 +951,8 @@
               "major": "教育学",
               "score": 84
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "海南工商职业学院",
@@ -936,7 +974,8 @@
               "major": "应用外语",
               "score": 78
             }
-          ]
+          ],
+          "program_type": null
         },
         {
           "name": "三亚理工职业学院",
@@ -958,7 +997,8 @@
               "major": "报关与国际货运",
               "score": 76
             }
-          ]
+          ],
+          "program_type": null
         }
       ]
     }

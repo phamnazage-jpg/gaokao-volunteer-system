@@ -424,7 +424,7 @@
             "reselect_subject": [],
             "note": "首选历史，无强制再选"
           },
-          "program_type": null
+          "program_type": "师范教育类"
         },
         {
           "name": "山东师范大学",
@@ -452,7 +452,7 @@
             "reselect_subject": [],
             "note": "首选历史，无强制再选"
           },
-          "program_type": null
+          "program_type": "师范教育类"
         }
       ]
     },
@@ -491,7 +491,7 @@
             ],
             "note": "首选物理，再选化学"
           },
-          "program_type": null
+          "program_type": "师范院校特色类"
         },
         {
           "name": "山东财经大学",
@@ -608,7 +608,7 @@
             ],
             "note": "首选物理，再选化学/生物"
           },
-          "program_type": null
+          "program_type": "医学类特色"
         },
         {
           "name": "济南大学",
@@ -711,7 +711,7 @@
             ],
             "note": "首选物理，再选化学"
           },
-          "program_type": null
+          "program_type": "农林类特色"
         },
         {
           "name": "山东科技大学",
@@ -802,7 +802,7 @@
             ],
             "note": "首选物理，再选化学"
           },
-          "program_type": null
+          "program_type": "师范教育类"
         },
         {
           "name": "山东理工大学",
@@ -832,7 +832,7 @@
             ],
             "note": "首选物理，再选化学"
           },
-          "program_type": null
+          "program_type": "艺体类"
         },
         {
           "name": "山东财经大学",
@@ -1077,7 +1077,7 @@
             "reselect_subject": [],
             "note": "首选物理，无强制再选"
           },
-          "program_type": null
+          "program_type": "医学类特色"
         }
       ]
     },
@@ -1116,7 +1116,7 @@
             ],
             "note": "首选物理，再选化学"
           },
-          "program_type": null
+          "program_type": "农林类特色"
         },
         {
           "name": "青岛农业大学",
@@ -1144,7 +1144,7 @@
             "reselect_subject": [],
             "note": "首选物理，无强制再选"
           },
-          "program_type": null
+          "program_type": "农林院校特色类"
         },
         {
           "name": "山东科技大学",
@@ -1291,7 +1291,7 @@
             ],
             "note": "首选物理，再选化学/生物"
           },
-          "program_type": null
+          "program_type": "医学类特色"
         }
       ]
     },
@@ -1328,7 +1328,7 @@
             "reselect_subject": [],
             "note": "首选历史，无强制再选"
           },
-          "program_type": null
+          "program_type": "师范教育类"
         },
         {
           "name": "济南大学",
@@ -1418,7 +1418,7 @@
             ],
             "note": "首选物理，再选化学"
           },
-          "program_type": null
+          "program_type": "农林类特色"
         },
         {
           "name": "青岛农业大学",
@@ -1448,7 +1448,7 @@
             "reselect_subject": [],
             "note": "首选物理，无强制再选"
           },
-          "program_type": null
+          "program_type": "农林院校特色类"
         },
         {
           "name": "齐鲁工业大学",
@@ -1575,7 +1575,7 @@
             "reselect_subject": [],
             "note": "首选历史，无强制再选"
           },
-          "program_type": null
+          "program_type": "师范教育类"
         },
         {
           "name": "济南大学",
@@ -1636,7 +1636,7 @@
             ],
             "note": "首选物理，再选化学/生物"
           },
-          "program_type": null
+          "program_type": "医学类特色"
         },
         {
           "name": "聊城大学",
@@ -1697,7 +1697,7 @@
             ],
             "note": "首选物理，再选化学/生物"
           },
-          "program_type": null
+          "program_type": "医学类特色"
         },
         {
           "name": "潍坊医学院",
@@ -1728,7 +1728,7 @@
             ],
             "note": "首选物理，再选化学/生物"
           },
-          "program_type": null
+          "program_type": "医学类特色"
         }
       ]
     },
@@ -1913,7 +1913,7 @@
             "reselect_subject": [],
             "note": "首选历史，艺体类无强制再选"
           },
-          "program_type": null
+          "program_type": "艺体类"
         },
         {
           "name": "山东体育学院",
@@ -1941,7 +1941,7 @@
             "reselect_subject": [],
             "note": "首选历史，艺体类无强制再选"
           },
-          "program_type": null
+          "program_type": "艺体类"
         }
       ]
     },
@@ -1978,7 +1978,7 @@
             "reselect_subject": [],
             "note": "首选历史，艺体类无强制再选"
           },
-          "program_type": null
+          "program_type": "艺体类"
         },
         {
           "name": "济南大学",
@@ -2036,7 +2036,7 @@
             "reselect_subject": [],
             "note": "首选物理，无强制再选"
           },
-          "program_type": null
+          "program_type": "师范教育类"
         },
         {
           "name": "山东财经大学",
@@ -2096,7 +2096,7 @@
             "reselect_subject": [],
             "note": "首选历史，无强制再选"
           },
-          "program_type": null
+          "program_type": "国际涉外导向"
         },
         {
           "name": "山东商业职业技术学院",
