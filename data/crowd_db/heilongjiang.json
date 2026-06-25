@@ -234,6 +234,40 @@
           ],
           "predicted_increase": 0,
           "alternatives": []
+        },
+        {
+          "name": "大庆师范学院",
+          "major": "历史学",
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史"
+          },
+          "program_type": "师范教育类",
+          "frequency": 2,
+          "platforms": [
+            "千问",
+            "百度"
+          ],
+          "predicted_increase": 0,
+          "alternatives": []
+        },
+        {
+          "name": "黑龙江工程学院",
+          "major": "测绘工程",
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [],
+            "note": "首选物理"
+          },
+          "program_type": null,
+          "frequency": 2,
+          "platforms": [
+            "元宝",
+            "豆包"
+          ],
+          "predicted_increase": 0,
+          "alternatives": []
         }
       ]
     },

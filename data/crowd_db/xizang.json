@@ -219,6 +219,40 @@
           ],
           "predicted_increase": 0,
           "alternatives": []
+        },
+        {
+          "name": "西藏职业技术学院",
+          "major": "畜牧兽医",
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [],
+            "note": "首选物理"
+          },
+          "program_type": "农林类特色",
+          "frequency": 2,
+          "platforms": [
+            "千问",
+            "百度"
+          ],
+          "predicted_increase": 0,
+          "alternatives": []
+        },
+        {
+          "name": "西藏农牧学院",
+          "major": "园艺",
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [],
+            "note": "首选物理"
+          },
+          "program_type": "农林类特色",
+          "frequency": 2,
+          "platforms": [
+            "元宝",
+            "豆包"
+          ],
+          "predicted_increase": 0,
+          "alternatives": []
         }
       ]
     },

@@ -249,6 +249,40 @@
           ],
           "predicted_increase": 0,
           "alternatives": []
+        },
+        {
+          "name": "黄冈师范学院",
+          "major": "历史学",
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史"
+          },
+          "program_type": "师范教育类",
+          "frequency": 2,
+          "platforms": [
+            "千问",
+            "元宝"
+          ],
+          "predicted_increase": 0,
+          "alternatives": []
+        },
+        {
+          "name": "长江大学",
+          "major": "农学",
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [],
+            "note": "首选物理"
+          },
+          "program_type": "农林类特色",
+          "frequency": 2,
+          "platforms": [
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 0,
+          "alternatives": []
         }
       ]
     },

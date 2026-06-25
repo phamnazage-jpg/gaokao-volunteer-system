@@ -234,6 +234,43 @@
           ],
           "predicted_increase": 0,
           "alternatives": []
+        },
+        {
+          "name": "青海交通职业技术学院",
+          "major": "道路桥梁工程技术",
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [],
+            "note": "首选物理"
+          },
+          "program_type": null,
+          "frequency": 2,
+          "platforms": [
+            "千问",
+            "百度"
+          ],
+          "predicted_increase": 0,
+          "alternatives": []
+        },
+        {
+          "name": "青海卫生职业技术学院",
+          "major": "护理学",
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学",
+              "生物"
+            ],
+            "note": "首选物理，再选化学/生物"
+          },
+          "program_type": "医学类特色",
+          "frequency": 2,
+          "platforms": [
+            "元宝",
+            "豆包"
+          ],
+          "predicted_increase": 0,
+          "alternatives": []
         }
       ]
     },

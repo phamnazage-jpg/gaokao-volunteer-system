@@ -344,6 +344,40 @@
           ],
           "predicted_increase": 0,
           "alternatives": []
+        },
+        {
+          "name": "华南农业大学",
+          "major": "林学",
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [],
+            "note": "首选物理"
+          },
+          "program_type": "农林类特色",
+          "frequency": 2,
+          "platforms": [
+            "千问",
+            "元宝"
+          ],
+          "predicted_increase": 0,
+          "alternatives": []
+        },
+        {
+          "name": "广东海洋大学",
+          "major": "水产养殖学",
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [],
+            "note": "首选物理"
+          },
+          "program_type": "农林类特色",
+          "frequency": 2,
+          "platforms": [
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 0,
+          "alternatives": []
         }
       ]
     },
