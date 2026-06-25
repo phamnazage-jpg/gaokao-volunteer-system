@@ -3030,5 +3030,47 @@
       "kind": "province_official"
     }
   ],
-  "quality_note": "2026 官方分数线已接入：本科历史类484/物理类456，特控历史类532/物理类513"
+  "quality_note": "2026 官方分数线已接入：本科历史类484/物理类456，特控历史类532/物理类513",
+  "score_distribution": {
+    "data_year": 2026,
+    "source_url": "https://www.gk100.com/read_26298486.htm",
+    "source_type": "official_release",
+    "last_updated": "2026-06-25",
+    "subjects": {
+      "物理": {
+        "benchmarks": [
+          {
+            "score": 657,
+            "cumulative_count": 104
+          },
+          {
+            "score": 600,
+            "cumulative_count": 35398
+          },
+          {
+            "score": 550,
+            "cumulative_count": 92971
+          }
+        ],
+        "score_line_at_600": 35398,
+        "total_above_bachelor_line": 187958,
+        "bachelor_score_line": 456
+      },
+      "历史": {
+        "benchmarks": [
+          {
+            "score": 600,
+            "cumulative_count": 5533
+          },
+          {
+            "score": 550,
+            "cumulative_count": 18000
+          }
+        ],
+        "score_line_at_600": 5533,
+        "total_above_bachelor_line": 0,
+        "bachelor_score_line": 484
+      }
+    }
+  }
 }

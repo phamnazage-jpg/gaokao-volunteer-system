@@ -1533,5 +1533,39 @@
       "kind": "province_official"
     }
   ],
-  "quality_note": "2026 官方分数线已接入（新高考模式）：本科历史类459/物理类419，特殊类型历史类534/物理类513"
+  "quality_note": "2026 官方分数线已接入（新高考模式）：本科历史类459/物理类419，特殊类型历史类534/物理类513",
+  "score_distribution": {
+    "data_year": 2026,
+    "source_url": "https://finance.sina.com.cn/jjxw/2026-06-25/doc-inieqnch2619892.shtml",
+    "source_type": "official_release",
+    "last_updated": "2026-06-25",
+    "subjects": {
+      "物理": {
+        "benchmarks": [
+          {
+            "score": 700,
+            "cumulative_count": 48
+          },
+          {
+            "score": 600,
+            "cumulative_count": 32622
+          }
+        ],
+        "score_line_at_600": 32622,
+        "total_above_bachelor_line": 359972,
+        "bachelor_score_line": 419
+      },
+      "历史": {
+        "benchmarks": [
+          {
+            "score": 600,
+            "cumulative_count": 4922
+          }
+        ],
+        "score_line_at_600": 4922,
+        "total_above_bachelor_line": 92756,
+        "bachelor_score_line": 459
+      }
+    }
+  }
 }
