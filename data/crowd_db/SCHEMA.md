@@ -34,6 +34,50 @@
 | `note`            | str       | ⚠️   | 段名/批次说明（如 `一本中段`） |
 | `recommendations` | list      | ✅   | 推荐条目列表，可空             |
 
+## 2.1 score_distribution（一分一段表，顶层）
+
+> 2026-06-25 Phase A 新增：用于存放官方公布的一分一段表/位次数据。
+
+```json
+{
+  "score_distribution": {
+    "data_year": 2026,
+    "source_url": "https://www.hneeb.cn/...",
+    "source_type": "official_release",
+    "last_updated": "2026-06-25",
+    "subjects": {
+      "物理": {
+        "benchmarks": [
+          {"score": 700, "cumulative_count": 17},
+          {"score": 690, "cumulative_count": 80},
+          {"score": 600, "cumulative_count": 6580}
+        ],
+        "score_line_at_600": 18876,
+        "total_above_bachelor_line": 82444,
+        "bachelor_score_line": 340
+      },
+      "历史": {
+        "benchmarks": [
+          {"score": 670, "cumulative_count": 15},
+          {"score": 600, "cumulative_count": 857}
+        ],
+        "score_line_at_600": 2139,
+        "total_above_bachelor_line": 21417,
+        "bachelor_score_line": 385
+      }
+    }
+  }
+}
+```
+
+说明：
+- `score_distribution` 为可选顶层字段，未接入一分一段表的省份省略
+- `subjects` 分物理类/历史类（新高考省份）或理科/文科（旧高考省份）
+- `benchmarks` 为关键分数段锚点（从一分一段表采样）
+- `score_line_at_600` 为 600 分以上考生总数
+- `total_above_bachelor_line` 为本科线上累计人数
+- `bachelor_score_line` 为本科分数线
+
 ## 3. recommendations 元素
 
 | 字段                 | 类型      | 必填 | 说明                               |

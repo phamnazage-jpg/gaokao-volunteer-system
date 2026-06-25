@@ -1548,5 +1548,119 @@
       "kind": "province_official"
     }
   ],
-  "quality_note": "高置信人工整理推荐（基于黑龙江现有院校池 + 2025 招生章程复核）；黑龙江省招生考试院官方入口已完成 2025 年度复核。"
+  "quality_note": "高置信人工整理推荐（基于黑龙江现有院校池 + 2025 招生章程复核）；黑龙江省招生考试院官方入口已完成 2025 年度复核。",
+  "score_distribution": {
+    "data_year": 2026,
+    "source_url": "https://www.163.com/dy/article/L07K0TVL05538QLM.html",
+    "source_type": "official_release",
+    "last_updated": "2026-06-25",
+    "subjects": {
+      "物理": {
+        "benchmarks": [
+          {
+            "score": 700,
+            "cumulative_count": 17
+          },
+          {
+            "score": 690,
+            "cumulative_count": 80
+          },
+          {
+            "score": 680,
+            "cumulative_count": 179
+          },
+          {
+            "score": 670,
+            "cumulative_count": 359
+          },
+          {
+            "score": 660,
+            "cumulative_count": 681
+          },
+          {
+            "score": 650,
+            "cumulative_count": 1143
+          },
+          {
+            "score": 640,
+            "cumulative_count": 1761
+          },
+          {
+            "score": 630,
+            "cumulative_count": 2690
+          },
+          {
+            "score": 620,
+            "cumulative_count": 3805
+          },
+          {
+            "score": 610,
+            "cumulative_count": 5092
+          },
+          {
+            "score": 600,
+            "cumulative_count": 6580
+          },
+          {
+            "score": 550,
+            "cumulative_count": 15996
+          },
+          {
+            "score": 500,
+            "cumulative_count": 29332
+          }
+        ],
+        "score_line_at_600": 6580,
+        "total_above_bachelor_line": 82444,
+        "bachelor_score_line": 340
+      },
+      "历史": {
+        "benchmarks": [
+          {
+            "score": 670,
+            "cumulative_count": 15
+          },
+          {
+            "score": 660,
+            "cumulative_count": 38
+          },
+          {
+            "score": 650,
+            "cumulative_count": 81
+          },
+          {
+            "score": 640,
+            "cumulative_count": 149
+          },
+          {
+            "score": 630,
+            "cumulative_count": 257
+          },
+          {
+            "score": 620,
+            "cumulative_count": 393
+          },
+          {
+            "score": 610,
+            "cumulative_count": 591
+          },
+          {
+            "score": 600,
+            "cumulative_count": 857
+          },
+          {
+            "score": 550,
+            "cumulative_count": 3027
+          },
+          {
+            "score": 500,
+            "cumulative_count": 6886
+          }
+        ],
+        "score_line_at_600": 857,
+        "total_above_bachelor_line": 21417,
+        "bachelor_score_line": 385
+      }
+    }
+  }
 }
