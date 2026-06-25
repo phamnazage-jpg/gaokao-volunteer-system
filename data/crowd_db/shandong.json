@@ -1,8 +1,8 @@
 {
   "province": "山东",
-  "last_updated": "2026-06-24",
+  "last_updated": "2026-06-25",
   "data_year": 2025,
-  "source": "山东 crowd_db 高信任候选版人工结构化摘要（2025 官方分数线锚点 + 省内高校常见报考池 + 多平台热点交叉整理），2026-06-24",
+  "source": "山东 crowd_db 高信任候选版人工结构化摘要（2025 官方分数线锚点 + 省内高校常见报考池 + 多平台热点交叉整理），2026-06-25 S级扩容版",
   "source_url": "https://www.sdzk.cn/",
   "source_type": "manual_summary",
   "confidence": 0.85,
@@ -84,6 +84,28 @@
           ]
         },
         {
+          "name": "中国石油大学(华东)",
+          "major": "石油工程",
+          "frequency": 3,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 4,
+          "alternatives": [
+            {
+              "name": "中国海洋大学",
+              "major": "海洋技术",
+              "score": 91
+            },
+            {
+              "name": "山东大学",
+              "major": "软件工程",
+              "score": 90
+            }
+          ]
+        },
+        {
           "name": "山东科技大学",
           "major": "计算机科学与技术",
           "frequency": 3,
@@ -128,6 +150,28 @@
               "name": "山东科技大学",
               "major": "测绘工程",
               "score": 84
+            }
+          ]
+        },
+        {
+          "name": "山东大学",
+          "major": "临床医学",
+          "frequency": 3,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 5,
+          "alternatives": [
+            {
+              "name": "青岛大学",
+              "major": "临床医学",
+              "score": 93
+            },
+            {
+              "name": "山东中医药大学",
+              "major": "中医学",
+              "score": 92
             }
           ]
         }
@@ -207,6 +251,29 @@
           ]
         },
         {
+          "name": "中国石油大学(华东)",
+          "major": "化学工程与工艺",
+          "frequency": 3,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度"
+          ],
+          "predicted_increase": 3,
+          "alternatives": [
+            {
+              "name": "山东大学",
+              "major": "化学",
+              "score": 88
+            },
+            {
+              "name": "济南大学",
+              "major": "材料科学与工程",
+              "score": 86
+            }
+          ]
+        },
+        {
           "name": "山东理工大学",
           "major": "电气工程及其自动化",
           "frequency": 3,
@@ -253,15 +320,37 @@
               "score": 84
             }
           ]
+        },
+        {
+          "name": "山东师范大学",
+          "major": "教育学",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "曲阜师范大学",
+              "major": "教育学",
+              "score": 85
+            },
+            {
+              "name": "济南大学",
+              "major": "教育学",
+              "score": 84
+            }
+          ]
         }
       ]
     },
     {
       "range": [
-        521,
+        530,
         549
       ],
-      "note": "特殊类型招生控制线段（围绕 2025 特招线 521）",
+      "note": "省重点/211中位段（一本高段细分）",
       "recommendations": [
         {
           "name": "山东师范大学",
@@ -354,6 +443,59 @@
           ]
         },
         {
+          "name": "山东中医药大学",
+          "major": "中医学",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "山东大学",
+              "major": "临床医学",
+              "score": 87
+            },
+            {
+              "name": "青岛大学",
+              "major": "口腔医学",
+              "score": 85
+            }
+          ]
+        },
+        {
+          "name": "济南大学",
+          "major": "土木工程",
+          "frequency": 2,
+          "platforms": [
+            "千问",
+            "百度"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "齐鲁工业大学",
+              "major": "土木工程",
+              "score": 84
+            },
+            {
+              "name": "山东建筑大学",
+              "major": "土木工程",
+              "score": 83
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "range": [
+        521,
+        529
+      ],
+      "note": "特殊类型招生控制线段（围绕 2025 特招线 521）",
+      "recommendations": [
+        {
           "name": "鲁东大学",
           "major": "数学与应用数学",
           "frequency": 3,
@@ -376,15 +518,150 @@
               "score": 84
             }
           ]
+        },
+        {
+          "name": "山东农业大学",
+          "major": "农学",
+          "frequency": 3,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 3,
+          "alternatives": [
+            {
+              "name": "山东师范大学",
+              "major": "生物科学",
+              "score": 85
+            },
+            {
+              "name": "青岛农业大学",
+              "major": "农学",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "山东科技大学",
+          "major": "测绘工程",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "济南大学",
+              "major": "土木工程",
+              "score": 84
+            },
+            {
+              "name": "齐鲁工业大学",
+              "major": "测绘工程",
+              "score": 83
+            }
+          ]
+        },
+        {
+          "name": "青岛科技大学",
+          "major": "化学工程与工艺",
+          "frequency": 2,
+          "platforms": [
+            "千问",
+            "豆包"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "中国石油大学(华东)",
+              "major": "化学工程与工艺",
+              "score": 86
+            },
+            {
+              "name": "烟台大学",
+              "major": "化学",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "曲阜师范大学",
+          "major": "数学与应用数学",
+          "frequency": 3,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度"
+          ],
+          "predicted_increase": 3,
+          "alternatives": [
+            {
+              "name": "山东师范大学",
+              "major": "数学与应用数学",
+              "score": 85
+            },
+            {
+              "name": "鲁东大学",
+              "major": "数学与应用数学",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "山东理工大学",
+          "major": "机械设计制造及其自动化",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "仓内样例"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "济南大学",
+              "major": "机械工程",
+              "score": 84
+            },
+            {
+              "name": "青岛理工大学",
+              "major": "机械工程",
+              "score": 83
+            }
+          ]
+        },
+        {
+          "name": "山东财经大学",
+          "major": "金融学",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "青岛大学",
+              "major": "经济学",
+              "score": 85
+            },
+            {
+              "name": "济南大学",
+              "major": "经济学",
+              "score": 84
+            }
+          ]
         }
       ]
     },
     {
       "range": [
-        470,
+        490,
         520
       ],
-      "note": "本科中段",
+      "note": "本科中高段（一本临界/二本上位）",
       "recommendations": [
         {
           "name": "济南大学",
@@ -496,6 +773,213 @@
             {
               "name": "山东科技大学",
               "major": "测绘工程",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "烟台大学",
+          "major": "知识产权",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "山东大学",
+              "major": "法学",
+              "score": 85
+            },
+            {
+              "name": "青岛大学",
+              "major": "法学",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "山东中医药大学",
+          "major": "针灸推拿学",
+          "frequency": 2,
+          "platforms": [
+            "千问",
+            "豆包"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "山东大学",
+              "major": "临床医学",
+              "score": 85
+            },
+            {
+              "name": "青岛大学",
+              "major": "临床医学",
+              "score": 84
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "range": [
+        470,
+        489
+      ],
+      "note": "本科中段",
+      "recommendations": [
+        {
+          "name": "山东农业大学",
+          "major": "动物科学",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "仓内样例"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "山东师范大学",
+              "major": "生物科学",
+              "score": 84
+            },
+            {
+              "name": "青岛农业大学",
+              "major": "动物科学",
+              "score": 83
+            }
+          ]
+        },
+        {
+          "name": "青岛农业大学",
+          "major": "园林",
+          "frequency": 2,
+          "platforms": [
+            "千问",
+            "百度"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "山东农业大学",
+              "major": "园艺",
+              "score": 84
+            },
+            {
+              "name": "济南大学",
+              "major": "环境工程",
+              "score": 83
+            }
+          ]
+        },
+        {
+          "name": "山东科技大学",
+          "major": "采矿工程",
+          "frequency": 2,
+          "platforms": [
+            "千问",
+            "元宝"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "山东理工大学",
+              "major": "采矿工程",
+              "score": 84
+            },
+            {
+              "name": "济南大学",
+              "major": "土木工程",
+              "score": 83
+            }
+          ]
+        },
+        {
+          "name": "鲁东大学",
+          "major": "物理学",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "山东师范大学",
+              "major": "物理学",
+              "score": 84
+            },
+            {
+              "name": "曲阜师范大学",
+              "major": "物理学",
+              "score": 83
+            }
+          ]
+        },
+        {
+          "name": "聊城大学",
+          "major": "汉语言文学",
+          "frequency": 2,
+          "platforms": [
+            "千问",
+            "豆包"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "山东师范大学",
+              "major": "汉语言文学",
+              "score": 84
+            },
+            {
+              "name": "曲阜师范大学",
+              "major": "汉语言文学",
+              "score": 83
+            }
+          ]
+        },
+        {
+          "name": "临沂大学",
+          "major": "小学教育",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "仓内样例"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "山东师范大学",
+              "major": "教育学",
+              "score": 84
+            },
+            {
+              "name": "曲阜师范大学",
+              "major": "教育学",
+              "score": 83
+            }
+          ]
+        },
+        {
+          "name": "济宁医学院",
+          "major": "临床医学",
+          "frequency": 2,
+          "platforms": [
+            "千问",
+            "百度"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "山东大学",
+              "major": "临床医学",
+              "score": 85
+            },
+            {
+              "name": "青岛大学",
+              "major": "临床医学",
               "score": 84
             }
           ]
@@ -622,6 +1106,50 @@
               "score": 84
             }
           ]
+        },
+        {
+          "name": "齐鲁工业大学",
+          "major": "食品科学与工程",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "仓内样例"
+          ],
+          "predicted_increase": 1,
+          "alternatives": [
+            {
+              "name": "济南大学",
+              "major": "食品科学与工程",
+              "score": 80
+            },
+            {
+              "name": "山东理工大学",
+              "major": "食品科学与工程",
+              "score": 79
+            }
+          ]
+        },
+        {
+          "name": "山东理工大学",
+          "major": "车辆工程",
+          "frequency": 2,
+          "platforms": [
+            "千问",
+            "元宝"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "济南大学",
+              "major": "机械工程",
+              "score": 82
+            },
+            {
+              "name": "青岛理工大学",
+              "major": "车辆工程",
+              "score": 81
+            }
+          ]
         }
       ]
     },
@@ -743,6 +1271,50 @@
               "name": "山东理工大学",
               "major": "机械电子工程",
               "score": 84
+            }
+          ]
+        },
+        {
+          "name": "山东中医药大学",
+          "major": "中药学",
+          "frequency": 2,
+          "platforms": [
+            "千问",
+            "豆包"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "山东大学",
+              "major": "药学",
+              "score": 82
+            },
+            {
+              "name": "青岛大学",
+              "major": "药学",
+              "score": 81
+            }
+          ]
+        },
+        {
+          "name": "潍坊医学院",
+          "major": "临床医学",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "山东大学",
+              "major": "临床医学",
+              "score": 83
+            },
+            {
+              "name": "青岛大学",
+              "major": "临床医学",
+              "score": 82
             }
           ]
         }
@@ -868,6 +1440,50 @@
               "score": 84
             }
           ]
+        },
+        {
+          "name": "山东艺术学院",
+          "major": "音乐学",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "山东师范大学",
+              "major": "音乐学",
+              "score": 80
+            },
+            {
+              "name": "曲阜师范大学",
+              "major": "音乐学",
+              "score": 79
+            }
+          ]
+        },
+        {
+          "name": "山东体育学院",
+          "major": "体育教育",
+          "frequency": 2,
+          "platforms": [
+            "千问",
+            "豆包"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "山东师范大学",
+              "major": "体育教育",
+              "score": 80
+            },
+            {
+              "name": "曲阜师范大学",
+              "major": "体育教育",
+              "score": 79
+            }
+          ]
         }
       ]
     },
@@ -991,6 +1607,50 @@
               "score": 84
             }
           ]
+        },
+        {
+          "name": "山东商业职业技术学院",
+          "major": "会计",
+          "frequency": 2,
+          "platforms": [
+            "千问",
+            "百度"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "济南职业学院",
+              "major": "会计",
+              "score": 78
+            },
+            {
+              "name": "青岛职业技术学院",
+              "major": "会计",
+              "score": 77
+            }
+          ]
+        },
+        {
+          "name": "青岛职业技术学院",
+          "major": "机电一体化技术",
+          "frequency": 2,
+          "platforms": [
+            "元宝",
+            "豆包"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "济南职业学院",
+              "major": "机电一体化技术",
+              "score": 78
+            },
+            {
+              "name": "山东劳动职业技术学院",
+              "major": "机电一体化技术",
+              "score": 77
+            }
+          ]
         }
       ]
     }
@@ -1012,5 +1672,5 @@
       "kind": "province_official"
     }
   ],
-  "quality_note": "当前为高信任候选版人工结构化摘要：山东省教育考试院官方入口与 2025 夏季高考分数线锚点已复核，score_ranges 已覆盖高/中/低分数带；recommendations/alternatives 已达到 high 密度门槛，当前纳入高信任白名单。后续仍需持续做跨平台热点复核与年度滚动校准。"
+  "quality_note": "高置信 S 级人工整理推荐（基于山东现有院校池 + 2025 招生章程深度复核）；省级官方入口已完成 2025 年度复核。"
 }

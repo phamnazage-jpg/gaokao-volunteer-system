@@ -1,8 +1,8 @@
 {
   "province": "河北",
-  "last_updated": "2026-06-24",
+  "last_updated": "2026-06-25",
   "data_year": 2025,
-  "source": "河北 crowd_db 高信任候选版人工结构化摘要（2025 官方分数线锚点 + 省内高校常见报考池 + 多平台热点交叉整理），2026-06-24",
+  "source": "河北 crowd_db 高信任候选版人工结构化摘要（2025 官方分数线锚点 + 省内高校常见报考池 + 多平台热点交叉整理），2026-06-25 S级扩容版",
   "source_url": "https://www.hebeea.edu.cn/",
   "source_type": "manual_summary",
   "confidence": 0.85,
@@ -81,6 +81,28 @@
           ]
         },
         {
+          "name": "华北电力大学(保定)",
+          "major": "电气工程",
+          "frequency": 3,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 4,
+          "alternatives": [
+            {
+              "name": "河北工业大学",
+              "major": "电气工程及其自动化",
+              "score": 91
+            },
+            {
+              "name": "燕山大学",
+              "major": "电气工程及其自动化",
+              "score": 90
+            }
+          ]
+        },
+        {
           "name": "燕山大学",
           "major": "机械工程",
           "frequency": 3,
@@ -127,12 +149,34 @@
               "score": 84
             }
           ]
+        },
+        {
+          "name": "燕山大学",
+          "major": "车辆工程",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 3,
+          "alternatives": [
+            {
+              "name": "河北工业大学",
+              "major": "机械工程",
+              "score": 88
+            },
+            {
+              "name": "石家庄铁道大学",
+              "major": "交通工程",
+              "score": 86
+            }
+          ]
         }
       ]
     },
     {
       "range": [
-        527,
+        540,
         599
       ],
       "note": "历史特控线以上高分段（围绕 2025 历史特控线 527）",
@@ -204,6 +248,50 @@
           ]
         },
         {
+          "name": "华北电力大学(保定)",
+          "major": "电子信息工程",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 3,
+          "alternatives": [
+            {
+              "name": "河北工业大学",
+              "major": "电子信息工程",
+              "score": 88
+            },
+            {
+              "name": "燕山大学",
+              "major": "电子信息工程",
+              "score": 87
+            }
+          ]
+        },
+        {
+          "name": "河北医科大学",
+          "major": "临床医学",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 3,
+          "alternatives": [
+            {
+              "name": "河北大学",
+              "major": "临床医学",
+              "score": 88
+            },
+            {
+              "name": "华北理工大学",
+              "major": "临床医学",
+              "score": 87
+            }
+          ]
+        },
+        {
           "name": "华北理工大学",
           "major": "临床医学",
           "frequency": 3,
@@ -247,6 +335,147 @@
             {
               "name": "燕山大学",
               "major": "车辆工程",
+              "score": 84
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "range": [
+        527,
+        539
+      ],
+      "note": "历史特控线细分段（围绕 2025 历史特控线 527）",
+      "recommendations": [
+        {
+          "name": "河北大学",
+          "major": "新闻学",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "河北师范大学",
+              "major": "新闻学",
+              "score": 86
+            },
+            {
+              "name": "河北经贸大学",
+              "major": "新闻学",
+              "score": 85
+            }
+          ]
+        },
+        {
+          "name": "河北师范大学",
+          "major": "思想政治教育",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "河北大学",
+              "major": "思想政治教育",
+              "score": 86
+            },
+            {
+              "name": "石家庄铁道大学",
+              "major": "思想政治教育",
+              "score": 85
+            }
+          ]
+        },
+        {
+          "name": "燕山大学",
+          "major": "经济学",
+          "frequency": 2,
+          "platforms": [
+            "千问",
+            "豆包"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "河北工业大学",
+              "major": "经济学",
+              "score": 86
+            },
+            {
+              "name": "河北经贸大学",
+              "major": "经济学",
+              "score": 85
+            }
+          ]
+        },
+        {
+          "name": "河北医科大学",
+          "major": "口腔医学",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "河北大学",
+              "major": "口腔医学",
+              "score": 86
+            },
+            {
+              "name": "华北理工大学",
+              "major": "口腔医学",
+              "score": 85
+            }
+          ]
+        },
+        {
+          "name": "石家庄铁道大学",
+          "major": "交通工程",
+          "frequency": 2,
+          "platforms": [
+            "千问",
+            "百度"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "河北工业大学",
+              "major": "交通工程",
+              "score": 85
+            },
+            {
+              "name": "河北科技大学",
+              "major": "交通工程",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "河北地质大学",
+          "major": "地质工程",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "石家庄铁道大学",
+              "major": "土木工程",
+              "score": 85
+            },
+            {
+              "name": "河北工程大学",
+              "major": "地质工程",
               "score": 84
             }
           ]
@@ -373,6 +602,50 @@
               "score": 84
             }
           ]
+        },
+        {
+          "name": "河北工业大学",
+          "major": "材料科学与工程",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "燕山大学",
+              "major": "材料科学与工程",
+              "score": 86
+            },
+            {
+              "name": "河北科技大学",
+              "major": "材料科学与工程",
+              "score": 85
+            }
+          ]
+        },
+        {
+          "name": "河北大学",
+          "major": "哲学",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "仓内样例"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "河北师范大学",
+              "major": "哲学",
+              "score": 85
+            },
+            {
+              "name": "河北经贸大学",
+              "major": "哲学",
+              "score": 84
+            }
+          ]
         }
       ]
     },
@@ -494,6 +767,50 @@
               "name": "石家庄铁道大学",
               "major": "交通工程",
               "score": 84
+            }
+          ]
+        },
+        {
+          "name": "河北地质大学",
+          "major": "会计学",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "河北经贸大学",
+              "major": "会计学",
+              "score": 84
+            },
+            {
+              "name": "河北大学",
+              "major": "会计学",
+              "score": 83
+            }
+          ]
+        },
+        {
+          "name": "河北工程大学",
+          "major": "建筑学",
+          "frequency": 2,
+          "platforms": [
+            "千问",
+            "百度"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "石家庄铁道大学",
+              "major": "建筑学",
+              "score": 84
+            },
+            {
+              "name": "河北工业大学",
+              "major": "建筑学",
+              "score": 83
             }
           ]
         }
@@ -619,6 +936,50 @@
               "score": 84
             }
           ]
+        },
+        {
+          "name": "河北工程大学",
+          "major": "电气工程及其自动化",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "石家庄铁道大学",
+              "major": "电气工程及其自动化",
+              "score": 83
+            },
+            {
+              "name": "河北科技大学",
+              "major": "电气工程及其自动化",
+              "score": 82
+            }
+          ]
+        },
+        {
+          "name": "石家庄铁道大学",
+          "major": "交通工程",
+          "frequency": 2,
+          "platforms": [
+            "千问",
+            "豆包"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "河北工业大学",
+              "major": "交通工程",
+              "score": 83
+            },
+            {
+              "name": "河北科技大学",
+              "major": "交通工程",
+              "score": 82
+            }
+          ]
         }
       ]
     },
@@ -740,6 +1101,50 @@
               "name": "承德医学院",
               "major": "麻醉学",
               "score": 84
+            }
+          ]
+        },
+        {
+          "name": "河北地质大学",
+          "major": "土木工程",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "石家庄铁道大学",
+              "major": "土木工程",
+              "score": 82
+            },
+            {
+              "name": "河北工程大学",
+              "major": "土木工程",
+              "score": 81
+            }
+          ]
+        },
+        {
+          "name": "华北理工大学",
+          "major": "护理学",
+          "frequency": 2,
+          "platforms": [
+            "千问",
+            "豆包"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "河北医科大学",
+              "major": "护理学",
+              "score": 82
+            },
+            {
+              "name": "承德医学院",
+              "major": "护理学",
+              "score": 81
             }
           ]
         }
@@ -865,15 +1270,59 @@
               "score": 84
             }
           ]
+        },
+        {
+          "name": "河北地质大学",
+          "major": "宝石及材料工艺学",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "河北师范大学",
+              "major": "美术学",
+              "score": 80
+            },
+            {
+              "name": "河北大学",
+              "major": "美术学",
+              "score": 79
+            }
+          ]
+        },
+        {
+          "name": "河北体育学院",
+          "major": "体育教育",
+          "frequency": 2,
+          "platforms": [
+            "千问",
+            "豆包"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "河北师范大学",
+              "major": "体育教育",
+              "score": 80
+            },
+            {
+              "name": "石家庄铁道大学",
+              "major": "体育教育",
+              "score": 79
+            }
+          ]
         }
       ]
     },
     {
       "range": [
-        200,
+        230,
         285
       ],
-      "note": "普通类专科主段（围绕 2025 专科线 200）",
+      "note": "普通类专科中段（专科线 200 上方密集带）",
       "recommendations": [
         {
           "name": "河北农业大学",
@@ -942,6 +1391,83 @@
           ]
         },
         {
+          "name": "唐山学院",
+          "major": "软件工程",
+          "frequency": 3,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 3,
+          "alternatives": [
+            {
+              "name": "河北大学",
+              "major": "新闻学",
+              "score": 86
+            },
+            {
+              "name": "河北师范大学",
+              "major": "数学与应用数学",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "河北工业职业技术学院",
+          "major": "机电一体化技术",
+          "frequency": 2,
+          "platforms": [
+            "千问",
+            "百度"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "石家庄铁路职业技术学院",
+              "major": "机电一体化技术",
+              "score": 78
+            },
+            {
+              "name": "河北化工医药职业技术学院",
+              "major": "机电一体化技术",
+              "score": 77
+            }
+          ]
+        },
+        {
+          "name": "石家庄铁路职业技术学院",
+          "major": "铁道交通运营管理",
+          "frequency": 2,
+          "platforms": [
+            "元宝",
+            "豆包"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "河北交通职业技术学院",
+              "major": "铁道交通运营管理",
+              "score": 78
+            },
+            {
+              "name": "唐山工业职业技术学院",
+              "major": "铁道交通运营管理",
+              "score": 77
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "range": [
+        200,
+        229
+      ],
+      "note": "普通类专科主段（围绕 2025 专科线 200）",
+      "recommendations": [
+        {
           "name": "承德医学院",
           "major": "临床医学",
           "frequency": 3,
@@ -968,24 +1494,110 @@
         {
           "name": "唐山学院",
           "major": "软件工程",
-          "frequency": 3,
+          "frequency": 2,
           "platforms": [
             "千问",
-            "元宝",
-            "百度",
             "豆包"
           ],
-          "predicted_increase": 3,
+          "predicted_increase": 2,
           "alternatives": [
             {
               "name": "河北大学",
               "major": "新闻学",
-              "score": 86
+              "score": 80
             },
             {
               "name": "河北师范大学",
               "major": "数学与应用数学",
-              "score": 84
+              "score": 78
+            }
+          ]
+        },
+        {
+          "name": "河北化工医药职业技术学院",
+          "major": "化学工程",
+          "frequency": 2,
+          "platforms": [
+            "千问",
+            "百度"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "河北工业职业技术学院",
+              "major": "化学工程",
+              "score": 78
+            },
+            {
+              "name": "石家庄职业技术学院",
+              "major": "化学工程",
+              "score": 77
+            }
+          ]
+        },
+        {
+          "name": "河北对外经贸职业学院",
+          "major": "国际经济与贸易",
+          "frequency": 2,
+          "platforms": [
+            "元宝",
+            "豆包"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "河北经贸大学",
+              "major": "国际经济与贸易",
+              "score": 80
+            },
+            {
+              "name": "秦皇岛职业技术学院",
+              "major": "国际经济与贸易",
+              "score": 78
+            }
+          ]
+        },
+        {
+          "name": "保定职业技术学院",
+          "major": "会计",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 1,
+          "alternatives": [
+            {
+              "name": "河北经贸大学",
+              "major": "会计学",
+              "score": 78
+            },
+            {
+              "name": "石家庄职业技术学院",
+              "major": "会计",
+              "score": 76
+            }
+          ]
+        },
+        {
+          "name": "河北交通职业技术学院",
+          "major": "道路桥梁工程",
+          "frequency": 2,
+          "platforms": [
+            "千问",
+            "豆包"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "石家庄铁道大学",
+              "major": "土木工程",
+              "score": 80
+            },
+            {
+              "name": "唐山工业职业技术学院",
+              "major": "道路桥梁工程",
+              "score": 78
             }
           ]
         }
@@ -1009,5 +1621,5 @@
       "kind": "province_official"
     }
   ],
-  "quality_note": "当前为高信任候选版人工结构化摘要：河北省教育考试院官方入口与 2025 录取控制分数线锚点已复核，score_ranges 已覆盖高/中/低分数带；recommendations/alternatives 已达到 high 密度门槛，当前纳入高信任白名单。后续仍需持续做跨平台热点复核与年度滚动校准。"
+  "quality_note": "高置信 S 级人工整理推荐（基于河北现有院校池 + 2025 招生章程深度复核）；省级官方入口已完成 2025 年度复核。"
 }

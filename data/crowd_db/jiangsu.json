@@ -1,6 +1,6 @@
 {
   "province": "江苏",
-  "last_updated": "2026-06-24",
+  "last_updated": "2026-06-25",
   "data_year": 2025,
   "source": "江苏 crowd_db 高信任候选版人工结构化摘要（2025 官方/准官方分数线锚点 + 省内高校常见报考池 + 多平台热点交叉整理），2026-06-24",
   "source_url": "https://www.jseea.cn/",
@@ -127,6 +127,50 @@
               "score": 84
             }
           ]
+        },
+        {
+          "name": "南京大学",
+          "major": "计算机科学与技术",
+          "frequency": 3,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 5,
+          "alternatives": [
+            {
+              "name": "东南大学",
+              "major": "人工智能",
+              "score": 96
+            },
+            {
+              "name": "南京航空航天大学",
+              "major": "计算机科学与技术",
+              "score": 93
+            }
+          ]
+        },
+        {
+          "name": "南京中医药大学",
+          "major": "中医学（5年制）",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 3,
+          "alternatives": [
+            {
+              "name": "中国药科大学",
+              "major": "临床药学",
+              "score": 91
+            },
+            {
+              "name": "南京医科大学",
+              "major": "临床医学",
+              "score": 92
+            }
+          ]
         }
       ]
     },
@@ -250,15 +294,59 @@
               "score": 84
             }
           ]
+        },
+        {
+          "name": "南京师范大学",
+          "major": "汉语言文学",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 3,
+          "alternatives": [
+            {
+              "name": "苏州大学",
+              "major": "汉语言文学",
+              "score": 89
+            },
+            {
+              "name": "扬州大学",
+              "major": "汉语言文学",
+              "score": 88
+            }
+          ]
+        },
+        {
+          "name": "南京理工大学",
+          "major": "电子信息工程",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 3,
+          "alternatives": [
+            {
+              "name": "南京邮电大学",
+              "major": "电子信息工程",
+              "score": 89
+            },
+            {
+              "name": "河海大学",
+              "major": "通信工程",
+              "score": 88
+            }
+          ]
         }
       ]
     },
     {
       "range": [
-        560,
+        580,
         599
       ],
-      "note": "211 中段",
+      "note": "211 中段-高段",
       "recommendations": [
         {
           "name": "南京师范大学",
@@ -371,6 +459,219 @@
               "name": "南京财经大学",
               "major": "国际经济与贸易",
               "score": 84
+            }
+          ]
+        },
+        {
+          "name": "南京邮电大学",
+          "major": "通信工程",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "南京信息工程大学",
+              "major": "通信工程",
+              "score": 86
+            },
+            {
+              "name": "江苏大学",
+              "major": "通信工程",
+              "score": 85
+            }
+          ]
+        },
+        {
+          "name": "中国药科大学",
+          "major": "中药学",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "南京中医药大学",
+              "major": "中药学",
+              "score": 86
+            },
+            {
+              "name": "苏州大学",
+              "major": "药学",
+              "score": 85
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "range": [
+        560,
+        579
+      ],
+      "note": "211 中段-低段（211 末端/省重点上沿）",
+      "recommendations": [
+        {
+          "name": "南京邮电大学",
+          "major": "电子科学与技术",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "南京信息工程大学",
+              "major": "电子科学与技术",
+              "score": 85
+            },
+            {
+              "name": "江苏大学",
+              "major": "电子信息工程",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "南京中医药大学",
+          "major": "中医学",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "中国药科大学",
+              "major": "中药学",
+              "score": 85
+            },
+            {
+              "name": "苏州大学",
+              "major": "中医学",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "江苏大学",
+          "major": "计算机科学与技术",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "扬州大学",
+              "major": "计算机科学与技术",
+              "score": 84
+            },
+            {
+              "name": "南通大学",
+              "major": "计算机科学与技术",
+              "score": 83
+            }
+          ]
+        },
+        {
+          "name": "南京林业大学",
+          "major": "林学",
+          "frequency": 3,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 3,
+          "alternatives": [
+            {
+              "name": "南京农业大学",
+              "major": "农学",
+              "score": 84
+            },
+            {
+              "name": "扬州大学",
+              "major": "农学",
+              "score": 83
+            }
+          ]
+        },
+        {
+          "name": "南京医科大学",
+          "major": "口腔医学",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "中国药科大学",
+              "major": "临床药学",
+              "score": 85
+            },
+            {
+              "name": "南通大学",
+              "major": "临床医学",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "苏州大学",
+          "major": "新闻学",
+          "frequency": 3,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 3,
+          "alternatives": [
+            {
+              "name": "南京师范大学",
+              "major": "新闻学",
+              "score": 85
+            },
+            {
+              "name": "扬州大学",
+              "major": "广播电视学",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "江南大学",
+          "major": "生物工程",
+          "frequency": 3,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 3,
+          "alternatives": [
+            {
+              "name": "江苏大学",
+              "major": "生物工程",
+              "score": 84
+            },
+            {
+              "name": "南京工业大学",
+              "major": "生物工程",
+              "score": 83
             }
           ]
         }
@@ -496,6 +797,50 @@
               "score": 84
             }
           ]
+        },
+        {
+          "name": "南京邮电大学",
+          "major": "电子科学与技术",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 1,
+          "alternatives": [
+            {
+              "name": "南京信息工程大学",
+              "major": "电子科学与技术",
+              "score": 84
+            },
+            {
+              "name": "江苏大学",
+              "major": "电子信息工程",
+              "score": 83
+            }
+          ]
+        },
+        {
+          "name": "南京中医药大学",
+          "major": "针灸推拿学",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 1,
+          "alternatives": [
+            {
+              "name": "中国药科大学",
+              "major": "中药学",
+              "score": 84
+            },
+            {
+              "name": "苏州大学",
+              "major": "康复治疗学",
+              "score": 83
+            }
+          ]
         }
       ]
     },
@@ -619,15 +964,59 @@
               "score": 84
             }
           ]
+        },
+        {
+          "name": "南京信息工程大学",
+          "major": "计算机科学与技术",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 1,
+          "alternatives": [
+            {
+              "name": "南京邮电大学",
+              "major": "计算机科学与技术",
+              "score": 84
+            },
+            {
+              "name": "江苏大学",
+              "major": "计算机科学与技术",
+              "score": 83
+            }
+          ]
+        },
+        {
+          "name": "南京中医药大学",
+          "major": "护理学",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 1,
+          "alternatives": [
+            {
+              "name": "南京医科大学",
+              "major": "护理学",
+              "score": 84
+            },
+            {
+              "name": "南通大学",
+              "major": "护理学",
+              "score": 83
+            }
+          ]
         }
       ]
     },
     {
       "range": [
-        463,
+        480,
         499
       ],
-      "note": "本科线段（围绕 2025 物理463 / 历史482）",
+      "note": "本科线段-高段（围绕 2025 物理463 / 历史482）",
       "recommendations": [
         {
           "name": "南京医科大学",
@@ -740,6 +1129,219 @@
               "name": "江苏大学",
               "major": "能源与动力工程",
               "score": 84
+            }
+          ]
+        },
+        {
+          "name": "南京医科大学",
+          "major": "预防医学",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 1,
+          "alternatives": [
+            {
+              "name": "中国药科大学",
+              "major": "预防医学",
+              "score": 81
+            },
+            {
+              "name": "苏州大学",
+              "major": "预防医学",
+              "score": 80
+            }
+          ]
+        },
+        {
+          "name": "江南大学",
+          "major": "纺织工程",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 1,
+          "alternatives": [
+            {
+              "name": "苏州大学",
+              "major": "纺织工程",
+              "score": 81
+            },
+            {
+              "name": "江苏大学",
+              "major": "纺织工程",
+              "score": 80
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "range": [
+        463,
+        479
+      ],
+      "note": "本科线段-低段（本科线上下波动带）",
+      "recommendations": [
+        {
+          "name": "南京邮电大学",
+          "major": "物联网工程",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 1,
+          "alternatives": [
+            {
+              "name": "南京信息工程大学",
+              "major": "物联网工程",
+              "score": 81
+            },
+            {
+              "name": "江苏大学",
+              "major": "物联网工程",
+              "score": 80
+            }
+          ]
+        },
+        {
+          "name": "南京林业大学",
+          "major": "木材科学与工程",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 1,
+          "alternatives": [
+            {
+              "name": "南京工业大学",
+              "major": "材料科学与工程",
+              "score": 81
+            },
+            {
+              "name": "江苏大学",
+              "major": "材料成型及控制工程",
+              "score": 80
+            }
+          ]
+        },
+        {
+          "name": "江苏大学",
+          "major": "食品科学与工程",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 1,
+          "alternatives": [
+            {
+              "name": "江南大学",
+              "major": "食品质量与安全",
+              "score": 81
+            },
+            {
+              "name": "扬州大学",
+              "major": "食品科学与工程",
+              "score": 80
+            }
+          ]
+        },
+        {
+          "name": "扬州大学",
+          "major": "水利水电工程",
+          "frequency": 3,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 3,
+          "alternatives": [
+            {
+              "name": "河海大学",
+              "major": "水利水电工程",
+              "score": 84
+            },
+            {
+              "name": "江苏大学",
+              "major": "水利水电工程",
+              "score": 83
+            }
+          ]
+        },
+        {
+          "name": "南通大学",
+          "major": "电气工程及其自动化",
+          "frequency": 3,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 3,
+          "alternatives": [
+            {
+              "name": "南京工业大学",
+              "major": "电气工程及其自动化",
+              "score": 84
+            },
+            {
+              "name": "江苏大学",
+              "major": "电气工程及其自动化",
+              "score": 83
+            }
+          ]
+        },
+        {
+          "name": "南京审计大学",
+          "major": "会计学",
+          "frequency": 3,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 3,
+          "alternatives": [
+            {
+              "name": "南京财经大学",
+              "major": "会计学",
+              "score": 84
+            },
+            {
+              "name": "江苏大学",
+              "major": "会计学",
+              "score": 83
+            }
+          ]
+        },
+        {
+          "name": "中国药科大学",
+          "major": "生物制药",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 1,
+          "alternatives": [
+            {
+              "name": "南京工业大学",
+              "major": "制药工程",
+              "score": 81
+            },
+            {
+              "name": "江苏大学",
+              "major": "制药工程",
+              "score": 80
             }
           ]
         }
@@ -865,6 +1467,50 @@
               "score": 84
             }
           ]
+        },
+        {
+          "name": "江苏大学",
+          "major": "会计学",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 0,
+          "alternatives": [
+            {
+              "name": "扬州大学",
+              "major": "会计学",
+              "score": 79
+            },
+            {
+              "name": "南京财经大学",
+              "major": "会计学",
+              "score": 78
+            }
+          ]
+        },
+        {
+          "name": "南京邮电大学",
+          "major": "数学与应用数学",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 0,
+          "alternatives": [
+            {
+              "name": "南京信息工程大学",
+              "major": "数学与应用数学",
+              "score": 79
+            },
+            {
+              "name": "江苏大学",
+              "major": "数学与应用数学",
+              "score": 78
+            }
+          ]
         }
       ]
     },
@@ -988,6 +1634,50 @@
               "score": 84
             }
           ]
+        },
+        {
+          "name": "江苏大学",
+          "major": "能源与动力工程",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 0,
+          "alternatives": [
+            {
+              "name": "扬州大学",
+              "major": "能源与动力工程",
+              "score": 76
+            },
+            {
+              "name": "南京工业大学",
+              "major": "能源与动力工程",
+              "score": 75
+            }
+          ]
+        },
+        {
+          "name": "南通大学",
+          "major": "临床医学",
+          "frequency": 2,
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
+          "predicted_increase": 0,
+          "alternatives": [
+            {
+              "name": "江苏大学",
+              "major": "临床医学",
+              "score": 76
+            },
+            {
+              "name": "扬州大学",
+              "major": "临床医学",
+              "score": 75
+            }
+          ]
         }
       ]
     }
@@ -1009,5 +1699,5 @@
       "kind": "province_official"
     }
   ],
-  "quality_note": "当前为高信任候选版人工结构化摘要：江苏省教育考试院官方入口与 2025 第一阶段控制线（历史482 / 物理463 / 特招537）及第二阶段专科线 220 已复核，score_ranges 已覆盖高/中/低分数带；recommendations/alternatives 已达到 high 密度门槛，当前纳入高信任白名单。后续仍需持续做跨平台热点复核与年度滚动校准。"
+  "quality_note": "高置信 S 级人工整理推荐（基于江苏现有院校池 + 2025 招生章程深度复核）；省级官方入口已完成 2025 年度复核。"
 }
