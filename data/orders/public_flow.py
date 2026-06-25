@@ -19,6 +19,37 @@ _SERVICE_PRICES: dict[ServiceVersion, int] = {
 }
 
 
+_SUPPORTED_PUBLIC_PROVINCES = {
+    "北京",
+    "天津",
+    "上海",
+    "重庆",
+    "河北",
+    "河南",
+    "山东",
+    "山西",
+    "陕西",
+    "辽宁",
+    "吉林",
+    "黑龙江",
+    "江苏",
+    "浙江",
+    "安徽",
+    "福建",
+    "江西",
+    "湖北",
+    "湖南",
+    "广东",
+    "海南",
+    "四川",
+    "贵州",
+    "云南",
+    "甘肃",
+    "青海",
+    "新疆",
+}
+
+
 def service_price_for(service_version: ServiceVersion) -> int:
     return _SERVICE_PRICES[service_version]
 
@@ -41,7 +72,10 @@ class PublicOrderCreate(BaseModel):
             raise ValueError("amount_cents 与套餐价格不一致")
         if not self.customer_phone and not self.customer_wechat:
             raise ValueError("customer_phone / customer_wechat 至少填写一个")
+        if self.candidate_province and self.candidate_province not in _SUPPORTED_PUBLIC_PROVINCES:
+            raise ValueError("candidate_province 当前暂不支持")
         return self
+
 
 
 class PublicOrderCreated(BaseModel):

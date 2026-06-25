@@ -37,6 +37,17 @@ RETENTION_GUARDED_STATUSES = frozenset({
 })
 DEFAULT_RETENTION_DAYS = 180
 
+_DEFAULT_TRUSTED_PORTAL_UPLOAD_ROOT = Path("data/portal_uploads").resolve()
+_DEFAULT_TRUSTED_ARTIFACT_ROOTS = (
+    (Path("data/portal_uploads").resolve().parent / "order_artifacts").resolve(),
+    Path("data/examples").resolve(),
+    Path("data/share/reports").resolve(),
+)
+
+
+def _is_within_roots(path: Path, roots: tuple[Path, ...]) -> bool:
+    return any(root == path or root in path.parents for root in roots)
+
 
 @dataclass
 class DeletionResult:
@@ -46,17 +57,35 @@ class DeletionResult:
 
 
 class OrderDeletionService:
-    def __init__(self, conn: sqlite3.Connection) -> None:
+    def __init__(
+        self,
+        conn: sqlite3.Connection,
+        *,
+        portal_upload_root: Path = _DEFAULT_TRUSTED_PORTAL_UPLOAD_ROOT,
+        artifact_roots: tuple[Path, ...] = _DEFAULT_TRUSTED_ARTIFACT_ROOTS,
+    ) -> None:
         self._conn = conn
+        self._portal_upload_root = portal_upload_root.resolve()
+        self._artifact_roots = tuple(root.resolve() for root in artifact_roots)
         self._conn.executescript(AUDIT_SCHEMA_SQL)
         self._conn.commit()
 
     @classmethod
-    def for_db(cls, db_path: str | Path) -> "OrderDeletionService":
+    def for_db(
+        cls,
+        db_path: str | Path,
+        *,
+        portal_upload_root: Path = _DEFAULT_TRUSTED_PORTAL_UPLOAD_ROOT,
+        artifact_roots: tuple[Path, ...] = _DEFAULT_TRUSTED_ARTIFACT_ROOTS,
+    ) -> "OrderDeletionService":
         conn = apply_schema(db_path)
         conn.row_factory = sqlite3.Row
         conn.execute("PRAGMA foreign_keys = ON")
-        return cls(conn)
+        return cls(
+            conn,
+            portal_upload_root=portal_upload_root,
+            artifact_roots=artifact_roots,
+        )
 
     def close(self) -> None:
         self._conn.close()
@@ -129,15 +158,15 @@ class OrderDeletionService:
                     order_id,
                 ),
             )
-            if self._table_exists("payments"):
-                self._conn.execute(
-                    "UPDATE payments SET checkout_token=NULL, callback_payload=NULL WHERE order_id=?",
-                    (order_id,),
-                )
             if self._table_exists("order_intakes"):
                 self._conn.execute(
-                    "UPDATE order_intakes SET payload_json='{}', updated_at=? WHERE order_id=?",
+                    "UPDATE order_intakes SET payload_json='{}', updated_at=?, status='submitted' WHERE order_id=?",
                     (now, order_id),
+                )
+            if self._table_exists("payments"):
+                self._conn.execute(
+                    "UPDATE payments SET callback_payload=NULL, checkout_token=NULL WHERE order_id=?",
+                    (order_id,),
                 )
             if self._table_exists("delivery_notifications"):
                 self._conn.execute(
@@ -220,16 +249,14 @@ class OrderDeletionService:
             raw_path = item.get("storage_path")
             if not raw_path:
                 continue
-            path = Path(str(raw_path))
+            path = Path(str(raw_path)).expanduser().resolve()
+            if not _is_within_roots(path, (self._portal_upload_root,)):
+                continue
             if path.is_file():
                 path.unlink()
                 deleted += 1
             parent_dirs.add(path.parent)
-        order_dir = None
-        if parent_dirs:
-            order_dir = sorted(parent_dirs, key=lambda p: len(p.parts))[0]
-        else:
-            order_dir = Path("data/portal_uploads") / order_id
+        order_dir = self._portal_upload_root / order_id
         if order_dir.exists() and order_dir.is_dir() and not any(order_dir.iterdir()):
             order_dir.rmdir()
         return deleted
@@ -241,13 +268,14 @@ class OrderDeletionService:
         ).fetchone()
         return row is not None
 
-    @staticmethod
-    def _delete_artifacts(*paths: str | None) -> int:
+    def _delete_artifacts(self, *paths: str | None) -> int:
         deleted = 0
         for raw_path in paths:
             if not raw_path:
                 continue
-            path = Path(raw_path)
+            path = Path(raw_path).expanduser().resolve()
+            if not _is_within_roots(path, self._artifact_roots):
+                continue
             if path.is_file():
                 path.unlink()
                 deleted += 1
