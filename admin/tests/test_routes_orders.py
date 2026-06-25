@@ -167,7 +167,7 @@ def test_create_order_writes_intake_record_with_consent_audit(
 def test_create_order_uses_settings_consent_version(client, auth_headers, settings):
     """consent_version / consent_scope 不再硬编码, 而是从 Settings 读取。
 
-    锁定: 默认值 = privacy-policy-v2026.06-draft / xianyu-channel-intake
+    锁定: 默认值 = privacy-policy-v2026.06.25 / xianyu-channel-intake
     （升级隐私政策时只需改环境变量 GAOKAO_CONSENT_VERSION, 无需改代码）
     """
     resp = client.post(
@@ -192,9 +192,9 @@ def test_create_order_uses_settings_consent_version(client, auth_headers, settin
         intake_store.close()
 
     assert record is not None
-    # 必须来自 settings.consent_version (默认 privacy-policy-v2026.06-draft)
+    # 必须来自 settings.consent_version (默认 privacy-policy-v2026.06.25)
     assert record.payload.get("consent_version") == settings.consent_version
-    assert record.payload.get("consent_version") == "privacy-policy-v2026.06-draft"
+    assert record.payload.get("consent_version") == "privacy-policy-v2026.06.25"
     # scope 必须是 f"{source}-{settings.consent_scope_channel_prefix}"
     assert (
         record.payload.get("consent_scope")

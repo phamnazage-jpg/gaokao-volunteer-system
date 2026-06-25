@@ -285,7 +285,7 @@ def load_settings() -> Settings:
         default_admin_username=os.getenv("GAOKAO_ADMIN_USER", "admin"),
         default_admin_password=os.getenv("GAOKAO_ADMIN_PASS", _DEFAULT_ADMIN_PASSWORD),
         consent_version=os.getenv(
-            "GAOKAO_CONSENT_VERSION", "privacy-policy-v2026.06-draft"
+            "GAOKAO_CONSENT_VERSION", "privacy-policy-v2026.06.25"
         ),
         consent_scope_portal=os.getenv(
             "GAOKAO_CONSENT_SCOPE_PORTAL", "web-self-service-order-intake"

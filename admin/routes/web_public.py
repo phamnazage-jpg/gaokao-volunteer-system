@@ -988,7 +988,7 @@ def privacy_page(token: str | None = None) -> HTMLResponse:
         doc_filename="PRIVACY_POLICY_DRAFT.md",
         title="隐私政策",
         eyebrow="隐私说明",
-        lead="我们只收集下单、资料填写、支付与交付所需的最小信息，用于志愿服务流程，不用于营销出售或无关用途。",
+        lead="运营主体：龙某某（个人开发者）｜联系邮箱：lon22@qq.com｜版本：privacy-policy-v2026.06.25｜生效：2026-06-25。我们只收集下单、资料填写、支付与交付所需的最小信息，用于志愿服务流程，不用于营销出售或无关用途。",
         footer_token=token,
     )
     if full_html is not None:
@@ -998,7 +998,7 @@ def privacy_page(token: str | None = None) -> HTMLResponse:
         _render_basic_page(
             title="隐私政策",
             eyebrow="隐私说明",
-            lead="我们只收集下单、资料填写、支付与交付所需的最小信息，用于志愿服务流程，不用于营销出售或无关用途。",
+            lead="运营主体：龙某某（个人开发者）｜联系邮箱：lon22@qq.com｜版本：privacy-policy-v2026.06.25｜生效：2026-06-25。我们只收集下单、资料填写、支付与交付所需的最小信息，用于志愿服务流程，不用于营销出售或无关用途。",
             sections_html=sections_html,
             footer_token=token,
         )
@@ -1011,7 +1011,7 @@ def service_terms_page(token: str | None = None) -> HTMLResponse:
         doc_filename="SERVICE_TERMS.md",
         title="服务说明与使用条款",
         eyebrow="服务边界",
-        lead="本服务提供志愿填报辅助建议、方案审计与交付支持，不承诺录取结果；提交资料前请确认监护人与考生已知情。",
+        lead="运营主体：龙某某（个人开发者）｜联系邮箱：lon22@qq.com｜版本：service-terms-v2026.06.25｜生效：2026-06-25。本服务提供志愿填报辅助建议、方案审计与交付支持，不承诺录取结果；提交资料前请确认监护人与考生已知情。",
         footer_token=token,
     )
     if full_html is not None:
@@ -1021,7 +1021,7 @@ def service_terms_page(token: str | None = None) -> HTMLResponse:
         _render_basic_page(
             title="服务说明与免责声明",
             eyebrow="服务边界",
-            lead="本服务提供志愿填报辅助建议、方案审计与交付支持，不承诺录取结果；提交资料前请确认监护人与考生已知情。",
+            lead="运营主体：龙某某（个人开发者）｜联系邮箱：lon22@qq.com｜版本：service-terms-v2026.06.25｜生效：2026-06-25。本服务提供志愿填报辅助建议、方案审计与交付支持，不承诺录取结果；提交资料前请确认监护人与考生已知情。",
             sections_html=sections_html,
             footer_token=token,
         )
