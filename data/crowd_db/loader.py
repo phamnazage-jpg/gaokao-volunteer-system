@@ -114,6 +114,11 @@ class CrowdDBLoader:
         "甘肃": "gansu",
         "青海": "qinghai",
         "新疆": "xinjiang",
+        # Stage 4 (2026-06-25): 4 个自治区加入，全国 31 省口径
+        "内蒙古": "neimenggu",
+        "广西": "guangxi",
+        "西藏": "xizang",
+        "宁夏": "ningxia",
     }
 
     # T3.2 溯源查询/验证常量（与 SCHEMA.md 1/3 节保持一致）

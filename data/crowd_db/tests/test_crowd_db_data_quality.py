@@ -2,7 +2,7 @@
 
 CROWD_DB_DATA_QUALITY.md §7 承诺的锁死文件, 实际仓库中缺失。
 本测试锁住以下契约:
-- 27 省总数 (23 省 + 4 直辖市, 不含 5 自治区/港澳台)
+- 31 省总数 (23 省 + 4 直辖市 + 4 自治区, 不含港澳台)
 - high 白名单显式枚举（当前为 湖南/广东/江苏/山东/河北）
 - 其余省份可以是 usable 或 skeleton，但非白名单省份不得进入 high
 - 高考生源大省中仍未进入白名单者不得高于 usable
@@ -23,6 +23,7 @@ from data.crowd_db.loader import CrowdDBLoader
 # 任何新增/移除 high 省份都必须显式更新本测试，避免"静默升级"。
 # 6/25 Stage 1: 新增河南/四川/湖北/北京/上海（5 省从 usable 升 high）
 # 6/25 Stage 2: 27 省全部达 high（15 省批量扩容完毕）
+# 6/25 Stage 4: 新增 4 自治区，全国 31 省全部达 high
 HIGH_TRUST_PROVINCES = frozenset({
     "湖南",
     "广东",
@@ -51,13 +52,14 @@ HIGH_TRUST_PROVINCES = frozenset({
     "天津",
     "新疆",
     "云南",
+    "内蒙古", "广西", "西藏", "宁夏",
 })
 
 # 仍不允许进入 high 的高考生源大省（除已进入白名单者外）
 # 6/25 Stage 1 后：四川/河南/湖北/北京/上海 已升 high；其余高考生源大省仍非 high
 HIGH_POPULATION_PROVINCES_NOT_YET_HIGH: frozenset[str] = frozenset({
     # 当前 27 个 high 已覆盖主要高考生源大省，此处保留为约束锚点
-    # 如未来有新高考生源大省进入 27 省范围，需重新评估
+    # 如未来有新高考生源大省进入 31 省范围，需重新评估
 })
 
 
@@ -66,10 +68,10 @@ def summary():
     return build_quality_summary(CrowdDBLoader(warn_low_confidence=False))
 
 
-def test_total_provinces_is_27(summary):
-    """6/20 真相: 27 个 JSON (23 省 + 4 直辖市), 不含 5 自治区/港澳台。"""
-    assert summary["total_provinces"] == 27
-    assert len(summary["provinces"]) == 27
+def test_total_provinces_is_31(summary):
+    """6/20 真相: 31 个 JSON (23 省 + 4 直辖市), 不含 5 自治区/港澳台。"""
+    assert summary["total_provinces"] == 31
+    assert len(summary["provinces"]) == 31
 
 
 def test_high_quality_province_whitelist(summary):
@@ -97,7 +99,7 @@ def test_non_whitelist_provinces_not_high(summary):
     non_whitelist = [
         p for p in summary["provinces"] if p["province"] not in HIGH_TRUST_PROVINCES
     ]
-    assert len(non_whitelist) == 27 - len(HIGH_TRUST_PROVINCES)
+    assert len(non_whitelist) == 31 - len(HIGH_TRUST_PROVINCES)
     leaked = [p["province"] for p in non_whitelist if p["quality_level"] == "high"]
     assert leaked == [], (
         f"以下省份被错标为 high（不在白名单）: {leaked}。"
@@ -150,7 +152,7 @@ def test_high_population_provinces_not_yet_high_remain_non_high(summary):
     by_name = {p["province"]: p for p in summary["provinces"]}
     for province in HIGH_POPULATION_PROVINCES_NOT_YET_HIGH:
         p = by_name.get(province)
-        assert p is not None, f"高考生源大省 {province} 不在 27 省列表内"
+        assert p is not None, f"高考生源大省 {province} 不在 31 省列表内"
         assert p["quality_level"] != "high", (
             f"{province} 当前被标为 high，但它不在当前 high 白名单。"
             "如需升级，先补充白名单与审计口径。"

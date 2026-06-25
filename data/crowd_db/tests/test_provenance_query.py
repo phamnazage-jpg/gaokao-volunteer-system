@@ -1,7 +1,7 @@
 """T3.2 溯源字段查询 + 验证 测试
 
 覆盖：
-1. 27省全部 validate_all 通过（errors=0），usable=27（全部省份均已达到 usable 及以上）
+1. 31 省全部 validate_all 通过（errors=0），usable=0（全部已 high）（全部省份均已达到 usable 及以上）
 2. validate_province(hunan) — ok + is_usable=True + summary 7 字段齐全
 3. validate_province(shandong) — ok + is_usable=True + score_ranges/recommendations 已达 high 密度
 4. validate_province(guangdong) — ok + is_usable=True + score_ranges/recommendations 已达 high 密度
@@ -32,21 +32,21 @@ from data.crowd_db.loader import (
 
 
 # ------------------------------------------------------------------ #
-# 1. validate_all 27省
+# 1. validate_all 31 省
 # ------------------------------------------------------------------ #
 
 
-def test_validate_all_27_passes():
-    """27 省全部通过 schema 校验（无 errors）"""
+def test_validate_all_31_passes():
+    """31 省全部通过 schema 校验（无 errors）"""
     loader = CrowdDBLoader(warn_low_confidence=False)
     results = loader.validate_all()
-    assert len(results) == 27, f"expected 27 entries, got {len(results)}"
+    assert len(results) == 31, f"expected 31 entries, got {len(results)}"
     failed = [(p, v.errors) for p, v in results.items() if not v.ok]
     assert not failed, f"应全部 ok, 失败省份: {failed}"
 
 
 def test_validate_all_usable_count():
-    """27 省当前全部达到 usable 及以上（按 PROVINCE_FILE_MAP 顺序）。"""
+    """31 省当前全部达到 usable 及以上（按 PROVINCE_FILE_MAP 顺序）。"""
     loader = CrowdDBLoader(warn_low_confidence=False)
     results = loader.validate_all()
     usable = [p for p, v in results.items() if v.is_usable]
@@ -78,11 +78,15 @@ def test_validate_all_usable_count():
         "甘肃",
         "青海",
         "新疆",
+        "内蒙古",
+        "广西",
+        "西藏",
+        "宁夏",
     ], f"unexpected usable provinces: {usable}"
 
 
 def test_validate_all_warnings_low_confidence():
-    """当前 27 省口径下已无 low_confidence warning。"""
+    """当前 31 省口径下已无 low_confidence warning。"""
     loader = CrowdDBLoader(warn_low_confidence=False)
     results = loader.validate_all()
     low_warn = [
@@ -245,7 +249,7 @@ def test_validate_provenance_empty_source_warning():
 
 
 def test_filter_provinces_only_usable():
-    """only_usable=True → 当前全部 27 省（按 PROVINCE_FILE_MAP 顺序）。"""
+    """only_usable=True → 当前全部 31 省（按 PROVINCE_FILE_MAP 顺序）。"""
     loader = CrowdDBLoader(warn_low_confidence=False)
     result = loader.filter_provinces(only_usable=True)
     assert result == [
@@ -276,14 +280,18 @@ def test_filter_provinces_only_usable():
         "甘肃",
         "青海",
         "新疆",
+        "内蒙古",
+        "广西",
+        "西藏",
+        "宁夏",
     ]
 
 
 def test_filter_provinces_source_type_manual():
-    """source_type='manual_summary' → 27 省全匹配"""
+    """source_type='manual_summary' → 31 省全匹配"""
     loader = CrowdDBLoader(warn_low_confidence=False)
     result = loader.filter_provinces(source_type="manual_summary")
-    assert len(result) == 27
+    assert len(result) == 31
 
 
 def test_filter_provinces_source_type_official():
@@ -294,10 +302,10 @@ def test_filter_provinces_source_type_official():
 
 
 def test_filter_provinces_data_year_match():
-    """data_year=2025 → 27 省全匹配"""
+    """data_year=2025 → 31 省全匹配"""
     loader = CrowdDBLoader(warn_low_confidence=False)
     result = loader.filter_provinces(data_year=2025)
-    assert len(result) == 27
+    assert len(result) == 31
 
 
 def test_filter_provinces_data_year_no_match():
@@ -308,15 +316,15 @@ def test_filter_provinces_data_year_no_match():
 
 
 def test_filter_provinces_min_confidence():
-    """min_confidence=0.5 → 当前 27 省全部 ≥ 0.65，全部返回。
+    """min_confidence=0.5 → 当前 31 省全部 ≥ 0.65，全部返回。
 
-    旧基线下只有 13 省 usable+ 通过，27 省升级后全部通过。
+    旧基线下只有 13 省 usable+ 通过，31 省升级后全部通过。
     用动态加载断言，避免未来再次升级数据时回归。
     """
     loader = CrowdDBLoader(warn_low_confidence=False)
     result = loader.filter_provinces(min_confidence=0.5)
-    # 所有 27 省当前 confidence 都 ≥ 0.65，应全部返回
-    assert len(result) == 27
+    # 所有 31 省当前 confidence 都 ≥ 0.65，应全部返回
+    assert len(result) == 31
     # 关键省份必须出现
     for province in [
         "北京",
@@ -337,9 +345,9 @@ def test_filter_provinces_min_confidence():
 
 
 def test_filter_provinces_max_confidence():
-    """max_confidence=0.5 → 当前 27 省全部 ≥ 0.65，无任何省份落入此区间。
+    """max_confidence=0.5 → 当前 31 省全部 ≥ 0.65，无任何省份落入此区间。
 
-    旧基线下 14 省 confidence=0.45 落入此区间，27 省升级后无任何落入。
+    旧基线下 14 省 confidence=0.45 落入此区间，31 省升级后无任何落入。
     """
     loader = CrowdDBLoader(warn_low_confidence=False)
     result = loader.filter_provinces(max_confidence=0.5)
@@ -357,18 +365,18 @@ def test_filter_provinces_confidence_range():
     result_empty = loader.filter_provinces(min_confidence=0.4, max_confidence=0.5)
     assert result_empty == []
 
-    # 正向：[0.8, 0.9] 应命中 27 省（全部 confidence=0.82-0.85）
+    # 正向：[0.8, 0.9] 应命中 31 省（全部 confidence=0.82-0.85）
     result_actual = loader.filter_provinces(min_confidence=0.8, max_confidence=0.9)
-    assert len(result_actual) == 27, (
-        f"[0.8, 0.9] 应命中 27 省（全部达 high），实际 {len(result_actual)}: {result_actual}"
+    assert len(result_actual) == 31, (
+        f"[0.8, 0.9] 应命中 31 省（全部达 high），实际 {len(result_actual)}: {result_actual}"
     )
 
 
 def test_filter_provinces_updated_since():
-    """updated_since='2026-06-12' → 27 省（全在 2026-06-12）"""
+    """updated_since='2026-06-12' → 31 省（全在 2026-06-12）"""
     loader = CrowdDBLoader(warn_low_confidence=False)
     result = loader.filter_provinces(updated_since="2026-06-12")
-    assert len(result) == 27
+    assert len(result) == 31
 
 
 def test_filter_provinces_updated_before_no_match():
@@ -379,7 +387,7 @@ def test_filter_provinces_updated_before_no_match():
 
 
 def test_filter_provinces_combined_usable_and_year():
-    """组合：only_usable=True + data_year=2025 → 当前全部 27 省。"""
+    """组合：only_usable=True + data_year=2025 → 当前全部 31 省。"""
     loader = CrowdDBLoader(warn_low_confidence=False)
     result = loader.filter_provinces(only_usable=True, data_year=2025)
     assert result == [
@@ -410,6 +418,10 @@ def test_filter_provinces_combined_usable_and_year():
         "甘肃",
         "青海",
         "新疆",
+        "内蒙古",
+        "广西",
+        "西藏",
+        "宁夏",
     ]
 
 
@@ -426,11 +438,11 @@ def test_filter_provinces_preserves_map_order():
 
 
 def test_get_provenance_report_total():
-    """report: total=27, usable_count=27, failed_count=0"""
+    """report: total=31, usable_count=31, failed_count=0"""
     loader = CrowdDBLoader(warn_low_confidence=False)
     r = loader.get_provenance_report()
-    assert r["total"] == 27
-    assert r["usable_count"] == 27
+    assert r["total"] == 31
+    assert r["usable_count"] == 31
     assert r["failed_count"] == 0
 
 
@@ -438,7 +450,7 @@ def test_get_provenance_report_by_source_type():
     """by_source_type 分布：27 全在 manual_summary"""
     loader = CrowdDBLoader(warn_low_confidence=False)
     r = loader.get_provenance_report()
-    assert r["by_source_type"] == {"manual_summary": 27}
+    assert r["by_source_type"] == {"manual_summary": 31}
 
 
 def test_get_provenance_report_items_have_summary():
@@ -461,11 +473,11 @@ def test_get_provenance_report_items_have_summary():
 
 
 def test_get_provenance_report_filtered_only_usable():
-    """only_usable=True 时应返回全部 27 省。"""
+    """only_usable=True 时应返回全部 31 省。"""
     loader = CrowdDBLoader(warn_low_confidence=False)
     r = loader.get_provenance_report(only_usable=True)
-    assert r["total"] == 27
-    assert r["usable_count"] == 27
+    assert r["total"] == 31
+    assert r["usable_count"] == 31
     assert [item["province"] for item in r["items"]] == [
         "北京",
         "天津",
@@ -494,6 +506,10 @@ def test_get_provenance_report_filtered_only_usable():
         "甘肃",
         "青海",
         "新疆",
+        "内蒙古",
+        "广西",
+        "西藏",
+        "宁夏",
     ]
 
 

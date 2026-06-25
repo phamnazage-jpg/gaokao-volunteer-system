@@ -1,4 +1,4 @@
-"""T3.1 27省溯源数据测试
+"""T3.1 31 省溯源数据测试
 
 覆盖：
 1. 27个省份 JSON 存在
@@ -30,10 +30,10 @@ def _list_json_files():
     return sorted(f for f in os.listdir(DATA_DIR) if f.endswith(".json"))
 
 
-def test_27_province_files_exist():
-    """27 省 JSON 全部存在"""
+def test_31_province_files_exist():
+    """31 省 JSON 全部存在"""
     files = _list_json_files()
-    assert len(files) == 27, f"expected 27 province JSONs, got {len(files)}"
+    assert len(files) == 31, f"expected 31 province JSONs, got {len(files)}"
 
 
 def test_top_level_provenance_fields():
@@ -83,18 +83,18 @@ def test_confidence_in_unit_interval():
         assert 0.0 <= c <= 1.0, f"{fname}: confidence {c} 越界"
 
 
-def test_loader_supported_count_27():
-    """loader.PROVINCE_FILE_MAP 必须覆盖 27 省份"""
+def test_loader_supported_count_31():
+    """loader.PROVINCE_FILE_MAP 必须覆盖 31 省份"""
     loader = CrowdDBLoader()
     supported = loader.list_supported_provinces()
-    assert len(supported) == 27, f"expected 27 supported, got {len(supported)}"
+    assert len(supported) == 31, f"expected 31 supported, got {len(supported)}"
 
 
-def test_loader_existing_count_27():
+def test_loader_existing_count_31():
     """list_provinces 报告 27/27 存在"""
     loader = CrowdDBLoader(warn_low_confidence=False)
     existing = [m for m in loader.list_provinces() if m.get("exists")]
-    assert len(existing) == 27, f"expected 27 existing, got {len(existing)}"
+    assert len(existing) == 31, f"expected 31 existing, got {len(existing)}"
 
 
 def test_loader_metadata_hunan():
@@ -127,7 +127,7 @@ def test_loader_metadata_hunan():
 def test_loader_low_confidence_warning(monkeypatch):
     """confidence<0.5 的省份加载时发出 UserWarning。
 
-    27 省均已升级到 ≥0.66 confidence，无法通过真实数据触发 warning。
+    31 省均已升级到 ≥0.66 confidence，无法通过真实数据触发 warning。
     通过 monkeypatch _load_json_file 注入 0.45 的虚构数据来验证 warn_low_confidence 路径。
     """
     loader = CrowdDBLoader(warn_low_confidence=True)
@@ -161,7 +161,7 @@ def test_loader_end_to_end_match():
 
 
 def test_all_provinces_have_trusted_sources_and_non_repo_source_url():
-    """27 省必须补齐可信来源元数据，source_url 不能再用仓库自引用冒充来源。"""
+    """31 省必须补齐可信来源元数据，source_url 不能再用仓库自引用冒充来源。"""
     for fname in _list_json_files():
         d = json.load(open(os.path.join(DATA_DIR, fname), encoding="utf-8"))
         source_url = d.get("source_url", "")

@@ -1,7 +1,7 @@
 # CURRENT_STATE
 
 最后更新: 2026-06-25
-状态词: 本地验证完成（v2.1 主链与 6/20/6/21 增量仍成立；crowd_db 27省全部达 high，当前 live 基线为 27 high / 0 usable / 0 skeleton；31 省真正全国口径仍缺 4 个自治区；crowd_db 质量门槛已硬化为综合判定，防静默升级）
+状态词: 本地验证完成（v2.1 主链与 6/20/6/21 增量仍成立；crowd_db 全国 31 省口径全部达 high，当前 live 基线为 31 high / 0 usable / 0 skeleton；crowd_db 质量门槛已硬化为综合判定，防静默升级）
 
 真相源优先级:
 
