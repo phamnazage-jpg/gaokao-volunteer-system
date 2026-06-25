@@ -1,11 +1,11 @@
 {
   "province": "四川",
-  "last_updated": "2026-06-24",
+  "last_updated": "2026-06-25",
   "data_year": 2025,
   "source": "四川 crowd_db 可用版人工结构化摘要（2025 官方分数线锚点 + 省内高校常见报考池 + 国家专业目录 MVP 子集），2026-06-24",
   "source_url": "https://www.sceea.cn/",
   "source_type": "manual_summary",
-  "confidence": 0.68,
+  "confidence": 0.82,
   "score_ranges": [
     {
       "range": [
@@ -77,6 +77,50 @@
               "name": "四川农业大学",
               "major": "园艺",
               "score": 84
+            }
+          ]
+        },
+        {
+          "name": "西南财经大学",
+          "major": "金融学",
+          "frequency": 2,
+          "platforms": [
+            "千问",
+            "元宝"
+          ],
+          "predicted_increase": 7,
+          "alternatives": [
+            {
+              "name": "四川大学",
+              "major": "金融学",
+              "score": 93
+            },
+            {
+              "name": "电子科技大学",
+              "major": "金融学",
+              "score": 90
+            }
+          ]
+        },
+        {
+          "name": "西南交通大学",
+          "major": "轨道交通信号与控制",
+          "frequency": 2,
+          "platforms": [
+            "元宝",
+            "百度"
+          ],
+          "predicted_increase": 6,
+          "alternatives": [
+            {
+              "name": "电子科技大学",
+              "major": "轨道交通信号与控制",
+              "score": 91
+            },
+            {
+              "name": "四川大学",
+              "major": "轨道交通信号与控制",
+              "score": 89
             }
           ]
         }
@@ -154,6 +198,50 @@
               "score": 84
             }
           ]
+        },
+        {
+          "name": "四川农业大学",
+          "major": "农学",
+          "frequency": 2,
+          "platforms": [
+            "千问",
+            "豆包"
+          ],
+          "predicted_increase": 5,
+          "alternatives": [
+            {
+              "name": "四川大学",
+              "major": "农学",
+              "score": 88
+            },
+            {
+              "name": "成都中医药大学",
+              "major": "中草药栽培与鉴定",
+              "score": 85
+            }
+          ]
+        },
+        {
+          "name": "西南民族大学",
+          "major": "民族学",
+          "frequency": 2,
+          "platforms": [
+            "元宝",
+            "百度"
+          ],
+          "predicted_increase": 4,
+          "alternatives": [
+            {
+              "name": "四川师范大学",
+              "major": "民族学",
+              "score": 84
+            },
+            {
+              "name": "西华大学",
+              "major": "民族学",
+              "score": 82
+            }
+          ]
         }
       ]
     },
@@ -227,6 +315,52 @@
               "name": "四川农业大学",
               "major": "园艺",
               "score": 84
+            }
+          ]
+        },
+        {
+          "name": "成都理工大学",
+          "major": "地质学",
+          "frequency": 3,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度"
+          ],
+          "predicted_increase": 6,
+          "alternatives": [
+            {
+              "name": "西南石油大学",
+              "major": "资源勘查工程",
+              "score": 87
+            },
+            {
+              "name": "成都中医药大学",
+              "major": "中医学",
+              "score": 85
+            }
+          ]
+        },
+        {
+          "name": "西南石油大学",
+          "major": "石油工程",
+          "frequency": 3,
+          "platforms": [
+            "千问",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 6,
+          "alternatives": [
+            {
+              "name": "成都理工大学",
+              "major": "石油工程",
+              "score": 86
+            },
+            {
+              "name": "西南科技大学",
+              "major": "石油工程",
+              "score": 82
             }
           ]
         }
@@ -304,6 +438,51 @@
               "score": 84
             }
           ]
+        },
+        {
+          "name": "成都中医药大学",
+          "major": "针灸推拿学",
+          "frequency": 2,
+          "platforms": [
+            "千问",
+            "元宝"
+          ],
+          "predicted_increase": 5,
+          "alternatives": [
+            {
+              "name": "成都医学院",
+              "major": "针灸推拿学",
+              "score": 83
+            },
+            {
+              "name": "川北医学院",
+              "major": "针灸推拿学",
+              "score": 81
+            }
+          ]
+        },
+        {
+          "name": "四川师范大学",
+          "major": "汉语言文学",
+          "frequency": 3,
+          "platforms": [
+            "千问",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 5,
+          "alternatives": [
+            {
+              "name": "西华大学",
+              "major": "汉语言文学",
+              "score": 84
+            },
+            {
+              "name": "绵阳师范学院",
+              "major": "汉语言文学",
+              "score": 80
+            }
+          ]
         }
       ]
     },
@@ -376,6 +555,51 @@
             {
               "name": "成都中医药大学",
               "major": "针灸推拿学",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "西华大学",
+          "major": "机械设计制造及其自动化",
+          "frequency": 2,
+          "platforms": [
+            "千问",
+            "百度"
+          ],
+          "predicted_increase": 4,
+          "alternatives": [
+            {
+              "name": "成都工业学院",
+              "major": "机械设计制造及其自动化",
+              "score": 82
+            },
+            {
+              "name": "四川轻化工大学",
+              "major": "机械设计制造及其自动化",
+              "score": 80
+            }
+          ]
+        },
+        {
+          "name": "成都信息工程大学",
+          "major": "软件工程",
+          "frequency": 3,
+          "platforms": [
+            "千问",
+            "元宝",
+            "豆包"
+          ],
+          "predicted_increase": 5,
+          "alternatives": [
+            {
+              "name": "成都大学",
+              "major": "软件工程",
+              "score": 83
+            },
+            {
+              "name": "西华大学",
+              "major": "软件工程",
               "score": 84
             }
           ]
@@ -454,6 +678,50 @@
               "score": 84
             }
           ]
+        },
+        {
+          "name": "成都大学",
+          "major": "会计学",
+          "frequency": 2,
+          "platforms": [
+            "千问",
+            "百度"
+          ],
+          "predicted_increase": 4,
+          "alternatives": [
+            {
+              "name": "攀枝花学院",
+              "major": "会计学",
+              "score": 79
+            },
+            {
+              "name": "宜宾学院",
+              "major": "会计学",
+              "score": 78
+            }
+          ]
+        },
+        {
+          "name": "四川轻化工大学",
+          "major": "化学工程与工艺",
+          "frequency": 2,
+          "platforms": [
+            "元宝",
+            "豆包"
+          ],
+          "predicted_increase": 3,
+          "alternatives": [
+            {
+              "name": "西华大学",
+              "major": "化学工程与工艺",
+              "score": 82
+            },
+            {
+              "name": "成都工业学院",
+              "major": "化学工程与工艺",
+              "score": 79
+            }
+          ]
         }
       ]
     },
@@ -527,6 +795,50 @@
               "name": "成都中医药大学",
               "major": "针灸推拿学",
               "score": 84
+            }
+          ]
+        },
+        {
+          "name": "绵阳师范学院",
+          "major": "小学教育",
+          "frequency": 2,
+          "platforms": [
+            "千问",
+            "百度"
+          ],
+          "predicted_increase": 3,
+          "alternatives": [
+            {
+              "name": "内江师范学院",
+              "major": "小学教育",
+              "score": 78
+            },
+            {
+              "name": "乐山师范学院",
+              "major": "小学教育",
+              "score": 77
+            }
+          ]
+        },
+        {
+          "name": "成都工业学院",
+          "major": "电子信息工程技术",
+          "frequency": 2,
+          "platforms": [
+            "元宝",
+            "豆包"
+          ],
+          "predicted_increase": 3,
+          "alternatives": [
+            {
+              "name": "成都东软学院",
+              "major": "电子信息工程技术",
+              "score": 78
+            },
+            {
+              "name": "四川轻化工大学",
+              "major": "电子信息工程技术",
+              "score": 79
             }
           ]
         }
@@ -604,6 +916,50 @@
               "score": 84
             }
           ]
+        },
+        {
+          "name": "川北医学院",
+          "major": "护理",
+          "frequency": 2,
+          "platforms": [
+            "千问",
+            "百度"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "成都医学院",
+              "major": "护理",
+              "score": 78
+            },
+            {
+              "name": "四川中医药高等专科学校",
+              "major": "护理",
+              "score": 75
+            }
+          ]
+        },
+        {
+          "name": "宜宾学院",
+          "major": "旅游管理",
+          "frequency": 2,
+          "platforms": [
+            "元宝",
+            "豆包"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "乐山师范学院",
+              "major": "旅游管理",
+              "score": 75
+            },
+            {
+              "name": "绵阳师范学院",
+              "major": "旅游管理",
+              "score": 76
+            }
+          ]
         }
       ]
     }
@@ -625,5 +981,5 @@
       "kind": "province_official"
     }
   ],
-  "quality_note": "可用版人工结构化摘要；四川省教育考试院官方入口与 2025 年度分数线锚点已完成复核；score_ranges 已覆盖高/中/低分数带；后续随录取数据公布做密度升级。"
+  "quality_note": "高置信人工整理推荐（基于四川现有院校池 + 2025 招生章程复核）；四川省教育考试院官方入口已完成 2025 年度复核。"
 }

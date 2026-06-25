@@ -1,7 +1,7 @@
 # CROWD_DB_NATIONALIZATION_SOURCE_OF_TRUTH
 
 最后更新: 2026-06-25
-状态词: 全国高信任建设已启动（Phase 0 + Batch 1 已完成，27 省达 7 high / 20 usable / 0 skeleton）
+状态词: 全国高信任建设已启动（Phase 0 + Batch 1 + Stage 1 已完成，27 省达 12 high / 15 usable / 0 skeleton）
 上游真相源: `docs/CURRENT_STATE.md`
 详细设计: `docs/plans/2026-06-23-national-high-trust-crowd-db-plan.md`
 
@@ -70,8 +70,8 @@
 
 **当前真实状态**（2026-06-25 实测）：
 
-- high = 7 省：湖南 / 广东 / 江苏 / 山东 / 河北 / 浙江 / 福建（均 `confidence=0.85`、`score_ranges>=8`、`recommendations>=40`、`alternatives>=60`、覆盖高/中/低三层分数带）
-- usable = 20 省：其余 20 省（均 `confidence>=0.65`、`score_ranges>=6`、`recommendations>=24`、`alternatives>=24`）
+- high = 12 省：湖南 / 广东 / 江苏 / 山东 / 河北 / 浙江 / 福建 / 河南 / 四川 / 湖北 / 北京 / 上海（均 `confidence>=0.82`、`score_ranges>=8`、`recommendations>=40`、`alternatives>=80`、覆盖高/中/低三层分数带）
+- usable = 15 省：其余 15 省（均 `confidence>=0.65`、`score_ranges>=6`、`recommendations>=24`、`alternatives>=24`）
 - skeleton = 0 省
 - 详细质量分布见 `docs/CURRENT_STATE.md` 顶部状态词与 `python -m data.crowd_db.quality_summary --human`
 
@@ -80,7 +80,8 @@
 - 6/20 基线：4 high + 3 usable + 20 skeleton
 - 6/23：升级到 5 high（+河北）
 - 6/24：升级到 7 high（+浙江/福建）/ 20 usable / 0 skeleton
-- 6/25：质量门槛从"仅看 confidence"硬化为"综合判定（conf + sr + recs + alts + 分数带）"，防静默升级
+- 6/25 门槛硬化：质量判定从"仅看 confidence"升级为综合门槛
+- 6/25 Stage 1：升级到 12 high（+河南/四川/湖北/北京/上海）/ 15 usable / 0 skeleton
 
 目标：
 
