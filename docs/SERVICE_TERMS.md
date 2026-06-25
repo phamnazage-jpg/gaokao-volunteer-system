@@ -254,6 +254,8 @@
 
 我们如何处理您的个人信息，详见 `docs/PRIVACY_POLICY_DRAFT.md`。
 
+当前已确认真实启用的第三方基础设施服务商为腾讯云；具体实名披露清单见 `docs/THIRD_PARTY_DISCLOSURE_TEMPLATE.md`。
+
 涉及数据保留、删除、匿名化与例外情形的，详见 `docs/PRIVACY_POLICY_DRAFT.md` 第 7 条及 `docs/DATA_RETENTION_AND_DELETION.md`。
 
 涉及同意审计字段、渠道补录口径、保留期门禁等合规基线，详见 `docs/LEGAL_PRIVACY_BASELINE.md`。
