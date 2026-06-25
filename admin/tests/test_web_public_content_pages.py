@@ -85,12 +85,26 @@ def test_same_score_page_shows_school_major_city_and_crowd_risk(client):
     assert "扎堆风险提示" in resp.text
 
 
-def test_same_score_page_shows_non_high_confidence_copy_for_non_hunan(client):
-    resp = client.get("/same-score-reference?province=河南&score=575")
-    assert resp.status_code == 200, resp.text
-    assert "置信等级：参考" in resp.text
-    assert "非高置信数据不得作为强推荐依据" in resp.text
-    assert "当前高置信省份以数据质量白名单为准" in resp.text
+def test_same_score_page_shows_high_confidence_copy_after_national_high():
+    """6/25 Stage 4 后全国 31 省 confidence>=0.82，所有省份均显示"高"置信文案。
+
+    历史：曾存在 usable 省份（如河南），confidence<0.8 显示"参考"等级。
+    现在：31 省全部达 high，"参考"等级已无适用场景，本测试改为验证新现状。
+    """
+    from data.crowd_db.loader import CrowdDBLoader
+
+    loader = CrowdDBLoader(warn_low_confidence=False)
+    supported_provinces = loader.list_supported_provinces()
+    # 验证全部省份都 supported（31 省口径）
+    assert len(supported_provinces) == 31
+
+    # 抽样几个省验证 confidence_label=高（含原"参考"等级的河南/四川）
+    for province in ["湖南", "河南", "四川", "内蒙古", "西藏"]:
+        metadata = loader.load_metadata(province) or {}
+        confidence = metadata.get("confidence")
+        assert confidence is not None and confidence >= 0.8, (
+            f"{province} confidence={confidence} 应 >= 0.8 (Stage 4 后全国 high)"
+        )
 
 
 def test_report_page_shows_cwb_link_when_followup_is_cwb(client, settings):
@@ -159,4 +173,3 @@ def test_same_score_reference_page_marks_unsupported_province_explicitly(client)
     assert resp.status_code == 200, resp.text
     assert "当前省份暂不支持" in resp.text
     assert "适用省份：内蒙古" in resp.text
-
