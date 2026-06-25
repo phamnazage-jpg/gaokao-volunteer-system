@@ -127,15 +127,22 @@ def classify_major(major: str) -> str:
 
 
 def detect_city_type(school_name: str, province: str) -> str:
-    """从院校名称推断所在城市类型"""
+    """从院校名称推断所在城市类型。
+
+    规则收紧：
+    1. 只有显式命中省会城市名才算“省会”
+    2. 不再把“省名/自治区名命中”直接判为省会（如西藏大学/宁夏大学会误判）
+    3. 直辖市（北京/上海/天津/重庆）仍按直辖市主城区处理
+    4. 含学院/职业/师范/理工/工业/农业/医科/财经/民族 等但不含省会名，按“地级市”或“其他”
+    """
     capital = PROVINCE_CAPITALS.get(province, "")
-    if capital in school_name:
+    # 直辖市
+    if province in {"北京", "上海", "天津", "重庆"} and capital in school_name:
         return "省会"
-    if (
-        province.replace("省", "").replace("市", "").replace("自治区", "")
-        in school_name
-    ):
+    # 只有显式命中省会城市名才算省会
+    if capital and capital in school_name:
         return "省会"
+    # 国家/区域级院校大多位于省会或核心城市，但不强制判省会
     if any(
         kw in school_name
         for kw in [
@@ -151,9 +158,23 @@ def detect_city_type(school_name: str, province: str) -> str:
         ]
     ):
         return "省会"
+    # 含明显高校/职业院校关键词，但未命中省会城市，默认按地级市处理
     if any(
         kw in school_name
-        for kw in ["学院", "职业", "师范", "理工", "工业", "农业", "医科", "财经"]
+        for kw in [
+            "学院",
+            "职业",
+            "师范",
+            "理工",
+            "工业",
+            "农业",
+            "医科",
+            "财经",
+            "民族",
+            "警官",
+            "科技",
+            "工程",
+        ]
     ):
         return "地级市"
     return "其他"
