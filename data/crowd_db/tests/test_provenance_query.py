@@ -302,10 +302,11 @@ def test_filter_provinces_source_type_official():
 
 
 def test_filter_provinces_data_year_match():
-    """data_year=2025 → 过渡期至少 25 省"""
+    """data_year=2025 → 过渡期至少 23 省。"""
     loader = CrowdDBLoader(warn_low_confidence=False)
     result = loader.filter_provinces(data_year=2025)
-    assert len(result) >= 25  # 过渡期：部分省份已切到 2026
+    # 目前 8 省已切到 2026，因此剩余 23 省为 2025
+    assert len(result) >= 23  # 过渡期：部分省份已切到 2026
 
 
 def test_filter_provinces_data_year_no_match():
@@ -387,11 +388,11 @@ def test_filter_provinces_updated_before_no_match():
 
 
 def test_filter_provinces_combined_usable_and_year():
-    """组合：only_usable=True + data_year=2025 → 过渡期至少 25 省。"""
+    """组合：only_usable=True + data_year=2025 → 过渡期至少 23 省。"""
     loader = CrowdDBLoader(warn_low_confidence=False)
     result = loader.filter_provinces(only_usable=True, data_year=2025)
-    # 过渡期：部分省份已切到 2026，只检查数量下限
-    assert len(result) >= 25
+    # 过渡期：目前 8 省已切到 2026，只检查数量下限
+    assert len(result) >= 23
 
 
 def test_filter_provinces_preserves_map_order():

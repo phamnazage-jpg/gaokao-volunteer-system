@@ -187,10 +187,19 @@ def test_data_year_is_2025_until_2026_published(summary):
     - 不得出现非 2025/2026 的年份
 
     已确认 2026 分数线公布省份（2026-06-25）：
-    - 湖南 / 江苏 / 广东 / 山东 / 河北 / 河南
+    - 湖南 / 江苏 / 广东 / 山东 / 河北 / 河南 / 浙江 / 四川
     """
     invalid_provinces = []
-    valid_provinces_2026 = {"湖南", "江苏", "广东", "山东", "河北", "河南"}
+    valid_provinces_2026 = {
+        "湖南",
+        "江苏",
+        "广东",
+        "山东",
+        "河北",
+        "河南",
+        "浙江",
+        "四川",
+    }
 
     for p in summary["provinces"]:
         year = p["data_year"]
