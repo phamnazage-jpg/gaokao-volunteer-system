@@ -4,6 +4,120 @@
 
 ---
 
+## v2.1.8 (2026-06-24) — 测试弃用 warning 清零
+
+### 🧪 测试依赖
+
+- `requirements-dev.txt` 新增 `httpx2>=2.0.0`
+- `starlette.testclient` → `httpx2` 的弃用 warning 已清除
+
+### ✅ 验证
+
+- `./.venv/bin/python -m pytest -q admin/tests/test_order_status_page.py admin/tests/test_web_public.py admin/tests/test_web_public_content_pages.py admin/tests/test_web_public_review_flow.py admin/tests/test_web_public_portal_info.py admin/tests/test_order_deletion.py admin/tests/test_routes_cases.py admin/tests/test_routes_stats_dashboard.py admin/tests/test_admin_ui_pages.py admin/tests/test_order_info_form.py data/orders/tests/test_schema.py data/orders/tests/test_public_flow.py tests/test_backup_restore_service_level.py` → `149 passed`
+
+## v2.1.7 (2026-06-24) — 严格审查汇总版与最新入口切换
+
+### 📄 审查与文档
+
+- 新增 `reports/STRICT_SYSTEM_REVIEW_2026-06-24.md`
+  - 以当前仓库状态重写严格审查汇总版，不再继续在 6/23 过程稿上叠加历史结论
+  - 明确当前结论：前台主链路、后台安全边界、恢复演练口径、后台录单契约、第五轮补充问题均已修复
+- `docs/CURRENT_STATE.md` 已切换为以 `STRICT_SYSTEM_REVIEW_2026-06-24.md` 作为最新严格审查结论
+- `docs/NAVIGATION.md` 已新增 6/24 汇总版入口，同时保留 6/23 过程稿作为历史轨迹参考
+
+### ✅ 验证
+
+- `./.venv/bin/python -m pytest -q admin/tests/test_order_status_page.py admin/tests/test_web_public.py admin/tests/test_web_public_content_pages.py admin/tests/test_web_public_review_flow.py admin/tests/test_web_public_portal_info.py admin/tests/test_order_deletion.py admin/tests/test_routes_cases.py admin/tests/test_routes_stats_dashboard.py admin/tests/test_admin_ui_pages.py admin/tests/test_order_info_form.py data/orders/tests/test_schema.py data/orders/tests/test_public_flow.py tests/test_backup_restore_service_level.py` → `149 passed, 1 warning`
+
+## v2.1.6 (2026-06-23) — 主链路真实 TestClient 覆盖收口
+
+### 🧪 测试可信度收口
+
+- **用户端主链路不再依赖 `RouteClient` 自证**
+  - 公开页、内容页、资料页、状态页、报告页、CWB、full-plan、payment-success 的关键页面访问已迁到真实 `TestClient`
+  - `POST /api/public/orders`、`POST /review/action`（真实 form + 303）、`POST /pay/mock/{payment_id}/complete` 的主链路已迁到真实 `client`
+- **前台关键测试文件已清零 `RouteClient`**
+  - `admin/tests/test_web_public.py`
+  - `admin/tests/test_web_public_content_pages.py`
+  - `admin/tests/test_web_public_review_flow.py`
+  - `admin/tests/test_web_public_portal_info.py`
+  - `admin/tests/test_order_status_page.py`
+- **剩余 `RouteClient` 已降级为非前台主证据**
+  - 仅作为仓库中的轻量辅助夹具保留，不再用于这批关键前台测试文件
+
+### 📄 文档
+
+- 新增 `reports/TEST_CLIENT_COVERAGE_2026-06-23.md`
+- `reports/STRICT_SYSTEM_REVIEW_2026-06-23.md` 与覆盖报告已互链
+- `docs/CURRENT_STATE.md` 已将两份 6/23 报告纳入真相源优先级前部
+
+### ✅ 验证
+
+- `./.venv/bin/python -m pytest -q admin/tests/test_web_public.py admin/tests/test_web_public_review_flow.py admin/tests/test_web_public_portal_info.py` → `54 passed, 1 warning`
+- `./.venv/bin/python -m pytest -q admin/tests/test_order_status_page.py admin/tests/test_web_public.py admin/tests/test_web_public_content_pages.py admin/tests/test_web_public_review_flow.py admin/tests/test_web_public_portal_info.py data/orders/tests/test_schema.py` → `89 passed, 1 warning`
+
+## v2.1.5 (2026-06-23) — P1/P2 页面升级与轻量版本管理
+
+### ✨ 新增
+
+- **Step 2-4 / P2 偏好收口**
+  - Portal Step 2 新增 `target_cities` 输入控件
+  - `submit_order_info` 现在保留 `profile_versions[]` 与 `latest_profile_version_id`，相同快照不重复记版本
+- **报告页 / 冲稳保页辅助能力升级**
+  - 报告页新增“基于最新档案生成 / 基于历史档案版本生成，建议刷新”判断
+  - 报告页与冲稳保页新增政策中心、同分段参考入口与辅助判断因子区块
+  - 完整规划入口页新增版本历史与辅助判断因子区块
+- **统一信任条**
+  - 政策中心与同分段参考页改为共用统一信任条：来源、更新时间、适用范围、适用省份、置信等级、边界文案
+  - 同分段页继续保留“非高置信数据不得作为强推荐依据”约束
+- **轻量报告版本元数据**
+  - `order_intakes.payload_json` 新增 `report_versions[]` / `latest_report_version_id`
+  - 报告页外显与 `profile_versions[]` / `review_results{}` 形成最小版本关系
+
+### 🧪 测试
+
+- `admin/tests/test_web_public_portal_info.py`
+  - `test_portal_info_page_renders_target_cities_field`
+  - `test_submit_order_info_creates_profile_version_history_without_duplicate_snapshots`
+- `admin/tests/test_web_public_review_flow.py`
+  - `test_cwb_page_links_policy_same_score_and_auxiliary_factors`
+  - `test_report_page_shows_latest_profile_state_and_helper_links`
+  - `test_report_page_warns_when_based_on_historical_profile_version`
+  - `test_full_plan_page_shows_profile_versions_and_assessment_context`
+- `admin/tests/test_web_public_content_pages.py`
+  - `test_policy_and_same_score_pages_expose_helper_navigation`
+- 回归：`./.venv/bin/python -m pytest -q admin/tests/test_web_public_content_pages.py admin/tests/test_web_public_portal_info.py admin/tests/test_web_public_review_flow.py data/orders/tests/test_schema.py` → `60 passed`
+
+## v2.1.4 (2026-06-23) — 审核优先主线第三轮质量收敛
+
+### ✨ 新增
+
+- **审核页最小输入 / 约束 / 输出 / 分流四区块收口**
+  - `admin/routes/web_public.py` 的 `ReviewResultContract` 新增 `review_input_summary` / `review_input_attachments` / `review_constraints`
+  - `/review/start` 现在支持承接首页 `province / score / goal / consult` 查询参数，并把最小约束与现有方案说明写入轻量 review result
+  - 审核结果页不再只展示 JSON，占位页已补齐“审核输入 / 最小约束 / 审核输出摘要 / 下一步分流”四区块
+- **首页咨询卡回到审核主线**
+  - 首页咨询表单由 `/pricing` 改为 `/review/start`
+  - 增加隐藏字段 `source=home`，保持 `review_entry_source` 可追踪
+- **工作台主动作按资料完整度收口**
+  - 当 Step 1 已完成且还没有最近一次复核结果时，首页工作台默认动作改为“开始方案复核”
+  - 仍保留“继续补充 Step 1”与“继续查看最近一次复核”两种路径
+
+### 🐛 修复
+
+- **第三轮质量收敛残留**：首页咨询卡此前仍把用户导向 `/pricing`，与 `P0`“先审核再规划”主线不一致
+- **第三轮质量收敛残留**：审核页此前只有轻量 JSON 占位，未满足“输入区 / 最小约束区 / 结果区 / 分流区”结构验收
+- **第三轮质量收敛残留**：Step 1 已完整但无复核结果时，首页工作台仍默认指向补资料，造成主动作偏移
+
+### 🧪 测试
+
+- `admin/tests/test_web_public_review_flow.py`
+  - `test_landing_page_review_consult_form_targets_review_start`
+  - `test_landing_page_uses_review_as_workspace_primary_action_when_step1_complete`
+  - `test_review_start_page_renders_input_constraints_result_and_diversion`
+- 回归：`./.venv/bin/python -m pytest -q admin/tests/test_web_public.py admin/tests/test_web_public_content_pages.py admin/tests/test_web_public_portal_info.py admin/tests/test_web_public_review_flow.py data/orders/tests/test_schema.py` → `70 passed`
+
+
 ## v2.1.3 (2026-06-20) — 生产加固 + L-A 送审前修复 + crowd_db 质量契约
 
 ### ✨ 新增
