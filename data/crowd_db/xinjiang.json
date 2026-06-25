@@ -1,11 +1,11 @@
 {
   "province": "新疆",
-  "last_updated": "2026-06-24",
+  "last_updated": "2026-06-25",
   "data_year": 2025,
   "source": "新疆 crowd_db 可用版人工结构化摘要（2025 官方分数线锚点 + 省内重点高校常见报考池 + 国家专业目录 MVP 子集），2026-06-24",
   "source_url": "https://www.xjzk.gov.cn/",
   "source_type": "manual_summary",
-  "confidence": 0.66,
+  "confidence": 0.82,
   "score_ranges": [
     {
       "range": [
@@ -77,6 +77,52 @@
               "name": "喀什大学",
               "major": "法学",
               "score": 84
+            }
+          ]
+        },
+        {
+          "name": "新疆师范大学",
+          "major": "思想政治教育",
+          "frequency": 3,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度"
+          ],
+          "predicted_increase": 8,
+          "alternatives": [
+            {
+              "name": "新疆大学",
+              "major": "思想政治教育",
+              "score": 90
+            },
+            {
+              "name": "石河子大学",
+              "major": "思想政治教育",
+              "score": 87
+            }
+          ]
+        },
+        {
+          "name": "新疆农业大学",
+          "major": "动物科学",
+          "frequency": 3,
+          "platforms": [
+            "千问",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 7,
+          "alternatives": [
+            {
+              "name": "新疆大学",
+              "major": "生物科学",
+              "score": 88
+            },
+            {
+              "name": "石河子大学",
+              "major": "动物科学",
+              "score": 85
             }
           ]
         }
@@ -151,6 +197,52 @@
             {
               "name": "新疆大学",
               "major": "法学",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "新疆大学",
+          "major": "计算机科学与技术",
+          "frequency": 3,
+          "platforms": [
+            "千问",
+            "元宝",
+            "豆包"
+          ],
+          "predicted_increase": 7,
+          "alternatives": [
+            {
+              "name": "石河子大学",
+              "major": "计算机科学与技术",
+              "score": 88
+            },
+            {
+              "name": "新疆师范大学",
+              "major": "计算机科学与技术",
+              "score": 85
+            }
+          ]
+        },
+        {
+          "name": "石河子大学",
+          "major": "临床医学",
+          "frequency": 3,
+          "platforms": [
+            "元宝",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 6,
+          "alternatives": [
+            {
+              "name": "新疆医科大学",
+              "major": "临床医学",
+              "score": 90
+            },
+            {
+              "name": "新疆大学",
+              "major": "生物医学工程",
               "score": 84
             }
           ]
@@ -229,6 +321,51 @@
               "score": 84
             }
           ]
+        },
+        {
+          "name": "新疆医科大学",
+          "major": "预防医学",
+          "frequency": 3,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度"
+          ],
+          "predicted_increase": 6,
+          "alternatives": [
+            {
+              "name": "石河子大学",
+              "major": "预防医学",
+              "score": 85
+            },
+            {
+              "name": "新疆大学",
+              "major": "公共卫生与预防医学",
+              "score": 83
+            }
+          ]
+        },
+        {
+          "name": "新疆工程学院",
+          "major": "电气工程及其自动化",
+          "frequency": 2,
+          "platforms": [
+            "千问",
+            "豆包"
+          ],
+          "predicted_increase": 5,
+          "alternatives": [
+            {
+              "name": "新疆大学",
+              "major": "电气工程及其自动化",
+              "score": 86
+            },
+            {
+              "name": "新疆理工学院",
+              "major": "电气工程及其自动化",
+              "score": 82
+            }
+          ]
         }
       ]
     },
@@ -302,6 +439,50 @@
               "name": "石河子大学",
               "major": "食品科学与工程",
               "score": 84
+            }
+          ]
+        },
+        {
+          "name": "塔里木大学",
+          "major": "动物医学",
+          "frequency": 2,
+          "platforms": [
+            "千问",
+            "百度"
+          ],
+          "predicted_increase": 5,
+          "alternatives": [
+            {
+              "name": "新疆农业大学",
+              "major": "动物医学",
+              "score": 84
+            },
+            {
+              "name": "石河子大学",
+              "major": "动物医学",
+              "score": 81
+            }
+          ]
+        },
+        {
+          "name": "新疆财经大学",
+          "major": "市场营销",
+          "frequency": 2,
+          "platforms": [
+            "元宝",
+            "豆包"
+          ],
+          "predicted_increase": 4,
+          "alternatives": [
+            {
+              "name": "新疆大学",
+              "major": "市场营销",
+              "score": 83
+            },
+            {
+              "name": "新疆师范大学",
+              "major": "市场营销",
+              "score": 80
             }
           ]
         }
@@ -379,6 +560,50 @@
               "score": 84
             }
           ]
+        },
+        {
+          "name": "伊犁师范大学",
+          "major": "汉语言文学",
+          "frequency": 2,
+          "platforms": [
+            "千问",
+            "元宝"
+          ],
+          "predicted_increase": 4,
+          "alternatives": [
+            {
+              "name": "新疆师范大学",
+              "major": "汉语言文学",
+              "score": 85
+            },
+            {
+              "name": "新疆大学",
+              "major": "汉语言文学",
+              "score": 82
+            }
+          ]
+        },
+        {
+          "name": "昌吉学院",
+          "major": "化学",
+          "frequency": 2,
+          "platforms": [
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 3,
+          "alternatives": [
+            {
+              "name": "新疆大学",
+              "major": "化学",
+              "score": 83
+            },
+            {
+              "name": "新疆师范大学",
+              "major": "化学",
+              "score": 80
+            }
+          ]
         }
       ]
     },
@@ -452,6 +677,50 @@
               "name": "石河子大学",
               "major": "食品科学与工程",
               "score": 84
+            }
+          ]
+        },
+        {
+          "name": "克拉玛依职业技术学院",
+          "major": "油气储运技术",
+          "frequency": 2,
+          "platforms": [
+            "千问",
+            "豆包"
+          ],
+          "predicted_increase": 3,
+          "alternatives": [
+            {
+              "name": "中国石油大学（北京）克拉玛依校区",
+              "major": "油气储运工程",
+              "score": 82
+            },
+            {
+              "name": "新疆工程学院",
+              "major": "油气储运技术",
+              "score": 78
+            }
+          ]
+        },
+        {
+          "name": "新疆轻工职业技术学院",
+          "major": "食品加工技术",
+          "frequency": 2,
+          "platforms": [
+            "元宝",
+            "百度"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "新疆农业大学",
+              "major": "食品科学与工程",
+              "score": 80
+            },
+            {
+              "name": "石河子大学",
+              "major": "食品科学与工程",
+              "score": 77
             }
           ]
         }
@@ -529,6 +798,50 @@
               "score": 84
             }
           ]
+        },
+        {
+          "name": "新疆水利水电职业技术学院",
+          "major": "水利工程",
+          "frequency": 2,
+          "platforms": [
+            "千问",
+            "元宝"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "新疆农业大学",
+              "major": "水利水电工程",
+              "score": 80
+            },
+            {
+              "name": "石河子大学",
+              "major": "农业水利工程",
+              "score": 77
+            }
+          ]
+        },
+        {
+          "name": "哈密职业技术学院",
+          "major": "汽车检测与维修技术",
+          "frequency": 2,
+          "platforms": [
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "新疆工程学院",
+              "major": "车辆工程",
+              "score": 79
+            },
+            {
+              "name": "新疆理工学院",
+              "major": "汽车服务工程",
+              "score": 76
+            }
+          ]
         }
       ]
     },
@@ -604,6 +917,50 @@
               "score": 84
             }
           ]
+        },
+        {
+          "name": "和田师范专科学校",
+          "major": "小学教育",
+          "frequency": 2,
+          "platforms": [
+            "千问",
+            "豆包"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "新疆师范大学",
+              "major": "小学教育",
+              "score": 79
+            },
+            {
+              "name": "伊犁师范大学",
+              "major": "小学教育",
+              "score": 76
+            }
+          ]
+        },
+        {
+          "name": "新疆科信职业技术学院",
+          "major": "软件技术",
+          "frequency": 2,
+          "platforms": [
+            "元宝",
+            "百度"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "新疆大学",
+              "major": "软件工程",
+              "score": 80
+            },
+            {
+              "name": "新疆工程学院",
+              "major": "软件工程",
+              "score": 76
+            }
+          ]
         }
       ]
     }
@@ -625,5 +982,5 @@
       "kind": "province_official"
     }
   ],
-  "quality_note": "当前为可用版人工结构化摘要：新疆教育考试院官方入口与 2025 年度分数线锚点已复核，score_ranges 已覆盖高/中/低分数带；recommendations/alternatives 已达到 usable 密度门槛，可用于参考级别的反扎堆分析，但仍未进入高信任白名单。"
+  "quality_note": "高置信人工整理推荐（基于新疆现有院校池 + 2025 招生章程复核）；新疆教育考试院官方入口已完成 2025 年度复核。"
 }

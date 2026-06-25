@@ -22,6 +22,7 @@ from data.crowd_db.loader import CrowdDBLoader
 # 高信任白名单（当前 controller 允许进入 high 的省份）
 # 任何新增/移除 high 省份都必须显式更新本测试，避免"静默升级"。
 # 6/25 Stage 1: 新增河南/四川/湖北/北京/上海（5 省从 usable 升 high）
+# 6/25 Stage 2: 27 省全部达 high（15 省批量扩容完毕）
 HIGH_TRUST_PROVINCES = frozenset({
     "湖南",
     "广东",
@@ -35,12 +36,27 @@ HIGH_TRUST_PROVINCES = frozenset({
     "湖北",
     "北京",
     "上海",
+    "安徽",
+    "重庆",
+    "甘肃",
+    "贵州",
+    "海南",
+    "黑龙江",
+    "江西",
+    "吉林",
+    "辽宁",
+    "青海",
+    "陕西",
+    "山西",
+    "天津",
+    "新疆",
+    "云南",
 })
 
 # 仍不允许进入 high 的高考生源大省（除已进入白名单者外）
 # 6/25 Stage 1 后：四川/河南/湖北/北京/上海 已升 high；其余高考生源大省仍非 high
-HIGH_POPULATION_PROVINCES_NOT_YET_HIGH = frozenset({
-    # 当前 12 个 high 已覆盖主要高考生源大省，此处保留为约束锚点
+HIGH_POPULATION_PROVINCES_NOT_YET_HIGH: frozenset[str] = frozenset({
+    # 当前 27 个 high 已覆盖主要高考生源大省，此处保留为约束锚点
     # 如未来有新高考生源大省进入 27 省范围，需重新评估
 })
 

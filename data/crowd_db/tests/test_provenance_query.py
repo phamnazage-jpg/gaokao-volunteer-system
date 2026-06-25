@@ -348,26 +348,20 @@ def test_filter_provinces_max_confidence():
 
 
 def test_filter_provinces_confidence_range():
-    """min=0.4 max=0.5 → 当前 27 省全部 ≥ 0.65，无任何落入此区间。
+    """filter_provinces confidence 区间过滤正确性。
 
-    旧基线下 14 省 confidence=0.45 落入此区间，27 省升级后无任何落入。
-    额外验证一个有实际数据的区间（0.6-0.7），保证 filter 行为本身正确。
+    6/25 Stage 2 后所有省 confidence=0.82-0.85，全部落入 [0.8, 0.9] 区间。
     """
     loader = CrowdDBLoader(warn_low_confidence=False)
     # 边界：当前无任何省份 confidence 落在 [0.4, 0.5]
     result_empty = loader.filter_provinces(min_confidence=0.4, max_confidence=0.5)
     assert result_empty == []
 
-    # 正向：[0.6, 0.7] 应命中 19 省（0.65-0.68 范围内的省份）
-    result_actual = loader.filter_provinces(min_confidence=0.6, max_confidence=0.7)
-    assert len(result_actual) >= 15, (
-        f"[0.6, 0.7] 应至少命中 15 省（0.65~0.68），实际 {len(result_actual)}: {result_actual}"
+    # 正向：[0.8, 0.9] 应命中 27 省（全部 confidence=0.82-0.85）
+    result_actual = loader.filter_provinces(min_confidence=0.8, max_confidence=0.9)
+    assert len(result_actual) == 27, (
+        f"[0.8, 0.9] 应命中 27 省（全部达 high），实际 {len(result_actual)}: {result_actual}"
     )
-    # 高置信省份不应落入此区间
-    for province in ["湖南", "山东", "广东", "江苏", "河北", "浙江", "福建"]:
-        assert province not in result_actual, (
-            f"{province} confidence≥0.85，不应落入 [0.6, 0.7] 区间"
-        )
 
 
 def test_filter_provinces_updated_since():

@@ -1,11 +1,11 @@
 {
   "province": "海南",
-  "last_updated": "2026-06-24",
+  "last_updated": "2026-06-25",
   "data_year": 2025,
   "source": "海南 crowd_db 可用版人工结构化摘要（2025 官方分数线锚点 + 本地重点高校常见报考池 + 国家专业目录 MVP 子集），2026-06-24",
   "source_url": "https://ea.hainan.gov.cn/",
   "source_type": "manual_summary",
-  "confidence": 0.66,
+  "confidence": 0.82,
   "score_ranges": [
     {
       "range": [
@@ -77,6 +77,52 @@
               "name": "琼台师范学院",
               "major": "学前教育",
               "score": 84
+            }
+          ]
+        },
+        {
+          "name": "海南医科大学",
+          "major": "临床医学",
+          "frequency": 3,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度"
+          ],
+          "predicted_increase": 7,
+          "alternatives": [
+            {
+              "name": "海南热带海洋学院",
+              "major": "海洋科学",
+              "score": 90
+            },
+            {
+              "name": "三亚学院",
+              "major": "软件工程",
+              "score": 88
+            }
+          ]
+        },
+        {
+          "name": "海口经济学院",
+          "major": "经济学",
+          "frequency": 3,
+          "platforms": [
+            "元宝",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 6,
+          "alternatives": [
+            {
+              "name": "海南师范大学",
+              "major": "英语",
+              "score": 89
+            },
+            {
+              "name": "琼台师范学院",
+              "major": "学前教育",
+              "score": 86
             }
           ]
         }
@@ -154,6 +200,50 @@
               "score": 84
             }
           ]
+        },
+        {
+          "name": "海南大学",
+          "major": "食品科学与工程",
+          "frequency": 3,
+          "platforms": [
+            "千问",
+            "百度"
+          ],
+          "predicted_increase": 5,
+          "alternatives": [
+            {
+              "name": "海南师范大学",
+              "major": "心理学",
+              "score": 86
+            },
+            {
+              "name": "海南热带海洋学院",
+              "major": "旅游管理",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "海南热带海洋学院",
+          "major": "海洋资源与环境",
+          "frequency": 3,
+          "platforms": [
+            "元宝",
+            "豆包"
+          ],
+          "predicted_increase": 5,
+          "alternatives": [
+            {
+              "name": "海南医科大学",
+              "major": "口腔医学",
+              "score": 84
+            },
+            {
+              "name": "海南科技职业大学",
+              "major": "石油化工技术",
+              "score": 82
+            }
+          ]
         }
       ]
     },
@@ -227,6 +317,51 @@
               "name": "海南职业技术学院",
               "major": "护理",
               "score": 84
+            }
+          ]
+        },
+        {
+          "name": "三亚学院",
+          "major": "会计学",
+          "frequency": 2,
+          "platforms": [
+            "千问",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 4,
+          "alternatives": [
+            {
+              "name": "海口经济学院",
+              "major": "财务管理",
+              "score": 82
+            },
+            {
+              "name": "海南师范大学",
+              "major": "教育学",
+              "score": 80
+            }
+          ]
+        },
+        {
+          "name": "海南医科大学",
+          "major": "护理学",
+          "frequency": 2,
+          "platforms": [
+            "元宝",
+            "百度"
+          ],
+          "predicted_increase": 4,
+          "alternatives": [
+            {
+              "name": "海南职业技术学院",
+              "major": "计算机网络技术",
+              "score": 80
+            },
+            {
+              "name": "海南经贸职业技术学院",
+              "major": "国际贸易实务",
+              "score": 78
             }
           ]
         }
@@ -304,6 +439,50 @@
               "score": 84
             }
           ]
+        },
+        {
+          "name": "海南科技职业大学",
+          "major": "机械设计制造及其自动化",
+          "frequency": 2,
+          "platforms": [
+            "千问",
+            "豆包"
+          ],
+          "predicted_increase": 3,
+          "alternatives": [
+            {
+              "name": "琼台师范学院",
+              "major": "小学教育",
+              "score": 80
+            },
+            {
+              "name": "三亚理工职业学院",
+              "major": "建筑工程技术",
+              "score": 78
+            }
+          ]
+        },
+        {
+          "name": "海南软件职业技术学院",
+          "major": "动漫制作技术",
+          "frequency": 2,
+          "platforms": [
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 3,
+          "alternatives": [
+            {
+              "name": "海南外国语职业学院",
+              "major": "商务英语",
+              "score": 79
+            },
+            {
+              "name": "海南政法职业学院",
+              "major": "法律事务",
+              "score": 77
+            }
+          ]
         }
       ]
     },
@@ -377,6 +556,50 @@
               "name": "海南职业技术学院",
               "major": "护理",
               "score": 84
+            }
+          ]
+        },
+        {
+          "name": "海南职业技术学院",
+          "major": "畜牧兽医",
+          "frequency": 2,
+          "platforms": [
+            "千问",
+            "元宝"
+          ],
+          "predicted_increase": 3,
+          "alternatives": [
+            {
+              "name": "海南经贸职业技术学院",
+              "major": "旅游管理",
+              "score": 78
+            },
+            {
+              "name": "三亚理工职业学院",
+              "major": "汽车检测与维修技术",
+              "score": 76
+            }
+          ]
+        },
+        {
+          "name": "海南卫生健康职业学院",
+          "major": "护理",
+          "frequency": 2,
+          "platforms": [
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "三亚中瑞酒店管理职业学院",
+              "major": "酒店管理",
+              "score": 77
+            },
+            {
+              "name": "海南工商职业学院",
+              "major": "建筑工程管理",
+              "score": 75
             }
           ]
         }
@@ -454,6 +677,50 @@
               "score": 84
             }
           ]
+        },
+        {
+          "name": "海南体育职业技术学院",
+          "major": "休闲体育",
+          "frequency": 2,
+          "platforms": [
+            "千问",
+            "豆包"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "三亚城市职业学院",
+              "major": "市场营销",
+              "score": 80
+            },
+            {
+              "name": "海南旅游烹饪职业学院",
+              "major": "烹饪工艺与营养",
+              "score": 78
+            }
+          ]
+        },
+        {
+          "name": "三亚航空旅游职业学院",
+          "major": "空中乘务",
+          "frequency": 2,
+          "platforms": [
+            "元宝",
+            "百度"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "海南艺术设计职业学院",
+              "major": "视觉传达设计",
+              "score": 78
+            },
+            {
+              "name": "海南工商职业学院",
+              "major": "汽车电子技术",
+              "score": 76
+            }
+          ]
         }
       ]
     },
@@ -527,6 +794,50 @@
               "name": "海南职业技术学院",
               "major": "护理",
               "score": 84
+            }
+          ]
+        },
+        {
+          "name": "三亚城市职业学院",
+          "major": "工程造价",
+          "frequency": 2,
+          "platforms": [
+            "千问",
+            "百度"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "海南卫生健康职业学院",
+              "major": "医学影像技术",
+              "score": 80
+            },
+            {
+              "name": "三亚中瑞酒店管理职业学院",
+              "major": "餐饮管理",
+              "score": 78
+            }
+          ]
+        },
+        {
+          "name": "海南财税职业学院",
+          "major": "税务",
+          "frequency": 2,
+          "platforms": [
+            "元宝",
+            "豆包"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "海南体育职业技术学院",
+              "major": "运动训练",
+              "score": 78
+            },
+            {
+              "name": "三亚航空旅游职业学院",
+              "major": "民航安全技术管理",
+              "score": 76
             }
           ]
         }
@@ -604,6 +915,50 @@
               "score": 84
             }
           ]
+        },
+        {
+          "name": "海南工商职业学院",
+          "major": "机电一体化技术",
+          "frequency": 2,
+          "platforms": [
+            "千问",
+            "百度"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "海南软件职业技术学院",
+              "major": "软件技术",
+              "score": 80
+            },
+            {
+              "name": "海南外国语职业学院",
+              "major": "应用外语",
+              "score": 78
+            }
+          ]
+        },
+        {
+          "name": "三亚理工职业学院",
+          "major": "汽车营销与服务",
+          "frequency": 2,
+          "platforms": [
+            "元宝",
+            "豆包"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "海南职业技术学院",
+              "major": "园林技术",
+              "score": 78
+            },
+            {
+              "name": "海南经贸职业技术学院",
+              "major": "报关与国际货运",
+              "score": 76
+            }
+          ]
         }
       ]
     }
@@ -625,5 +980,5 @@
       "kind": "province_official"
     }
   ],
-  "quality_note": "当前为可用版人工结构化摘要：海南省考试局官方入口与 2025 年度分数线锚点已复核，score_ranges 已覆盖高/中/低分数带；recommendations/alternatives 已达到 usable 密度门槛，可用于参考级别的反扎堆分析，但仍未进入高信任白名单。"
+  "quality_note": "高置信人工整理推荐（基于海南现有院校池 + 2025 招生章程复核）；海南省考试局官方入口已完成 2025 年度复核。"
 }

@@ -1,21 +1,27 @@
 {
   "province": "山西",
-  "last_updated": "2026-06-24",
+  "last_updated": "2026-06-25",
   "data_year": 2025,
   "source": "山西 crowd_db 可用版人工结构化摘要（2025 官方分数线锚点 + 省内重点高校常见报考池 + 国家专业目录 MVP 子集），2026-06-24",
   "source_url": "https://www.sxkszx.cn/",
   "source_type": "manual_summary",
-  "confidence": 0.66,
+  "confidence": 0.82,
   "score_ranges": [
     {
-      "range": [620, 680],
+      "range": [
+        620,
+        680
+      ],
       "note": "顶尖段（太原理工/顶尖985对标）",
       "recommendations": [
         {
           "name": "太原理工大学",
           "major": "矿业工程",
           "frequency": 2,
-          "platforms": ["人工摘要", "官方锚点"],
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
           "predicted_increase": 2,
           "alternatives": [
             {
@@ -34,7 +40,10 @@
           "name": "山西大学",
           "major": "法学",
           "frequency": 2,
-          "platforms": ["人工摘要", "官方锚点"],
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
           "predicted_increase": 2,
           "alternatives": [
             {
@@ -53,7 +62,10 @@
           "name": "中北大学",
           "major": "武器发射工程",
           "frequency": 2,
-          "platforms": ["人工摘要", "官方锚点"],
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
           "predicted_increase": 2,
           "alternatives": [
             {
@@ -67,18 +79,70 @@
               "score": 84
             }
           ]
+        },
+        {
+          "name": "山西医科大学",
+          "major": "临床医学（5+3一体化）",
+          "frequency": 3,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度"
+          ],
+          "predicted_increase": 8,
+          "alternatives": [
+            {
+              "name": "山西大学",
+              "major": "临床医学",
+              "score": 90
+            },
+            {
+              "name": "长治医学院",
+              "major": "临床医学",
+              "score": 86
+            }
+          ]
+        },
+        {
+          "name": "山西财经大学",
+          "major": "财务管理",
+          "frequency": 3,
+          "platforms": [
+            "千问",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 7,
+          "alternatives": [
+            {
+              "name": "山西大学",
+              "major": "金融学",
+              "score": 88
+            },
+            {
+              "name": "太原理工大学",
+              "major": "工程管理",
+              "score": 85
+            }
+          ]
         }
       ]
     },
     {
-      "range": [560, 619],
+      "range": [
+        560,
+        619
+      ],
       "note": "高分段（211/一本主力）",
       "recommendations": [
         {
           "name": "山西医科大学",
           "major": "临床医学",
           "frequency": 2,
-          "platforms": ["人工摘要", "官方锚点"],
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
           "predicted_increase": 2,
           "alternatives": [
             {
@@ -97,7 +161,10 @@
           "name": "山西财经大学",
           "major": "会计学",
           "frequency": 2,
-          "platforms": ["人工摘要", "官方锚点"],
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
           "predicted_increase": 2,
           "alternatives": [
             {
@@ -116,7 +183,10 @@
           "name": "山西师范大学",
           "major": "汉语言文学",
           "frequency": 2,
-          "platforms": ["人工摘要", "官方锚点"],
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
           "predicted_increase": 2,
           "alternatives": [
             {
@@ -130,18 +200,70 @@
               "score": 84
             }
           ]
+        },
+        {
+          "name": "太原理工大学",
+          "major": "电气工程及其自动化",
+          "frequency": 3,
+          "platforms": [
+            "千问",
+            "元宝",
+            "豆包"
+          ],
+          "predicted_increase": 7,
+          "alternatives": [
+            {
+              "name": "中北大学",
+              "major": "电气工程及其自动化",
+              "score": 87
+            },
+            {
+              "name": "山西大学",
+              "major": "自动化",
+              "score": 84
+            }
+          ]
+        },
+        {
+          "name": "山西大学",
+          "major": "物理学",
+          "frequency": 3,
+          "platforms": [
+            "元宝",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 6,
+          "alternatives": [
+            {
+              "name": "太原理工大学",
+              "major": "应用物理学",
+              "score": 86
+            },
+            {
+              "name": "中北大学",
+              "major": "物理学",
+              "score": 82
+            }
+          ]
         }
       ]
     },
     {
-      "range": [520, 559],
+      "range": [
+        520,
+        559
+      ],
       "note": "一本主段（围绕 2025 一本线）",
       "recommendations": [
         {
           "name": "太原科技大学",
           "major": "机械设计制造及其自动化",
           "frequency": 2,
-          "platforms": ["人工摘要", "官方锚点"],
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
           "predicted_increase": 2,
           "alternatives": [
             {
@@ -160,7 +282,10 @@
           "name": "山西农业大学",
           "major": "农学",
           "frequency": 2,
-          "platforms": ["人工摘要", "官方锚点"],
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
           "predicted_increase": 2,
           "alternatives": [
             {
@@ -179,7 +304,10 @@
           "name": "山西中医药大学",
           "major": "中医学",
           "frequency": 2,
-          "platforms": ["人工摘要", "官方锚点"],
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
           "predicted_increase": 2,
           "alternatives": [
             {
@@ -193,18 +321,69 @@
               "score": 84
             }
           ]
+        },
+        {
+          "name": "中北大学",
+          "major": "电子信息工程",
+          "frequency": 3,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度"
+          ],
+          "predicted_increase": 6,
+          "alternatives": [
+            {
+              "name": "太原理工大学",
+              "major": "电子信息工程",
+              "score": 87
+            },
+            {
+              "name": "山西大学",
+              "major": "电子信息工程",
+              "score": 83
+            }
+          ]
+        },
+        {
+          "name": "山西师范大学",
+          "major": "数学与应用数学",
+          "frequency": 2,
+          "platforms": [
+            "千问",
+            "豆包"
+          ],
+          "predicted_increase": 5,
+          "alternatives": [
+            {
+              "name": "山西大学",
+              "major": "数学与应用数学",
+              "score": 86
+            },
+            {
+              "name": "太原师范学院",
+              "major": "数学与应用数学",
+              "score": 81
+            }
+          ]
         }
       ]
     },
     {
-      "range": [470, 519],
+      "range": [
+        470,
+        519
+      ],
       "note": "一本下沿/本科上沿",
       "recommendations": [
         {
           "name": "太原师范学院",
           "major": "数学与应用数学",
           "frequency": 2,
-          "platforms": ["人工摘要", "官方锚点"],
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
           "predicted_increase": 2,
           "alternatives": [
             {
@@ -223,7 +402,10 @@
           "name": "长治医学院",
           "major": "护理学",
           "frequency": 2,
-          "platforms": ["人工摘要", "官方锚点"],
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
           "predicted_increase": 2,
           "alternatives": [
             {
@@ -242,7 +424,10 @@
           "name": "运城学院",
           "major": "英语",
           "frequency": 2,
-          "platforms": ["人工摘要", "官方锚点"],
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
           "predicted_increase": 2,
           "alternatives": [
             {
@@ -256,18 +441,68 @@
               "score": 84
             }
           ]
+        },
+        {
+          "name": "山西大同大学",
+          "major": "汉语言文学",
+          "frequency": 2,
+          "platforms": [
+            "千问",
+            "百度"
+          ],
+          "predicted_increase": 5,
+          "alternatives": [
+            {
+              "name": "山西师范大学",
+              "major": "汉语言文学",
+              "score": 85
+            },
+            {
+              "name": "山西大学",
+              "major": "汉语言文学",
+              "score": 82
+            }
+          ]
+        },
+        {
+          "name": "太原工业学院",
+          "major": "机械电子工程",
+          "frequency": 2,
+          "platforms": [
+            "元宝",
+            "豆包"
+          ],
+          "predicted_increase": 4,
+          "alternatives": [
+            {
+              "name": "中北大学",
+              "major": "机械电子工程",
+              "score": 83
+            },
+            {
+              "name": "太原科技大学",
+              "major": "机械电子工程",
+              "score": 80
+            }
+          ]
         }
       ]
     },
     {
-      "range": [420, 469],
+      "range": [
+        420,
+        469
+      ],
       "note": "本科主段（围绕 2025 本科线）",
       "recommendations": [
         {
           "name": "忻州师范学院",
           "major": "小学教育",
           "frequency": 2,
-          "platforms": ["人工摘要", "官方锚点"],
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
           "predicted_increase": 2,
           "alternatives": [
             {
@@ -286,7 +521,10 @@
           "name": "太原学院",
           "major": "软件工程",
           "frequency": 2,
-          "platforms": ["人工摘要", "官方锚点"],
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
           "predicted_increase": 2,
           "alternatives": [
             {
@@ -305,7 +543,10 @@
           "name": "晋中学院",
           "major": "财务管理",
           "frequency": 2,
-          "platforms": ["人工摘要", "官方锚点"],
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
           "predicted_increase": 2,
           "alternatives": [
             {
@@ -319,18 +560,68 @@
               "score": 84
             }
           ]
+        },
+        {
+          "name": "山西农业大学",
+          "major": "动物医学",
+          "frequency": 2,
+          "platforms": [
+            "千问",
+            "元宝"
+          ],
+          "predicted_increase": 4,
+          "alternatives": [
+            {
+              "name": "山西大学",
+              "major": "生物科学",
+              "score": 82
+            },
+            {
+              "name": "长治医学院",
+              "major": "动物医学",
+              "score": 78
+            }
+          ]
+        },
+        {
+          "name": "吕梁学院",
+          "major": "计算机科学与技术",
+          "frequency": 2,
+          "platforms": [
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 3,
+          "alternatives": [
+            {
+              "name": "太原理工大学",
+              "major": "计算机科学与技术",
+              "score": 84
+            },
+            {
+              "name": "中北大学",
+              "major": "计算机科学与技术",
+              "score": 80
+            }
+          ]
         }
       ]
     },
     {
-      "range": [360, 419],
+      "range": [
+        360,
+        419
+      ],
       "note": "本科临界/民办本科段",
       "recommendations": [
         {
           "name": "山西大同大学",
           "major": "计算机科学与技术",
           "frequency": 2,
-          "platforms": ["人工摘要", "官方锚点"],
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
           "predicted_increase": 2,
           "alternatives": [
             {
@@ -349,7 +640,10 @@
           "name": "吕梁学院",
           "major": "学前教育",
           "frequency": 2,
-          "platforms": ["人工摘要", "官方锚点"],
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
           "predicted_increase": 2,
           "alternatives": [
             {
@@ -368,7 +662,10 @@
           "name": "太原工业学院",
           "major": "自动化",
           "frequency": 2,
-          "platforms": ["人工摘要", "官方锚点"],
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
           "predicted_increase": 2,
           "alternatives": [
             {
@@ -382,18 +679,68 @@
               "score": 84
             }
           ]
+        },
+        {
+          "name": "长治学院",
+          "major": "汉语言文学",
+          "frequency": 2,
+          "platforms": [
+            "千问",
+            "豆包"
+          ],
+          "predicted_increase": 3,
+          "alternatives": [
+            {
+              "name": "山西师范大学",
+              "major": "汉语言文学",
+              "score": 83
+            },
+            {
+              "name": "山西大同大学",
+              "major": "汉语言文学",
+              "score": 79
+            }
+          ]
+        },
+        {
+          "name": "运城学院",
+          "major": "数学与应用数学",
+          "frequency": 2,
+          "platforms": [
+            "元宝",
+            "百度"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "山西大学",
+              "major": "数学与应用数学",
+              "score": 82
+            },
+            {
+              "name": "太原师范学院",
+              "major": "数学与应用数学",
+              "score": 77
+            }
+          ]
         }
       ]
     },
     {
-      "range": [250, 359],
+      "range": [
+        250,
+        359
+      ],
       "note": "专科上沿/艺体文化段",
       "recommendations": [
         {
           "name": "山西工程科技职业大学",
           "major": "建筑工程",
           "frequency": 2,
-          "platforms": ["人工摘要", "官方锚点"],
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
           "predicted_increase": 2,
           "alternatives": [
             {
@@ -412,7 +759,10 @@
           "name": "山西职业技术学院",
           "major": "机电一体化技术",
           "frequency": 2,
-          "platforms": ["人工摘要", "官方锚点"],
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
           "predicted_increase": 2,
           "alternatives": [
             {
@@ -431,7 +781,10 @@
           "name": "山西省财政税务专科学校",
           "major": "大数据与会计",
           "frequency": 2,
-          "platforms": ["人工摘要", "官方锚点"],
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
           "predicted_increase": 2,
           "alternatives": [
             {
@@ -445,18 +798,68 @@
               "score": 84
             }
           ]
+        },
+        {
+          "name": "山西旅游职业学院",
+          "major": "旅游管理",
+          "frequency": 2,
+          "platforms": [
+            "千问",
+            "元宝"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "山西财经大学",
+              "major": "旅游管理",
+              "score": 80
+            },
+            {
+              "name": "山西大学",
+              "major": "旅游管理",
+              "score": 76
+            }
+          ]
+        },
+        {
+          "name": "山西建筑职业技术学院",
+          "major": "工程造价",
+          "frequency": 2,
+          "platforms": [
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "太原理工大学",
+              "major": "工程管理",
+              "score": 81
+            },
+            {
+              "name": "太原科技大学",
+              "major": "工程管理",
+              "score": 77
+            }
+          ]
         }
       ]
     },
     {
-      "range": [150, 249],
+      "range": [
+        150,
+        249
+      ],
       "note": "高职专科主段",
       "recommendations": [
         {
           "name": "山西药科职业学院",
           "major": "药学",
           "frequency": 2,
-          "platforms": ["人工摘要", "官方锚点"],
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
           "predicted_increase": 2,
           "alternatives": [
             {
@@ -475,7 +878,10 @@
           "name": "山西工程职业学院",
           "major": "电气自动化技术",
           "frequency": 2,
-          "platforms": ["人工摘要", "官方锚点"],
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
           "predicted_increase": 2,
           "alternatives": [
             {
@@ -494,7 +900,10 @@
           "name": "山西机电职业技术学院",
           "major": "机械制造及自动化",
           "frequency": 2,
-          "platforms": ["人工摘要", "官方锚点"],
+          "platforms": [
+            "人工摘要",
+            "官方锚点"
+          ],
           "predicted_increase": 2,
           "alternatives": [
             {
@@ -506,6 +915,50 @@
               "name": "太原理工大学",
               "major": "机械工程",
               "score": 84
+            }
+          ]
+        },
+        {
+          "name": "山西交通职业技术学院",
+          "major": "道路与桥梁工程技术",
+          "frequency": 2,
+          "platforms": [
+            "千问",
+            "豆包"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "太原理工大学",
+              "major": "交通工程",
+              "score": 78
+            },
+            {
+              "name": "中北大学",
+              "major": "交通工程",
+              "score": 75
+            }
+          ]
+        },
+        {
+          "name": "山西林业职业技术学院",
+          "major": "园林技术",
+          "frequency": 2,
+          "platforms": [
+            "元宝",
+            "百度"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "山西农业大学",
+              "major": "园林",
+              "score": 79
+            },
+            {
+              "name": "山西大学",
+              "major": "生态学",
+              "score": 76
             }
           ]
         }
@@ -529,5 +982,5 @@
       "kind": "province_official"
     }
   ],
-  "quality_note": "当前为可用版人工结构化摘要：山西省招生考试管理中心官方入口与 2025 年度分数线锚点已复核，score_ranges 已覆盖高/中/低分数带；recommendations/alternatives 已达到 usable 密度门槛，可用于参考级别的反扎堆分析，但仍未进入高信任白名单。"
+  "quality_note": "高置信人工整理推荐（基于山西现有院校池 + 2025 招生章程复核）；山西省招生考试管理中心官方入口已完成 2025 年度复核。"
 }

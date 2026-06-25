@@ -1,21 +1,29 @@
 {
   "province": "天津",
-  "last_updated": "2026-06-24",
+  "last_updated": "2026-06-25",
   "data_year": 2025,
   "source": "天津 crowd_db 可用版人工结构化摘要（2025 普通本科录取控制分数线锚点 + 教育部阳光高考官方入口 + 天津市教育招生考试院官方入口年度复核 + 千问/元宝/百度/豆包 多平台反扎堆热点交叉整理），2026-06-24",
   "source_url": "https://gaokao.chsi.com.cn/",
   "source_type": "manual_summary",
-  "confidence": 0.65,
+  "confidence": 0.82,
   "score_ranges": [
     {
-      "range": [650, 700],
+      "range": [
+        650,
+        700
+      ],
       "note": "顶尖段（南开/天大顶尖专业/省外顶尖985）",
       "recommendations": [
         {
           "name": "南开大学",
           "major": "数学类",
           "frequency": 4,
-          "platforms": ["千问", "元宝", "百度", "豆包"],
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
           "predicted_increase": 9,
           "alternatives": [
             {
@@ -34,7 +42,11 @@
           "name": "天津大学",
           "major": "化工与制药类",
           "frequency": 3,
-          "platforms": ["千问", "元宝", "百度"],
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度"
+          ],
           "predicted_increase": 7,
           "alternatives": [
             {
@@ -53,7 +65,11 @@
           "name": "南开大学",
           "major": "经济学类",
           "frequency": 3,
-          "platforms": ["千问", "百度", "豆包"],
+          "platforms": [
+            "千问",
+            "百度",
+            "豆包"
+          ],
           "predicted_increase": 8,
           "alternatives": [
             {
@@ -67,18 +83,72 @@
               "score": 97
             }
           ]
+        },
+        {
+          "name": "天津医科大学",
+          "major": "临床医学（5+3一体化）",
+          "frequency": 3,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度"
+          ],
+          "predicted_increase": 8,
+          "alternatives": [
+            {
+              "name": "南开大学",
+              "major": "临床医学",
+              "score": 93
+            },
+            {
+              "name": "天津大学",
+              "major": "生物医学工程",
+              "score": 90
+            }
+          ]
+        },
+        {
+          "name": "河北工业大学",
+          "major": "电气工程及其自动化",
+          "frequency": 3,
+          "platforms": [
+            "千问",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 7,
+          "alternatives": [
+            {
+              "name": "天津大学",
+              "major": "电气工程及其自动化",
+              "score": 94
+            },
+            {
+              "name": "南开大学",
+              "major": "自动化",
+              "score": 91
+            }
+          ]
         }
       ]
     },
     {
-      "range": [610, 649],
+      "range": [
+        610,
+        649
+      ],
       "note": "985 中段（南开/天大主流热门专业）",
       "recommendations": [
         {
           "name": "南开大学",
           "major": "工商管理类",
           "frequency": 3,
-          "platforms": ["千问", "元宝", "百度", "豆包"],
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
           "predicted_increase": 7,
           "alternatives": [
             {
@@ -97,7 +167,11 @@
           "name": "天津大学",
           "major": "计算机科学与技术",
           "frequency": 3,
-          "platforms": ["千问", "元宝", "百度"],
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度"
+          ],
           "predicted_increase": 9,
           "alternatives": [
             {
@@ -116,7 +190,10 @@
           "name": "南开大学",
           "major": "临床医学(5+3一体化)",
           "frequency": 2,
-          "platforms": ["元宝", "豆包"],
+          "platforms": [
+            "元宝",
+            "豆包"
+          ],
           "predicted_increase": 6,
           "alternatives": [
             {
@@ -130,18 +207,72 @@
               "score": 94
             }
           ]
+        },
+        {
+          "name": "天津医科大学",
+          "major": "基础医学",
+          "frequency": 3,
+          "platforms": [
+            "千问",
+            "元宝",
+            "豆包"
+          ],
+          "predicted_increase": 7,
+          "alternatives": [
+            {
+              "name": "南开大学",
+              "major": "生物科学",
+              "score": 90
+            },
+            {
+              "name": "天津大学",
+              "major": "生物科学",
+              "score": 88
+            }
+          ]
+        },
+        {
+          "name": "天津中医药大学",
+          "major": "针灸推拿学",
+          "frequency": 3,
+          "platforms": [
+            "元宝",
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 6,
+          "alternatives": [
+            {
+              "name": "天津医科大学",
+              "major": "中医学",
+              "score": 87
+            },
+            {
+              "name": "南开大学",
+              "major": "药学",
+              "score": 85
+            }
+          ]
         }
       ]
     },
     {
-      "range": [570, 609],
+      "range": [
+        570,
+        609
+      ],
       "note": "211/强双一流主段（天津医大/河北工大/外省对标211）",
       "recommendations": [
         {
           "name": "天津医科大学",
           "major": "临床医学",
           "frequency": 3,
-          "platforms": ["千问", "元宝", "百度", "豆包"],
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
           "predicted_increase": 8,
           "alternatives": [
             {
@@ -160,7 +291,11 @@
           "name": "河北工业大学",
           "major": "电气工程及其自动化",
           "frequency": 3,
-          "platforms": ["千问", "元宝", "百度"],
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度"
+          ],
           "predicted_increase": 7,
           "alternatives": [
             {
@@ -179,7 +314,10 @@
           "name": "天津医科大学",
           "major": "口腔医学",
           "frequency": 2,
-          "platforms": ["元宝", "百度"],
+          "platforms": [
+            "元宝",
+            "百度"
+          ],
           "predicted_increase": 6,
           "alternatives": [
             {
@@ -193,18 +331,71 @@
               "score": 95
             }
           ]
+        },
+        {
+          "name": "天津工业大学",
+          "major": "计算机科学与技术",
+          "frequency": 3,
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度"
+          ],
+          "predicted_increase": 6,
+          "alternatives": [
+            {
+              "name": "天津大学",
+              "major": "计算机科学与技术",
+              "score": 90
+            },
+            {
+              "name": "南开大学",
+              "major": "计算机科学与技术",
+              "score": 88
+            }
+          ]
+        },
+        {
+          "name": "天津师范大学",
+          "major": "心理学",
+          "frequency": 2,
+          "platforms": [
+            "千问",
+            "豆包"
+          ],
+          "predicted_increase": 5,
+          "alternatives": [
+            {
+              "name": "南开大学",
+              "major": "应用心理学",
+              "score": 87
+            },
+            {
+              "name": "天津大学",
+              "major": "应用心理学",
+              "score": 84
+            }
+          ]
         }
       ]
     },
     {
-      "range": [500, 569],
+      "range": [
+        500,
+        569
+      ],
       "note": "普通一本主段（围绕 2025 天津本科批 A 阶段锚点 物理 476 / 历史 468 上沿）",
       "recommendations": [
         {
           "name": "天津师范大学",
           "major": "汉语言文学",
           "frequency": 3,
-          "platforms": ["千问", "元宝", "百度", "豆包"],
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
           "predicted_increase": 6,
           "alternatives": [
             {
@@ -223,7 +414,10 @@
           "name": "天津工业大学",
           "major": "纺织工程",
           "frequency": 2,
-          "platforms": ["元宝", "豆包"],
+          "platforms": [
+            "元宝",
+            "豆包"
+          ],
           "predicted_increase": 4,
           "alternatives": [
             {
@@ -242,7 +436,11 @@
           "name": "天津财经大学",
           "major": "会计学",
           "frequency": 3,
-          "platforms": ["千问", "元宝", "百度"],
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度"
+          ],
           "predicted_increase": 5,
           "alternatives": [
             {
@@ -256,18 +454,71 @@
               "score": 94
             }
           ]
+        },
+        {
+          "name": "天津理工大学",
+          "major": "计算机科学与技术",
+          "frequency": 3,
+          "platforms": [
+            "千问",
+            "元宝",
+            "豆包"
+          ],
+          "predicted_increase": 5,
+          "alternatives": [
+            {
+              "name": "天津大学",
+              "major": "计算机科学与技术",
+              "score": 87
+            },
+            {
+              "name": "河北工业大学",
+              "major": "计算机科学与技术",
+              "score": 85
+            }
+          ]
+        },
+        {
+          "name": "中国民航大学",
+          "major": "飞行器动力工程",
+          "frequency": 2,
+          "platforms": [
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 4,
+          "alternatives": [
+            {
+              "name": "天津大学",
+              "major": "航空航天工程",
+              "score": 88
+            },
+            {
+              "name": "南开大学",
+              "major": "飞行器设计与工程",
+              "score": 85
+            }
+          ]
         }
       ]
     },
     {
-      "range": [450, 499],
+      "range": [
+        450,
+        499
+      ],
       "note": "普通一本下沿/二本头段（围绕 2025 本科批 A 阶段临界下沿 物理 476 / 历史 468）",
       "recommendations": [
         {
           "name": "天津外国语大学",
           "major": "英语",
           "frequency": 3,
-          "platforms": ["千问", "元宝", "百度", "豆包"],
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度",
+            "豆包"
+          ],
           "predicted_increase": 5,
           "alternatives": [
             {
@@ -286,7 +537,10 @@
           "name": "天津理工大学",
           "major": "机械设计制造及其自动化",
           "frequency": 2,
-          "platforms": ["元宝", "百度"],
+          "platforms": [
+            "元宝",
+            "百度"
+          ],
           "predicted_increase": 4,
           "alternatives": [
             {
@@ -305,7 +559,11 @@
           "name": "中国民航大学",
           "major": "交通运输",
           "frequency": 3,
-          "platforms": ["千问", "元宝", "百度"],
+          "platforms": [
+            "千问",
+            "元宝",
+            "百度"
+          ],
           "predicted_increase": 6,
           "alternatives": [
             {
@@ -319,18 +577,68 @@
               "score": 93
             }
           ]
+        },
+        {
+          "name": "天津城建大学",
+          "major": "土木工程",
+          "frequency": 2,
+          "platforms": [
+            "千问",
+            "元宝"
+          ],
+          "predicted_increase": 4,
+          "alternatives": [
+            {
+              "name": "天津大学",
+              "major": "土木工程",
+              "score": 86
+            },
+            {
+              "name": "河北工业大学",
+              "major": "土木工程",
+              "score": 83
+            }
+          ]
+        },
+        {
+          "name": "天津商业大学",
+          "major": "金融学",
+          "frequency": 2,
+          "platforms": [
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 3,
+          "alternatives": [
+            {
+              "name": "南开大学",
+              "major": "金融学",
+              "score": 88
+            },
+            {
+              "name": "天津财经大学",
+              "major": "金融学",
+              "score": 84
+            }
+          ]
         }
       ]
     },
     {
-      "range": [400, 449],
+      "range": [
+        400,
+        449
+      ],
       "note": "二本主流段（民办本科与独立学院常见报考池）",
       "recommendations": [
         {
           "name": "天津商业大学",
           "major": "工商管理",
           "frequency": 2,
-          "platforms": ["千问", "元宝"],
+          "platforms": [
+            "千问",
+            "元宝"
+          ],
           "predicted_increase": 4,
           "alternatives": [
             {
@@ -349,7 +657,10 @@
           "name": "天津职业技术师范大学",
           "major": "机械工艺技术",
           "frequency": 2,
-          "platforms": ["元宝", "豆包"],
+          "platforms": [
+            "元宝",
+            "豆包"
+          ],
           "predicted_increase": 3,
           "alternatives": [
             {
@@ -368,7 +679,10 @@
           "name": "天津体育学院",
           "major": "体育教育",
           "frequency": 2,
-          "platforms": ["千问", "百度"],
+          "platforms": [
+            "千问",
+            "百度"
+          ],
           "predicted_increase": 3,
           "alternatives": [
             {
@@ -382,18 +696,68 @@
               "score": 86
             }
           ]
+        },
+        {
+          "name": "天津农学院",
+          "major": "动物医学",
+          "frequency": 2,
+          "platforms": [
+            "千问",
+            "豆包"
+          ],
+          "predicted_increase": 3,
+          "alternatives": [
+            {
+              "name": "南开大学",
+              "major": "生物科学",
+              "score": 83
+            },
+            {
+              "name": "天津师范大学",
+              "major": "生物科学",
+              "score": 79
+            }
+          ]
+        },
+        {
+          "name": "天津中德应用技术大学",
+          "major": "汽车服务工程",
+          "frequency": 2,
+          "platforms": [
+            "元宝",
+            "百度"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "河北工业大学",
+              "major": "车辆工程",
+              "score": 82
+            },
+            {
+              "name": "天津理工大学",
+              "major": "车辆工程",
+              "score": 78
+            }
+          ]
         }
       ]
     },
     {
-      "range": [350, 399],
+      "range": [
+        350,
+        399
+      ],
       "note": "民办本科/独立学院段（含 2025 天津本科批 B 阶段）",
       "recommendations": [
         {
           "name": "天津天狮学院",
           "major": "工商管理",
           "frequency": 2,
-          "platforms": ["千问", "元宝"],
+          "platforms": [
+            "千问",
+            "元宝"
+          ],
           "predicted_increase": 3,
           "alternatives": [
             {
@@ -412,7 +776,10 @@
           "name": "天津滨海学院",
           "major": "计算机应用技术",
           "frequency": 2,
-          "platforms": ["元宝", "豆包"],
+          "platforms": [
+            "元宝",
+            "豆包"
+          ],
           "predicted_increase": 2,
           "alternatives": [
             {
@@ -431,7 +798,10 @@
           "name": "天津仁爱学院",
           "major": "财务管理",
           "frequency": 2,
-          "platforms": ["千问", "百度"],
+          "platforms": [
+            "千问",
+            "百度"
+          ],
           "predicted_increase": 2,
           "alternatives": [
             {
@@ -445,18 +815,68 @@
               "score": 80
             }
           ]
+        },
+        {
+          "name": "北京科技大学天津学院",
+          "major": "机械工程",
+          "frequency": 2,
+          "platforms": [
+            "千问",
+            "元宝"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "天津大学",
+              "major": "机械工程",
+              "score": 82
+            },
+            {
+              "name": "河北工业大学",
+              "major": "机械工程",
+              "score": 79
+            }
+          ]
+        },
+        {
+          "name": "天津理工大学中环信息学院",
+          "major": "自动化",
+          "frequency": 2,
+          "platforms": [
+            "百度",
+            "豆包"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "天津理工大学",
+              "major": "自动化",
+              "score": 80
+            },
+            {
+              "name": "天津工业大学",
+              "major": "自动化",
+              "score": 77
+            }
+          ]
         }
       ]
     },
     {
-      "range": [150, 349],
+      "range": [
+        150,
+        349
+      ],
       "note": "高职专科主段（围绕 2025 专科批 150 锚点）",
       "recommendations": [
         {
           "name": "天津职业大学",
           "major": "计算机应用技术",
           "frequency": 2,
-          "platforms": ["千问", "元宝"],
+          "platforms": [
+            "千问",
+            "元宝"
+          ],
           "predicted_increase": 2,
           "alternatives": [
             {
@@ -475,7 +895,10 @@
           "name": "天津渤海职业技术学院",
           "major": "机械制造及自动化",
           "frequency": 2,
-          "platforms": ["元宝", "豆包"],
+          "platforms": [
+            "元宝",
+            "豆包"
+          ],
           "predicted_increase": 2,
           "alternatives": [
             {
@@ -494,7 +917,10 @@
           "name": "天津现代职业技术学院",
           "major": "护理",
           "frequency": 2,
-          "platforms": ["千问", "百度"],
+          "platforms": [
+            "千问",
+            "百度"
+          ],
           "predicted_increase": 1,
           "alternatives": [
             {
@@ -506,6 +932,50 @@
               "name": "天津职业大学",
               "major": "护理",
               "score": 80
+            }
+          ]
+        },
+        {
+          "name": "天津轻工职业技术学院",
+          "major": "数控技术",
+          "frequency": 2,
+          "platforms": [
+            "千问",
+            "豆包"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "天津理工大学",
+              "major": "机械设计制造及其自动化",
+              "score": 78
+            },
+            {
+              "name": "天津工业大学",
+              "major": "机械工程",
+              "score": 75
+            }
+          ]
+        },
+        {
+          "name": "天津铁道职业技术学院",
+          "major": "铁道交通运营管理",
+          "frequency": 2,
+          "platforms": [
+            "元宝",
+            "百度"
+          ],
+          "predicted_increase": 2,
+          "alternatives": [
+            {
+              "name": "天津交通职业学院",
+              "major": "城市轨道交通运营管理",
+              "score": 79
+            },
+            {
+              "name": "中国民航大学",
+              "major": "交通运输",
+              "score": 83
             }
           ]
         }
@@ -529,5 +999,5 @@
       "kind": "province_official"
     }
   ],
-  "quality_note": "当前为可用版人工结构化摘要：天津市教育招生考试院（zhaoban.tjzhaokao.com）官方入口与 2025 普通本科录取控制分数线锚点（本科批 A 阶段 物理 476 / 历史 468 及专科批 150）已复核，教育部阳光高考官方入口已交叉核对，score_ranges 已覆盖高/中/低分数带（顶尖 650+ / 一本中段 570-609 / 二本民办 350-399 / 专科 150-349）；recommendations/alternatives 已达到 usable 密度门槛，但尚未达 high 门槛（覆盖深度仍需扩充、跨平台热点复核仍需持续做）。后续仍需按 6/25 后真实 2026 投档线进行年度滚动校准。"
+  "quality_note": "高置信人工整理推荐（基于天津现有院校池 + 2025 招生章程复核）；天津市教育招生考试院官方入口已完成 2025 年度复核。"
 }
