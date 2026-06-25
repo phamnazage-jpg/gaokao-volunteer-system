@@ -1514,5 +1514,42 @@
       "kind": "province_official"
     }
   ],
-  "quality_note": "高置信人工整理推荐（基于重庆现有院校池 + 2025 招生章程复核）；重庆市教育考试院官方入口已完成 2025 年度复核。"
+  "quality_note": "高置信人工整理推荐（基于重庆现有院校池 + 2025 招生章程复核）；重庆市教育考试院官方入口已完成 2025 年度复核。",
+  "score_distribution": {
+    "data_year": 2026,
+    "source_url": "https://www.gk100.com/read_35916764.htm",
+    "source_type": "official_release",
+    "last_updated": "2026-06-25",
+    "subjects": {
+      "物理": {
+        "benchmarks": [
+          {
+            "score": 684,
+            "cumulative_count": 157
+          },
+          {
+            "score": 600,
+            "cumulative_count": 12895
+          },
+          {
+            "score": 500,
+            "cumulative_count": 63249
+          },
+          {
+            "score": 450,
+            "cumulative_count": 88930
+          }
+        ],
+        "score_line_at_600": 12895,
+        "total_above_bachelor_line": 0,
+        "bachelor_score_line": 406
+      },
+      "历史": {
+        "benchmarks": [],
+        "score_line_at_600": 0,
+        "total_above_bachelor_line": 0,
+        "bachelor_score_line": 415
+      }
+    }
+  }
 }

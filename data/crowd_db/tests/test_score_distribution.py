@@ -29,6 +29,8 @@ PROVINCES_WITH_DISTRIBUTION = frozenset({
     "山东",
     "江苏",
     "河北",
+    "上海",
+    "重庆",
 })
 
 REQUIRED_SUBJECTS = {"物理", "历史"}
