@@ -87,7 +87,9 @@ def _prepare_backup_sources(settings, tmp_path: Path) -> dict[str, str]:
 
     secrets_dir = tmp_path / "secrets"
     secrets_dir.mkdir(parents=True, exist_ok=True)
-    (secrets_dir / "jwt.secret").write_text("secret", encoding="utf-8")
+    (secrets_dir / "jwt_secret").write_text("secret", encoding="utf-8")
+    (secrets_dir / "orders_fernet_key").write_text("secret-fernet", encoding="utf-8")
+    (secrets_dir / "admin_pass").write_text("secret-admin-pass", encoding="utf-8")
 
     return {
         "GAOKAO_DB_PATH": settings.db_path,
@@ -136,7 +138,11 @@ def test_backup_snapshot_creates_manifest_and_prunes_old_backups(settings, tmp_p
     assert "db/short_links.db" in manifest_paths
     assert "config/.env" in manifest_paths
     assert "config/deploy/docker-compose.yml" in manifest_paths
-    assert "secrets/jwt.secret" in manifest_paths
+    assert "secrets/jwt_secret" in manifest_paths
+
+    assert "secrets/orders_fernet_key" in manifest_paths
+    assert "secrets/admin_pass" in manifest_paths
+
     assert "files/portal_uploads/ORDER-1/score.pdf" in manifest_paths
     assert any(
         path.startswith("files/order_artifacts/ORDER-1/audit_report/") for path in manifest_paths

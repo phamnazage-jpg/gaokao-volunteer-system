@@ -27,8 +27,12 @@ def _prepare_backup_dir(staging: Path) -> None:
     staging.mkdir(parents=True, exist_ok=True)
     db_dir = staging / "db"
     files_dir = staging / "files"
+    config_dir = staging / "config"
+    secrets_dir = staging / "secrets"
     db_dir.mkdir(parents=True, exist_ok=True)
     files_dir.mkdir(parents=True, exist_ok=True)
+    config_dir.mkdir(parents=True, exist_ok=True)
+    secrets_dir.mkdir(parents=True, exist_ok=True)
 
     src_orders = REPO_ROOT / "data" / "orders.db"
     src_share = REPO_ROOT / "data" / "share" / "short_links.db"
@@ -39,6 +43,28 @@ def _prepare_backup_dir(staging: Path) -> None:
         shutil.copy(src_share, db_dir / "short_links.db")
     if src_admin.exists():
         shutil.copy(src_admin, db_dir / "admin.db")
+
+    (config_dir / ".env").write_text(
+        "\n".join(
+            [
+                "GAOKAO_ENV=dev",
+                "GAOKAO_PAYMENT_PROVIDER=mock",
+                "GAOKAO_PAYMENT_BASE_URL=http://testserver",
+                "GAOKAO_ADMIN_USER=admin",
+            ]
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+    (secrets_dir / "jwt_secret").write_text(
+        "backup-restore-jwt-secret-0123456789abcdef", encoding="utf-8"
+    )
+    (secrets_dir / "orders_fernet_key").write_text(
+        "backup-restore-fernet-secret", encoding="utf-8"
+    )
+    (secrets_dir / "admin_pass").write_text(
+        "backup-restore-pass-123", encoding="utf-8"
+    )
 
     src_reports = REPO_ROOT / "data" / "share" / "reports"
     if src_reports.exists():
@@ -60,10 +86,7 @@ def test_backup_verify_uses_venv_python_for_service_level_restore(tmp_path):
 
     env = os.environ.copy()
     env.pop("GAOKAO_PYTHON_BIN", None)
-    # Force the shell script to fall back to its own venv detection
-    # logic by hiding any caller-provided PYTHON_BIN.
     env.pop("PYTHON_BIN", None)
-    # Ensure no GAOKAO_DB_PATH override leaks in from the test env.
 
     proc = subprocess.run(
         ["bash", str(SCRIPTS_DIR / "backup_verify.sh"), "--from-backup", str(staging)],
@@ -77,15 +100,9 @@ def test_backup_verify_uses_venv_python_for_service_level_restore(tmp_path):
     assert proc.returncode == 0, (
         f"backup_verify.sh failed\nstdout:\n{proc.stdout}\nstderr:\n{proc.stderr}"
     )
-    # The smoke output should be a JSON block with a 200 health_status.
-    # That is the contract that distinguishes service-level from
-    # file-level recovery.
     assert '"health_status": 200' in proc.stdout
+    assert '"public_order_create": 201' in proc.stdout
     assert '"smoke_order_id"' in proc.stdout
-    # Venv python must be used; if the script ever silently falls
-    # back to ``python3``, a developer without the admin dependencies
-    # installed globally will see the same ModuleNotFoundError that
-    # motivated this regression lock.
     assert "ModuleNotFoundError" not in proc.stderr
     assert "ModuleNotFoundError" not in proc.stdout
 
@@ -162,3 +179,34 @@ def test_backup_restore_smoke_fails_fast_when_admin_db_missing(tmp_path):
     assert proc.returncode != 0
     assert "restore precondition failed" in proc.stderr
     assert "db/admin.db" in proc.stderr
+
+
+def test_backup_restore_smoke_fails_fast_when_config_env_missing(tmp_path):
+    staging = tmp_path / "backup"
+    _prepare_backup_dir(staging)
+    shutil.rmtree(staging / "config")
+
+    proc = subprocess.run(
+        [
+            str(REPO_ROOT / ".venv" / "bin" / "python"),
+            str(SCRIPTS_DIR / "backup_restore_smoke.py"),
+            "--backup-dir",
+            str(staging),
+        ],
+        cwd=REPO_ROOT,
+        text=True,
+        capture_output=True,
+        check=False,
+        timeout=10,
+    )
+
+    assert proc.returncode != 0
+    assert "restore precondition failed" in proc.stderr
+    assert "config/" in proc.stderr
+
+
+def test_backup_restore_smoke_uses_real_testclient_contract_marker():
+    script = (SCRIPTS_DIR / "backup_restore_smoke.py").read_text(encoding="utf-8")
+    assert "TestClient" in script
+    assert "create_app" in script
+    assert "/api/public/orders" in script
