@@ -145,12 +145,14 @@ def test_audit_to_report_flow(
     output_path = tmp_path / "audit-report.pdf"
     monkeypatch.setattr(_AUDIT_CLI, "ReportGenerator", _CaptureReportGenerator)
 
-    exit_code = _AUDIT_CLI.main([
-        str(SAMPLE_PLAN),
-        "--output",
-        str(output_path),
-        "--json",
-    ])
+    exit_code = _AUDIT_CLI.main(
+        [
+            str(SAMPLE_PLAN),
+            "--output",
+            str(output_path),
+            "--json",
+        ]
+    )
     captured = capsys.readouterr()
     payload = _extract_json(captured.out)
 
@@ -312,7 +314,7 @@ def test_traceability_display_flow(capsys: pytest.CaptureFixture[str]) -> None:
 
     assert exit_code == 0
     assert "query: 长沙理工大学" in captured.out
-    assert "湖南 / 2025年数据 / 长沙理工大学 / 会计学" in captured.out
+    assert "湖南 / 2026年数据 / 长沙理工大学 / 会计学" in captured.out
     assert "source_type: report (⚠️报告)" in captured.out
     assert "source_url: https://" in captured.out
     assert "confidence: 0.85" in captured.out

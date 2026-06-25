@@ -173,3 +173,61 @@ def test_same_score_reference_page_marks_unsupported_province_explicitly(client)
     assert resp.status_code == 200, resp.text
     assert "当前省份暂不支持" in resp.text
     assert "适用省份：内蒙古" in resp.text
+
+
+def test_privacy_page_renders_full_legal_doc_when_available(client):
+    """当 docs/PRIVACY_POLICY_DRAFT.md 存在时，/privacy 渲染完整法务送审版。
+
+    锁定：
+    - 含 legal-doc 渲染容器
+    - 含表格化披露（收集信息表）
+    - 含关键章节标题
+    - 不只是简版概要页
+    """
+    privacy = client.get("/privacy")
+    assert privacy.status_code == 200, privacy.text
+    assert "legal-doc" in privacy.text, "应渲染为完整法务文档页面"
+    assert "<table>" in privacy.text, "应包含表格化披露"
+    assert "我们收集哪些信息" in privacy.text, "应包含收集信息章节"
+    assert "未成年人" in privacy.text or "监护人" in privacy.text, (
+        "应包含未成年人/监护人章节"
+    )
+    assert "保存期限" in privacy.text or "保存" in privacy.text, "应包含保存期限说明"
+
+
+def test_service_terms_page_renders_full_legal_doc_when_available(client):
+    """当 docs/SERVICE_TERMS.md 存在时，/service-terms 渲染完整法务送审版。
+
+    锁定：
+    - 含 legal-doc 渲染容器
+    - 含表格化披露（订单/退款规则、能力边界）
+    - 含关键章节标题
+    - 不只是简版概要页
+    """
+    terms = client.get("/service-terms")
+    assert terms.status_code == 200, terms.text
+    assert "legal-doc" in terms.text, "应渲染为完整法务文档页面"
+    assert "<table>" in terms.text, "应包含表格化披露"
+    assert "用户责任" in terms.text or "禁止行为" in terms.text, "应包含用户责任章节"
+    assert "退款" in terms.text, "应包含退款规则"
+    assert "免责" in terms.text, "应包含免责声明"
+
+
+def test_legal_doc_pages_fallback_when_doc_missing(client, monkeypatch):
+    """当 docs/*.md 不存在时，路由 fallback 到简版概要页，不抛 500。"""
+    from admin.routes import web_public
+
+    def fake_find(doc_filename: str):
+        return None
+
+    monkeypatch.setattr(web_public, "_find_legal_doc_path", fake_find)
+
+    privacy = client.get("/privacy")
+    assert privacy.status_code == 200, privacy.text
+    assert "隐私政策" in privacy.text
+    # 简版不应有 legal-doc class
+    assert "legal-doc" not in privacy.text
+
+    terms = client.get("/service-terms")
+    assert terms.status_code == 200, terms.text
+    assert "legal-doc" not in terms.text

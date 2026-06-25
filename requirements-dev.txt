@@ -17,3 +17,7 @@ locust>=2.42,<3.0
 ruff>=0.8
 mypy>=1.11
 types-PyYAML>=6.0.12
+types-Markdown
+
+# Markdown 渲染（隐私政策/服务条款页面）
+markdown

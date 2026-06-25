@@ -11,6 +11,7 @@ from datetime import datetime, timedelta, timezone
 from typing import Any, Literal
 from urllib.parse import parse_qsl
 
+import markdown
 from fastapi import APIRouter, Depends, File, Form, HTTPException, Request, UploadFile
 from fastapi.responses import (
     FileResponse,
@@ -909,8 +910,85 @@ def _render_placeholder_shell(
     return f"""<!doctype html><html lang=\"zh-CN\"><head><meta charset=\"utf-8\" /><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" /><title>{escape(title)}</title><link rel=\"stylesheet\" href=\"/static/portal-ui.css\" /><style>body{{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f3f7fb;margin:0;padding:32px 20px;color:#142235}}.wrap{{max-width:{max_width}px;margin:0 auto;display:grid;gap:16px}}.panel{{background:#fff;border:1px solid #d7e3f1;border-radius:20px;padding:24px;box-shadow:0 18px 42px rgba(20,34,53,.08)}}.meta{{color:#5b6b88;line-height:1.8}}.actions{{display:flex;gap:12px;flex-wrap:wrap;margin-top:12px}}.btn{{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border-radius:12px;text-decoration:none;font-weight:700}}.btn-primary{{background:#1f6feb;color:#fff}}.btn-secondary{{background:#edf3ff;color:#194fb6}}</style></head><body><main class=\"wrap\">{body_html}</main></body></html>"""
 
 
+def _find_legal_doc_path(doc_filename: str) -> Path | None:
+    """定位 docs/<doc_filename> 法务文档；找不到返回 None。
+
+    搜索顺序：项目根 docs/（开发态）→ 包内 admin/legal/（部署态）。
+    """
+    candidates = [
+        Path(__file__).resolve().parents[2] / "docs" / doc_filename,
+        Path(__file__).resolve().parent / "legal" / doc_filename,
+    ]
+    for path in candidates:
+        if path.is_file():
+            return path
+    return None
+
+
+def _render_legal_doc_page(
+    *,
+    doc_filename: str,
+    title: str,
+    eyebrow: str,
+    lead: str,
+    footer_token: str | None = None,
+) -> str | None:
+    """渲染完整法务文档为 HTML 页面。
+
+    找不到文档时返回 None，调用方应 fallback 到简版概要页。
+    """
+    doc_path = _find_legal_doc_path(doc_filename)
+    if doc_path is None:
+        return None
+    try:
+        raw = doc_path.read_text(encoding="utf-8")
+    except OSError:
+        return None
+    body_html = markdown.markdown(
+        raw,
+        extensions=["tables", "fenced_code", "sane_lists"],
+    )
+    return (
+        "<!doctype html><html lang='zh-CN'><head><meta charset='utf-8' />"
+        "<meta name='viewport' content='width=device-width, initial-scale=1' />"
+        f"<title>{escape(title)}</title>"
+        "<link rel='stylesheet' href='/static/portal-ui.css' />"
+        '<style>body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f4f7fb;padding:32px 20px;color:#172033;margin:0}'
+        ".wrap{max-width:920px;margin:0 auto;display:grid;gap:18px}"
+        ".panel{background:#fff;border:1px solid #dbe3f0;border-radius:20px;padding:32px;box-shadow:0 18px 42px rgba(20,34,53,.08)}"
+        ".eyebrow{display:inline-flex;padding:6px 10px;border-radius:999px;background:#eef6ff;color:#194fb6;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}"
+        ".lead{color:#5b6b88;line-height:1.8;margin:8px 0 16px}"
+        ".legal-doc h1{display:none}"
+        ".legal-doc h2{color:#172033;font-size:18px;margin:24px 0 12px;border-bottom:2px solid #eef2fb;padding-bottom:6px}"
+        ".legal-doc h3{color:#1f3a68;font-size:15px;margin:18px 0 8px}"
+        ".legal-doc p{color:#34425b;line-height:1.85;margin:8px 0}"
+        ".legal-doc ul,.legal-doc ol{color:#34425b;line-height:1.85;padding-left:22px;margin:8px 0}"
+        ".legal-doc li{margin:4px 0}"
+        ".legal-doc blockquote{border-left:3px solid #cfd9ee;color:#5b6b88;padding:8px 14px;margin:12px 0;background:#f8fbff;border-radius:0 8px 8px 0}"
+        ".legal-doc table{border-collapse:collapse;width:100%;margin:12px 0;font-size:13.5px;background:#fff}"
+        ".legal-doc th,.legal-doc td{border:1px solid #d7e3f1;padding:8px 10px;text-align:left;vertical-align:top}"
+        ".legal-doc th{background:#eef4ff;color:#172033;font-weight:600}"
+        ".legal-doc code{background:#f1f5fb;padding:1px 4px;border-radius:4px;font-size:12.5px;color:#1f3a68}"
+        "</style></head>"
+        "<body><main class='wrap'>"
+        f"<section class='panel'><span class='eyebrow'>{escape(eyebrow)}</span><h1>{escape(title)}</h1><p class='lead'>{escape(lead)}</p></section>"
+        f"<section class='panel legal-doc'>{body_html}</section>"
+        f"{_render_footer_links(footer_token)}"
+        "</main></body></html>"
+    )
+
+
 @router.get("/privacy", include_in_schema=False)
 def privacy_page(token: str | None = None) -> HTMLResponse:
+    full_html = _render_legal_doc_page(
+        doc_filename="PRIVACY_POLICY_DRAFT.md",
+        title="隐私政策",
+        eyebrow="隐私说明",
+        lead="我们只收集下单、资料填写、支付与交付所需的最小信息，用于志愿服务流程，不用于营销出售或无关用途。",
+        footer_token=token,
+    )
+    if full_html is not None:
+        return HTMLResponse(full_html)
     sections_html = "<section class='panel'><h2>你可以预期什么</h2><ul class='checklist'><li>支付前只收必要下单信息</li><li>详细资料在支付后通过资料向导分步补充</li><li>隐私政策、服务说明与删除申请入口全程可见</li><li>如需撤回资料或申请删除，可通过删除申请入口提交请求</li></ul></section>"
     return HTMLResponse(
         _render_basic_page(
@@ -925,6 +1003,15 @@ def privacy_page(token: str | None = None) -> HTMLResponse:
 
 @router.get("/service-terms", include_in_schema=False)
 def service_terms_page(token: str | None = None) -> HTMLResponse:
+    full_html = _render_legal_doc_page(
+        doc_filename="SERVICE_TERMS.md",
+        title="服务说明与使用条款",
+        eyebrow="服务边界",
+        lead="本服务提供志愿填报辅助建议、方案审计与交付支持，不承诺录取结果；提交资料前请确认监护人与考生已知情。",
+        footer_token=token,
+    )
+    if full_html is not None:
+        return HTMLResponse(full_html)
     sections_html = "<section class='panel'><h2>下单前请了解</h2><ul class='checklist'><li>我们优先帮助你审计现有方案与风险点</li><li>支付后可继续补充详细资料与附件</li><li>交付状态、通知与报告入口会在站内持续更新</li><li>如需撤回资料或删除交付物，可通过删除申请入口提交请求</li></ul></section>"
     return HTMLResponse(
         _render_basic_page(
