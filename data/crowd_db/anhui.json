@@ -33,6 +33,17 @@
               "name": "合肥工业大学",
               "major": "车辆工程",
               "score": 84
+            },
+            {
+              "name": "安徽师范大学",
+              "major": "计算机科学与技术",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -56,6 +67,17 @@
               "name": "安徽师范大学",
               "major": "教育学",
               "score": 84
+            },
+            {
+              "name": "安徽大学",
+              "major": "机械工程",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -79,6 +101,17 @@
               "name": "安徽理工大学",
               "major": "机械设计制造及其自动化",
               "score": 84
+            },
+            {
+              "name": "合肥工业大学",
+              "major": "法学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -103,6 +136,18 @@
               "name": "安徽师范大学",
               "major": "汉语言文学",
               "score": 88
+            },
+            {
+              "name": "安徽大学",
+              "major": "土木工程",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度"
+              ],
+              "predicted_increase": 6,
+              "score": 50
             }
           ],
           "program_type": null
@@ -127,6 +172,18 @@
               "name": "安徽工业大学",
               "major": "冶金工程",
               "score": 87
+            },
+            {
+              "name": "安徽大学",
+              "major": "建筑学",
+              "frequency": 2,
+              "platforms": [
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 5,
+              "score": 50
             }
           ],
           "program_type": null
@@ -159,6 +216,17 @@
               "name": "安徽工程大学",
               "major": "网络工程",
               "score": 84
+            },
+            {
+              "name": "安徽大学",
+              "major": "临床医学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": "医学类特色"
@@ -182,6 +250,17 @@
               "name": "合肥大学",
               "major": "机械设计制造及其自动化",
               "score": 84
+            },
+            {
+              "name": "安徽大学",
+              "major": "汉语言文学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": "师范教育类"
@@ -205,6 +284,17 @@
               "name": "中国科学技术大学",
               "major": "自动化",
               "score": 84
+            },
+            {
+              "name": "安徽大学",
+              "major": "农学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": "农林类特色"
@@ -228,6 +318,17 @@
               "name": "安徽工程大学",
               "major": "机械工程",
               "score": 83
+            },
+            {
+              "name": "安徽大学",
+              "major": "材料科学与工程",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "百度"
+              ],
+              "predicted_increase": 4,
+              "score": 50
             }
           ],
           "program_type": null
@@ -251,6 +352,17 @@
               "name": "安徽中医药大学",
               "major": "中医学",
               "score": 82
+            },
+            {
+              "name": "安徽大学",
+              "major": "临床医学",
+              "frequency": 2,
+              "platforms": [
+                "元宝",
+                "豆包"
+              ],
+              "predicted_increase": 3,
+              "score": 50
             }
           ],
           "program_type": "医学类特色"
@@ -283,6 +395,17 @@
               "name": "安徽大学",
               "major": "新闻学",
               "score": 84
+            },
+            {
+              "name": "安徽师范大学",
+              "major": "安全工程",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -306,6 +429,17 @@
               "name": "安徽师范大学",
               "major": "教育学",
               "score": 84
+            },
+            {
+              "name": "安徽大学",
+              "major": "电气工程及其自动化",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -329,6 +463,17 @@
               "name": "安徽理工大学",
               "major": "机械设计制造及其自动化",
               "score": 84
+            },
+            {
+              "name": "安徽大学",
+              "major": "软件工程",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -353,6 +498,18 @@
               "name": "合肥大学",
               "major": "电子信息工程",
               "score": 80
+            },
+            {
+              "name": "安徽大学",
+              "major": "食品科学与工程",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 2,
+              "score": 25
             }
           ],
           "program_type": "农林类特色"
@@ -376,6 +533,17 @@
               "name": "安庆师范大学",
               "major": "英语",
               "score": 79
+            },
+            {
+              "name": "安徽大学",
+              "major": "教育学",
+              "frequency": 1,
+              "platforms": [
+                "元宝",
+                "百度"
+              ],
+              "predicted_increase": 2,
+              "score": 25
             }
           ],
           "program_type": "师范教育类"
@@ -408,6 +576,17 @@
               "name": "安徽工程大学",
               "major": "网络工程",
               "score": 84
+            },
+            {
+              "name": "安徽大学",
+              "major": "会计学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -431,6 +610,17 @@
               "name": "皖南医学院",
               "major": "医学影像学",
               "score": 84
+            },
+            {
+              "name": "安徽大学",
+              "major": "电子信息工程",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -454,6 +644,17 @@
               "name": "合肥工业大学",
               "major": "车辆工程",
               "score": 84
+            },
+            {
+              "name": "安徽大学",
+              "major": "数学与应用数学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": "师范教育类"
@@ -477,6 +678,17 @@
               "name": "蚌埠医科大学",
               "major": "口腔医学",
               "score": 78
+            },
+            {
+              "name": "安徽大学",
+              "major": "中西医临床医学",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "豆包"
+              ],
+              "predicted_increase": 1,
+              "score": 25
             }
           ],
           "program_type": "医学类特色"
@@ -500,6 +712,17 @@
               "name": "黄山学院",
               "major": "旅游管理",
               "score": 77
+            },
+            {
+              "name": "安徽大学",
+              "major": "地理信息科学",
+              "frequency": 1,
+              "platforms": [
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 1,
+              "score": 25
             }
           ],
           "program_type": null
@@ -532,6 +755,17 @@
               "name": "安徽医科大学",
               "major": "口腔医学",
               "score": 84
+            },
+            {
+              "name": "合肥工业大学",
+              "major": "英语",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": "师范教育类"
@@ -555,6 +789,17 @@
               "name": "安徽农业大学",
               "major": "园艺",
               "score": 84
+            },
+            {
+              "name": "安徽大学",
+              "major": "护理学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": "医学类特色"
@@ -578,6 +823,17 @@
               "name": "安徽工业大学",
               "major": "自动化",
               "score": 84
+            },
+            {
+              "name": "安徽大学",
+              "major": "临床医学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": "医学类特色"
@@ -601,6 +857,17 @@
               "name": "合肥师范学院",
               "major": "小学教育",
               "score": 76
+            },
+            {
+              "name": "安徽大学",
+              "major": "化学",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "元宝"
+              ],
+              "predicted_increase": 1,
+              "score": 25
             }
           ],
           "program_type": "师范教育类"
@@ -624,6 +891,17 @@
               "name": "宿州学院",
               "major": "机械设计制造及其自动化",
               "score": 75
+            },
+            {
+              "name": "安徽大学",
+              "major": "电子信息工程",
+              "frequency": 1,
+              "platforms": [
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -656,6 +934,17 @@
               "name": "安徽财经大学",
               "major": "金融学",
               "score": 84
+            },
+            {
+              "name": "安徽大学",
+              "major": "财务管理",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -679,6 +968,17 @@
               "name": "皖南医学院",
               "major": "医学影像学",
               "score": 84
+            },
+            {
+              "name": "安徽大学",
+              "major": "旅游管理",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -702,6 +1002,17 @@
               "name": "合肥工业大学",
               "major": "车辆工程",
               "score": 84
+            },
+            {
+              "name": "安徽大学",
+              "major": "计算机科学与技术",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -725,6 +1036,17 @@
               "name": "池州学院",
               "major": "历史学",
               "score": 75
+            },
+            {
+              "name": "安徽大学",
+              "major": "电气工程及其自动化",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "豆包"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -748,6 +1070,17 @@
               "name": "铜陵学院",
               "major": "财务管理",
               "score": 75
+            },
+            {
+              "name": "安徽大学",
+              "major": "小学教育",
+              "frequency": 1,
+              "platforms": [
+                "元宝",
+                "百度"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": "师范教育类"
@@ -780,6 +1113,17 @@
               "name": "安徽医科大学",
               "major": "口腔医学",
               "score": 84
+            },
+            {
+              "name": "合肥工业大学",
+              "major": "学前教育",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": "师范教育类"
@@ -803,6 +1147,17 @@
               "name": "安徽农业大学",
               "major": "园艺",
               "score": 84
+            },
+            {
+              "name": "安徽大学",
+              "major": "电子商务",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -826,6 +1181,17 @@
               "name": "安徽工业大学",
               "major": "自动化",
               "score": 84
+            },
+            {
+              "name": "安徽大学",
+              "major": "交通运输",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -849,6 +1215,17 @@
               "name": "合肥职业技术学院",
               "major": "软件技术",
               "score": 78
+            },
+            {
+              "name": "安徽大学",
+              "major": "护理",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "百度"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -872,6 +1249,17 @@
               "name": "安徽审计职业学院",
               "major": "审计实务",
               "score": 76
+            },
+            {
+              "name": "安徽大学",
+              "major": "电子商务",
+              "frequency": 1,
+              "platforms": [
+                "元宝",
+                "豆包"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -904,6 +1292,17 @@
               "name": "安徽财经大学",
               "major": "金融学",
               "score": 84
+            },
+            {
+              "name": "安徽大学",
+              "major": "机电一体化技术",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -927,6 +1326,17 @@
               "name": "皖南医学院",
               "major": "医学影像学",
               "score": 84
+            },
+            {
+              "name": "安徽大学",
+              "major": "护理",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -950,6 +1360,17 @@
               "name": "合肥工业大学",
               "major": "车辆工程",
               "score": 84
+            },
+            {
+              "name": "安徽大学",
+              "major": "建筑工程技术",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -973,6 +1394,17 @@
               "name": "安徽粮食工程职业学院",
               "major": "粮食工程技术",
               "score": 78
+            },
+            {
+              "name": "安徽大学",
+              "major": "道路桥梁工程技术",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "百度"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -996,6 +1428,17 @@
               "name": "安徽电子信息职业技术学院",
               "major": "应用电子技术",
               "score": 76
+            },
+            {
+              "name": "安徽大学",
+              "major": "工业机器人技术",
+              "frequency": 1,
+              "platforms": [
+                "元宝",
+                "豆包"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null

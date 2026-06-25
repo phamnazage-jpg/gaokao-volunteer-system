@@ -33,6 +33,17 @@
               "name": "西北工业大学",
               "major": "机械设计制造及其自动化",
               "score": 84
+            },
+            {
+              "name": "陕西师范大学",
+              "major": "能源与动力工程",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -56,6 +67,17 @@
               "name": "陕西师范大学",
               "major": "教育学",
               "score": 84
+            },
+            {
+              "name": "西安交通大学",
+              "major": "航空航天类",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -79,6 +101,17 @@
               "name": "西安建筑科技大学",
               "major": "工程管理",
               "score": 84
+            },
+            {
+              "name": "西安交通大学",
+              "major": "电子信息工程",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -103,6 +136,18 @@
               "name": "西北大学",
               "major": "地质学",
               "score": 89
+            },
+            {
+              "name": "西安交通大学",
+              "major": "农学",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度"
+              ],
+              "predicted_increase": 6,
+              "score": 50
             }
           ],
           "program_type": "农林类特色"
@@ -127,6 +172,18 @@
               "name": "西北工业大学",
               "major": "材料科学与工程",
               "score": 90
+            },
+            {
+              "name": "西安电子科技大学",
+              "major": "交通工程",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "豆包"
+              ],
+              "predicted_increase": 5,
+              "score": 50
             }
           ],
           "program_type": null
@@ -159,6 +216,17 @@
               "name": "西安科技大学",
               "major": "采矿工程",
               "score": 84
+            },
+            {
+              "name": "西安交通大学",
+              "major": "交通运输",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -182,6 +250,17 @@
               "name": "陕西科技大学",
               "major": "包装工程",
               "score": 84
+            },
+            {
+              "name": "西安交通大学",
+              "major": "汉语言文学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": "师范教育类"
@@ -205,6 +284,17 @@
               "name": "西安交通大学",
               "major": "自动化",
               "score": 84
+            },
+            {
+              "name": "西北工业大学",
+              "major": "考古学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -229,6 +319,18 @@
               "name": "长安大学",
               "major": "建筑学",
               "score": 87
+            },
+            {
+              "name": "西北工业大学",
+              "major": "建筑学",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 5,
+              "score": 50
             }
           ],
           "program_type": null
@@ -253,6 +355,18 @@
               "name": "西安建筑科技大学",
               "major": "冶金工程",
               "score": 85
+            },
+            {
+              "name": "西安交通大学",
+              "major": "材料科学与工程",
+              "frequency": 2,
+              "platforms": [
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 4,
+              "score": 50
             }
           ],
           "program_type": null
@@ -285,6 +399,17 @@
               "name": "西安电子科技大学",
               "major": "通信工程",
               "score": 84
+            },
+            {
+              "name": "西安交通大学",
+              "major": "土木工程",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -308,6 +433,17 @@
               "name": "陕西师范大学",
               "major": "教育学",
               "score": 84
+            },
+            {
+              "name": "西安交通大学",
+              "major": "机械设计制造及其自动化",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": "艺体类"
@@ -331,6 +467,17 @@
               "name": "西安建筑科技大学",
               "major": "工程管理",
               "score": 84
+            },
+            {
+              "name": "西安交通大学",
+              "major": "安全工程",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -355,6 +502,18 @@
               "name": "西北大学",
               "major": "中药学",
               "score": 84
+            },
+            {
+              "name": "西安交通大学",
+              "major": "中医学",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度"
+              ],
+              "predicted_increase": 4,
+              "score": 50
             }
           ],
           "program_type": "医学类特色"
@@ -378,6 +537,17 @@
               "name": "西北大学",
               "major": "英语",
               "score": 85
+            },
+            {
+              "name": "西安交通大学",
+              "major": "英语",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "豆包"
+              ],
+              "predicted_increase": 3,
+              "score": 25
             }
           ],
           "program_type": "国际涉外导向"
@@ -410,6 +580,17 @@
               "name": "西安科技大学",
               "major": "采矿工程",
               "score": 84
+            },
+            {
+              "name": "西安交通大学",
+              "major": "石油工程",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -433,6 +614,17 @@
               "name": "西安工业大学",
               "major": "测控技术与仪器",
               "score": 84
+            },
+            {
+              "name": "西安交通大学",
+              "major": "轻化工程",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -456,6 +648,17 @@
               "name": "西北工业大学",
               "major": "机械设计制造及其自动化",
               "score": 84
+            },
+            {
+              "name": "西安电子科技大学",
+              "major": "自动化",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -479,6 +682,17 @@
               "name": "西北大学",
               "major": "行政管理",
               "score": 82
+            },
+            {
+              "name": "西安交通大学",
+              "major": "中国共产党历史",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "百度"
+              ],
+              "predicted_increase": 3,
+              "score": 25
             }
           ],
           "program_type": null
@@ -502,6 +716,17 @@
               "name": "西安理工大学",
               "major": "轻化工程",
               "score": 80
+            },
+            {
+              "name": "西安交通大学",
+              "major": "纺织工程",
+              "frequency": 1,
+              "platforms": [
+                "元宝",
+                "豆包"
+              ],
+              "predicted_increase": 2,
+              "score": 25
             }
           ],
           "program_type": null
@@ -534,6 +759,17 @@
               "name": "长安大学",
               "major": "土木工程",
               "score": 84
+            },
+            {
+              "name": "西安交通大学",
+              "major": "临床医学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -557,6 +793,17 @@
               "name": "西北大学",
               "major": "汉语言文学",
               "score": 84
+            },
+            {
+              "name": "西安交通大学",
+              "major": "数学与应用数学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -580,6 +827,17 @@
               "name": "西安理工大学",
               "major": "水利水电工程",
               "score": 84
+            },
+            {
+              "name": "西安交通大学",
+              "major": "小学教育",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": "师范教育类"
@@ -603,6 +861,17 @@
               "name": "西安交通大学",
               "major": "航空航天工程",
               "score": 83
+            },
+            {
+              "name": "西安电子科技大学",
+              "major": "飞行器动力工程",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "元宝"
+              ],
+              "predicted_increase": 2,
+              "score": 25
             }
           ],
           "program_type": null
@@ -626,6 +895,17 @@
               "name": "宝鸡文理学院",
               "major": "学前教育",
               "score": 80
+            },
+            {
+              "name": "西安交通大学",
+              "major": "学前教育",
+              "frequency": 1,
+              "platforms": [
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 1,
+              "score": 25
             }
           ],
           "program_type": "师范教育类"
@@ -658,6 +938,17 @@
               "name": "西安石油大学",
               "major": "机械工程",
               "score": 84
+            },
+            {
+              "name": "西安交通大学",
+              "major": "会计学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -681,6 +972,17 @@
               "name": "西安工业大学",
               "major": "测控技术与仪器",
               "score": 84
+            },
+            {
+              "name": "西安交通大学",
+              "major": "护理学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": "医学类特色"
@@ -704,6 +1006,17 @@
               "name": "西北工业大学",
               "major": "机械设计制造及其自动化",
               "score": 84
+            },
+            {
+              "name": "西安电子科技大学",
+              "major": "英语",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": "师范教育类"
@@ -727,6 +1040,17 @@
               "name": "西安建筑科技大学",
               "major": "电气工程及其自动化",
               "score": 79
+            },
+            {
+              "name": "西安交通大学",
+              "major": "电气工程及其自动化",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "豆包"
+              ],
+              "predicted_increase": 1,
+              "score": 25
             }
           ],
           "program_type": null
@@ -750,6 +1074,17 @@
               "name": "陕西中医药大学",
               "major": "护理学",
               "score": 78
+            },
+            {
+              "name": "西安交通大学",
+              "major": "护理学",
+              "frequency": 1,
+              "platforms": [
+                "元宝",
+                "百度"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -782,6 +1117,17 @@
               "name": "长安大学",
               "major": "土木工程",
               "score": 84
+            },
+            {
+              "name": "西安交通大学",
+              "major": "计算机科学与技术",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -805,6 +1151,17 @@
               "name": "西北大学",
               "major": "汉语言文学",
               "score": 84
+            },
+            {
+              "name": "西安交通大学",
+              "major": "电气工程及其自动化",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -828,6 +1185,17 @@
               "name": "西安理工大学",
               "major": "水利水电工程",
               "score": 84
+            },
+            {
+              "name": "西安交通大学",
+              "major": "电子商务",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -851,6 +1219,17 @@
               "name": "西安工业大学",
               "major": "机械设计制造及其自动化",
               "score": 77
+            },
+            {
+              "name": "西安交通大学",
+              "major": "机械设计制造及其自动化",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "元宝"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": "艺体类"
@@ -874,6 +1253,17 @@
               "name": "西北大学",
               "major": "软件工程",
               "score": 78
+            },
+            {
+              "name": "西安交通大学",
+              "major": "软件工程",
+              "frequency": 1,
+              "platforms": [
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -906,6 +1296,17 @@
               "name": "西安石油大学",
               "major": "机械工程",
               "score": 84
+            },
+            {
+              "name": "西安交通大学",
+              "major": "学前教育",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -929,6 +1330,17 @@
               "name": "西安工业大学",
               "major": "测控技术与仪器",
               "score": 84
+            },
+            {
+              "name": "西安交通大学",
+              "major": "大数据与会计",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -952,6 +1364,17 @@
               "name": "西北工业大学",
               "major": "机械设计制造及其自动化",
               "score": 84
+            },
+            {
+              "name": "西安电子科技大学",
+              "major": "机电一体化技术",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -975,6 +1398,17 @@
               "name": "陕西经济管理职业技术学院",
               "major": "大数据与财务管理",
               "score": 76
+            },
+            {
+              "name": "西安交通大学",
+              "major": "大数据与会计",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "豆包"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -998,6 +1432,17 @@
               "name": "西安工业大学",
               "major": "机械电子工程",
               "score": 75
+            },
+            {
+              "name": "西安交通大学",
+              "major": "机电一体化技术",
+              "frequency": 1,
+              "platforms": [
+                "元宝",
+                "百度"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null

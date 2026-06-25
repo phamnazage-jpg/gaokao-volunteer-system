@@ -33,6 +33,17 @@
               "name": "电子科技大学",
               "major": "软件工程",
               "score": 84
+            },
+            {
+              "name": "西南财经大学",
+              "major": "临床医学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -56,6 +67,17 @@
               "name": "西南财经大学",
               "major": "会计学",
               "score": 84
+            },
+            {
+              "name": "四川师范大学",
+              "major": "计算机科学与技术",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -79,6 +101,17 @@
               "name": "四川农业大学",
               "major": "园艺",
               "score": 84
+            },
+            {
+              "name": "四川大学",
+              "major": "电气工程及其自动化",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -102,6 +135,17 @@
               "name": "电子科技大学",
               "major": "金融学",
               "score": 90
+            },
+            {
+              "name": "四川师范大学",
+              "major": "金融学",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "元宝"
+              ],
+              "predicted_increase": 5,
+              "score": 25
             }
           ],
           "program_type": null
@@ -125,6 +169,17 @@
               "name": "四川大学",
               "major": "轨道交通信号与控制",
               "score": 89
+            },
+            {
+              "name": "西南财经大学",
+              "major": "轨道交通信号与控制",
+              "frequency": 1,
+              "platforms": [
+                "元宝",
+                "百度"
+              ],
+              "predicted_increase": 4,
+              "score": 25
             }
           ],
           "program_type": null
@@ -157,6 +212,17 @@
               "name": "西南石油大学",
               "major": "机械工程",
               "score": 84
+            },
+            {
+              "name": "四川大学",
+              "major": "金融学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -180,6 +246,17 @@
               "name": "成都大学",
               "major": "数据科学与大数据技术",
               "score": 84
+            },
+            {
+              "name": "四川大学",
+              "major": "农学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": "农林类特色"
@@ -203,6 +280,17 @@
               "name": "西南科技大学",
               "major": "自动化",
               "score": 84
+            },
+            {
+              "name": "四川大学",
+              "major": "地质工程",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -226,6 +314,17 @@
               "name": "成都中医药大学",
               "major": "中草药栽培与鉴定",
               "score": 85
+            },
+            {
+              "name": "电子科技大学",
+              "major": "农学",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "豆包"
+              ],
+              "predicted_increase": 3,
+              "score": 25
             }
           ],
           "program_type": "农林类特色"
@@ -249,6 +348,17 @@
               "name": "西华大学",
               "major": "民族学",
               "score": 82
+            },
+            {
+              "name": "四川大学",
+              "major": "民族学",
+              "frequency": 1,
+              "platforms": [
+                "元宝",
+                "百度"
+              ],
+              "predicted_increase": 2,
+              "score": 25
             }
           ],
           "program_type": "民族类特色"
@@ -281,6 +391,17 @@
               "name": "电子科技大学",
               "major": "软件工程",
               "score": 84
+            },
+            {
+              "name": "四川大学",
+              "major": "中医学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": "医学类特色"
@@ -304,6 +425,17 @@
               "name": "西南财经大学",
               "major": "会计学",
               "score": 84
+            },
+            {
+              "name": "电子科技大学",
+              "major": "油气储运工程",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -327,6 +459,17 @@
               "name": "四川农业大学",
               "major": "园艺",
               "score": 84
+            },
+            {
+              "name": "四川大学",
+              "major": "法学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": "民族类特色"
@@ -351,6 +494,18 @@
               "name": "成都中医药大学",
               "major": "中医学",
               "score": 85
+            },
+            {
+              "name": "四川大学",
+              "major": "地质学",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度"
+              ],
+              "predicted_increase": 4,
+              "score": 50
             }
           ],
           "program_type": null
@@ -375,6 +530,18 @@
               "name": "西南科技大学",
               "major": "石油工程",
               "score": 82
+            },
+            {
+              "name": "四川大学",
+              "major": "石油工程",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 4,
+              "score": 50
             }
           ],
           "program_type": null
@@ -407,6 +574,17 @@
               "name": "西南石油大学",
               "major": "机械工程",
               "score": 84
+            },
+            {
+              "name": "四川大学",
+              "major": "软件工程",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -430,6 +608,17 @@
               "name": "成都大学",
               "major": "数据科学与大数据技术",
               "score": 84
+            },
+            {
+              "name": "四川大学",
+              "major": "机械设计制造及其自动化",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": "艺体类"
@@ -453,6 +642,17 @@
               "name": "西南交通大学",
               "major": "交通运输",
               "score": 84
+            },
+            {
+              "name": "四川大学",
+              "major": "材料科学与工程",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -476,6 +676,17 @@
               "name": "川北医学院",
               "major": "针灸推拿学",
               "score": 81
+            },
+            {
+              "name": "四川大学",
+              "major": "针灸推拿学",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "元宝"
+              ],
+              "predicted_increase": 3,
+              "score": 25
             }
           ],
           "program_type": "医学类特色"
@@ -500,6 +711,18 @@
               "name": "绵阳师范学院",
               "major": "汉语言文学",
               "score": 80
+            },
+            {
+              "name": "四川大学",
+              "major": "汉语言文学",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 3,
+              "score": 50
             }
           ],
           "program_type": "师范教育类"
@@ -532,6 +755,17 @@
               "name": "四川大学",
               "major": "口腔医学",
               "score": 84
+            },
+            {
+              "name": "西南财经大学",
+              "major": "汉语言文学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": "师范教育类"
@@ -555,6 +789,17 @@
               "name": "成都理工大学",
               "major": "资源勘查工程",
               "score": 84
+            },
+            {
+              "name": "四川大学",
+              "major": "大气科学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -578,6 +823,17 @@
               "name": "成都中医药大学",
               "major": "针灸推拿学",
               "score": 84
+            },
+            {
+              "name": "四川大学",
+              "major": "临床医学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": "医学类特色"
@@ -601,6 +857,17 @@
               "name": "四川轻化工大学",
               "major": "机械设计制造及其自动化",
               "score": 80
+            },
+            {
+              "name": "四川大学",
+              "major": "机械设计制造及其自动化",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "百度"
+              ],
+              "predicted_increase": 2,
+              "score": 25
             }
           ],
           "program_type": "艺体类"
@@ -625,6 +892,18 @@
               "name": "西华大学",
               "major": "软件工程",
               "score": 84
+            },
+            {
+              "name": "四川大学",
+              "major": "软件工程",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "豆包"
+              ],
+              "predicted_increase": 3,
+              "score": 50
             }
           ],
           "program_type": null
@@ -657,6 +936,17 @@
               "name": "西南民族大学",
               "major": "社会学",
               "score": 84
+            },
+            {
+              "name": "四川大学",
+              "major": "医学影像学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": "医学类特色"
@@ -680,6 +970,17 @@
               "name": "西华大学",
               "major": "车辆工程",
               "score": 84
+            },
+            {
+              "name": "四川大学",
+              "major": "自动化",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -703,6 +1004,17 @@
               "name": "西南交通大学",
               "major": "交通运输",
               "score": 84
+            },
+            {
+              "name": "四川大学",
+              "major": "计算机科学与技术",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -726,6 +1038,17 @@
               "name": "宜宾学院",
               "major": "会计学",
               "score": 78
+            },
+            {
+              "name": "四川大学",
+              "major": "会计学",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "百度"
+              ],
+              "predicted_increase": 2,
+              "score": 25
             }
           ],
           "program_type": null
@@ -749,6 +1072,17 @@
               "name": "成都工业学院",
               "major": "化学工程与工艺",
               "score": 79
+            },
+            {
+              "name": "四川大学",
+              "major": "化学工程与工艺",
+              "frequency": 1,
+              "platforms": [
+                "元宝",
+                "豆包"
+              ],
+              "predicted_increase": 1,
+              "score": 25
             }
           ],
           "program_type": null
@@ -781,6 +1115,17 @@
               "name": "四川大学",
               "major": "口腔医学",
               "score": 84
+            },
+            {
+              "name": "西南财经大学",
+              "major": "数学与应用数学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": "师范教育类"
@@ -804,6 +1149,17 @@
               "name": "成都理工大学",
               "major": "资源勘查工程",
               "score": 84
+            },
+            {
+              "name": "四川大学",
+              "major": "英语",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": "师范教育类"
@@ -827,6 +1183,17 @@
               "name": "成都中医药大学",
               "major": "针灸推拿学",
               "score": 84
+            },
+            {
+              "name": "四川大学",
+              "major": "网络工程",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -850,6 +1217,17 @@
               "name": "乐山师范学院",
               "major": "小学教育",
               "score": 77
+            },
+            {
+              "name": "四川大学",
+              "major": "小学教育",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "百度"
+              ],
+              "predicted_increase": 1,
+              "score": 25
             }
           ],
           "program_type": "师范教育类"
@@ -873,6 +1251,17 @@
               "name": "四川轻化工大学",
               "major": "电子信息工程技术",
               "score": 79
+            },
+            {
+              "name": "四川大学",
+              "major": "电子信息工程技术",
+              "frequency": 1,
+              "platforms": [
+                "元宝",
+                "豆包"
+              ],
+              "predicted_increase": 1,
+              "score": 25
             }
           ],
           "program_type": null
@@ -905,6 +1294,17 @@
               "name": "西南民族大学",
               "major": "社会学",
               "score": 84
+            },
+            {
+              "name": "四川大学",
+              "major": "化学工程与工艺",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -928,6 +1328,17 @@
               "name": "西华大学",
               "major": "车辆工程",
               "score": 84
+            },
+            {
+              "name": "四川大学",
+              "major": "小学教育",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": "师范教育类"
@@ -951,6 +1362,17 @@
               "name": "西南交通大学",
               "major": "交通运输",
               "score": 84
+            },
+            {
+              "name": "四川大学",
+              "major": "新能源材料与器件",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -974,6 +1396,17 @@
               "name": "四川中医药高等专科学校",
               "major": "护理",
               "score": 75
+            },
+            {
+              "name": "四川大学",
+              "major": "护理",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "百度"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": "医学类特色"
@@ -997,6 +1430,17 @@
               "name": "绵阳师范学院",
               "major": "旅游管理",
               "score": 76
+            },
+            {
+              "name": "四川大学",
+              "major": "旅游管理",
+              "frequency": 1,
+              "platforms": [
+                "元宝",
+                "豆包"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null

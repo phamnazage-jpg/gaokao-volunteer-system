@@ -33,6 +33,17 @@
               "name": "西北师范大学",
               "major": "教育学",
               "score": 84
+            },
+            {
+              "name": "甘肃农业大学",
+              "major": "化学类",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -56,6 +67,17 @@
               "name": "甘肃农业大学",
               "major": "园艺",
               "score": 84
+            },
+            {
+              "name": "西北师范大学",
+              "major": "临床医学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -79,6 +101,17 @@
               "name": "兰州财经大学",
               "major": "金融学",
               "score": 84
+            },
+            {
+              "name": "兰州大学",
+              "major": "汉语言文学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": "师范教育类"
@@ -103,6 +136,18 @@
               "name": "西北师范大学",
               "major": "教育学",
               "score": 86
+            },
+            {
+              "name": "兰州大学",
+              "major": "机械工程",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度"
+              ],
+              "predicted_increase": 6,
+              "score": 50
             }
           ],
           "program_type": null
@@ -127,6 +172,18 @@
               "name": "甘肃中医药大学",
               "major": "中医学",
               "score": 85
+            },
+            {
+              "name": "兰州大学",
+              "major": "中国少数民族语言文学",
+              "frequency": 2,
+              "platforms": [
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 5,
+              "score": 50
             }
           ],
           "program_type": "民族类特色"
@@ -159,6 +216,17 @@
               "name": "甘肃政法大学",
               "major": "知识产权",
               "score": 84
+            },
+            {
+              "name": "兰州大学",
+              "major": "交通运输",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -182,6 +250,17 @@
               "name": "河西学院",
               "major": "医学影像技术",
               "score": 84
+            },
+            {
+              "name": "兰州大学",
+              "major": "机械设计制造及其自动化",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": "艺体类"
@@ -205,6 +284,17 @@
               "name": "兰州大学",
               "major": "经济学",
               "score": 84
+            },
+            {
+              "name": "西北师范大学",
+              "major": "农学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": "农林类特色"
@@ -228,6 +318,17 @@
               "name": "甘肃中医药大学",
               "major": "中西医临床医学",
               "score": 82
+            },
+            {
+              "name": "甘肃农业大学",
+              "major": "大气科学",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "百度"
+              ],
+              "predicted_increase": 3,
+              "score": 50
             }
           ],
           "program_type": null
@@ -251,6 +352,17 @@
               "name": "西北民族大学",
               "major": "民族学",
               "score": 80
+            },
+            {
+              "name": "兰州大学",
+              "major": "汉语言文学",
+              "frequency": 2,
+              "platforms": [
+                "元宝",
+                "豆包"
+              ],
+              "predicted_increase": 3,
+              "score": 50
             }
           ],
           "program_type": "师范教育类"
@@ -283,6 +395,17 @@
               "name": "兰州交通大学",
               "major": "土木工程",
               "score": 84
+            },
+            {
+              "name": "兰州大学",
+              "major": "中医学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": "医学类特色"
@@ -306,6 +429,17 @@
               "name": "甘肃农业大学",
               "major": "园艺",
               "score": 84
+            },
+            {
+              "name": "兰州大学",
+              "major": "会计学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -329,6 +463,17 @@
               "name": "兰州财经大学",
               "major": "金融学",
               "score": 84
+            },
+            {
+              "name": "兰州大学",
+              "major": "法学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": "民族类特色"
@@ -353,6 +498,18 @@
               "name": "甘肃农业大学",
               "major": "动物医学",
               "score": 80
+            },
+            {
+              "name": "兰州大学",
+              "major": "土木工程",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 2,
+              "score": 25
             }
           ],
           "program_type": null
@@ -376,6 +533,17 @@
               "name": "天水师范学院",
               "major": "数学与应用数学",
               "score": 78
+            },
+            {
+              "name": "兰州大学",
+              "major": "法学",
+              "frequency": 1,
+              "platforms": [
+                "元宝",
+                "百度"
+              ],
+              "predicted_increase": 2,
+              "score": 25
             }
           ],
           "program_type": null
@@ -408,6 +576,17 @@
               "name": "甘肃政法大学",
               "major": "知识产权",
               "score": 84
+            },
+            {
+              "name": "兰州大学",
+              "major": "数学与应用数学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": "师范教育类"
@@ -431,6 +610,17 @@
               "name": "河西学院",
               "major": "医学影像技术",
               "score": 84
+            },
+            {
+              "name": "兰州大学",
+              "major": "计算机科学与技术",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -454,6 +644,17 @@
               "name": "兰州大学",
               "major": "经济学",
               "score": 84
+            },
+            {
+              "name": "西北师范大学",
+              "major": "护理学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -477,6 +678,17 @@
               "name": "兰州财经大学",
               "major": "会计学",
               "score": 78
+            },
+            {
+              "name": "兰州大学",
+              "major": "新闻学",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "豆包"
+              ],
+              "predicted_increase": 1,
+              "score": 25
             }
           ],
           "program_type": null
@@ -500,6 +712,17 @@
               "name": "河西学院",
               "major": "农学",
               "score": 77
+            },
+            {
+              "name": "兰州大学",
+              "major": "临床医学",
+              "frequency": 1,
+              "platforms": [
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 1,
+              "score": 25
             }
           ],
           "program_type": "医学类特色"
@@ -532,6 +755,17 @@
               "name": "兰州交通大学",
               "major": "土木工程",
               "score": 84
+            },
+            {
+              "name": "兰州大学",
+              "major": "小学教育",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -555,6 +789,17 @@
               "name": "甘肃农业大学",
               "major": "园艺",
               "score": 84
+            },
+            {
+              "name": "兰州大学",
+              "major": "法学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -578,6 +823,17 @@
               "name": "兰州财经大学",
               "major": "金融学",
               "score": 84
+            },
+            {
+              "name": "兰州大学",
+              "major": "学前教育",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": "师范教育类"
@@ -601,6 +857,17 @@
               "name": "甘肃林业职业技术大学",
               "major": "园林技术",
               "score": 76
+            },
+            {
+              "name": "兰州大学",
+              "major": "应用化工技术",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "元宝"
+              ],
+              "predicted_increase": 1,
+              "score": 25
             }
           ],
           "program_type": null
@@ -624,6 +891,17 @@
               "name": "甘肃民族师范学院",
               "major": "藏语言文学",
               "score": 75
+            },
+            {
+              "name": "兰州大学",
+              "major": "汉语言文学",
+              "frequency": 1,
+              "platforms": [
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": "师范教育类"
@@ -656,6 +934,17 @@
               "name": "甘肃政法大学",
               "major": "知识产权",
               "score": 84
+            },
+            {
+              "name": "兰州大学",
+              "major": "临床医学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": "医学类特色"
@@ -679,6 +968,17 @@
               "name": "河西学院",
               "major": "医学影像技术",
               "score": 84
+            },
+            {
+              "name": "兰州大学",
+              "major": "应用化工技术",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -702,6 +1002,17 @@
               "name": "兰州大学",
               "major": "经济学",
               "score": 84
+            },
+            {
+              "name": "西北师范大学",
+              "major": "园艺技术",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -725,6 +1036,17 @@
               "name": "兰州文理学院",
               "major": "旅游管理",
               "score": 76
+            },
+            {
+              "name": "兰州大学",
+              "major": "社会工作",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "豆包"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -748,6 +1070,17 @@
               "name": "甘肃建筑职业技术学院",
               "major": "建筑工程技术",
               "score": 75
+            },
+            {
+              "name": "兰州大学",
+              "major": "工程测量技术",
+              "frequency": 1,
+              "platforms": [
+                "元宝",
+                "百度"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -780,6 +1113,17 @@
               "name": "兰州交通大学",
               "major": "土木工程",
               "score": 84
+            },
+            {
+              "name": "兰州大学",
+              "major": "园林技术",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -803,6 +1147,17 @@
               "name": "甘肃农业大学",
               "major": "园艺",
               "score": 84
+            },
+            {
+              "name": "兰州大学",
+              "major": "机电一体化技术",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -826,6 +1181,17 @@
               "name": "兰州财经大学",
               "major": "金融学",
               "score": 84
+            },
+            {
+              "name": "兰州大学",
+              "major": "安全技术与管理",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -849,6 +1215,17 @@
               "name": "酒泉职业技术学院",
               "major": "机电一体化技术",
               "score": 78
+            },
+            {
+              "name": "兰州大学",
+              "major": "语文教育",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "百度"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": "师范教育类"
@@ -872,6 +1249,17 @@
               "name": "甘肃财贸职业学院",
               "major": "物流管理",
               "score": 76
+            },
+            {
+              "name": "兰州大学",
+              "major": "道路桥梁工程技术",
+              "frequency": 1,
+              "platforms": [
+                "元宝",
+                "豆包"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -904,6 +1292,17 @@
               "name": "甘肃政法大学",
               "major": "知识产权",
               "score": 84
+            },
+            {
+              "name": "兰州大学",
+              "major": "小学语文教育",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": "师范教育类"
@@ -927,6 +1326,17 @@
               "name": "河西学院",
               "major": "医学影像技术",
               "score": 84
+            },
+            {
+              "name": "兰州大学",
+              "major": "护理",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -950,6 +1360,17 @@
               "name": "兰州大学",
               "major": "经济学",
               "score": 84
+            },
+            {
+              "name": "西北师范大学",
+              "major": "新能源装备技术",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -973,6 +1394,17 @@
               "name": "兰州石化职业技术大学",
               "major": "石油化工技术",
               "score": 78
+            },
+            {
+              "name": "兰州大学",
+              "major": "园林技术",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "百度"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -996,6 +1428,17 @@
               "name": "庆阳职业学院",
               "major": "石油工程技术",
               "score": 76
+            },
+            {
+              "name": "兰州大学",
+              "major": "光伏发电技术与应用",
+              "frequency": 1,
+              "platforms": [
+                "元宝",
+                "豆包"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null

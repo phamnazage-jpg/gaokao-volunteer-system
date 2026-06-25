@@ -34,6 +34,18 @@
               "name": "湖南工商职业学院",
               "major": "民政管理",
               "score": 90
+            },
+            {
+              "name": "中南大学",
+              "major": "社会工作",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度"
+              ],
+              "predicted_increase": 8,
+              "score": 50
             }
           ],
           "subject_requirements": {
@@ -63,6 +75,18 @@
               "name": "湖南高速铁路职业技术学院",
               "major": "铁道车辆",
               "score": 91
+            },
+            {
+              "name": "中南大学",
+              "major": "铁道机车",
+              "frequency": 2,
+              "platforms": [
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 7,
+              "score": 50
             }
           ],
           "subject_requirements": {
@@ -91,6 +115,17 @@
               "name": "湖南艺术职业学院",
               "major": "播音与主持",
               "score": 90
+            },
+            {
+              "name": "中南大学",
+              "major": "新闻采编与制作",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "豆包"
+              ],
+              "predicted_increase": 4,
+              "score": 25
             }
           ],
           "subject_requirements": {
@@ -119,6 +154,17 @@
               "name": "湖南生物机电职业技术学院",
               "major": "财务管理",
               "score": 89
+            },
+            {
+              "name": "中南大学",
+              "major": "会计电算化",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "百度"
+              ],
+              "predicted_increase": 3,
+              "score": 25
             }
           ],
           "subject_requirements": {
@@ -157,6 +203,18 @@
               "name": "邵阳学院",
               "major": "汉语言文学",
               "score": 91
+            },
+            {
+              "name": "中南大学",
+              "major": "汉语言文学",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度"
+              ],
+              "predicted_increase": 6,
+              "score": 50
             }
           ],
           "subject_requirements": {
@@ -185,6 +243,17 @@
               "name": "湖南第一师范学院",
               "major": "数学与应用数学",
               "score": 90
+            },
+            {
+              "name": "中南大学",
+              "major": "数学与应用数学",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "百度"
+              ],
+              "predicted_increase": 4,
+              "score": 25
             }
           ],
           "subject_requirements": {
@@ -216,6 +285,18 @@
               "name": "长沙医学院",
               "major": "临床医学",
               "score": 89
+            },
+            {
+              "name": "中南大学",
+              "major": "临床医学",
+              "frequency": 2,
+              "platforms": [
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 7,
+              "score": 50
             }
           ],
           "subject_requirements": {
@@ -247,6 +328,17 @@
               "name": "湖南第一师范学院",
               "major": "英语",
               "score": 90
+            },
+            {
+              "name": "中南大学",
+              "major": "英语",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "豆包"
+              ],
+              "predicted_increase": 3,
+              "score": 25
             }
           ],
           "subject_requirements": {
@@ -277,6 +369,19 @@
               "name": "长沙师范学院",
               "major": "小学教育",
               "score": 95
+            },
+            {
+              "name": "中南大学",
+              "major": "小学教育",
+              "frequency": 3,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 10,
+              "score": 75
             }
           ],
           "subject_requirements": {
@@ -306,6 +411,18 @@
               "name": "湖南女子学院",
               "major": "学前教育",
               "score": 88
+            },
+            {
+              "name": "中南大学",
+              "major": "学前教育",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度"
+              ],
+              "predicted_increase": 8,
+              "score": 50
             }
           ],
           "subject_requirements": {
@@ -345,6 +462,19 @@
               "name": "湖南理工学院",
               "major": "会计学",
               "score": 92
+            },
+            {
+              "name": "中南大学",
+              "major": "会计学",
+              "frequency": 3,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 13,
+              "score": 75
             }
           ],
           "subject_requirements": {
@@ -374,6 +504,18 @@
               "name": "湖南工程学院",
               "major": "机械设计制造及其自动化",
               "score": 91
+            },
+            {
+              "name": "中南大学",
+              "major": "机械设计制造及其自动化",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度"
+              ],
+              "predicted_increase": 9,
+              "score": 50
             }
           ],
           "subject_requirements": {
@@ -405,6 +547,18 @@
               "name": "湖南理工学院",
               "major": "电气工程及其自动化",
               "score": 90
+            },
+            {
+              "name": "中南大学",
+              "major": "电气工程及其自动化",
+              "frequency": 2,
+              "platforms": [
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 10,
+              "score": 50
             }
           ],
           "subject_requirements": {
@@ -435,6 +589,17 @@
               "name": "湖南农业大学",
               "major": "森林保护",
               "score": 90
+            },
+            {
+              "name": "中南大学",
+              "major": "林学",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "百度"
+              ],
+              "predicted_increase": 4,
+              "score": 25
             }
           ],
           "subject_requirements": {
@@ -465,6 +630,17 @@
               "name": "中南林业科技大学",
               "major": "园艺",
               "score": 92
+            },
+            {
+              "name": "中南大学",
+              "major": "动物科学",
+              "frequency": 1,
+              "platforms": [
+                "元宝",
+                "豆包"
+              ],
+              "predicted_increase": 3,
+              "score": 25
             }
           ],
           "subject_requirements": {
@@ -497,6 +673,19 @@
               "name": "长沙医学院",
               "major": "中医学",
               "score": 88
+            },
+            {
+              "name": "中南大学",
+              "major": "中医学",
+              "frequency": 3,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 12,
+              "score": 75
             }
           ],
           "subject_requirements": {
@@ -528,6 +717,17 @@
               "name": "长沙师范学院",
               "major": "汉语言文学",
               "score": 90
+            },
+            {
+              "name": "中南大学",
+              "major": "汉语言文学",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "百度"
+              ],
+              "predicted_increase": 4,
+              "score": 25
             }
           ],
           "subject_requirements": {
@@ -556,6 +756,17 @@
               "name": "湖南科技学院",
               "major": "音乐学",
               "score": 89
+            },
+            {
+              "name": "中南大学",
+              "major": "音乐学",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "豆包"
+              ],
+              "predicted_increase": 3,
+              "score": 25
             }
           ],
           "subject_requirements": {
@@ -595,6 +806,19 @@
               "name": "湖北经济学院",
               "major": "财务管理",
               "score": 92
+            },
+            {
+              "name": "中南大学",
+              "major": "会计学",
+              "frequency": 3,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 16,
+              "score": 75
             }
           ],
           "subject_requirements": {
@@ -625,6 +849,19 @@
               "name": "三峡大学",
               "major": "电气工程及其自动化",
               "score": 94
+            },
+            {
+              "name": "中南大学",
+              "major": "电气工程及其自动化",
+              "frequency": 3,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 15,
+              "score": 75
             }
           ],
           "subject_requirements": {
@@ -656,6 +893,18 @@
               "name": "湖南科技大学",
               "major": "汉语言文学",
               "score": 92
+            },
+            {
+              "name": "中南大学",
+              "major": "汉语言文学",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度"
+              ],
+              "predicted_increase": 8,
+              "score": 50
             }
           ],
           "subject_requirements": {
@@ -685,6 +934,18 @@
               "name": "湖南科技大学",
               "major": "土木工程",
               "score": 93
+            },
+            {
+              "name": "中南大学",
+              "major": "土木工程",
+              "frequency": 2,
+              "platforms": [
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 9,
+              "score": 50
             }
           ],
           "subject_requirements": {
@@ -715,6 +976,17 @@
               "name": "湘潭大学",
               "major": "机械工程",
               "score": 90
+            },
+            {
+              "name": "湖南大学",
+              "major": "采矿工程",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "百度"
+              ],
+              "predicted_increase": 3,
+              "score": 25
             }
           ],
           "subject_requirements": {
@@ -747,6 +1019,19 @@
               "name": "湖南师范大学",
               "major": "法学",
               "score": 94
+            },
+            {
+              "name": "中南大学",
+              "major": "法学",
+              "frequency": 3,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 14,
+              "score": 75
             }
           ],
           "subject_requirements": {
@@ -775,6 +1060,17 @@
               "name": "中南林业科技大学",
               "major": "园艺",
               "score": 91
+            },
+            {
+              "name": "中南大学",
+              "major": "农学",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "豆包"
+              ],
+              "predicted_increase": 3,
+              "score": 25
             }
           ],
           "subject_requirements": {
@@ -806,6 +1102,18 @@
               "name": "湖南医药学院",
               "major": "临床医学",
               "score": 90
+            },
+            {
+              "name": "中南大学",
+              "major": "临床医学",
+              "frequency": 2,
+              "platforms": [
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 7,
+              "score": 50
             }
           ],
           "subject_requirements": {
@@ -847,6 +1155,18 @@
               "name": "湖南师范大学",
               "major": "会计学",
               "score": 93
+            },
+            {
+              "name": "长沙理工大学",
+              "major": "会计学",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度"
+              ],
+              "predicted_increase": 10,
+              "score": 50
             }
           ],
           "subject_requirements": {
@@ -877,6 +1197,19 @@
               "name": "长沙理工大学",
               "major": "会计学",
               "score": 93
+            },
+            {
+              "name": "中南大学",
+              "major": "会计学",
+              "frequency": 3,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 13,
+              "score": 75
             }
           ],
           "subject_requirements": {
@@ -907,6 +1240,19 @@
               "name": "湖南大学",
               "major": "临床医学",
               "score": 96
+            },
+            {
+              "name": "长沙理工大学",
+              "major": "临床医学",
+              "frequency": 3,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 12,
+              "score": 75
             }
           ],
           "subject_requirements": {
@@ -939,6 +1285,18 @@
               "name": "长沙理工大学",
               "major": "土木工程",
               "score": 92
+            },
+            {
+              "name": "湖南师范大学",
+              "major": "土木工程",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 8,
+              "score": 50
             }
           ],
           "subject_requirements": {
@@ -970,6 +1328,18 @@
               "name": "湖南师范大学",
               "major": "数学与应用数学",
               "score": 93
+            },
+            {
+              "name": "中南大学",
+              "major": "数学与应用数学",
+              "frequency": 2,
+              "platforms": [
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 7,
+              "score": 50
             }
           ],
           "subject_requirements": {
@@ -1002,6 +1372,19 @@
               "name": "湘潭大学",
               "major": "计算机科学与技术",
               "score": 93
+            },
+            {
+              "name": "中南大学",
+              "major": "计算机科学与技术",
+              "frequency": 3,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 14,
+              "score": 75
             }
           ],
           "subject_requirements": {
@@ -1032,6 +1415,17 @@
               "name": "湖南大学",
               "major": "机械设计制造及其自动化",
               "score": 95
+            },
+            {
+              "name": "中南大学",
+              "major": "机械设计制造及其自动化",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "元宝"
+              ],
+              "predicted_increase": 5,
+              "score": 25
             }
           ],
           "subject_requirements": {
@@ -1062,6 +1456,17 @@
               "name": "吉首大学",
               "major": "林学",
               "score": 91
+            },
+            {
+              "name": "中南大学",
+              "major": "风景园林",
+              "frequency": 1,
+              "platforms": [
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 3,
+              "score": 25
             }
           ],
           "subject_requirements": {
@@ -1101,6 +1506,19 @@
               "name": "湖南师范大学",
               "major": "计算机科学与技术",
               "score": 93
+            },
+            {
+              "name": "长沙理工大学",
+              "major": "计算机科学与技术",
+              "frequency": 3,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 16,
+              "score": 75
             }
           ],
           "subject_requirements": {
@@ -1133,6 +1551,19 @@
               "name": "湖南大学",
               "major": "软件工程",
               "score": 95
+            },
+            {
+              "name": "湖南师范大学",
+              "major": "计算机科学与技术",
+              "frequency": 3,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 15,
+              "score": 75
             }
           ],
           "subject_requirements": {
@@ -1164,6 +1595,18 @@
               "name": "湖南师范大学",
               "major": "金融学",
               "score": 93
+            },
+            {
+              "name": "长沙理工大学",
+              "major": "金融学",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度"
+              ],
+              "predicted_increase": 11,
+              "score": 50
             }
           ],
           "subject_requirements": {
@@ -1194,6 +1637,19 @@
               "name": "湘潭大学",
               "major": "汉语言文学",
               "score": 92
+            },
+            {
+              "name": "中南大学",
+              "major": "汉语言文学",
+              "frequency": 3,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 12,
+              "score": 75
             }
           ],
           "subject_requirements": {
@@ -1224,6 +1680,19 @@
               "name": "湖南师范大学",
               "major": "临床医学",
               "score": 92
+            },
+            {
+              "name": "湖南大学",
+              "major": "临床医学(八年制)",
+              "frequency": 3,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 13,
+              "score": 75
             }
           ],
           "subject_requirements": {
@@ -1256,6 +1725,18 @@
               "name": "长沙理工大学",
               "major": "材料科学与工程",
               "score": 91
+            },
+            {
+              "name": "湖南师范大学",
+              "major": "材料科学与工程",
+              "frequency": 2,
+              "platforms": [
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 8,
+              "score": 50
             }
           ],
           "subject_requirements": {
@@ -1287,6 +1768,18 @@
               "name": "湖南师范大学",
               "major": "法学",
               "score": 93
+            },
+            {
+              "name": "中南大学",
+              "major": "法学",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度"
+              ],
+              "predicted_increase": 9,
+              "score": 50
             }
           ],
           "subject_requirements": {
@@ -1315,6 +1808,17 @@
               "name": "湘潭大学",
               "major": "英语",
               "score": 91
+            },
+            {
+              "name": "中南大学",
+              "major": "英语",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "豆包"
+              ],
+              "predicted_increase": 5,
+              "score": 25
             }
           ],
           "subject_requirements": {
@@ -1354,6 +1858,19 @@
               "name": "长沙理工大学",
               "major": "自动化",
               "score": 94
+            },
+            {
+              "name": "湖南大学",
+              "major": "临床医学",
+              "frequency": 3,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 14,
+              "score": 75
             }
           ],
           "subject_requirements": {
@@ -1387,6 +1904,19 @@
               "name": "长沙理工大学",
               "major": "电气工程及其自动化",
               "score": 91
+            },
+            {
+              "name": "湖南师范大学",
+              "major": "电气工程及其自动化",
+              "frequency": 3,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 13,
+              "score": 75
             }
           ],
           "subject_requirements": {
@@ -1419,6 +1949,19 @@
               "name": "国防科技大学",
               "major": "软件工程",
               "score": 97
+            },
+            {
+              "name": "湖南师范大学",
+              "major": "软件工程",
+              "frequency": 3,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 15,
+              "score": 75
             }
           ],
           "subject_requirements": {
@@ -1450,6 +1993,18 @@
               "name": "长沙理工大学",
               "major": "车辆工程",
               "score": 92
+            },
+            {
+              "name": "湖南师范大学",
+              "major": "车辆工程",
+              "frequency": 2,
+              "platforms": [
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 10,
+              "score": 50
             }
           ],
           "subject_requirements": {
@@ -1480,6 +2035,17 @@
               "name": "中南大学",
               "major": "广播电视学",
               "score": 94
+            },
+            {
+              "name": "长沙理工大学",
+              "major": "新闻传播学",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "元宝"
+              ],
+              "predicted_increase": 5,
+              "score": 25
             }
           ],
           "subject_requirements": {
@@ -1509,6 +2075,18 @@
               "name": "湖南师范大学",
               "major": "工商管理",
               "score": 92
+            },
+            {
+              "name": "长沙理工大学",
+              "major": "工商管理",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 9,
+              "score": 50
             }
           ],
           "subject_requirements": {
@@ -1537,6 +2115,17 @@
               "name": "中南大学",
               "major": "数学与应用数学",
               "score": 96
+            },
+            {
+              "name": "湖南师范大学",
+              "major": "数学与应用数学",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "豆包"
+              ],
+              "predicted_increase": 4,
+              "score": 25
             }
           ],
           "subject_requirements": {
@@ -1567,6 +2156,17 @@
               "name": "中南大学",
               "major": "教育学",
               "score": 93
+            },
+            {
+              "name": "长沙理工大学",
+              "major": "教育学",
+              "frequency": 1,
+              "platforms": [
+                "元宝",
+                "百度"
+              ],
+              "predicted_increase": 4,
+              "score": 25
             }
           ],
           "subject_requirements": {
@@ -1606,6 +2206,19 @@
               "name": "湖南大学",
               "major": "计算机科学与技术",
               "score": 94
+            },
+            {
+              "name": "湖南师范大学",
+              "major": "计算机科学与技术",
+              "frequency": 3,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 16,
+              "score": 75
             }
           ],
           "subject_requirements": {
@@ -1637,6 +2250,18 @@
               "name": "湖南师范大学",
               "major": "金融学",
               "score": 92
+            },
+            {
+              "name": "长沙理工大学",
+              "major": "金融学",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度"
+              ],
+              "predicted_increase": 10,
+              "score": 50
             }
           ],
           "subject_requirements": {
@@ -1667,6 +2292,19 @@
               "name": "武汉大学",
               "major": "口腔医学",
               "score": 97
+            },
+            {
+              "name": "湖南大学",
+              "major": "口腔医学",
+              "frequency": 3,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 15,
+              "score": 75
             }
           ],
           "subject_requirements": {
@@ -1699,6 +2337,18 @@
               "name": "中南大学",
               "major": "电子信息工程",
               "score": 94
+            },
+            {
+              "name": "湖南师范大学",
+              "major": "电子科学与技术",
+              "frequency": 2,
+              "platforms": [
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 11,
+              "score": 50
             }
           ],
           "subject_requirements": {
@@ -1728,6 +2378,18 @@
               "name": "中南林业科技大学",
               "major": "风景园林",
               "score": 90
+            },
+            {
+              "name": "湖南师范大学",
+              "major": "建筑学",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度"
+              ],
+              "predicted_increase": 9,
+              "score": 50
             }
           ],
           "subject_requirements": {
@@ -1759,6 +2421,18 @@
               "name": "国防科技大学",
               "major": "自动化",
               "score": 96
+            },
+            {
+              "name": "湖南师范大学",
+              "major": "自动化",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 9,
+              "score": 50
             }
           ],
           "subject_requirements": {
@@ -1800,6 +2474,19 @@
               "name": "中南大学",
               "major": "计算机科学与技术",
               "score": 95
+            },
+            {
+              "name": "湖南大学",
+              "major": "计算机科学与技术",
+              "frequency": 3,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 16,
+              "score": 75
             }
           ],
           "subject_requirements": {
@@ -1832,6 +2519,19 @@
               "name": "中南大学",
               "major": "通信工程",
               "score": 93
+            },
+            {
+              "name": "湖南师范大学",
+              "major": "信息与通信工程",
+              "frequency": 3,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 14,
+              "score": 75
             }
           ],
           "subject_requirements": {
@@ -1864,6 +2564,19 @@
               "name": "湖南师范大学",
               "major": "临床医学",
               "score": 90
+            },
+            {
+              "name": "长沙理工大学",
+              "major": "临床医学(八年制)",
+              "frequency": 3,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 15,
+              "score": 75
             }
           ],
           "subject_requirements": {
@@ -1896,6 +2609,18 @@
               "name": "对外经济贸易大学",
               "major": "金融学",
               "score": 97
+            },
+            {
+              "name": "湖南师范大学",
+              "major": "金融学",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度"
+              ],
+              "predicted_increase": 10,
+              "score": 50
             }
           ],
           "subject_requirements": {
@@ -1925,6 +2650,18 @@
               "name": "国防科技大学",
               "major": "材料科学与工程",
               "score": 95
+            },
+            {
+              "name": "湖南师范大学",
+              "major": "材料科学与工程",
+              "frequency": 2,
+              "platforms": [
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 8,
+              "score": 50
             }
           ],
           "subject_requirements": {
@@ -1955,6 +2692,17 @@
               "name": "湖南大学",
               "major": "数学与应用数学",
               "score": 94
+            },
+            {
+              "name": "湖南师范大学",
+              "major": "数学与应用数学",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "豆包"
+              ],
+              "predicted_increase": 5,
+              "score": 25
             }
           ],
           "subject_requirements": {
@@ -1996,6 +2744,19 @@
               "name": "上海交通大学",
               "major": "计算机科学与技术",
               "score": 98
+            },
+            {
+              "name": "中南大学",
+              "major": "计算机科学与技术",
+              "frequency": 3,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 18,
+              "score": 75
             }
           ],
           "subject_requirements": {
@@ -2028,6 +2789,19 @@
               "name": "中国人民大学",
               "major": "金融学",
               "score": 97
+            },
+            {
+              "name": "中南大学",
+              "major": "金融学",
+              "frequency": 3,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 16,
+              "score": 75
             }
           ],
           "subject_requirements": {
@@ -2058,6 +2832,19 @@
               "name": "浙江大学",
               "major": "电子科学与技术",
               "score": 97
+            },
+            {
+              "name": "中南大学",
+              "major": "电子科学与技术",
+              "frequency": 3,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 15,
+              "score": 75
             }
           ],
           "subject_requirements": {
@@ -2087,6 +2874,18 @@
               "name": "复旦大学",
               "major": "临床医学(八年制)",
               "score": 96
+            },
+            {
+              "name": "中南大学",
+              "major": "临床医学(八年制)",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度"
+              ],
+              "predicted_increase": 13,
+              "score": 50
             }
           ],
           "subject_requirements": {
@@ -2119,6 +2918,18 @@
               "name": "中国传媒大学",
               "major": "新闻学",
               "score": 94
+            },
+            {
+              "name": "中南大学",
+              "major": "新闻传播学",
+              "frequency": 2,
+              "platforms": [
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 12,
+              "score": 50
             }
           ],
           "subject_requirements": {
@@ -2147,6 +2958,17 @@
               "name": "北京大学",
               "major": "数学与应用数学",
               "score": 97
+            },
+            {
+              "name": "中南大学",
+              "major": "数学与应用数学",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "豆包"
+              ],
+              "predicted_increase": 6,
+              "score": 25
             }
           ],
           "subject_requirements": {

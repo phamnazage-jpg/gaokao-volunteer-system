@@ -34,6 +34,18 @@
               "name": "上海交通大学",
               "major": "工科试验班",
               "score": 95
+            },
+            {
+              "name": "郑州大学",
+              "major": "工科试验班",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度"
+              ],
+              "predicted_increase": 10,
+              "score": 50
             }
           ],
           "program_type": null
@@ -57,6 +69,17 @@
               "name": "清华大学",
               "major": "经济与金融",
               "score": 96
+            },
+            {
+              "name": "郑州大学",
+              "major": "工商管理类",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "元宝"
+              ],
+              "predicted_increase": 8,
+              "score": 25
             }
           ],
           "program_type": null
@@ -81,6 +104,18 @@
               "name": "浙江大学",
               "major": "临床医学(八年制)",
               "score": 94
+            },
+            {
+              "name": "郑州大学",
+              "major": "临床医学(八年制)",
+              "frequency": 2,
+              "platforms": [
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 9,
+              "score": 50
             }
           ],
           "program_type": null
@@ -104,6 +139,17 @@
               "name": "武汉大学",
               "major": "法学",
               "score": 92
+            },
+            {
+              "name": "郑州大学",
+              "major": "法学",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "元宝"
+              ],
+              "predicted_increase": 6,
+              "score": 25
             }
           ],
           "program_type": null
@@ -127,6 +173,17 @@
               "name": "华中科技大学",
               "major": "电子信息类",
               "score": 91
+            },
+            {
+              "name": "郑州大学",
+              "major": "电子信息类",
+              "frequency": 1,
+              "platforms": [
+                "元宝",
+                "百度"
+              ],
+              "predicted_increase": 7,
+              "score": 25
             }
           ],
           "program_type": null
@@ -160,6 +217,18 @@
               "name": "中山大学",
               "major": "计算机科学与技术",
               "score": 92
+            },
+            {
+              "name": "郑州大学",
+              "major": "计算机科学与技术",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度"
+              ],
+              "predicted_increase": 7,
+              "score": 50
             }
           ],
           "program_type": null
@@ -183,6 +252,17 @@
               "name": "天津大学",
               "major": "建筑学",
               "score": 92
+            },
+            {
+              "name": "郑州大学",
+              "major": "建筑学",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "豆包"
+              ],
+              "predicted_increase": 5,
+              "score": 25
             }
           ],
           "program_type": null
@@ -207,6 +287,18 @@
               "name": "中南大学",
               "major": "临床医学(湘雅)",
               "score": 91
+            },
+            {
+              "name": "郑州大学",
+              "major": "临床医学",
+              "frequency": 2,
+              "platforms": [
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 6,
+              "score": 50
             }
           ],
           "program_type": null
@@ -230,6 +322,17 @@
               "name": "中南大学",
               "major": "临床医学",
               "score": 90
+            },
+            {
+              "name": "郑州大学",
+              "major": "临床医学",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "豆包"
+              ],
+              "predicted_increase": 5,
+              "score": 25
             }
           ],
           "program_type": null
@@ -253,6 +356,17 @@
               "name": "华南理工大学",
               "major": "建筑学",
               "score": 88
+            },
+            {
+              "name": "郑州大学",
+              "major": "建筑学",
+              "frequency": 1,
+              "platforms": [
+                "元宝",
+                "百度"
+              ],
+              "predicted_increase": 4,
+              "score": 25
             }
           ],
           "program_type": null
@@ -286,6 +400,18 @@
               "name": "华中科技大学",
               "major": "计算机科学与技术",
               "score": 93
+            },
+            {
+              "name": "郑州大学",
+              "major": "计算机科学与技术",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度"
+              ],
+              "predicted_increase": 5,
+              "score": 50
             }
           ],
           "program_type": null
@@ -309,6 +435,17 @@
               "name": "华北电力大学",
               "major": "电气工程及其自动化",
               "score": 90
+            },
+            {
+              "name": "郑州大学",
+              "major": "电气工程及其自动化",
+              "frequency": 1,
+              "platforms": [
+                "元宝",
+                "百度"
+              ],
+              "predicted_increase": 4,
+              "score": 25
             }
           ],
           "program_type": null
@@ -334,6 +471,19 @@
               "name": "新乡医学院",
               "major": "临床医学",
               "score": 87
+            },
+            {
+              "name": "河南师范大学",
+              "major": "临床医学",
+              "frequency": 3,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 7,
+              "score": 75
             }
           ],
           "program_type": null
@@ -357,6 +507,17 @@
               "name": "郑州大学",
               "major": "土木工程",
               "score": 85
+            },
+            {
+              "name": "河南大学",
+              "major": "土木工程",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "百度"
+              ],
+              "predicted_increase": 3,
+              "score": 25
             }
           ],
           "program_type": null
@@ -381,6 +542,18 @@
               "name": "河南大学",
               "major": "英语",
               "score": 86
+            },
+            {
+              "name": "郑州大学",
+              "major": "英语",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "豆包"
+              ],
+              "predicted_increase": 4,
+              "score": 50
             }
           ],
           "program_type": "师范教育类"
@@ -415,6 +588,19 @@
               "name": "河南师范大学",
               "major": "汉语言文学",
               "score": 88
+            },
+            {
+              "name": "河南科技大学",
+              "major": "汉语言文学",
+              "frequency": 3,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 5,
+              "score": 75
             }
           ],
           "program_type": null
@@ -439,6 +625,18 @@
               "name": "河南科技大学",
               "major": "计算机科学与技术",
               "score": 86
+            },
+            {
+              "name": "河南大学",
+              "major": "计算机科学与技术",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度"
+              ],
+              "predicted_increase": 6,
+              "score": 50
             }
           ],
           "program_type": null
@@ -462,6 +660,17 @@
               "name": "河南大学",
               "major": "数学与应用数学",
               "score": 88
+            },
+            {
+              "name": "郑州大学",
+              "major": "数学与应用数学",
+              "frequency": 1,
+              "platforms": [
+                "元宝",
+                "豆包"
+              ],
+              "predicted_increase": 3,
+              "score": 25
             }
           ],
           "program_type": "师范教育类"
@@ -486,6 +695,18 @@
               "name": "黄河水利职业技术学院",
               "major": "水利水电建筑工程",
               "score": 86
+            },
+            {
+              "name": "河南大学",
+              "major": "水利水电工程",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度"
+              ],
+              "predicted_increase": 5,
+              "score": 50
             }
           ],
           "program_type": null
@@ -510,6 +731,18 @@
               "name": "河南大学",
               "major": "会计学",
               "score": 85
+            },
+            {
+              "name": "河南师范大学",
+              "major": "会计学",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 4,
+              "score": 50
             }
           ],
           "program_type": null
@@ -543,6 +776,18 @@
               "name": "河南大学",
               "major": "英语",
               "score": 89
+            },
+            {
+              "name": "郑州大学",
+              "major": "英语",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 4,
+              "score": 50
             }
           ],
           "program_type": "师范教育类"
@@ -566,6 +811,17 @@
               "name": "中原工学院",
               "major": "机械设计制造及其自动化",
               "score": 85
+            },
+            {
+              "name": "郑州大学",
+              "major": "机械设计制造及其自动化",
+              "frequency": 1,
+              "platforms": [
+                "元宝",
+                "百度"
+              ],
+              "predicted_increase": 3,
+              "score": 25
             }
           ],
           "program_type": "艺体类"
@@ -590,6 +846,18 @@
               "name": "新乡医学院",
               "major": "中医学",
               "score": 87
+            },
+            {
+              "name": "郑州大学",
+              "major": "中医学",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "豆包"
+              ],
+              "predicted_increase": 5,
+              "score": 50
             }
           ],
           "program_type": "医学类特色"
@@ -614,6 +882,18 @@
               "name": "中原工学院",
               "major": "食品科学与工程",
               "score": 80
+            },
+            {
+              "name": "郑州大学",
+              "major": "食品科学与工程",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度"
+              ],
+              "predicted_increase": 3,
+              "score": 50
             }
           ],
           "program_type": null
@@ -637,6 +917,17 @@
               "name": "河南大学",
               "major": "中医学",
               "score": 83
+            },
+            {
+              "name": "郑州大学",
+              "major": "中医学",
+              "frequency": 1,
+              "platforms": [
+                "元宝",
+                "豆包"
+              ],
+              "predicted_increase": 2,
+              "score": 25
             }
           ],
           "program_type": "医学类特色"
@@ -670,6 +961,18 @@
               "name": "中原工学院",
               "major": "会计学",
               "score": 84
+            },
+            {
+              "name": "郑州大学",
+              "major": "会计学",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度"
+              ],
+              "predicted_increase": 4,
+              "score": 50
             }
           ],
           "program_type": null
@@ -693,6 +996,17 @@
               "name": "黄河水利职业技术学院",
               "major": "水利工程",
               "score": 82
+            },
+            {
+              "name": "河南大学",
+              "major": "水利水电工程",
+              "frequency": 1,
+              "platforms": [
+                "元宝",
+                "豆包"
+              ],
+              "predicted_increase": 3,
+              "score": 25
             }
           ],
           "program_type": null
@@ -717,6 +1031,18 @@
               "name": "河南师范大学",
               "major": "汉语言文学",
               "score": 88
+            },
+            {
+              "name": "郑州大学",
+              "major": "汉语言文学",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 3,
+              "score": 50
             }
           ],
           "program_type": "师范教育类"
@@ -740,6 +1066,17 @@
               "name": "中原工学院",
               "major": "材料成型及控制工程",
               "score": 80
+            },
+            {
+              "name": "郑州大学",
+              "major": "材料成型及控制工程",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "百度"
+              ],
+              "predicted_increase": 3,
+              "score": 25
             }
           ],
           "program_type": null
@@ -763,6 +1100,17 @@
               "name": "河南师范大学",
               "major": "数学与应用数学",
               "score": 86
+            },
+            {
+              "name": "郑州大学",
+              "major": "数学与应用数学",
+              "frequency": 1,
+              "platforms": [
+                "元宝",
+                "豆包"
+              ],
+              "predicted_increase": 2,
+              "score": 25
             }
           ],
           "program_type": "师范教育类"
@@ -795,6 +1143,17 @@
               "name": "郑州商学院",
               "major": "财务管理",
               "score": 81
+            },
+            {
+              "name": "郑州大学",
+              "major": "财务管理",
+              "frequency": 1,
+              "platforms": [
+                "元宝",
+                "百度"
+              ],
+              "predicted_increase": 2,
+              "score": 25
             }
           ],
           "program_type": null
@@ -818,6 +1177,17 @@
               "name": "郑州升达经贸管理学院",
               "major": "计算机科学与技术",
               "score": 80
+            },
+            {
+              "name": "郑州大学",
+              "major": "计算机科学与技术",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "豆包"
+              ],
+              "predicted_increase": 2,
+              "score": 25
             }
           ],
           "program_type": null
@@ -842,6 +1212,18 @@
               "name": "黄河科技学院",
               "major": "机械设计制造及其自动化",
               "score": 81
+            },
+            {
+              "name": "郑州大学",
+              "major": "机械设计制造及其自动化",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度"
+              ],
+              "predicted_increase": 3,
+              "score": 50
             }
           ],
           "program_type": "艺体类"
@@ -865,6 +1247,17 @@
               "name": "黄河科技学院",
               "major": "机械设计制造及其自动化",
               "score": 79
+            },
+            {
+              "name": "郑州大学",
+              "major": "机械设计制造及其自动化",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "百度"
+              ],
+              "predicted_increase": 1,
+              "score": 25
             }
           ],
           "program_type": "艺体类"
@@ -888,6 +1281,17 @@
               "name": "郑州商学院",
               "major": "计算机科学与技术",
               "score": 76
+            },
+            {
+              "name": "郑州大学",
+              "major": "计算机科学与技术",
+              "frequency": 1,
+              "platforms": [
+                "元宝",
+                "豆包"
+              ],
+              "predicted_increase": 1,
+              "score": 25
             }
           ],
           "program_type": null
@@ -921,6 +1325,18 @@
               "name": "河南职业技术学院",
               "major": "建筑工程技术",
               "score": 82
+            },
+            {
+              "name": "郑州大学",
+              "major": "水利水电建筑工程",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 5,
+              "score": 50
             }
           ],
           "program_type": null
@@ -945,6 +1361,18 @@
               "name": "河南交通职业技术学院",
               "major": "城市轨道交通",
               "score": 81
+            },
+            {
+              "name": "郑州大学",
+              "major": "铁道机车",
+              "frequency": 2,
+              "platforms": [
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 6,
+              "score": 50
             }
           ],
           "program_type": null
@@ -968,6 +1396,17 @@
               "name": "河南机电职业学院",
               "major": "机械制造及自动化",
               "score": 80
+            },
+            {
+              "name": "郑州大学",
+              "major": "机械制造及自动化",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "元宝"
+              ],
+              "predicted_increase": 4,
+              "score": 25
             }
           ],
           "program_type": null
@@ -991,6 +1430,17 @@
               "name": "河南水利与环境职业学院",
               "major": "道路桥梁工程技术",
               "score": 76
+            },
+            {
+              "name": "郑州大学",
+              "major": "道路桥梁工程技术",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "百度"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -1014,6 +1464,17 @@
               "name": "河南机电职业学院",
               "major": "机电一体化技术",
               "score": 75
+            },
+            {
+              "name": "郑州大学",
+              "major": "机电一体化技术",
+              "frequency": 1,
+              "platforms": [
+                "元宝",
+                "豆包"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null

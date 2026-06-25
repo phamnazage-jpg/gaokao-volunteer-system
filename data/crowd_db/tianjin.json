@@ -35,6 +35,19 @@
               "name": "复旦大学",
               "major": "数学类",
               "score": 97
+            },
+            {
+              "name": "天津大学",
+              "major": "数学类",
+              "frequency": 3,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 7,
+              "score": 75
             }
           ],
           "program_type": null
@@ -59,6 +72,18 @@
               "name": "上海交通大学",
               "major": "化学工程与工艺",
               "score": 96
+            },
+            {
+              "name": "南开大学",
+              "major": "化工与制药类",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度"
+              ],
+              "predicted_increase": 5,
+              "score": 50
             }
           ],
           "program_type": null
@@ -83,6 +108,18 @@
               "name": "中国人民大学",
               "major": "经济学类",
               "score": 97
+            },
+            {
+              "name": "天津大学",
+              "major": "经济学类",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 6,
+              "score": 50
             }
           ],
           "program_type": null
@@ -107,6 +144,18 @@
               "name": "天津大学",
               "major": "生物医学工程",
               "score": 90
+            },
+            {
+              "name": "天津师范大学",
+              "major": "临床医学（5+3一体化）",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度"
+              ],
+              "predicted_increase": 6,
+              "score": 50
             }
           ],
           "program_type": "医学类特色"
@@ -131,6 +180,18 @@
               "name": "南开大学",
               "major": "自动化",
               "score": 91
+            },
+            {
+              "name": "天津师范大学",
+              "major": "电气工程及其自动化",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 5,
+              "score": 50
             }
           ],
           "program_type": null
@@ -165,6 +226,19 @@
               "name": "中山大学",
               "major": "工商管理类",
               "score": 94
+            },
+            {
+              "name": "天津师范大学",
+              "major": "工商管理类",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 5,
+              "score": 50
             }
           ],
           "program_type": null
@@ -189,6 +263,18 @@
               "name": "北京航空航天大学",
               "major": "计算机科学与技术",
               "score": 96
+            },
+            {
+              "name": "天津师范大学",
+              "major": "计算机科学与技术",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度"
+              ],
+              "predicted_increase": 7,
+              "score": 50
             }
           ],
           "program_type": null
@@ -212,6 +298,17 @@
               "name": "中山大学",
               "major": "临床医学",
               "score": 94
+            },
+            {
+              "name": "天津大学",
+              "major": "临床医学(5+3一体化)",
+              "frequency": 1,
+              "platforms": [
+                "元宝",
+                "豆包"
+              ],
+              "predicted_increase": 4,
+              "score": 25
             }
           ],
           "program_type": null
@@ -236,6 +333,18 @@
               "name": "天津大学",
               "major": "生物科学",
               "score": 88
+            },
+            {
+              "name": "天津师范大学",
+              "major": "基础医学",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "豆包"
+              ],
+              "predicted_increase": 5,
+              "score": 50
             }
           ],
           "program_type": "医学院校特色类"
@@ -260,6 +369,18 @@
               "name": "南开大学",
               "major": "药学",
               "score": 85
+            },
+            {
+              "name": "天津大学",
+              "major": "针灸推拿学",
+              "frequency": 2,
+              "platforms": [
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 4,
+              "score": 50
             }
           ],
           "program_type": "医学类特色"
@@ -294,6 +415,19 @@
               "name": "河北医科大学",
               "major": "临床医学",
               "score": 91
+            },
+            {
+              "name": "南开大学",
+              "major": "临床医学",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 6,
+              "score": 50
             }
           ],
           "program_type": "医学类特色"
@@ -318,6 +452,18 @@
               "name": "华北电力大学(北京)",
               "major": "电气工程及其自动化",
               "score": 94
+            },
+            {
+              "name": "南开大学",
+              "major": "电气工程及其自动化",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度"
+              ],
+              "predicted_increase": 5,
+              "score": 50
             }
           ],
           "program_type": null
@@ -341,6 +487,17 @@
               "name": "中山大学",
               "major": "口腔医学",
               "score": 95
+            },
+            {
+              "name": "南开大学",
+              "major": "口腔医学",
+              "frequency": 1,
+              "platforms": [
+                "元宝",
+                "百度"
+              ],
+              "predicted_increase": 4,
+              "score": 25
             }
           ],
           "program_type": "医学类特色"
@@ -365,6 +522,18 @@
               "name": "南开大学",
               "major": "计算机科学与技术",
               "score": 88
+            },
+            {
+              "name": "天津师范大学",
+              "major": "计算机科学与技术",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度"
+              ],
+              "predicted_increase": 4,
+              "score": 50
             }
           ],
           "program_type": null
@@ -388,6 +557,17 @@
               "name": "天津大学",
               "major": "应用心理学",
               "score": 84
+            },
+            {
+              "name": "天津医科大学",
+              "major": "心理学",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "豆包"
+              ],
+              "predicted_increase": 3,
+              "score": 25
             }
           ],
           "program_type": "师范教育类"
@@ -422,6 +602,19 @@
               "name": "南开大学",
               "major": "汉语言文学",
               "score": 90
+            },
+            {
+              "name": "天津医科大学",
+              "major": "汉语言文学",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 4,
+              "score": 50
             }
           ],
           "program_type": "师范教育类"
@@ -445,6 +638,17 @@
               "name": "西安工程大学",
               "major": "纺织工程",
               "score": 85
+            },
+            {
+              "name": "南开大学",
+              "major": "纺织工程",
+              "frequency": 1,
+              "platforms": [
+                "元宝",
+                "豆包"
+              ],
+              "predicted_increase": 2,
+              "score": 25
             }
           ],
           "program_type": null
@@ -469,6 +673,18 @@
               "name": "对外经济贸易大学",
               "major": "会计学",
               "score": 94
+            },
+            {
+              "name": "南开大学",
+              "major": "会计学",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度"
+              ],
+              "predicted_increase": 3,
+              "score": 50
             }
           ],
           "program_type": null
@@ -493,6 +709,18 @@
               "name": "河北工业大学",
               "major": "计算机科学与技术",
               "score": 85
+            },
+            {
+              "name": "南开大学",
+              "major": "计算机科学与技术",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "豆包"
+              ],
+              "predicted_increase": 3,
+              "score": 50
             }
           ],
           "program_type": null
@@ -516,6 +744,17 @@
               "name": "南开大学",
               "major": "飞行器设计与工程",
               "score": 85
+            },
+            {
+              "name": "天津师范大学",
+              "major": "飞行器动力工程",
+              "frequency": 1,
+              "platforms": [
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 2,
+              "score": 25
             }
           ],
           "program_type": null
@@ -550,6 +789,19 @@
               "name": "北京第二外国语学院",
               "major": "英语",
               "score": 91
+            },
+            {
+              "name": "南开大学",
+              "major": "英语",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 3,
+              "score": 50
             }
           ],
           "program_type": "国际涉外导向"
@@ -573,6 +825,17 @@
               "name": "天津大学",
               "major": "机械设计制造及其自动化",
               "score": 93
+            },
+            {
+              "name": "南开大学",
+              "major": "机械设计制造及其自动化",
+              "frequency": 1,
+              "platforms": [
+                "元宝",
+                "百度"
+              ],
+              "predicted_increase": 2,
+              "score": 25
             }
           ],
           "program_type": "艺体类"
@@ -597,6 +860,18 @@
               "name": "南京航空航天大学",
               "major": "交通运输",
               "score": 93
+            },
+            {
+              "name": "南开大学",
+              "major": "交通运输",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度"
+              ],
+              "predicted_increase": 4,
+              "score": 50
             }
           ],
           "program_type": null
@@ -620,6 +895,17 @@
               "name": "河北工业大学",
               "major": "土木工程",
               "score": 83
+            },
+            {
+              "name": "南开大学",
+              "major": "土木工程",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "元宝"
+              ],
+              "predicted_increase": 2,
+              "score": 25
             }
           ],
           "program_type": null
@@ -643,6 +929,17 @@
               "name": "天津财经大学",
               "major": "金融学",
               "score": 84
+            },
+            {
+              "name": "天津大学",
+              "major": "金融学",
+              "frequency": 1,
+              "platforms": [
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 1,
+              "score": 25
             }
           ],
           "program_type": null
@@ -675,6 +972,17 @@
               "name": "天津师范大学",
               "major": "工商管理",
               "score": 85
+            },
+            {
+              "name": "南开大学",
+              "major": "工商管理",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "元宝"
+              ],
+              "predicted_increase": 2,
+              "score": 25
             }
           ],
           "program_type": null
@@ -698,6 +1006,17 @@
               "name": "天津理工大学",
               "major": "机械工艺技术",
               "score": 84
+            },
+            {
+              "name": "南开大学",
+              "major": "机械工艺技术",
+              "frequency": 1,
+              "platforms": [
+                "元宝",
+                "豆包"
+              ],
+              "predicted_increase": 1,
+              "score": 25
             }
           ],
           "program_type": "师范院校特色类"
@@ -721,6 +1040,17 @@
               "name": "首都体育学院",
               "major": "体育教育",
               "score": 86
+            },
+            {
+              "name": "南开大学",
+              "major": "体育教育",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "百度"
+              ],
+              "predicted_increase": 1,
+              "score": 25
             }
           ],
           "program_type": "艺体类"
@@ -744,6 +1074,17 @@
               "name": "天津师范大学",
               "major": "生物科学",
               "score": 79
+            },
+            {
+              "name": "天津大学",
+              "major": "动物医学",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "豆包"
+              ],
+              "predicted_increase": 1,
+              "score": 25
             }
           ],
           "program_type": null
@@ -767,6 +1108,17 @@
               "name": "天津理工大学",
               "major": "车辆工程",
               "score": 78
+            },
+            {
+              "name": "南开大学",
+              "major": "汽车服务工程",
+              "frequency": 1,
+              "platforms": [
+                "元宝",
+                "百度"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -799,6 +1151,17 @@
               "name": "天津师范大学",
               "major": "工商管理",
               "score": 83
+            },
+            {
+              "name": "南开大学",
+              "major": "工商管理",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "元宝"
+              ],
+              "predicted_increase": 1,
+              "score": 25
             }
           ],
           "program_type": null
@@ -822,6 +1185,17 @@
               "name": "天津工业大学",
               "major": "计算机科学与技术",
               "score": 82
+            },
+            {
+              "name": "南开大学",
+              "major": "计算机应用技术",
+              "frequency": 1,
+              "platforms": [
+                "元宝",
+                "豆包"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -845,6 +1219,17 @@
               "name": "天津商业大学",
               "major": "财务管理",
               "score": 80
+            },
+            {
+              "name": "南开大学",
+              "major": "财务管理",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "百度"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -868,6 +1253,17 @@
               "name": "河北工业大学",
               "major": "机械工程",
               "score": 79
+            },
+            {
+              "name": "南开大学",
+              "major": "机械工程",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "元宝"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -891,6 +1287,17 @@
               "name": "天津工业大学",
               "major": "自动化",
               "score": 77
+            },
+            {
+              "name": "南开大学",
+              "major": "自动化",
+              "frequency": 1,
+              "platforms": [
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -923,6 +1330,17 @@
               "name": "天津交通职业学院",
               "major": "计算机应用技术",
               "score": 78
+            },
+            {
+              "name": "南开大学",
+              "major": "计算机应用技术",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "元宝"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -946,6 +1364,17 @@
               "name": "天津职业大学",
               "major": "机械制造及自动化",
               "score": 80
+            },
+            {
+              "name": "南开大学",
+              "major": "机械制造及自动化",
+              "frequency": 1,
+              "platforms": [
+                "元宝",
+                "豆包"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -969,6 +1398,17 @@
               "name": "天津职业大学",
               "major": "护理",
               "score": 80
+            },
+            {
+              "name": "南开大学",
+              "major": "护理",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "百度"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -992,6 +1432,17 @@
               "name": "天津工业大学",
               "major": "机械工程",
               "score": 75
+            },
+            {
+              "name": "南开大学",
+              "major": "数控技术",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "豆包"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -1015,6 +1466,17 @@
               "name": "中国民航大学",
               "major": "交通运输",
               "score": 83
+            },
+            {
+              "name": "南开大学",
+              "major": "铁道交通运营管理",
+              "frequency": 1,
+              "platforms": [
+                "元宝",
+                "百度"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null

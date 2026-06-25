@@ -51,6 +51,17 @@
               "name": "宁夏理工学院",
               "major": "应用化学",
               "score": 85
+            },
+            {
+              "name": "宁夏医科大学",
+              "major": "化学工程与工艺",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 1,
+              "score": 25
             }
           ],
           "program_type": null
@@ -75,6 +86,18 @@
               "name": "北方民族大学",
               "major": "生态学",
               "score": 84
+            },
+            {
+              "name": "宁夏医科大学",
+              "major": "草业科学",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度"
+              ],
+              "predicted_increase": 3,
+              "score": 50
             }
           ],
           "program_type": null
@@ -98,6 +121,17 @@
               "name": "宁夏理工学院",
               "major": "网络工程",
               "score": 83
+            },
+            {
+              "name": "宁夏医科大学",
+              "major": "计算机科学与技术",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -122,6 +156,18 @@
               "name": "北方民族大学",
               "major": "医学影像技术",
               "score": 82
+            },
+            {
+              "name": "宁夏师范学院",
+              "major": "临床医学",
+              "frequency": 2,
+              "platforms": [
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 4,
+              "score": 50
             }
           ],
           "program_type": "医学类特色"
@@ -145,6 +191,17 @@
               "name": "宁夏师范学院",
               "major": "思想政治教育",
               "score": 81
+            },
+            {
+              "name": "宁夏医科大学",
+              "major": "民族学",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "豆包"
+              ],
+              "predicted_increase": 1,
+              "score": 25
             }
           ],
           "program_type": "民族类特色"
@@ -177,6 +234,17 @@
               "name": "北方民族大学",
               "major": "口腔医学技术",
               "score": 84
+            },
+            {
+              "name": "宁夏师范学院",
+              "major": "口腔医学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": "医学类特色"
@@ -200,6 +268,17 @@
               "name": "北方民族大学",
               "major": "中国少数民族语言文学",
               "score": 83
+            },
+            {
+              "name": "宁夏医科大学",
+              "major": "汉语言文学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -224,6 +303,18 @@
               "name": "宁夏理工学院",
               "major": "材料工程",
               "score": 82
+            },
+            {
+              "name": "宁夏医科大学",
+              "major": "材料科学与工程",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度"
+              ],
+              "predicted_increase": 2,
+              "score": 50
             }
           ],
           "program_type": "民族类特色"
@@ -247,6 +338,17 @@
               "name": "北方民族大学",
               "major": "学前教育",
               "score": 81
+            },
+            {
+              "name": "宁夏医科大学",
+              "major": "教育学",
+              "frequency": 1,
+              "platforms": [
+                "元宝",
+                "豆包"
+              ],
+              "predicted_increase": 1,
+              "score": 25
             }
           ],
           "program_type": "师范教育类"
@@ -270,6 +372,17 @@
               "name": "北方民族大学",
               "major": "机械工程",
               "score": 80
+            },
+            {
+              "name": "宁夏医科大学",
+              "major": "机械工程",
+              "frequency": 1,
+              "platforms": [
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 1,
+              "score": 25
             }
           ],
           "program_type": null
@@ -302,6 +415,17 @@
               "name": "北方民族大学",
               "major": "针灸推拿学",
               "score": 83
+            },
+            {
+              "name": "宁夏师范学院",
+              "major": "中医学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": "医学类特色"
@@ -325,6 +449,17 @@
               "name": "宁夏师范学院",
               "major": "思想政治教育",
               "score": 82
+            },
+            {
+              "name": "宁夏医科大学",
+              "major": "法学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": "民族类特色"
@@ -349,6 +484,18 @@
               "name": "北方民族大学",
               "major": "自动化",
               "score": 81
+            },
+            {
+              "name": "宁夏医科大学",
+              "major": "电气工程及其自动化",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度"
+              ],
+              "predicted_increase": 2,
+              "score": 50
             }
           ],
           "program_type": null
@@ -372,6 +519,17 @@
               "name": "北方民族大学",
               "major": "翻译",
               "score": 80
+            },
+            {
+              "name": "宁夏医科大学",
+              "major": "英语",
+              "frequency": 1,
+              "platforms": [
+                "元宝",
+                "豆包"
+              ],
+              "predicted_increase": 1,
+              "score": 25
             }
           ],
           "program_type": "师范教育类"
@@ -395,6 +553,17 @@
               "name": "宁夏理工学院",
               "major": "国际经济与贸易",
               "score": 79
+            },
+            {
+              "name": "宁夏医科大学",
+              "major": "经济学",
+              "frequency": 1,
+              "platforms": [
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 1,
+              "score": 25
             }
           ],
           "program_type": null
@@ -427,6 +596,17 @@
               "name": "北方民族大学",
               "major": "土木工程",
               "score": 82
+            },
+            {
+              "name": "宁夏医科大学",
+              "major": "土木工程",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -450,6 +630,17 @@
               "name": "宁夏师范学院",
               "major": "市场营销",
               "score": 81
+            },
+            {
+              "name": "宁夏医科大学",
+              "major": "工商管理",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": "民族类特色"
@@ -473,6 +664,17 @@
               "name": "北方民族大学",
               "major": "信息与计算科学",
               "score": 80
+            },
+            {
+              "name": "宁夏医科大学",
+              "major": "数学与应用数学",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "元宝"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": "师范教育类"
@@ -496,6 +698,17 @@
               "name": "北方民族大学",
               "major": "康复治疗学",
               "score": 79
+            },
+            {
+              "name": "宁夏师范学院",
+              "major": "护理学",
+              "frequency": 1,
+              "platforms": [
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 1,
+              "score": 25
             }
           ],
           "program_type": "医学类特色"
@@ -519,6 +732,17 @@
               "name": "北方民族大学",
               "major": "网络工程",
               "score": 78
+            },
+            {
+              "name": "宁夏医科大学",
+              "major": "计算机科学与技术",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -551,6 +775,17 @@
               "name": "北方民族大学",
               "major": "学前教育",
               "score": 81
+            },
+            {
+              "name": "宁夏医科大学",
+              "major": "学前教育",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": "师范教育类"
@@ -574,6 +809,17 @@
               "name": "宁夏理工学院",
               "major": "环境设计",
               "score": 80
+            },
+            {
+              "name": "宁夏医科大学",
+              "major": "设计学类",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": "民族类特色"
@@ -597,6 +843,17 @@
               "name": "北方民族大学",
               "major": "财务管理",
               "score": 79
+            },
+            {
+              "name": "宁夏医科大学",
+              "major": "会计学",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "百度"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -620,6 +877,17 @@
               "name": "北方民族大学",
               "major": "医学检验技术",
               "score": 78
+            },
+            {
+              "name": "宁夏师范学院",
+              "major": "医学影像技术",
+              "frequency": 1,
+              "platforms": [
+                "元宝",
+                "豆包"
+              ],
+              "predicted_increase": 1,
+              "score": 25
             }
           ],
           "program_type": "医学类特色"
@@ -644,6 +912,18 @@
               "name": "北方民族大学",
               "major": "电子信息科学与技术",
               "score": 77
+            },
+            {
+              "name": "宁夏医科大学",
+              "major": "物理学",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "豆包"
+              ],
+              "predicted_increase": 1,
+              "score": 50
             }
           ],
           "program_type": "师范教育类"
@@ -676,6 +956,17 @@
               "name": "北方民族大学",
               "major": "机械设计制造及其自动化",
               "score": 79
+            },
+            {
+              "name": "宁夏大学",
+              "major": "机电一体化技术",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -699,6 +990,17 @@
               "name": "北方民族大学",
               "major": "财务管理",
               "score": 78
+            },
+            {
+              "name": "宁夏医科大学",
+              "major": "大数据与会计",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -722,6 +1024,17 @@
               "name": "宁夏大学",
               "major": "建筑学",
               "score": 77
+            },
+            {
+              "name": "宁夏医科大学",
+              "major": "建筑工程技术",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "元宝"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -745,6 +1058,17 @@
               "name": "北方民族大学",
               "major": "经济学",
               "score": 76
+            },
+            {
+              "name": "宁夏医科大学",
+              "major": "金融服务与管理",
+              "frequency": 1,
+              "platforms": [
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -768,6 +1092,17 @@
               "name": "宁夏师范学院",
               "major": "生物科学",
               "score": 75
+            },
+            {
+              "name": "宁夏医科大学",
+              "major": "畜牧兽医",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -800,6 +1135,17 @@
               "name": "北方民族大学",
               "major": "学前教育",
               "score": 77
+            },
+            {
+              "name": "宁夏大学",
+              "major": "学前教育",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": "民族类特色"
@@ -823,6 +1169,17 @@
               "name": "宁夏理工学院",
               "major": "软件技术",
               "score": 76
+            },
+            {
+              "name": "宁夏医科大学",
+              "major": "计算机应用技术",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -846,6 +1203,17 @@
               "name": "北方民族大学",
               "major": "市场营销",
               "score": 75
+            },
+            {
+              "name": "宁夏医科大学",
+              "major": "电子商务",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "百度"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -869,6 +1237,17 @@
               "name": "北方民族大学",
               "major": "社会工作",
               "score": 74
+            },
+            {
+              "name": "宁夏医科大学",
+              "major": "法律事务",
+              "frequency": 1,
+              "platforms": [
+                "元宝",
+                "豆包"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": "公安院校"
@@ -892,6 +1271,17 @@
               "name": "宁夏大学",
               "major": "工程造价",
               "score": 73
+            },
+            {
+              "name": "宁夏医科大学",
+              "major": "工程造价",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -924,6 +1314,17 @@
               "name": "宁夏师范学院",
               "major": "生物技术",
               "score": 73
+            },
+            {
+              "name": "宁夏医科大学",
+              "major": "现代农业技术",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -947,6 +1348,17 @@
               "name": "北方民族大学",
               "major": "音乐表演",
               "score": 72
+            },
+            {
+              "name": "宁夏医科大学",
+              "major": "音乐表演",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": "艺体类"
@@ -970,6 +1382,17 @@
               "name": "宁夏师范学院",
               "major": "社会体育指导与管理",
               "score": 71
+            },
+            {
+              "name": "宁夏医科大学",
+              "major": "体育教育",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "元宝"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": "艺体类"
@@ -993,6 +1416,17 @@
               "name": "北方民族大学",
               "major": "康复治疗学",
               "score": 70
+            },
+            {
+              "name": "宁夏大学",
+              "major": "护理",
+              "frequency": 1,
+              "platforms": [
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -1016,6 +1450,17 @@
               "name": "宁夏大学",
               "major": "土木工程",
               "score": 69
+            },
+            {
+              "name": "宁夏医科大学",
+              "major": "道路桥梁工程技术",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null

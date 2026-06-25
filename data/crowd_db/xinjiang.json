@@ -33,6 +33,17 @@
               "name": "石河子大学",
               "major": "食品科学与工程",
               "score": 84
+            },
+            {
+              "name": "新疆师范大学",
+              "major": "数学与应用数学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -56,6 +67,17 @@
               "name": "新疆农业大学",
               "major": "园艺",
               "score": 84
+            },
+            {
+              "name": "新疆大学",
+              "major": "农学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -79,6 +101,17 @@
               "name": "喀什大学",
               "major": "法学",
               "score": 84
+            },
+            {
+              "name": "新疆大学",
+              "major": "临床医学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": "医学类特色"
@@ -103,6 +136,18 @@
               "name": "石河子大学",
               "major": "思想政治教育",
               "score": 87
+            },
+            {
+              "name": "新疆医科大学",
+              "major": "思想政治教育",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度"
+              ],
+              "predicted_increase": 6,
+              "score": 50
             }
           ],
           "program_type": "师范教育类"
@@ -127,6 +172,18 @@
               "name": "石河子大学",
               "major": "动物科学",
               "score": 85
+            },
+            {
+              "name": "新疆师范大学",
+              "major": "动物科学",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 5,
+              "score": 50
             }
           ],
           "program_type": "农林类特色"
@@ -159,6 +216,17 @@
               "name": "新疆财经大学",
               "major": "金融学",
               "score": 84
+            },
+            {
+              "name": "新疆大学",
+              "major": "汉语言文学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": "师范教育类"
@@ -182,6 +250,17 @@
               "name": "昌吉学院",
               "major": "英语",
               "score": 84
+            },
+            {
+              "name": "新疆大学",
+              "major": "农学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": "农林类特色"
@@ -205,6 +284,17 @@
               "name": "新疆大学",
               "major": "法学",
               "score": 84
+            },
+            {
+              "name": "新疆师范大学",
+              "major": "园艺",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -229,6 +319,18 @@
               "name": "新疆师范大学",
               "major": "计算机科学与技术",
               "score": 85
+            },
+            {
+              "name": "新疆医科大学",
+              "major": "计算机科学与技术",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "豆包"
+              ],
+              "predicted_increase": 5,
+              "score": 50
             }
           ],
           "program_type": null
@@ -253,6 +355,18 @@
               "name": "新疆大学",
               "major": "生物医学工程",
               "score": 84
+            },
+            {
+              "name": "新疆师范大学",
+              "major": "临床医学",
+              "frequency": 2,
+              "platforms": [
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 4,
+              "score": 50
             }
           ],
           "program_type": null
@@ -285,6 +399,17 @@
               "name": "新疆医科大学",
               "major": "口腔医学",
               "score": 84
+            },
+            {
+              "name": "新疆大学",
+              "major": "英语",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": "国际涉外导向"
@@ -308,6 +433,17 @@
               "name": "新疆农业大学",
               "major": "园艺",
               "score": 84
+            },
+            {
+              "name": "新疆大学",
+              "major": "小学教育",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": "师范教育类"
@@ -331,6 +467,17 @@
               "name": "喀什大学",
               "major": "法学",
               "score": 84
+            },
+            {
+              "name": "新疆大学",
+              "major": "会计学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -355,6 +502,18 @@
               "name": "新疆大学",
               "major": "公共卫生与预防医学",
               "score": 83
+            },
+            {
+              "name": "新疆师范大学",
+              "major": "预防医学",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度"
+              ],
+              "predicted_increase": 4,
+              "score": 50
             }
           ],
           "program_type": "医学类特色"
@@ -378,6 +537,17 @@
               "name": "新疆理工学院",
               "major": "电气工程及其自动化",
               "score": 82
+            },
+            {
+              "name": "新疆师范大学",
+              "major": "电气工程及其自动化",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "豆包"
+              ],
+              "predicted_increase": 3,
+              "score": 25
             }
           ],
           "program_type": null
@@ -410,6 +580,17 @@
               "name": "新疆财经大学",
               "major": "金融学",
               "score": 84
+            },
+            {
+              "name": "新疆大学",
+              "major": "机械设计制造及其自动化",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": "艺体类"
@@ -433,6 +614,17 @@
               "name": "新疆理工学院",
               "major": "材料科学与工程",
               "score": 84
+            },
+            {
+              "name": "新疆大学",
+              "major": "计算机科学与技术",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -456,6 +648,17 @@
               "name": "石河子大学",
               "major": "食品科学与工程",
               "score": 84
+            },
+            {
+              "name": "新疆师范大学",
+              "major": "电气工程及其自动化",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -479,6 +682,17 @@
               "name": "石河子大学",
               "major": "动物医学",
               "score": 81
+            },
+            {
+              "name": "新疆大学",
+              "major": "动物医学",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "百度"
+              ],
+              "predicted_increase": 3,
+              "score": 25
             }
           ],
           "program_type": null
@@ -502,6 +716,17 @@
               "name": "新疆师范大学",
               "major": "市场营销",
               "score": 80
+            },
+            {
+              "name": "石河子大学",
+              "major": "市场营销",
+              "frequency": 1,
+              "platforms": [
+                "元宝",
+                "豆包"
+              ],
+              "predicted_increase": 2,
+              "score": 25
             }
           ],
           "program_type": null
@@ -534,6 +759,17 @@
               "name": "新疆师范大学",
               "major": "教育学",
               "score": 84
+            },
+            {
+              "name": "新疆大学",
+              "major": "音乐学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": "艺体类"
@@ -557,6 +793,17 @@
               "name": "塔里木大学",
               "major": "植物保护",
               "score": 84
+            },
+            {
+              "name": "新疆大学",
+              "major": "法学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": "公安院校"
@@ -580,6 +827,17 @@
               "name": "伊犁师范大学",
               "major": "数学与应用数学",
               "score": 84
+            },
+            {
+              "name": "新疆大学",
+              "major": "护理",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -603,6 +861,17 @@
               "name": "新疆大学",
               "major": "汉语言文学",
               "score": 82
+            },
+            {
+              "name": "石河子大学",
+              "major": "汉语言文学",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "元宝"
+              ],
+              "predicted_increase": 2,
+              "score": 25
             }
           ],
           "program_type": "师范教育类"
@@ -626,6 +895,17 @@
               "name": "新疆师范大学",
               "major": "化学",
               "score": 80
+            },
+            {
+              "name": "石河子大学",
+              "major": "化学",
+              "frequency": 1,
+              "platforms": [
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 1,
+              "score": 25
             }
           ],
           "program_type": null
@@ -658,6 +938,17 @@
               "name": "新疆工程学院",
               "major": "自动化",
               "score": 84
+            },
+            {
+              "name": "新疆大学",
+              "major": "机电一体化技术",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -681,6 +972,17 @@
               "name": "新疆理工学院",
               "major": "材料科学与工程",
               "score": 84
+            },
+            {
+              "name": "新疆大学",
+              "major": "软件技术",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -704,6 +1006,17 @@
               "name": "石河子大学",
               "major": "食品科学与工程",
               "score": 84
+            },
+            {
+              "name": "新疆师范大学",
+              "major": "大数据与会计",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -727,6 +1040,17 @@
               "name": "新疆工程学院",
               "major": "油气储运技术",
               "score": 78
+            },
+            {
+              "name": "新疆大学",
+              "major": "油气储运技术",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "豆包"
+              ],
+              "predicted_increase": 1,
+              "score": 25
             }
           ],
           "program_type": null
@@ -750,6 +1074,17 @@
               "name": "石河子大学",
               "major": "食品科学与工程",
               "score": 77
+            },
+            {
+              "name": "新疆大学",
+              "major": "食品加工技术",
+              "frequency": 1,
+              "platforms": [
+                "元宝",
+                "百度"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -782,6 +1117,17 @@
               "name": "新疆师范大学",
               "major": "教育学",
               "score": 84
+            },
+            {
+              "name": "新疆大学",
+              "major": "道路与桥梁工程技术",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -805,6 +1151,17 @@
               "name": "塔里木大学",
               "major": "植物保护",
               "score": 84
+            },
+            {
+              "name": "新疆大学",
+              "major": "石油化工技术",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -828,6 +1185,17 @@
               "name": "伊犁师范大学",
               "major": "数学与应用数学",
               "score": 84
+            },
+            {
+              "name": "新疆大学",
+              "major": "护理",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -851,6 +1219,17 @@
               "name": "石河子大学",
               "major": "农业水利工程",
               "score": 77
+            },
+            {
+              "name": "新疆大学",
+              "major": "水利工程",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "元宝"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -874,6 +1253,17 @@
               "name": "新疆理工学院",
               "major": "汽车服务工程",
               "score": 76
+            },
+            {
+              "name": "新疆大学",
+              "major": "汽车检测与维修技术",
+              "frequency": 1,
+              "platforms": [
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -906,6 +1296,17 @@
               "name": "新疆工程学院",
               "major": "自动化",
               "score": 84
+            },
+            {
+              "name": "新疆大学",
+              "major": "学前教育",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -929,6 +1330,17 @@
               "name": "新疆理工学院",
               "major": "材料科学与工程",
               "score": 84
+            },
+            {
+              "name": "新疆大学",
+              "major": "现代农业技术",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -952,6 +1364,17 @@
               "name": "石河子大学",
               "major": "食品科学与工程",
               "score": 84
+            },
+            {
+              "name": "新疆师范大学",
+              "major": "机电一体化技术",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -975,6 +1398,17 @@
               "name": "伊犁师范大学",
               "major": "小学教育",
               "score": 76
+            },
+            {
+              "name": "新疆大学",
+              "major": "小学教育",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "豆包"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": "师范教育类"
@@ -998,6 +1432,17 @@
               "name": "新疆工程学院",
               "major": "软件工程",
               "score": 76
+            },
+            {
+              "name": "新疆师范大学",
+              "major": "软件技术",
+              "frequency": 1,
+              "platforms": [
+                "元宝",
+                "百度"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null

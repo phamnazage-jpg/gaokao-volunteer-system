@@ -33,6 +33,17 @@
               "name": "上海交通大学",
               "major": "自动化",
               "score": 84
+            },
+            {
+              "name": "华东师范大学",
+              "major": "临床医学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -56,6 +67,17 @@
               "name": "上海财经大学",
               "major": "财政学",
               "score": 84
+            },
+            {
+              "name": "复旦大学",
+              "major": "计算机科学与技术",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -79,6 +101,17 @@
               "name": "东华大学",
               "major": "服装设计与工程",
               "score": 84
+            },
+            {
+              "name": "复旦大学",
+              "major": "建筑学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -102,6 +135,17 @@
               "name": "同济大学",
               "major": "电子信息类",
               "score": 92
+            },
+            {
+              "name": "华东师范大学",
+              "major": "电子信息类",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "元宝"
+              ],
+              "predicted_increase": 6,
+              "score": 25
             }
           ],
           "program_type": null
@@ -125,6 +169,17 @@
               "name": "上海外国语大学",
               "major": "新闻学",
               "score": 88
+            },
+            {
+              "name": "上海交通大学",
+              "major": "新闻学",
+              "frequency": 1,
+              "platforms": [
+                "元宝",
+                "百度"
+              ],
+              "predicted_increase": 5,
+              "score": 25
             }
           ],
           "program_type": null
@@ -157,6 +212,17 @@
               "name": "上海外国语大学",
               "major": "翻译",
               "score": 84
+            },
+            {
+              "name": "复旦大学",
+              "major": "汉语言文学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": "师范教育类"
@@ -180,6 +246,17 @@
               "name": "上海中医药大学",
               "major": "针灸推拿学",
               "score": 84
+            },
+            {
+              "name": "复旦大学",
+              "major": "会计学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -203,6 +280,17 @@
               "name": "复旦大学",
               "major": "经济学",
               "score": 84
+            },
+            {
+              "name": "上海交通大学",
+              "major": "化学工程与工艺",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -227,6 +315,18 @@
               "name": "上海大学",
               "major": "土木工程",
               "score": 86
+            },
+            {
+              "name": "复旦大学",
+              "major": "土木工程",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度"
+              ],
+              "predicted_increase": 5,
+              "score": 50
             }
           ],
           "program_type": null
@@ -250,6 +350,17 @@
               "name": "上海师范大学",
               "major": "心理学",
               "score": 85
+            },
+            {
+              "name": "上海交通大学",
+              "major": "心理学",
+              "frequency": 1,
+              "platforms": [
+                "元宝",
+                "豆包"
+              ],
+              "predicted_increase": 4,
+              "score": 25
             }
           ],
           "program_type": "师范教育类"
@@ -282,6 +393,17 @@
               "name": "同济大学",
               "major": "土木工程",
               "score": 84
+            },
+            {
+              "name": "复旦大学",
+              "major": "纺织工程",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -305,6 +427,17 @@
               "name": "上海财经大学",
               "major": "财政学",
               "score": 84
+            },
+            {
+              "name": "复旦大学",
+              "major": "电子信息工程",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -328,6 +461,17 @@
               "name": "东华大学",
               "major": "服装设计与工程",
               "score": 84
+            },
+            {
+              "name": "复旦大学",
+              "major": "英语",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": "国际涉外导向"
@@ -352,6 +496,18 @@
               "name": "东华大学",
               "major": "化学工程与工艺",
               "score": 86
+            },
+            {
+              "name": "复旦大学",
+              "major": "化学工程与工艺",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 4,
+              "score": 50
             }
           ],
           "program_type": null
@@ -375,6 +531,17 @@
               "name": "上海应用技术大学",
               "major": "纺织工程",
               "score": 80
+            },
+            {
+              "name": "复旦大学",
+              "major": "纺织工程",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "元宝"
+              ],
+              "predicted_increase": 3,
+              "score": 25
             }
           ],
           "program_type": null
@@ -407,6 +574,17 @@
               "name": "上海外国语大学",
               "major": "翻译",
               "score": 84
+            },
+            {
+              "name": "复旦大学",
+              "major": "金融学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -430,6 +608,17 @@
               "name": "上海中医药大学",
               "major": "针灸推拿学",
               "score": 84
+            },
+            {
+              "name": "复旦大学",
+              "major": "机械设计制造及其自动化",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": "艺体类"
@@ -453,6 +642,17 @@
               "name": "复旦大学",
               "major": "经济学",
               "score": 84
+            },
+            {
+              "name": "上海交通大学",
+              "major": "交通运输",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -477,6 +677,18 @@
               "name": "上海立信会计金融学院",
               "major": "会计学",
               "score": 85
+            },
+            {
+              "name": "复旦大学",
+              "major": "会计学",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度"
+              ],
+              "predicted_increase": 4,
+              "score": 50
             }
           ],
           "program_type": null
@@ -500,6 +712,17 @@
               "name": "上海大学",
               "major": "英语",
               "score": 84
+            },
+            {
+              "name": "复旦大学",
+              "major": "英语",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "豆包"
+              ],
+              "predicted_increase": 3,
+              "score": 25
             }
           ],
           "program_type": "国际涉外导向"
@@ -532,6 +755,17 @@
               "name": "同济大学",
               "major": "土木工程",
               "score": 84
+            },
+            {
+              "name": "复旦大学",
+              "major": "数学与应用数学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": "师范教育类"
@@ -555,6 +789,17 @@
               "name": "上海财经大学",
               "major": "财政学",
               "score": 84
+            },
+            {
+              "name": "复旦大学",
+              "major": "中医学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": "医学类特色"
@@ -578,6 +823,17 @@
               "name": "东华大学",
               "major": "服装设计与工程",
               "score": 84
+            },
+            {
+              "name": "复旦大学",
+              "major": "食品科学与工程",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -602,6 +858,18 @@
               "name": "上海海事大学",
               "major": "通信工程",
               "score": 83
+            },
+            {
+              "name": "复旦大学",
+              "major": "通信工程",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 3,
+              "score": 50
             }
           ],
           "program_type": null
@@ -625,6 +893,17 @@
               "name": "上海工程技术大学",
               "major": "航海技术",
               "score": 80
+            },
+            {
+              "name": "复旦大学",
+              "major": "航海技术",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "元宝"
+              ],
+              "predicted_increase": 2,
+              "score": 25
             }
           ],
           "program_type": null
@@ -657,6 +936,17 @@
               "name": "上海外国语大学",
               "major": "翻译",
               "score": 84
+            },
+            {
+              "name": "复旦大学",
+              "major": "电气工程及其自动化",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -680,6 +970,17 @@
               "name": "上海中医药大学",
               "major": "针灸推拿学",
               "score": 84
+            },
+            {
+              "name": "复旦大学",
+              "major": "材料科学与工程",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -703,6 +1004,17 @@
               "name": "复旦大学",
               "major": "经济学",
               "score": 84
+            },
+            {
+              "name": "上海交通大学",
+              "major": "审计学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -727,6 +1039,18 @@
               "name": "上海应用技术大学",
               "major": "机械设计制造及其自动化",
               "score": 81
+            },
+            {
+              "name": "复旦大学",
+              "major": "机械设计制造及其自动化",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 2,
+              "score": 50
             }
           ],
           "program_type": "艺体类"
@@ -750,6 +1074,17 @@
               "name": "上海第二工业大学",
               "major": "金融学",
               "score": 79
+            },
+            {
+              "name": "复旦大学",
+              "major": "金融学",
+              "frequency": 1,
+              "platforms": [
+                "元宝",
+                "豆包"
+              ],
+              "predicted_increase": 2,
+              "score": 25
             }
           ],
           "program_type": null
@@ -782,6 +1117,17 @@
               "name": "同济大学",
               "major": "土木工程",
               "score": 84
+            },
+            {
+              "name": "复旦大学",
+              "major": "车辆工程",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -805,6 +1151,17 @@
               "name": "上海财经大学",
               "major": "财政学",
               "score": 84
+            },
+            {
+              "name": "复旦大学",
+              "major": "软件工程",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -828,6 +1185,17 @@
               "name": "东华大学",
               "major": "服装设计与工程",
               "score": 84
+            },
+            {
+              "name": "复旦大学",
+              "major": "工商管理",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -851,6 +1219,17 @@
               "name": "上海工程技术大学",
               "major": "小学教育",
               "score": 79
+            },
+            {
+              "name": "复旦大学",
+              "major": "小学教育",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "百度"
+              ],
+              "predicted_increase": 1,
+              "score": 25
             }
           ],
           "program_type": "师范教育类"
@@ -874,6 +1253,17 @@
               "name": "上海第二工业大学",
               "major": "电气工程及其自动化",
               "score": 78
+            },
+            {
+              "name": "复旦大学",
+              "major": "电气工程及其自动化",
+              "frequency": 1,
+              "platforms": [
+                "元宝",
+                "豆包"
+              ],
+              "predicted_increase": 1,
+              "score": 25
             }
           ],
           "program_type": null
@@ -906,6 +1296,17 @@
               "name": "上海外国语大学",
               "major": "翻译",
               "score": 84
+            },
+            {
+              "name": "复旦大学",
+              "major": "护理学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -929,6 +1330,17 @@
               "name": "上海中医药大学",
               "major": "针灸推拿学",
               "score": 84
+            },
+            {
+              "name": "复旦大学",
+              "major": "机电一体化技术",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -952,6 +1364,17 @@
               "name": "复旦大学",
               "major": "经济学",
               "score": 84
+            },
+            {
+              "name": "上海交通大学",
+              "major": "数字媒体技术",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -975,6 +1398,17 @@
               "name": "上海第二工业大学",
               "major": "印刷媒体技术",
               "score": 75
+            },
+            {
+              "name": "复旦大学",
+              "major": "印刷媒体技术",
+              "frequency": 1,
+              "platforms": [
+                "千问",
+                "百度"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null
@@ -998,6 +1432,17 @@
               "name": "上海建桥学院",
               "major": "机电一体化技术",
               "score": 78
+            },
+            {
+              "name": "复旦大学",
+              "major": "机电一体化技术",
+              "frequency": 1,
+              "platforms": [
+                "元宝",
+                "豆包"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "program_type": null

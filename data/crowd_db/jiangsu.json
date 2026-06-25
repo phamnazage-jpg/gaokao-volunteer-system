@@ -33,6 +33,17 @@
               "name": "东南大学",
               "major": "自动化",
               "score": 94
+            },
+            {
+              "name": "南京理工大学",
+              "major": "物理学类",
+              "frequency": 2,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 4,
+              "score": 50
             }
           ],
           "subject_requirements": {
@@ -63,6 +74,17 @@
               "name": "南京师范大学",
               "major": "教育学",
               "score": 93
+            },
+            {
+              "name": "南京理工大学",
+              "major": "计算机科学与技术",
+              "frequency": 2,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 3,
+              "score": 50
             }
           ],
           "subject_requirements": {
@@ -93,6 +115,17 @@
               "name": "河海大学",
               "major": "港口航道与海岸工程",
               "score": 91
+            },
+            {
+              "name": "南京大学",
+              "major": "临床医学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 2,
+              "score": 25
             }
           ],
           "subject_requirements": {
@@ -126,6 +159,19 @@
               "name": "江南大学",
               "major": "纺织工程",
               "score": 84
+            },
+            {
+              "name": "南京大学",
+              "major": "化学工程与工艺",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 1,
+              "score": 50
             }
           ],
           "subject_requirements": {
@@ -158,6 +204,19 @@
               "name": "江苏大学",
               "major": "能源与动力工程",
               "score": 84
+            },
+            {
+              "name": "南京大学",
+              "major": "风景园林",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 1,
+              "score": 50
             }
           ],
           "subject_requirements": {
@@ -186,6 +245,17 @@
               "name": "南京航空航天大学",
               "major": "计算机科学与技术",
               "score": 93
+            },
+            {
+              "name": "南京理工大学",
+              "major": "计算机科学与技术",
+              "frequency": 2,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 3,
+              "score": 50
             }
           ],
           "subject_requirements": {
@@ -216,6 +286,17 @@
               "name": "南京医科大学",
               "major": "临床医学",
               "score": 92
+            },
+            {
+              "name": "南京大学",
+              "major": "中医学（5年制）",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 1,
+              "score": 25
             }
           ],
           "subject_requirements": {
@@ -256,6 +337,17 @@
               "name": "扬州大学",
               "major": "动物医学",
               "score": 90
+            },
+            {
+              "name": "南京大学",
+              "major": "计算机科学与技术",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 1,
+              "score": 25
             }
           ],
           "subject_requirements": {
@@ -286,6 +378,17 @@
               "name": "南京工业大学",
               "major": "制药工程",
               "score": 88
+            },
+            {
+              "name": "南京大学",
+              "major": "计算机科学与技术",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 1,
+              "score": 25
             }
           ],
           "subject_requirements": {
@@ -316,6 +419,17 @@
               "name": "南京财经大学",
               "major": "国际经济与贸易",
               "score": 87
+            },
+            {
+              "name": "南京大学",
+              "major": "土木工程",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "subject_requirements": {
@@ -348,6 +462,19 @@
               "name": "南京大学",
               "major": "信息管理与信息系统",
               "score": 84
+            },
+            {
+              "name": "东南大学",
+              "major": "石油工程",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 1,
+              "score": 50
             }
           ],
           "subject_requirements": {
@@ -380,6 +507,19 @@
               "name": "南京师范大学",
               "major": "教育学",
               "score": 84
+            },
+            {
+              "name": "南京大学",
+              "major": "建筑学",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 1,
+              "score": 50
             }
           ],
           "subject_requirements": {
@@ -410,6 +550,17 @@
               "name": "扬州大学",
               "major": "汉语言文学",
               "score": 88
+            },
+            {
+              "name": "南京大学",
+              "major": "汉语言文学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 1,
+              "score": 25
             }
           ],
           "subject_requirements": {
@@ -438,6 +589,17 @@
               "name": "河海大学",
               "major": "通信工程",
               "score": 88
+            },
+            {
+              "name": "南京大学",
+              "major": "电子信息工程",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 1,
+              "score": 25
             }
           ],
           "subject_requirements": {
@@ -477,6 +639,17 @@
               "name": "河海大学",
               "major": "港口航道与海岸工程",
               "score": 86
+            },
+            {
+              "name": "南京大学",
+              "major": "汉语言文学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "subject_requirements": {
@@ -505,6 +678,17 @@
               "name": "南京邮电大学",
               "major": "网络空间安全",
               "score": 85
+            },
+            {
+              "name": "南京大学",
+              "major": "法学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "subject_requirements": {
@@ -533,6 +717,17 @@
               "name": "苏州大学",
               "major": "应用化学",
               "score": 85
+            },
+            {
+              "name": "南京大学",
+              "major": "食品科学与工程",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "subject_requirements": {
@@ -565,6 +760,19 @@
               "name": "扬州大学",
               "major": "动物医学",
               "score": 84
+            },
+            {
+              "name": "南京大学",
+              "major": "临床医学",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 1,
+              "score": 50
             }
           ],
           "subject_requirements": {
@@ -598,6 +806,19 @@
               "name": "南京财经大学",
               "major": "国际经济与贸易",
               "score": 84
+            },
+            {
+              "name": "南京大学",
+              "major": "农学",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 1,
+              "score": 50
             }
           ],
           "subject_requirements": {
@@ -628,6 +849,17 @@
               "name": "江苏大学",
               "major": "通信工程",
               "score": 85
+            },
+            {
+              "name": "南京大学",
+              "major": "通信工程",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "subject_requirements": {
@@ -658,6 +890,17 @@
               "name": "苏州大学",
               "major": "药学",
               "score": 85
+            },
+            {
+              "name": "南京大学",
+              "major": "中药学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "subject_requirements": {
@@ -698,6 +941,17 @@
               "name": "江苏大学",
               "major": "电子信息工程",
               "score": 84
+            },
+            {
+              "name": "南京大学",
+              "major": "电子科学与技术",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "subject_requirements": {
@@ -726,6 +980,17 @@
               "name": "苏州大学",
               "major": "中医学",
               "score": 84
+            },
+            {
+              "name": "南京大学",
+              "major": "中医学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "subject_requirements": {
@@ -757,6 +1022,17 @@
               "name": "南通大学",
               "major": "计算机科学与技术",
               "score": 83
+            },
+            {
+              "name": "南京大学",
+              "major": "计算机科学与技术",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "subject_requirements": {
@@ -789,6 +1065,19 @@
               "name": "扬州大学",
               "major": "农学",
               "score": 83
+            },
+            {
+              "name": "南京大学",
+              "major": "林学",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 1,
+              "score": 50
             }
           ],
           "subject_requirements": {
@@ -819,6 +1108,17 @@
               "name": "南通大学",
               "major": "临床医学",
               "score": 84
+            },
+            {
+              "name": "南京大学",
+              "major": "口腔医学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "subject_requirements": {
@@ -852,6 +1152,19 @@
               "name": "扬州大学",
               "major": "广播电视学",
               "score": 84
+            },
+            {
+              "name": "南京大学",
+              "major": "新闻学",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 1,
+              "score": 50
             }
           ],
           "subject_requirements": {
@@ -882,6 +1195,19 @@
               "name": "南京工业大学",
               "major": "生物工程",
               "score": 83
+            },
+            {
+              "name": "南京大学",
+              "major": "生物工程",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 1,
+              "score": 50
             }
           ],
           "subject_requirements": {
@@ -922,6 +1248,17 @@
               "name": "南通大学",
               "major": "护理学",
               "score": 84
+            },
+            {
+              "name": "南京大学",
+              "major": "计算机科学与技术",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "仓内样例"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "subject_requirements": {
@@ -952,6 +1289,17 @@
               "name": "南京大学",
               "major": "信息管理与信息系统",
               "score": 83
+            },
+            {
+              "name": "东南大学",
+              "major": "土木工程",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "subject_requirements": {
@@ -982,6 +1330,17 @@
               "name": "东南大学",
               "major": "自动化",
               "score": 83
+            },
+            {
+              "name": "南京大学",
+              "major": "生物科学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "subject_requirements": {
@@ -1012,6 +1371,19 @@
               "name": "河海大学",
               "major": "港口航道与海岸工程",
               "score": 84
+            },
+            {
+              "name": "南京大学",
+              "major": "汉语言文学",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 1,
+              "score": 50
             }
           ],
           "subject_requirements": {
@@ -1042,6 +1414,19 @@
               "name": "江南大学",
               "major": "纺织工程",
               "score": 84
+            },
+            {
+              "name": "南京大学",
+              "major": "金融学",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 1,
+              "score": 50
             }
           ],
           "subject_requirements": {
@@ -1070,6 +1455,17 @@
               "name": "江苏大学",
               "major": "电子信息工程",
               "score": 83
+            },
+            {
+              "name": "南京大学",
+              "major": "电子科学与技术",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "subject_requirements": {
@@ -1098,6 +1494,17 @@
               "name": "苏州大学",
               "major": "康复治疗学",
               "score": 83
+            },
+            {
+              "name": "南京大学",
+              "major": "针灸推拿学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "subject_requirements": {
@@ -1135,6 +1542,17 @@
               "name": "苏州大学",
               "major": "应用化学",
               "score": 82
+            },
+            {
+              "name": "南京大学",
+              "major": "工商管理",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "subject_requirements": {
@@ -1163,6 +1581,17 @@
               "name": "江苏大学",
               "major": "能源与动力工程",
               "score": 81
+            },
+            {
+              "name": "南京大学",
+              "major": "汉语言文学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "subject_requirements": {
@@ -1191,6 +1620,17 @@
               "name": "扬州大学",
               "major": "动物医学",
               "score": 81
+            },
+            {
+              "name": "南京大学",
+              "major": "土木工程",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "subject_requirements": {
@@ -1223,6 +1663,19 @@
               "name": "南京财经大学",
               "major": "国际经济与贸易",
               "score": 84
+            },
+            {
+              "name": "南京大学",
+              "major": "大气科学",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 1,
+              "score": 50
             }
           ],
           "subject_requirements": {
@@ -1253,6 +1706,19 @@
               "name": "南京大学",
               "major": "信息管理与信息系统",
               "score": 84
+            },
+            {
+              "name": "东南大学",
+              "major": "车辆工程",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 1,
+              "score": 50
             }
           ],
           "subject_requirements": {
@@ -1283,6 +1749,17 @@
               "name": "江苏大学",
               "major": "计算机科学与技术",
               "score": 83
+            },
+            {
+              "name": "南京大学",
+              "major": "计算机科学与技术",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "subject_requirements": {
@@ -1313,6 +1790,17 @@
               "name": "南通大学",
               "major": "护理学",
               "score": 83
+            },
+            {
+              "name": "南京大学",
+              "major": "护理学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "subject_requirements": {
@@ -1353,6 +1841,17 @@
               "name": "东南大学",
               "major": "自动化",
               "score": 80
+            },
+            {
+              "name": "南京大学",
+              "major": "生物科学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "subject_requirements": {
@@ -1381,6 +1880,17 @@
               "name": "南京师范大学",
               "major": "教育学",
               "score": 79
+            },
+            {
+              "name": "南京大学",
+              "major": "生物科学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "subject_requirements": {
@@ -1409,6 +1919,17 @@
               "name": "河海大学",
               "major": "港口航道与海岸工程",
               "score": 79
+            },
+            {
+              "name": "南京大学",
+              "major": "工商管理",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "subject_requirements": {
@@ -1439,6 +1960,19 @@
               "name": "江南大学",
               "major": "纺织工程",
               "score": 84
+            },
+            {
+              "name": "南京大学",
+              "major": "材料科学与工程",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 1,
+              "score": 50
             }
           ],
           "subject_requirements": {
@@ -1471,6 +2005,19 @@
               "name": "江苏大学",
               "major": "能源与动力工程",
               "score": 84
+            },
+            {
+              "name": "南京大学",
+              "major": "食品质量与安全",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 1,
+              "score": 50
             }
           ],
           "subject_requirements": {
@@ -1501,6 +2048,17 @@
               "name": "苏州大学",
               "major": "预防医学",
               "score": 80
+            },
+            {
+              "name": "南京大学",
+              "major": "预防医学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "subject_requirements": {
@@ -1529,6 +2087,17 @@
               "name": "江苏大学",
               "major": "纺织工程",
               "score": 80
+            },
+            {
+              "name": "南京大学",
+              "major": "纺织工程",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "subject_requirements": {
@@ -1568,6 +2137,17 @@
               "name": "江苏大学",
               "major": "物联网工程",
               "score": 80
+            },
+            {
+              "name": "南京大学",
+              "major": "物联网工程",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "subject_requirements": {
@@ -1598,6 +2178,17 @@
               "name": "江苏大学",
               "major": "材料成型及控制工程",
               "score": 80
+            },
+            {
+              "name": "南京大学",
+              "major": "木材科学与工程",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "subject_requirements": {
@@ -1628,6 +2219,17 @@
               "name": "扬州大学",
               "major": "食品科学与工程",
               "score": 80
+            },
+            {
+              "name": "南京大学",
+              "major": "食品科学与工程",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "subject_requirements": {
@@ -1660,6 +2262,19 @@
               "name": "江苏大学",
               "major": "水利水电工程",
               "score": 83
+            },
+            {
+              "name": "南京大学",
+              "major": "水利水电工程",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 1,
+              "score": 50
             }
           ],
           "subject_requirements": {
@@ -1692,6 +2307,19 @@
               "name": "江苏大学",
               "major": "电气工程及其自动化",
               "score": 83
+            },
+            {
+              "name": "南京大学",
+              "major": "电气工程及其自动化",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 1,
+              "score": 50
             }
           ],
           "subject_requirements": {
@@ -1724,6 +2352,19 @@
               "name": "江苏大学",
               "major": "会计学",
               "score": 83
+            },
+            {
+              "name": "南京大学",
+              "major": "会计学",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 1,
+              "score": 50
             }
           ],
           "subject_requirements": {
@@ -1752,6 +2393,17 @@
               "name": "江苏大学",
               "major": "制药工程",
               "score": 80
+            },
+            {
+              "name": "南京大学",
+              "major": "生物制药",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "subject_requirements": {
@@ -1789,6 +2441,17 @@
               "name": "扬州大学",
               "major": "动物医学",
               "score": 78
+            },
+            {
+              "name": "南京大学",
+              "major": "会计学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "subject_requirements": {
@@ -1817,6 +2480,17 @@
               "name": "南京工业大学",
               "major": "制药工程",
               "score": 77
+            },
+            {
+              "name": "南京大学",
+              "major": "工商管理",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "subject_requirements": {
@@ -1845,6 +2519,17 @@
               "name": "南京财经大学",
               "major": "国际经济与贸易",
               "score": 77
+            },
+            {
+              "name": "南京大学",
+              "major": "食品科学与工程",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "subject_requirements": {
@@ -1877,6 +2562,19 @@
               "name": "南京大学",
               "major": "信息管理与信息系统",
               "score": 84
+            },
+            {
+              "name": "东南大学",
+              "major": "水利水电工程",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 1,
+              "score": 50
             }
           ],
           "subject_requirements": {
@@ -1909,6 +2607,19 @@
               "name": "南京师范大学",
               "major": "教育学",
               "score": 84
+            },
+            {
+              "name": "南京大学",
+              "major": "电子信息工程",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 1,
+              "score": 50
             }
           ],
           "subject_requirements": {
@@ -1939,6 +2650,17 @@
               "name": "南京财经大学",
               "major": "会计学",
               "score": 78
+            },
+            {
+              "name": "南京大学",
+              "major": "会计学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "subject_requirements": {
@@ -1967,6 +2689,17 @@
               "name": "江苏大学",
               "major": "数学与应用数学",
               "score": 78
+            },
+            {
+              "name": "南京大学",
+              "major": "数学与应用数学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "subject_requirements": {
@@ -2006,6 +2739,17 @@
               "name": "河海大学",
               "major": "港口航道与海岸工程",
               "score": 76
+            },
+            {
+              "name": "南京大学",
+              "major": "数学与应用数学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "subject_requirements": {
@@ -2036,6 +2780,17 @@
               "name": "南京邮电大学",
               "major": "网络空间安全",
               "score": 75
+            },
+            {
+              "name": "南京大学",
+              "major": "计算机科学与技术",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "subject_requirements": {
@@ -2066,6 +2821,17 @@
               "name": "江南大学",
               "major": "纺织工程",
               "score": 74
+            },
+            {
+              "name": "南京大学",
+              "major": "教育学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "subject_requirements": {
@@ -2096,6 +2862,19 @@
               "name": "江苏大学",
               "major": "能源与动力工程",
               "score": 84
+            },
+            {
+              "name": "南京大学",
+              "major": "审计学",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 1,
+              "score": 50
             }
           ],
           "subject_requirements": {
@@ -2126,6 +2905,19 @@
               "name": "南京工业大学",
               "major": "制药工程",
               "score": 84
+            },
+            {
+              "name": "南京大学",
+              "major": "麻醉学",
+              "frequency": 2,
+              "platforms": [
+                "千问",
+                "元宝",
+                "百度",
+                "豆包"
+              ],
+              "predicted_increase": 1,
+              "score": 50
             }
           ],
           "subject_requirements": {
@@ -2154,6 +2946,17 @@
               "name": "南京工业大学",
               "major": "能源与动力工程",
               "score": 75
+            },
+            {
+              "name": "南京大学",
+              "major": "能源与动力工程",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "subject_requirements": {
@@ -2184,6 +2987,17 @@
               "name": "扬州大学",
               "major": "临床医学",
               "score": 75
+            },
+            {
+              "name": "南京大学",
+              "major": "临床医学",
+              "frequency": 1,
+              "platforms": [
+                "人工摘要",
+                "官方锚点"
+              ],
+              "predicted_increase": 0,
+              "score": 25
             }
           ],
           "subject_requirements": {
