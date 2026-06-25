@@ -35,7 +35,16 @@
               "major": "自动化",
               "score": 94
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学",
+              "生物"
+            ],
+            "note": "首选物理，再选化学/生物"
+          },
+          "program_type": null
         },
         {
           "name": "华南理工大学",
@@ -57,7 +66,15 @@
               "major": "生物科学",
               "score": 93
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "暨南大学",
@@ -79,7 +96,13 @@
               "major": "应用心理学",
               "score": 91
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "南方科技大学",
@@ -103,7 +126,15 @@
               "major": "翻译",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "汕头大学",
@@ -127,7 +158,15 @@
               "major": "数学与应用数学",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "华南师范大学",
@@ -149,7 +188,15 @@
               "major": "物理学",
               "score": 92
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "广州中医药大学",
@@ -171,7 +218,16 @@
               "major": "临床医学",
               "score": 90
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学",
+              "生物"
+            ],
+            "note": "首选物理，再选化学/生物"
+          },
+          "program_type": null
         }
       ]
     },
@@ -202,7 +258,13 @@
               "major": "车辆工程",
               "score": 90
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "深圳大学",
@@ -224,7 +286,15 @@
               "major": "食品质量与安全",
               "score": 89
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "广东外语外贸大学",
@@ -246,7 +316,13 @@
               "major": "法学",
               "score": 87
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "广东财经大学",
@@ -270,7 +346,13 @@
               "major": "自动化",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "广州中医药大学",
@@ -294,7 +376,16 @@
               "major": "新闻学",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学",
+              "生物"
+            ],
+            "note": "首选物理，再选化学/生物"
+          },
+          "program_type": null
         },
         {
           "name": "暨南大学",
@@ -316,7 +407,13 @@
               "major": "新闻学",
               "score": 89
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "华南理工大学",
@@ -338,7 +435,15 @@
               "major": "建筑学",
               "score": 90
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         }
       ]
     },
@@ -369,7 +474,15 @@
               "major": "应用心理学",
               "score": 86
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "广东工业大学",
@@ -391,7 +504,15 @@
               "major": "电子信息工程",
               "score": 85
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "南方医科大学",
@@ -413,7 +534,16 @@
               "major": "翻译",
               "score": 88
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学",
+              "生物"
+            ],
+            "note": "首选物理，再选化学/生物"
+          },
+          "program_type": null
         },
         {
           "name": "深圳技术大学",
@@ -437,7 +567,13 @@
               "major": "数学与应用数学",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [],
+            "note": "首选物理，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "东莞理工学院",
@@ -461,7 +597,15 @@
               "major": "食品质量与安全",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "华南农业大学",
@@ -483,7 +627,15 @@
               "major": "食品科学与工程",
               "score": 85
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "广东工业大学",
@@ -505,7 +657,15 @@
               "major": "电子信息工程",
               "score": 85
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         }
       ]
     },
@@ -536,7 +696,15 @@
               "major": "物联网工程",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "广东外语外贸大学",
@@ -558,7 +726,13 @@
               "major": "英语",
               "score": 83
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "华南农业大学",
@@ -580,7 +754,15 @@
               "major": "食品科学与工程",
               "score": 83
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "广州中医药大学",
@@ -602,7 +784,16 @@
               "major": "中药学",
               "score": 82
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学",
+              "生物"
+            ],
+            "note": "首选物理，再选化学/生物"
+          },
+          "program_type": null
         },
         {
           "name": "佛山大学",
@@ -626,7 +817,15 @@
               "major": "翻译",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "深圳大学",
@@ -650,7 +849,15 @@
               "major": "物理学",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "汕头大学",
@@ -672,7 +879,13 @@
               "major": "法学",
               "score": 83
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         }
       ]
     },
@@ -703,7 +916,15 @@
               "major": "法学",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "广州医科大学",
@@ -725,7 +946,16 @@
               "major": "自动化",
               "score": 83
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学",
+              "生物"
+            ],
+            "note": "首选物理，再选化学/生物"
+          },
+          "program_type": null
         },
         {
           "name": "汕头大学",
@@ -747,7 +977,13 @@
               "major": "生物科学",
               "score": 82
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [],
+            "note": "首选物理，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "广东医科大学",
@@ -771,7 +1007,16 @@
               "major": "应用心理学",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学",
+              "生物"
+            ],
+            "note": "首选物理，再选化学/生物"
+          },
+          "program_type": null
         },
         {
           "name": "佛山大学",
@@ -795,7 +1040,15 @@
               "major": "翻译",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "广州大学",
@@ -817,7 +1070,15 @@
               "major": "土木工程",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "广东工业大学",
@@ -839,7 +1100,15 @@
               "major": "自动化",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         }
       ]
     },
@@ -870,7 +1139,13 @@
               "major": "预防医学",
               "score": 81
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "深圳技术大学",
@@ -892,7 +1167,15 @@
               "major": "数学与应用数学",
               "score": 81
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "广东医科大学",
@@ -914,7 +1197,16 @@
               "major": "车辆工程",
               "score": 80
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学",
+              "生物"
+            ],
+            "note": "首选物理，再选化学/生物"
+          },
+          "program_type": null
         },
         {
           "name": "五邑大学",
@@ -938,7 +1230,15 @@
               "major": "法学",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "广东海洋大学",
@@ -962,7 +1262,15 @@
               "major": "自动化",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "汕头大学",
@@ -984,7 +1292,13 @@
               "major": "法学",
               "score": 81
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "广州中医药大学",
@@ -1006,7 +1320,13 @@
               "major": "康复治疗学",
               "score": 80
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [],
+            "note": "首选物理，无强制再选"
+          },
+          "program_type": null
         }
       ]
     },
@@ -1037,7 +1357,15 @@
               "major": "软件工程",
               "score": 81
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "东莞理工学院",
@@ -1059,7 +1387,15 @@
               "major": "电子信息工程",
               "score": 81
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "广州大学",
@@ -1081,7 +1417,13 @@
               "major": "教育学",
               "score": 80
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "深圳大学",
@@ -1105,7 +1447,13 @@
               "major": "工商管理",
               "score": 83
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "南方医科大学",
@@ -1129,7 +1477,13 @@
               "major": "预防医学",
               "score": 83
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [],
+            "note": "首选物理，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "华南农业大学",
@@ -1153,7 +1507,13 @@
               "major": "水产养殖学",
               "score": 82
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [],
+            "note": "首选物理，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "佛山大学",
@@ -1175,7 +1535,15 @@
               "major": "机械工程",
               "score": 81
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         }
       ]
     },
@@ -1206,7 +1574,15 @@
               "major": "生物科学",
               "score": 79
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "仲恺农业工程学院",
@@ -1228,7 +1604,15 @@
               "major": "新闻学",
               "score": 78
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "五邑大学",
@@ -1250,7 +1634,15 @@
               "major": "应用心理学",
               "score": 77
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "仲恺农业工程学院",
@@ -1274,7 +1666,13 @@
               "major": "翻译",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [],
+            "note": "首选物理，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "广东技术师范大学",
@@ -1298,7 +1696,15 @@
               "major": "数学与应用数学",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "广州大学",
@@ -1320,7 +1726,15 @@
               "major": "网络工程",
               "score": 78
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "广东工业大学",
@@ -1342,7 +1756,15 @@
               "major": "机械工程",
               "score": 78
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         }
       ]
     },
@@ -1373,7 +1795,13 @@
               "major": "车辆工程",
               "score": 76
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "广东财经大学",
@@ -1395,7 +1823,13 @@
               "major": "食品质量与安全",
               "score": 75
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "佛山大学",
@@ -1417,7 +1851,13 @@
               "major": "法学",
               "score": 74
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "广州大学",
@@ -1441,7 +1881,15 @@
               "major": "自动化",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "广东工业大学",
@@ -1465,7 +1913,15 @@
               "major": "新闻学",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "华南农业大学",
@@ -1487,7 +1943,13 @@
               "major": "生物科学",
               "score": 76
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [],
+            "note": "首选物理，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "深圳大学",
@@ -1509,7 +1971,13 @@
               "major": "会计学",
               "score": 76
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         }
       ]
     },
@@ -1540,7 +2008,13 @@
               "major": "应用心理学",
               "score": 73
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [],
+            "note": "首选物理，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "五邑大学",
@@ -1562,7 +2036,13 @@
               "major": "电子信息工程",
               "score": 72
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "广东技术师范大学",
@@ -1584,7 +2064,13 @@
               "major": "翻译",
               "score": 71
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "华南农业大学",
@@ -1608,7 +2094,13 @@
               "major": "数学与应用数学",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [],
+            "note": "首选物理，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "深圳大学",
@@ -1632,7 +2124,13 @@
               "major": "食品质量与安全",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "广州大学",
@@ -1654,7 +2152,13 @@
               "major": "教育技术学",
               "score": 72
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "广东外语外贸大学",
@@ -1676,7 +2180,13 @@
               "major": "商务英语",
               "score": 71
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [],
+            "note": "首选物理，无强制再选"
+          },
+          "program_type": null
         }
       ]
     }

@@ -34,7 +34,13 @@
               "major": "会计学",
               "score": 91
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "厦门大学",
@@ -56,7 +62,15 @@
               "major": "软件工程",
               "score": 91
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "厦门大学",
@@ -78,7 +92,13 @@
               "major": "法学",
               "score": 90
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "厦门大学",
@@ -102,7 +122,15 @@
               "major": "统计学",
               "score": 88
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "厦门大学",
@@ -126,7 +154,13 @@
               "major": "广播电视学",
               "score": 87
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "厦门大学",
@@ -148,7 +182,15 @@
               "major": "应用化学",
               "score": 87
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "福州大学",
@@ -172,7 +214,15 @@
               "major": "自动化",
               "score": 85
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         }
       ]
     },
@@ -203,7 +253,13 @@
               "major": "电子信息工程",
               "score": 93
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "厦门大学",
@@ -225,7 +281,16 @@
               "major": "教育学",
               "score": 92
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学",
+              "生物"
+            ],
+            "note": "首选物理，再选化学/生物"
+          },
+          "program_type": null
         },
         {
           "name": "福州大学",
@@ -247,7 +312,15 @@
               "major": "法学",
               "score": 90
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "福州大学",
@@ -271,7 +344,15 @@
               "major": "临床医学",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "福建师范大学",
@@ -295,7 +376,13 @@
               "major": "自动化",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "福建医科大学",
@@ -317,7 +404,16 @@
               "major": "航海技术",
               "score": 91
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学",
+              "生物"
+            ],
+            "note": "首选物理，再选化学/生物"
+          },
+          "program_type": null
         },
         {
           "name": "华侨大学",
@@ -341,7 +437,15 @@
               "major": "工程管理",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         }
       ]
     },
@@ -372,7 +476,15 @@
               "major": "国际经济与贸易",
               "score": 88
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "福建师范大学",
@@ -394,7 +506,13 @@
               "major": "工程管理",
               "score": 87
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "福建农林大学",
@@ -416,7 +534,15 @@
               "major": "汉语言文学",
               "score": 86
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "福建农林大学",
@@ -440,7 +566,15 @@
               "major": "经济学",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "华侨大学",
@@ -464,7 +598,15 @@
               "major": "教育学",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "福建师范大学",
@@ -486,7 +628,13 @@
               "major": "小学教育",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "福建农林大学",
@@ -510,7 +658,13 @@
               "major": "风景园林",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [],
+            "note": "首选物理，无强制再选"
+          },
+          "program_type": null
         }
       ]
     },
@@ -541,7 +695,13 @@
               "major": "法学",
               "score": 85
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "福建医科大学",
@@ -563,7 +723,16 @@
               "major": "会计学",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学",
+              "生物"
+            ],
+            "note": "首选物理，再选化学/生物"
+          },
+          "program_type": null
         },
         {
           "name": "福建中医药大学",
@@ -585,7 +754,13 @@
               "major": "临床医学",
               "score": 83
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [],
+            "note": "首选物理，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "集美大学",
@@ -609,7 +784,13 @@
               "major": "自动化",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [],
+            "note": "首选物理，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "福建医科大学",
@@ -633,7 +814,16 @@
               "major": "工程管理",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学",
+              "生物"
+            ],
+            "note": "首选物理，再选化学/生物"
+          },
+          "program_type": null
         },
         {
           "name": "福建师范大学",
@@ -655,7 +845,13 @@
               "major": "汉语国际教育",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "集美大学",
@@ -679,7 +875,13 @@
               "major": "食品科学与工程",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [],
+            "note": "首选物理，无强制再选"
+          },
+          "program_type": null
         }
       ]
     },
@@ -710,7 +912,13 @@
               "major": "汉语言文学",
               "score": 83
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "福建师范大学",
@@ -732,7 +940,13 @@
               "major": "针灸推拿学",
               "score": 82
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "福建农林大学",
@@ -754,7 +968,13 @@
               "major": "经济学",
               "score": 82
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "福建中医药大学",
@@ -778,7 +998,16 @@
               "major": "教育学",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学",
+              "生物"
+            ],
+            "note": "首选物理，再选化学/生物"
+          },
+          "program_type": null
         },
         {
           "name": "闽南师范大学",
@@ -802,7 +1031,13 @@
               "major": "会计学",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "福建师范大学",
@@ -824,7 +1059,13 @@
               "major": "学前教育",
               "score": 83
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "华侨大学",
@@ -848,7 +1089,13 @@
               "major": "广播电视学",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         }
       ]
     },
@@ -879,7 +1126,13 @@
               "major": "临床医学",
               "score": 81
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "福建工程学院",
@@ -901,7 +1154,15 @@
               "major": "园艺",
               "score": 81
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "闽江学院",
@@ -923,7 +1184,15 @@
               "major": "自动化",
               "score": 80
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "福建工程学院",
@@ -947,7 +1216,15 @@
               "major": "汉语言文学",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "闽江学院",
@@ -971,7 +1248,13 @@
               "major": "经济学",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "集美大学",
@@ -993,7 +1276,13 @@
               "major": "工程造价",
               "score": 83
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [],
+            "note": "首选物理，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "闽南师范大学",
@@ -1017,7 +1306,15 @@
               "major": "信息与计算科学",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         }
       ]
     },
@@ -1048,7 +1345,13 @@
               "major": "电子信息工程",
               "score": 79
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "闽南师范大学",
@@ -1070,7 +1373,13 @@
               "major": "教育学",
               "score": 79
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "福建工程学院",
@@ -1092,7 +1401,13 @@
               "major": "法学",
               "score": 78
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "福建江夏学院",
@@ -1116,7 +1431,13 @@
               "major": "临床医学",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "厦门理工学院",
@@ -1140,7 +1461,15 @@
               "major": "国际经济与贸易",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "厦门理工学院",
@@ -1162,7 +1491,15 @@
               "major": "电子信息工程",
               "score": 81
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "闽江学院",
@@ -1186,7 +1523,13 @@
               "major": "工程造价",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [],
+            "note": "首选物理，无强制再选"
+          },
+          "program_type": null
         }
       ]
     },
@@ -1217,7 +1560,15 @@
               "major": "车辆工程",
               "score": 81
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "闽江学院",
@@ -1239,7 +1590,15 @@
               "major": "材料成型及控制工程",
               "score": 80
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "闽南师范大学",
@@ -1261,7 +1620,15 @@
               "major": "电子信息工程",
               "score": 80
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "集美大学",
@@ -1285,7 +1652,15 @@
               "major": "包装工程",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "福建医科大学",
@@ -1309,7 +1684,13 @@
               "major": "护理学",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [],
+            "note": "首选物理，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "华侨大学",
@@ -1333,7 +1714,15 @@
               "major": "材料成型及控制工程",
               "score": 83
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "福建农林大学",
@@ -1357,7 +1746,13 @@
               "major": "生物技术",
               "score": 83
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [],
+            "note": "首选物理，无强制再选"
+          },
+          "program_type": null
         }
       ]
     },
@@ -1388,7 +1783,13 @@
               "major": "工程管理",
               "score": 77
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，艺体类无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "集美大学",
@@ -1410,7 +1811,13 @@
               "major": "汉语言文学",
               "score": 77
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，艺体类无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "闽南师范大学",
@@ -1432,7 +1839,13 @@
               "major": "针灸推拿学",
               "score": 76
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "武夷学院",
@@ -1456,7 +1869,13 @@
               "major": "电子信息工程",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [],
+            "note": "首选物理，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "龙岩学院",
@@ -1480,7 +1899,15 @@
               "major": "法学",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "闽南师范大学",
@@ -1502,7 +1929,13 @@
               "major": "广告学",
               "score": 79
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "厦门理工学院",
@@ -1526,7 +1959,15 @@
               "major": "测绘工程",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         }
       ]
     },
@@ -1557,7 +1998,13 @@
               "major": "会计学",
               "score": 75
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "闽江学院",
@@ -1579,7 +2026,13 @@
               "major": "临床医学",
               "score": 75
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "闽南师范大学",
@@ -1601,7 +2054,13 @@
               "major": "园艺",
               "score": 74
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "泉州师范学院",
@@ -1625,7 +2084,15 @@
               "major": "国际经济与贸易",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "莆田学院",
@@ -1649,7 +2116,16 @@
               "major": "汉语言文学",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学",
+              "生物"
+            ],
+            "note": "首选物理，再选化学/生物"
+          },
+          "program_type": null
         },
         {
           "name": "泉州师范学院",
@@ -1671,7 +2147,13 @@
               "major": "秘书学",
               "score": 75
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "福建工程学院",
@@ -1695,7 +2177,15 @@
               "major": "城乡规划",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         }
       ]
     }

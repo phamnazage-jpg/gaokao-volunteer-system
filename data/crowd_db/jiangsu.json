@@ -34,7 +34,15 @@
               "major": "自动化",
               "score": 94
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "东南大学",
@@ -56,7 +64,15 @@
               "major": "教育学",
               "score": 93
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "中国药科大学",
@@ -78,7 +94,16 @@
               "major": "港口航道与海岸工程",
               "score": 91
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学",
+              "生物"
+            ],
+            "note": "首选物理，再选化学/生物"
+          },
+          "program_type": null
         },
         {
           "name": "南京工业大学",
@@ -102,7 +127,15 @@
               "major": "纺织工程",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "南京林业大学",
@@ -126,7 +159,13 @@
               "major": "能源与动力工程",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [],
+            "note": "首选物理，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "南京大学",
@@ -148,7 +187,15 @@
               "major": "计算机科学与技术",
               "score": 93
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "南京中医药大学",
@@ -170,7 +217,16 @@
               "major": "临床医学",
               "score": 92
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学",
+              "生物"
+            ],
+            "note": "首选物理，再选化学/生物"
+          },
+          "program_type": null
         }
       ]
     },
@@ -201,7 +257,15 @@
               "major": "动物医学",
               "score": 90
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "南京理工大学",
@@ -223,7 +287,15 @@
               "major": "制药工程",
               "score": 88
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "河海大学",
@@ -245,7 +317,15 @@
               "major": "国际经济与贸易",
               "score": 87
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "常州大学",
@@ -269,7 +349,15 @@
               "major": "信息管理与信息系统",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "苏州科技大学",
@@ -293,7 +381,15 @@
               "major": "教育学",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "南京师范大学",
@@ -315,7 +411,13 @@
               "major": "汉语言文学",
               "score": 88
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "南京理工大学",
@@ -337,7 +439,15 @@
               "major": "通信工程",
               "score": 88
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         }
       ]
     },
@@ -368,7 +478,13 @@
               "major": "港口航道与海岸工程",
               "score": 86
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "苏州大学",
@@ -390,7 +506,13 @@
               "major": "网络空间安全",
               "score": 85
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "江南大学",
@@ -412,7 +534,15 @@
               "major": "应用化学",
               "score": 85
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "南通大学",
@@ -436,7 +566,16 @@
               "major": "动物医学",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学",
+              "生物"
+            ],
+            "note": "首选物理，再选化学/生物"
+          },
+          "program_type": null
         },
         {
           "name": "扬州大学",
@@ -460,7 +599,15 @@
               "major": "国际经济与贸易",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "南京邮电大学",
@@ -482,7 +629,15 @@
               "major": "通信工程",
               "score": 85
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "中国药科大学",
@@ -504,7 +659,16 @@
               "major": "药学",
               "score": 85
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学",
+              "生物"
+            ],
+            "note": "首选物理，再选化学/生物"
+          },
+          "program_type": null
         }
       ]
     },
@@ -535,7 +699,13 @@
               "major": "电子信息工程",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [],
+            "note": "首选物理，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "南京中医药大学",
@@ -557,7 +727,16 @@
               "major": "中医学",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学",
+              "生物"
+            ],
+            "note": "首选物理，再选化学/生物"
+          },
+          "program_type": null
         },
         {
           "name": "江苏大学",
@@ -579,7 +758,15 @@
               "major": "计算机科学与技术",
               "score": 83
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "南京林业大学",
@@ -603,7 +790,15 @@
               "major": "农学",
               "score": 83
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "南京医科大学",
@@ -625,7 +820,16 @@
               "major": "临床医学",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学",
+              "生物"
+            ],
+            "note": "首选物理，再选化学/生物"
+          },
+          "program_type": null
         },
         {
           "name": "苏州大学",
@@ -649,7 +853,13 @@
               "major": "广播电视学",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "江南大学",
@@ -673,7 +883,16 @@
               "major": "生物工程",
               "score": 83
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学",
+              "生物"
+            ],
+            "note": "首选物理，再选化学/生物"
+          },
+          "program_type": null
         }
       ]
     },
@@ -704,7 +923,15 @@
               "major": "护理学",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "南京工业大学",
@@ -726,7 +953,15 @@
               "major": "信息管理与信息系统",
               "score": 83
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "南京信息工程大学",
@@ -748,7 +983,13 @@
               "major": "自动化",
               "score": 83
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [],
+            "note": "首选物理，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "江苏师范大学",
@@ -772,7 +1013,13 @@
               "major": "港口航道与海岸工程",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "南京财经大学",
@@ -796,7 +1043,13 @@
               "major": "纺织工程",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "南京邮电大学",
@@ -818,7 +1071,13 @@
               "major": "电子信息工程",
               "score": 83
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [],
+            "note": "首选物理，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "南京中医药大学",
@@ -840,7 +1099,13 @@
               "major": "康复治疗学",
               "score": 83
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [],
+            "note": "首选物理，无强制再选"
+          },
+          "program_type": null
         }
       ]
     },
@@ -871,7 +1136,13 @@
               "major": "应用化学",
               "score": 82
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "扬州大学",
@@ -893,7 +1164,13 @@
               "major": "能源与动力工程",
               "score": 81
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "南京林业大学",
@@ -915,7 +1192,15 @@
               "major": "动物医学",
               "score": 81
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "南京信息工程大学",
@@ -939,7 +1224,13 @@
               "major": "国际经济与贸易",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [],
+            "note": "首选物理，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "江苏大学",
@@ -963,7 +1254,15 @@
               "major": "信息管理与信息系统",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "南京信息工程大学",
@@ -985,7 +1284,15 @@
               "major": "计算机科学与技术",
               "score": 83
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "南京中医药大学",
@@ -1007,7 +1314,16 @@
               "major": "护理学",
               "score": 83
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学",
+              "生物"
+            ],
+            "note": "首选物理，再选化学/生物"
+          },
+          "program_type": null
         }
       ]
     },
@@ -1038,7 +1354,13 @@
               "major": "自动化",
               "score": 80
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [],
+            "note": "首选物理，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "中国药科大学",
@@ -1060,7 +1382,13 @@
               "major": "教育学",
               "score": 79
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [],
+            "note": "首选物理，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "苏州大学",
@@ -1082,7 +1410,13 @@
               "major": "港口航道与海岸工程",
               "score": 79
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "苏州大学",
@@ -1106,7 +1440,15 @@
               "major": "纺织工程",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "江南大学",
@@ -1130,7 +1472,15 @@
               "major": "能源与动力工程",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "南京医科大学",
@@ -1152,7 +1502,13 @@
               "major": "预防医学",
               "score": 80
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [],
+            "note": "首选物理，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "江南大学",
@@ -1174,7 +1530,15 @@
               "major": "纺织工程",
               "score": 80
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         }
       ]
     },
@@ -1205,7 +1569,15 @@
               "major": "物联网工程",
               "score": 80
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "南京林业大学",
@@ -1227,7 +1599,15 @@
               "major": "材料成型及控制工程",
               "score": 80
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "江苏大学",
@@ -1249,7 +1629,15 @@
               "major": "食品科学与工程",
               "score": 80
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "扬州大学",
@@ -1273,7 +1661,15 @@
               "major": "水利水电工程",
               "score": 83
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "南通大学",
@@ -1297,7 +1693,15 @@
               "major": "电气工程及其自动化",
               "score": 83
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "南京审计大学",
@@ -1321,7 +1725,13 @@
               "major": "会计学",
               "score": 83
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "中国药科大学",
@@ -1343,7 +1753,13 @@
               "major": "制药工程",
               "score": 80
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [],
+            "note": "首选物理，无强制再选"
+          },
+          "program_type": null
         }
       ]
     },
@@ -1374,7 +1790,13 @@
               "major": "动物医学",
               "score": 78
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "扬州大学",
@@ -1396,7 +1818,13 @@
               "major": "制药工程",
               "score": 77
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "南京工业大学",
@@ -1418,7 +1846,15 @@
               "major": "国际经济与贸易",
               "score": 77
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "河海大学",
@@ -1442,7 +1878,15 @@
               "major": "信息管理与信息系统",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "南京邮电大学",
@@ -1466,7 +1910,15 @@
               "major": "教育学",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "江苏大学",
@@ -1488,7 +1940,13 @@
               "major": "会计学",
               "score": 78
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "南京邮电大学",
@@ -1510,7 +1968,15 @@
               "major": "数学与应用数学",
               "score": 78
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         }
       ]
     },
@@ -1541,7 +2007,15 @@
               "major": "港口航道与海岸工程",
               "score": 76
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "南京信息工程大学",
@@ -1563,7 +2037,15 @@
               "major": "网络空间安全",
               "score": 75
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "河海大学",
@@ -1585,7 +2067,13 @@
               "major": "纺织工程",
               "score": 74
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "南京审计大学",
@@ -1609,7 +2097,13 @@
               "major": "能源与动力工程",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [],
+            "note": "首选物理，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "徐州医科大学",
@@ -1633,7 +2127,13 @@
               "major": "制药工程",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [],
+            "note": "首选物理，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "江苏大学",
@@ -1655,7 +2155,15 @@
               "major": "能源与动力工程",
               "score": 75
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "南通大学",
@@ -1677,7 +2185,16 @@
               "major": "临床医学",
               "score": 75
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学",
+              "生物"
+            ],
+            "note": "首选物理，再选化学/生物"
+          },
+          "program_type": null
         }
       ]
     }

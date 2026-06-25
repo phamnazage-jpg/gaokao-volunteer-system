@@ -40,10 +40,42 @@
 | -------------------- | --------- | ---- | ---------------------------------- |
 | `name`               | str       | ✅   | 院校名称                           |
 | `major`              | str       | ⚠️   | 专业；无专业聚合时填 `""`          |
+| `subject_requirements` | object/null | ⚠️ | 新高考省份选科要求；历史推荐不填时为 `null` |
+| `program_type`       | str/null  | ⚠️   | 特殊类型（定向培养/专项计划/公费师范等）；无则为 `null` |
 | `frequency`          | int       | ✅   | 推荐频次（0-4）                    |
 | `platforms`          | list[str] | ✅   | 推荐平台名（千问/元宝/百度/豆包）  |
 | `predicted_increase` | int       | ⚠️   | 预测分数上涨分；无可靠预测可填 `0` |
 | `alternatives`       | list      | ⚠️   | 替代院校推荐，可空                 |
+
+### `subject_requirements` 结构
+
+```json
+{
+  "preferred_subject": "物理",
+  "reselect_subject": ["化学", "生物"],
+  "note": "首选物理，再选化学/生物"
+}
+```
+
+说明：
+- `preferred_subject`: 首选科目（物理/历史）
+- `reselect_subject`: 再选科目组合，可为空 list
+- `note`: 人类可读说明
+- 旧高考省份或选科要求未整理时填 `null`
+
+### `program_type` 枚举
+
+常见值：
+- `定向培养`
+- `国家专项`
+- `地方专项`
+- `高校专项`
+- `中外合作办学`
+- `公费师范生`
+- `军校`
+- `公安院校`
+- `艺体类`
+- `null`（普通专业）
 
 ## 4. `trusted_sources` 元素
 

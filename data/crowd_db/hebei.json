@@ -34,7 +34,15 @@
               "major": "电子信息工程",
               "score": 93
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "东北大学秦皇岛分校",
@@ -56,7 +64,15 @@
               "major": "车辆工程",
               "score": 91
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "河北工业大学",
@@ -78,7 +94,15 @@
               "major": "新闻学",
               "score": 90
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "华北电力大学(保定)",
@@ -100,7 +124,15 @@
               "major": "电气工程及其自动化",
               "score": 90
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "燕山大学",
@@ -124,7 +156,15 @@
               "major": "医学影像学",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "河北工业大学",
@@ -148,7 +188,15 @@
               "major": "护理学",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "燕山大学",
@@ -170,7 +218,15 @@
               "major": "交通工程",
               "score": 86
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         }
       ]
     },
@@ -201,7 +257,15 @@
               "major": "国际经济与贸易",
               "score": 88
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "河北大学",
@@ -223,7 +287,13 @@
               "major": "园艺",
               "score": 87
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "河北师范大学",
@@ -245,7 +315,13 @@
               "major": "网络工程",
               "score": 86
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "华北电力大学(保定)",
@@ -267,7 +343,15 @@
               "major": "电子信息工程",
               "score": 87
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "河北医科大学",
@@ -289,7 +373,16 @@
               "major": "临床医学",
               "score": 87
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学",
+              "生物"
+            ],
+            "note": "首选物理，再选化学/生物"
+          },
+          "program_type": null
         },
         {
           "name": "华北理工大学",
@@ -313,7 +406,16 @@
               "major": "麻醉学",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学",
+              "生物"
+            ],
+            "note": "首选物理，再选化学/生物"
+          },
+          "program_type": null
         },
         {
           "name": "河北大学",
@@ -337,7 +439,13 @@
               "major": "车辆工程",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         }
       ]
     },
@@ -368,7 +476,13 @@
               "major": "新闻学",
               "score": 85
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "河北师范大学",
@@ -390,7 +504,13 @@
               "major": "思想政治教育",
               "score": 85
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "燕山大学",
@@ -412,7 +532,13 @@
               "major": "经济学",
               "score": 85
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "河北医科大学",
@@ -434,7 +560,16 @@
               "major": "口腔医学",
               "score": 85
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学",
+              "生物"
+            ],
+            "note": "首选物理，再选化学/生物"
+          },
+          "program_type": null
         },
         {
           "name": "石家庄铁道大学",
@@ -456,7 +591,15 @@
               "major": "交通工程",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "河北地质大学",
@@ -478,7 +621,15 @@
               "major": "地质工程",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         }
       ]
     },
@@ -509,7 +660,15 @@
               "major": "新闻学",
               "score": 85
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "河北经贸大学",
@@ -531,7 +690,13 @@
               "major": "数学与应用数学",
               "score": 85
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "河北医科大学",
@@ -553,7 +718,16 @@
               "major": "交通工程",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学",
+              "生物"
+            ],
+            "note": "首选物理，再选化学/生物"
+          },
+          "program_type": null
         },
         {
           "name": "河北师范大学",
@@ -577,7 +751,13 @@
               "major": "国际经济与贸易",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "石家庄铁道大学",
@@ -601,7 +781,15 @@
               "major": "网络工程",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "河北工业大学",
@@ -623,7 +811,15 @@
               "major": "材料科学与工程",
               "score": 85
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "河北大学",
@@ -645,7 +841,13 @@
               "major": "哲学",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         }
       ]
     },
@@ -676,7 +878,15 @@
               "major": "建筑学",
               "score": 83
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "河北大学",
@@ -698,7 +908,13 @@
               "major": "麻醉学",
               "score": 83
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "河北师范大学",
@@ -720,7 +936,13 @@
               "major": "电子信息工程",
               "score": 82
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "河北经贸大学",
@@ -744,7 +966,13 @@
               "major": "新闻学",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "河北医科大学",
@@ -768,7 +996,16 @@
               "major": "交通工程",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学",
+              "生物"
+            ],
+            "note": "首选物理，再选化学/生物"
+          },
+          "program_type": null
         },
         {
           "name": "河北地质大学",
@@ -790,7 +1027,13 @@
               "major": "会计学",
               "score": 83
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "河北工程大学",
@@ -812,7 +1055,15 @@
               "major": "建筑学",
               "score": 83
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         }
       ]
     },
@@ -843,7 +1094,13 @@
               "major": "护理学",
               "score": 81
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "河北医科大学",
@@ -865,7 +1122,13 @@
               "major": "国际经济与贸易",
               "score": 81
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [],
+            "note": "首选物理，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "河北农业大学",
@@ -887,7 +1150,13 @@
               "major": "网络工程",
               "score": 80
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [],
+            "note": "首选物理，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "河北科技大学",
@@ -911,7 +1180,15 @@
               "major": "麻醉学",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "河北地质大学",
@@ -935,7 +1212,13 @@
               "major": "车辆工程",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "河北工程大学",
@@ -957,7 +1240,15 @@
               "major": "电气工程及其自动化",
               "score": 82
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "石家庄铁道大学",
@@ -979,7 +1270,15 @@
               "major": "交通工程",
               "score": 82
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         }
       ]
     },
@@ -1010,7 +1309,13 @@
               "major": "数学与应用数学",
               "score": 79
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "河北经贸大学",
@@ -1032,7 +1337,13 @@
               "major": "医学影像学",
               "score": 78
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "石家庄铁道大学",
@@ -1054,7 +1365,15 @@
               "major": "护理学",
               "score": 78
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "河北农业大学",
@@ -1078,7 +1397,15 @@
               "major": "网络工程",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "河北工程大学",
@@ -1102,7 +1429,15 @@
               "major": "麻醉学",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "河北地质大学",
@@ -1124,7 +1459,15 @@
               "major": "土木工程",
               "score": 81
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "华北理工大学",
@@ -1146,7 +1489,16 @@
               "major": "护理学",
               "score": 81
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学",
+              "生物"
+            ],
+            "note": "首选物理，再选化学/生物"
+          },
+          "program_type": null
         }
       ]
     },
@@ -1177,7 +1529,13 @@
               "major": "车辆工程",
               "score": 77
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，艺体类无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "河北大学",
@@ -1199,7 +1557,13 @@
               "major": "数学与应用数学",
               "score": 76
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，艺体类无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "河北经贸大学",
@@ -1221,7 +1585,13 @@
               "major": "医学影像学",
               "score": 76
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "防灾科技学院",
@@ -1245,7 +1615,15 @@
               "major": "护理学",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "北华航天工业学院",
@@ -1269,7 +1647,15 @@
               "major": "园艺",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "河北地质大学",
@@ -1291,7 +1677,15 @@
               "major": "美术学",
               "score": 79
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "河北体育学院",
@@ -1313,7 +1707,13 @@
               "major": "体育教育",
               "score": 79
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，艺体类无强制再选"
+          },
+          "program_type": null
         }
       ]
     },
@@ -1344,7 +1744,13 @@
               "major": "网络工程",
               "score": 75
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "河北师范大学",
@@ -1366,7 +1772,13 @@
               "major": "建筑学",
               "score": 74
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [],
+            "note": "首选物理，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "河北大学",
@@ -1388,7 +1800,13 @@
               "major": "麻醉学",
               "score": 74
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "唐山学院",
@@ -1412,7 +1830,15 @@
               "major": "数学与应用数学",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "河北工业职业技术学院",
@@ -1434,7 +1860,13 @@
               "major": "机电一体化技术",
               "score": 77
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [],
+            "note": "首选物理，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "石家庄铁路职业技术学院",
@@ -1456,7 +1888,15 @@
               "major": "铁道交通运营管理",
               "score": 77
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         }
       ]
     },
@@ -1489,7 +1929,16 @@
               "major": "车辆工程",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学",
+              "生物"
+            ],
+            "note": "首选物理，再选化学/生物"
+          },
+          "program_type": null
         },
         {
           "name": "唐山学院",
@@ -1511,7 +1960,15 @@
               "major": "数学与应用数学",
               "score": 78
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "河北化工医药职业技术学院",
@@ -1533,7 +1990,15 @@
               "major": "化学工程",
               "score": 77
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "河北对外经贸职业学院",
@@ -1555,7 +2020,13 @@
               "major": "国际经济与贸易",
               "score": 78
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "保定职业技术学院",
@@ -1577,7 +2048,13 @@
               "major": "会计",
               "score": 76
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "河北交通职业技术学院",
@@ -1599,7 +2076,15 @@
               "major": "道路桥梁工程",
               "score": 78
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         }
       ]
     }

@@ -34,7 +34,15 @@
               "major": "电子信息工程",
               "score": 93
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "浙江大学",
@@ -56,7 +64,16 @@
               "major": "中医学",
               "score": 93
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学",
+              "生物"
+            ],
+            "note": "首选物理，再选化学/生物"
+          },
+          "program_type": null
         },
         {
           "name": "浙江大学",
@@ -78,7 +95,15 @@
               "major": "自动化",
               "score": 92
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "浙江大学",
@@ -102,7 +127,13 @@
               "major": "会计学",
               "score": 89
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "浙江大学",
@@ -126,7 +157,15 @@
               "major": "网络空间安全",
               "score": 88
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "中国美术学院",
@@ -148,7 +187,13 @@
               "major": "美术学",
               "score": 86
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，艺体类无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "浙江大学",
@@ -172,7 +217,15 @@
               "major": "通信工程",
               "score": 85
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         }
       ]
     },
@@ -203,7 +256,15 @@
               "major": "电子信息工程",
               "score": 95
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "浙江大学",
@@ -225,7 +286,16 @@
               "major": "化学工程与工艺",
               "score": 94
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学",
+              "生物"
+            ],
+            "note": "首选物理，再选化学/生物"
+          },
+          "program_type": null
         },
         {
           "name": "中国科学技术大学",
@@ -247,7 +317,15 @@
               "major": "网络空间安全",
               "score": 93
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "浙江工业大学",
@@ -271,7 +349,15 @@
               "major": "英语",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "杭州电子科技大学",
@@ -295,7 +381,15 @@
               "major": "应用心理学",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "温州医科大学",
@@ -317,7 +411,16 @@
               "major": "临床医学",
               "score": 93
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学",
+              "生物"
+            ],
+            "note": "首选物理，再选化学/生物"
+          },
+          "program_type": null
         },
         {
           "name": "中国美术学院",
@@ -341,7 +444,13 @@
               "major": "视觉传达设计",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，艺体类无强制再选"
+          },
+          "program_type": null
         }
       ]
     },
@@ -372,7 +481,15 @@
               "major": "生物科学",
               "score": 89
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "浙江工业大学",
@@ -394,7 +511,15 @@
               "major": "林学",
               "score": 88
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "杭州电子科技大学",
@@ -416,7 +541,15 @@
               "major": "服装设计与工程",
               "score": 87
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "浙江工商大学",
@@ -440,7 +573,13 @@
               "major": "自动化",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "浙江师范大学",
@@ -464,7 +603,13 @@
               "major": "化学工程与工艺",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "温州医科大学",
@@ -486,7 +631,16 @@
               "major": "临床医学",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学",
+              "生物"
+            ],
+            "note": "首选物理，再选化学/生物"
+          },
+          "program_type": null
         },
         {
           "name": "杭州电子科技大学",
@@ -510,7 +664,13 @@
               "major": "计算机科学与技术",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [],
+            "note": "首选物理，无强制再选"
+          },
+          "program_type": null
         }
       ]
     },
@@ -541,7 +701,15 @@
               "major": "网络空间安全",
               "score": 86
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "浙江工商大学",
@@ -563,7 +731,13 @@
               "major": "英语",
               "score": 86
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "浙江财经大学",
@@ -585,7 +759,13 @@
               "major": "光电信息科学与工程",
               "score": 85
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "中国计量大学",
@@ -609,7 +789,13 @@
               "major": "生物科学",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [],
+            "note": "首选物理，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "宁波大学",
@@ -633,7 +819,16 @@
               "major": "服装设计与工程",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学",
+              "生物"
+            ],
+            "note": "首选物理，再选化学/生物"
+          },
+          "program_type": null
         },
         {
           "name": "温州医科大学",
@@ -655,7 +850,16 @@
               "major": "应用心理学",
               "score": 85
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学",
+              "生物"
+            ],
+            "note": "首选物理，再选化学/生物"
+          },
+          "program_type": null
         },
         {
           "name": "杭州师范大学",
@@ -679,7 +883,13 @@
               "major": "教育学",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         }
       ]
     },
@@ -710,7 +920,13 @@
               "major": "食品科学与工程",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "温州大学",
@@ -732,7 +948,15 @@
               "major": "自动化",
               "score": 83
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "杭州师范大学",
@@ -754,7 +978,13 @@
               "major": "电子信息工程",
               "score": 83
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "杭州师范大学",
@@ -778,7 +1008,13 @@
               "major": "网络空间安全",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "浙江理工大学",
@@ -802,7 +1038,15 @@
               "major": "英语",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "中国计量大学",
@@ -824,7 +1068,15 @@
               "major": "材料科学与工程",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "浙江中医药大学",
@@ -848,7 +1100,16 @@
               "major": "护理学",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学",
+              "生物"
+            ],
+            "note": "首选物理，再选化学/生物"
+          },
+          "program_type": null
         }
       ]
     },
@@ -879,7 +1140,15 @@
               "major": "测控技术与仪器",
               "score": 83
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "浙江工商大学",
@@ -901,7 +1170,13 @@
               "major": "国际经济与贸易",
               "score": 83
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [],
+            "note": "首选物理，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "浙江师范大学",
@@ -923,7 +1198,13 @@
               "major": "教育学",
               "score": 83
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "杭州电子科技大学",
@@ -947,7 +1228,13 @@
               "major": "工业工程",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [],
+            "note": "首选物理，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "温州医科大学",
@@ -971,7 +1258,13 @@
               "major": "护理学",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [],
+            "note": "首选物理，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "浙江农林大学",
@@ -995,7 +1288,15 @@
               "major": "化学",
               "score": 83
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "宁波大学",
@@ -1019,7 +1320,13 @@
               "major": "会展经济与管理",
               "score": 83
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [],
+            "note": "首选物理，无强制再选"
+          },
+          "program_type": null
         }
       ]
     },
@@ -1050,7 +1357,15 @@
               "major": "光电信息科学与工程",
               "score": 82
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "浙江海洋大学",
@@ -1072,7 +1387,13 @@
               "major": "应用心理学",
               "score": 81
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [],
+            "note": "首选物理，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "浙江中医药大学",
@@ -1094,7 +1415,13 @@
               "major": "生物科学",
               "score": 81
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [],
+            "note": "首选物理，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "浙江农林大学",
@@ -1118,7 +1445,13 @@
               "major": "服装设计与工程",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [],
+            "note": "首选物理，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "浙江海洋大学",
@@ -1142,7 +1475,13 @@
               "major": "电子信息工程",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [],
+            "note": "首选物理，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "浙江农林大学",
@@ -1164,7 +1503,13 @@
               "major": "土木工程",
               "score": 82
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [],
+            "note": "首选物理，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "中国美术学院",
@@ -1188,7 +1533,15 @@
               "major": "美术学",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         }
       ]
     },
@@ -1219,7 +1572,13 @@
               "major": "化学工程与工艺",
               "score": 80
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，艺体类无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "杭州师范大学",
@@ -1241,7 +1600,13 @@
               "major": "网络空间安全",
               "score": 79
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，艺体类无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "浙江传媒学院",
@@ -1263,7 +1628,13 @@
               "major": "国际经济与贸易",
               "score": 79
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，艺体类无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "浙江传媒学院",
@@ -1287,7 +1658,13 @@
               "major": "光电信息科学与工程",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [],
+            "note": "首选物理，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "温州大学",
@@ -1311,7 +1688,13 @@
               "major": "林学",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "中国美术学院",
@@ -1333,7 +1716,13 @@
               "major": "美术学",
               "score": 81
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [],
+            "note": "首选物理，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "浙江理工大学",
@@ -1357,7 +1746,13 @@
               "major": "书法学",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，艺体类无强制再选"
+          },
+          "program_type": null
         }
       ]
     },
@@ -1388,7 +1783,13 @@
               "major": "服装设计与工程",
               "score": 78
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "浙江树人学院",
@@ -1410,7 +1811,13 @@
               "major": "食品科学与工程",
               "score": 77
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "绍兴文理学院",
@@ -1432,7 +1839,13 @@
               "major": "自动化",
               "score": 77
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "绍兴文理学院",
@@ -1456,7 +1869,13 @@
               "major": "化学工程与工艺",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "湖州师范学院",
@@ -1480,7 +1899,15 @@
               "major": "国际经济与贸易",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "浙江农林大学",
@@ -1502,7 +1929,15 @@
               "major": "建筑学",
               "score": 78
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "中国计量大学",
@@ -1526,7 +1961,15 @@
               "major": "物流管理",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         }
       ]
     },
@@ -1557,7 +2000,13 @@
               "major": "英语",
               "score": 76
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "浙江树人学院",
@@ -1579,7 +2028,13 @@
               "major": "光电信息科学与工程",
               "score": 75
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "湖州师范学院",
@@ -1601,7 +2056,13 @@
               "major": "应用心理学",
               "score": 75
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         },
         {
           "name": "嘉兴大学",
@@ -1625,7 +2086,15 @@
               "major": "林学",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "台州学院",
@@ -1649,7 +2118,15 @@
               "major": "食品科学与工程",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "浙江农林大学",
@@ -1671,7 +2148,15 @@
               "major": "建筑学",
               "score": 76
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "物理",
+            "reselect_subject": [
+              "化学"
+            ],
+            "note": "首选物理，再选化学"
+          },
+          "program_type": null
         },
         {
           "name": "浙江师范大学",
@@ -1695,7 +2180,13 @@
               "major": "市场营销",
               "score": 84
             }
-          ]
+          ],
+          "subject_requirements": {
+            "preferred_subject": "历史",
+            "reselect_subject": [],
+            "note": "首选历史，无强制再选"
+          },
+          "program_type": null
         }
       ]
     }
