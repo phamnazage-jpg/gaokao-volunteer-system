@@ -434,7 +434,11 @@ def order_info_page(
     context = _build_portal_context(order, settings)
     return HTMLResponse(
         _render_info_page(
-            order, token, intake.payload if intake else {}, context["stage"]
+            order,
+            token,
+            intake.payload if intake else {},
+            context["stage"],
+            settings,
         )
     )
 
@@ -2384,10 +2388,14 @@ def _complete_simulated_payment(
 
 
 def _render_info_page(
-    order: Order, token: str, payload: dict[str, Any], stage: str
+    order: Order,
+    token: str,
+    payload: dict[str, Any],
+    stage: str,
+    settings: Settings,
 ) -> str:
-    consent_version = str(payload.get("consent_version") or "t12-web-mvp-v1")
-    consent_scope = str(payload.get("consent_scope") or "web-self-service-order-intake")
+    consent_version = str(payload.get("consent_version") or settings.consent_version)
+    consent_scope = str(payload.get("consent_scope") or settings.consent_scope_portal)
     privacy_checked = "checked" if payload.get("privacy_accepted") else ""
     service_terms_checked = "checked" if payload.get("service_terms_accepted") else ""
     guardian_checked = "checked" if payload.get("guardian_confirmed") else ""

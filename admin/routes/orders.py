@@ -291,9 +291,10 @@ def _attach_intake_fields(order_payload: dict[str, Any], intake: Any) -> dict[st
     enriched = dict(order_payload)
     enriched["intake_status"] = getattr(intake, "status", None)
     enriched["intake_submitted_at"] = getattr(intake, "submitted_at", None)
-    enriched["intake"] = dict(getattr(intake, "payload", {}) or {}) if intake is not None else None
+    enriched["intake"] = (
+        dict(getattr(intake, "payload", {}) or {}) if intake is not None else None
+    )
     return enriched
-
 
 
 def _csv_safe_value(value: Any) -> Any:
@@ -644,8 +645,8 @@ def create_order(
             "customer_name": payload.customer_name,
             "customer_phone": payload.customer_phone,
             "customer_wechat": payload.customer_wechat,
-            "consent_version": "t12-web-mvp-v1",
-            "consent_scope": f"{payload.source}-channel-intake",
+            "consent_version": settings.consent_version,
+            "consent_scope": f"{payload.source}-{settings.consent_scope_channel_prefix}",
             "consent_channel": payload.source,
             "consent_operator": consent_operator,
             "consent_method": payload.consent.consent_method,
@@ -655,7 +656,9 @@ def create_order(
             intake_payload["consent_note"] = payload.consent.consent_note
         if payload.customer_phone:
             intake_payload["privacy_accepted"] = False
-        intake_record = intake_store.save(order_id=order_id, payload=intake_payload, submit=False)
+        intake_record = intake_store.save(
+            order_id=order_id, payload=intake_payload, submit=False
+        )
     finally:
         intake_store.close()
 

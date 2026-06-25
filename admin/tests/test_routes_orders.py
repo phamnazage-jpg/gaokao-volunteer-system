@@ -164,6 +164,43 @@ def test_create_order_writes_intake_record_with_consent_audit(
     assert record.payload.get("consent_note") == "闲鱼沟通后电话确认"
 
 
+def test_create_order_uses_settings_consent_version(client, auth_headers, settings):
+    """consent_version / consent_scope 不再硬编码, 而是从 Settings 读取。
+
+    锁定: 默认值 = privacy-policy-v2026.06-draft / xianyu-channel-intake
+    （升级隐私政策时只需改环境变量 GAOKAO_CONSENT_VERSION, 无需改代码）
+    """
+    resp = client.post(
+        "/api/orders",
+        headers=auth_headers,
+        json={
+            **_XIANYU_BASE,
+            "external_id": "XY-CONSENT-VER-001",
+            "consent": {
+                "consent_method": "phone_recording",
+                "consent_note": "consent_version 来源测试",
+            },
+        },
+    )
+    assert resp.status_code == 201, resp.text
+    order_id = resp.json()["order"]["id"]
+
+    intake_store = IntakeStore.for_db(settings.orders_db_path)
+    try:
+        record = intake_store.get(order_id)
+    finally:
+        intake_store.close()
+
+    assert record is not None
+    # 必须来自 settings.consent_version (默认 privacy-policy-v2026.06-draft)
+    assert record.payload.get("consent_version") == settings.consent_version
+    assert record.payload.get("consent_version") == "privacy-policy-v2026.06-draft"
+    # scope 必须是 f"{source}-{settings.consent_scope_channel_prefix}"
+    assert (
+        record.payload.get("consent_scope")
+        == f"xianyu-{settings.consent_scope_channel_prefix}"
+    )
+
 
 def test_create_order_external_channel_marks_consent_operator_as_admin(
     client, auth_headers, settings
@@ -291,7 +328,6 @@ def test_detail_exposes_submitted_intake_state(client, auth_headers, settings):
     assert detail["order"]["intake_submitted_at"] == record.submitted_at
 
 
-
 def test_detail_exposes_structured_intake_payload(client, auth_headers, settings):
     created = _seed_order(settings, id="GKO-20260624-INTAKE-STRUCT")
     intake_store = IntakeStore.for_db(settings.orders_db_path)
@@ -321,7 +357,9 @@ def test_detail_exposes_structured_intake_payload(client, auth_headers, settings
     assert detail["order"]["intake"]["interest_assessment_result"] == "INTJ"
 
 
-def test_admin_create_order_defaults_to_draft_intake_state(client, auth_headers, settings):
+def test_admin_create_order_defaults_to_draft_intake_state(
+    client, auth_headers, settings
+):
     resp = client.post(
         "/api/orders",
         headers=auth_headers,
@@ -344,7 +382,6 @@ def test_admin_create_order_defaults_to_draft_intake_state(client, auth_headers,
     body = resp.json()
     assert body["order"]["intake_status"] == "draft"
     assert body["order"]["intake_submitted_at"] is None
-
 
 
 def test_patch_updates_business_fields_and_status_transition(

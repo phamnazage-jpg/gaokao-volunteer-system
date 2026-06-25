@@ -70,6 +70,9 @@ class Settings:
     jwt_expire_minutes: int
     default_admin_username: str
     default_admin_password: str
+    consent_version: str  # 当前同意协议版本号，与 docs/PRIVACY_POLICY_DRAFT.md 版本对齐
+    consent_scope_portal: str  # portal 资料提交默认 scope
+    consent_scope_channel_prefix: str  # 后台代录 scope 前缀
 
 
 def _resolve_payment_webhook_secret(env: str) -> str:
@@ -281,6 +284,15 @@ def load_settings() -> Settings:
         jwt_expire_minutes=int(os.getenv("GAOKAO_JWT_EXP_MIN", "60")),
         default_admin_username=os.getenv("GAOKAO_ADMIN_USER", "admin"),
         default_admin_password=os.getenv("GAOKAO_ADMIN_PASS", _DEFAULT_ADMIN_PASSWORD),
+        consent_version=os.getenv(
+            "GAOKAO_CONSENT_VERSION", "privacy-policy-v2026.06-draft"
+        ),
+        consent_scope_portal=os.getenv(
+            "GAOKAO_CONSENT_SCOPE_PORTAL", "web-self-service-order-intake"
+        ),
+        consent_scope_channel_prefix=os.getenv(
+            "GAOKAO_CONSENT_SCOPE_CHANNEL_PREFIX", "channel-intake"
+        ),
     )
     # 生产环境 post-load 校验:webhook / portal token / JWT / admin password
     # / payment provider 必须满足强度门槛, 任一不满足 fail-closed (P0-2/P2-4/P2-5/6/20)。
@@ -323,12 +335,14 @@ def is_default_admin_password_secure(settings: Settings) -> tuple[bool, str]:
     if settings.env == "prod" and password == _DEFAULT_ADMIN_PASSWORD:
         return False, "生产环境禁止使用默认管理员密码 admin123"
     if settings.env == "prod":
-        classes = sum((
-            any(ch.islower() for ch in password),
-            any(ch.isupper() for ch in password),
-            any(ch.isdigit() for ch in password),
-            any(ch in string.punctuation for ch in password),
-        ))
+        classes = sum(
+            (
+                any(ch.islower() for ch in password),
+                any(ch.isupper() for ch in password),
+                any(ch.isdigit() for ch in password),
+                any(ch in string.punctuation for ch in password),
+            )
+        )
         if classes < 3:
             return False, "生产环境默认管理员密码至少覆盖 3 类字符（大小写/数字/符号）"
     if settings.env == "dev" and password == _DEFAULT_ADMIN_PASSWORD:
