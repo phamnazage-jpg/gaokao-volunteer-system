@@ -1599,7 +1599,7 @@ def _render_landing_page(request: Request, settings: Settings) -> str:
       <section class="section" id="consult-box">
         <h2>先做一次免费复核</h2>
         <p class="section-intro">先提交最小必要信息，我们会判断你当前方案值不值得继续；如果你已经拿到老师、机构或其他平台给出的方案，后续资料页也可以上传文档继续复核。</p>
-        <div class="consult-card" style="margin-top:0; background:#f8fbff; border:1px solid var(--border);">
+        <div class="consult-card" style="margin-top:0; background:#f8fbff; border:1px solid var(--border); padding:24px;">
           <p class="consult-privacy" aria-label="隐私说明">🔒 这些输入只用于判断要不要复核你的方案，<strong>不会留底、不会用于生成方案、不会发邮件推销</strong>。如果你决定不进入付费方案，提交的资料不会保存到我们的数据库。</p>
           <form action="/review/start" method="get">
             <input type="hidden" name="source" value="home" />
@@ -1618,6 +1618,10 @@ def _render_landing_page(request: Request, settings: Settings) -> str:
               <a class="btn btn-secondary" href="/pricing">直接做完整规划</a>
             </div>
           </form>
+          <div class="upload-hint" style="margin-top:16px; padding:12px 14px; border-radius:12px; background:rgba(31,111,235,.06); border:1px solid rgba(31,111,235,.18);">
+            <p style="margin:0; color:#1f6feb; font-size:13px; line-height:1.5;">如果你已经有老师、机构或其他平台给出的志愿方案文档，可以先<strong>上传已有方案文档</strong>再做免费复核。</p>
+            <a class="btn btn-secondary" style="margin-top:8px;" href="/pricing">上传方案文档并进入完整规划</a>
+          </div>
           <p class="consult-privacy-tail">不会收到营销短信，提交后你也可以随时要求删除已填资料。</p>
         </div>
       </section>
@@ -3261,7 +3265,7 @@ def _render_review_start_page(contract: ReviewResultContract, token: str | None)
 <section class=\"panel\">
   <span class=\"eyebrow\">免费复核结果</span>
   <h1>复核结果</h1>
-  <p class=\"meta\">我们已经根据你当前提供的信息做了第一轮判断，下面先告诉你当前风险和最适合的下一步，而不是让你继续看系统流程说明。</p>
+  <p class=\"meta\">基于你当前提交的信息，下面先告诉你当前的风险判断和最适合的下一步。</p>
 </section>
 
 <section class=\"panel\">
@@ -3274,16 +3278,18 @@ def _render_review_start_page(contract: ReviewResultContract, token: str | None)
     <li>位次：{rank}</li>
     <li>附件：{attachment_html}</li>
   </ul>
+  <p class=\"meta\" style=\"margin-top:10px;color:#1f6feb;\">信息越完整，复核结论越准确。补齐选科和位次后，我们可以给出更具体的风险定位。</p>
 </section>
 
 <section class=\"panel\">
   <h2>初步评估结果</h2>
   <ul>
-    <li>风险等级：{escape(contract.risk_level)}</li>
-    <li>当前更建议：{escape(recommended_label)}</li>
+    <li><strong>风险等级：{escape(contract.risk_level)}</strong></li>
+    <li>当前最建议的下一步：{escape(recommended_label)}</li>
   </ul>
   <h3>核心问题</h3>
   <ul>{findings_html}</ul>
+  <p class=\"meta\" style=\"margin-top:8px;\">风险等级说明：低 = 当前方案结构基本合理，微调即可；中 = 存在踩线或扎堆风险，需要进一步判断；高 = 存在明显梯度失衡或结构风险，建议尽快调整。</p>
 </section>
 
 <section class=\"panel\">
@@ -3292,8 +3298,9 @@ def _render_review_start_page(contract: ReviewResultContract, token: str | None)
   <div class=\"actions\">
     <form action=\"/review/action\" method=\"post\">{token_input}<input type=\"hidden\" name=\"action\" value=\"{escape(primary_action[1])}\" /><button class=\"btn btn-primary\" type=\"submit\">{escape(primary_action[0])}</button></form>
     <form action=\"/review/action\" method=\"post\">{token_input}<input type=\"hidden\" name=\"action\" value=\"cwb\" /><button class=\"btn btn-secondary\" type=\"submit\">查看冲稳保建议</button></form>
-    <form action=\"/review/action\" method=\"post\">{token_input}<input type=\"hidden\" name=\"action\" value=\"full_plan\" /><button class=\"btn btn-secondary\" type=\"submit\">进入完整规划</button></form>
+    <a class=\"btn btn-secondary\" href=\"/pricing\">进入完整规划（付费）</a>
   </div>
+  <p class=\"meta\" style=\"margin-top:10px;\">免费复核帮你判断风险方向；完整规划和深度辅导在支付后启动，会给你逐志愿解析、冲稳保梯度表和交付报告。</p>
 </section>
 """
     return _render_placeholder_shell(
