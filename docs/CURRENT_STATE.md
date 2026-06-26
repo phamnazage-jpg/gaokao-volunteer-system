@@ -1,7 +1,7 @@
 # CURRENT_STATE
 
 最后更新: 2026-06-26
-状态词: 本地验证完成（v2.1 主链与 6/20/6/21 增量仍成立；crowd_db 全国 31 省口径全部达 high，当前 live 基线为 31 high / 0 usable / 0 skeleton；crowd_db 质量门槛已硬化为综合判定，防静默升级；本地服务启动 + integration/user_simulation E2E 已复跑通过）
+状态词: 本地验证完成（v2.1 主链与 6/20/6/21 增量仍成立；crowd_db 全国 31 省口径全部达 high，当前 live 基线为 31 high / 0 usable / 0 skeleton；crowd_db 质量门槛已硬化为综合判定，防静默升级；本地服务启动 + integration/user_simulation E2E 已复跑通过；新增 30 组分段样例复核入口 E2E 已通过）
 
 本轮增量（当前工作区，基于 HEAD `dbb8fb7` 继续深度升级）:
 
@@ -12,7 +12,8 @@
 - 2026-06-26 新增深度接入：`广西` / `宁夏` 已补 `score_distribution`（官方一分一档/一分段统计 + 本科线）
 - 当前 `score_distribution` 覆盖已达 **31/31 省**；其中 `新疆 / 西藏` 已补齐官方最低控制分数线级别接入，但两省暂未检索到公开一分一段表
 - 本轮本地验证附加证据：`GAOKAO_SKIP_INSTALL=1 bash scripts/dev-verify.sh` => `1297 passed, 3 skipped`；`scripts/integration_test.py` => `overall PASS`；`scripts/user_simulation.py` => `overall PASS`
-- 当前工作区未提交修改：`data/crowd_db/xinjiang.json`、`data/crowd_db/xizang.json`、`data/crowd_db/tests/test_score_distribution.py`、`docs/CURRENT_STATE.md`、`docs/CROWD_DB_NATIONALIZATION_SOURCE_OF_TRUTH.md`
+- 新增 30 组分段样例 E2E：`reports/score_range_e2e_2026_06_26.json` => `review_start 30/30 通过`，且对 6 组公开支持省份样例做了 `公开下单 -> portal status` 深层抽样，结果 `6/6 通过`
+- 当前工作区未提交修改：`data/crowd_db/xinjiang.json`、`data/crowd_db/xizang.json`、`data/crowd_db/tests/test_score_distribution.py`、`docs/CURRENT_STATE.md`、`docs/CROWD_DB_NATIONALIZATION_SOURCE_OF_TRUTH.md`、`reports/score_range_e2e_2026_06_26.json`
 
 真相源优先级:
 

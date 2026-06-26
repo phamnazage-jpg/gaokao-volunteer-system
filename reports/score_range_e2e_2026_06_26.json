@@ -1,0 +1,484 @@
+{
+  "base_url": "http://127.0.0.1:19100",
+  "sample_count": 30,
+  "review_start_pass": 30,
+  "review_start_fail": [],
+  "portal_deep_sample_count": 6,
+  "portal_deep_pass": 6,
+  "portal_deep_fail": [],
+  "public_supported_provinces_used_for_portal": [
+    "上海",
+    "云南",
+    "北京",
+    "吉林",
+    "四川",
+    "天津"
+  ],
+  "samples": [
+    {
+      "sample_no": 1,
+      "province": "上海",
+      "range_index": 7,
+      "range": [
+        200,
+        299
+      ],
+      "score": 249,
+      "goal": "上海 高职专科主段 护理学 复核",
+      "consult": "分段样例 idx=7 note=高职专科主段",
+      "review_start_status": 200,
+      "review_start_ok": true
+    },
+    {
+      "sample_no": 2,
+      "province": "云南",
+      "range_index": 7,
+      "range": [
+        150,
+        249
+      ],
+      "score": 199,
+      "goal": "云南 高职专科主段 无人机应用技术 复核",
+      "consult": "分段样例 idx=7 note=高职专科主段",
+      "review_start_status": 200,
+      "review_start_ok": true
+    },
+    {
+      "sample_no": 3,
+      "province": "内蒙古",
+      "range_index": 7,
+      "range": [
+        150,
+        199
+      ],
+      "score": 174,
+      "goal": "内蒙古 专科临界段 学前教育 复核",
+      "consult": "分段样例 idx=7 note=专科临界段",
+      "review_start_status": 200,
+      "review_start_ok": true
+    },
+    {
+      "sample_no": 4,
+      "province": "北京",
+      "range_index": 7,
+      "range": [
+        200,
+        299
+      ],
+      "score": 249,
+      "goal": "北京 高职专科主段 工程造价 复核",
+      "consult": "分段样例 idx=7 note=高职专科主段",
+      "review_start_status": 200,
+      "review_start_ok": true
+    },
+    {
+      "sample_no": 5,
+      "province": "吉林",
+      "range_index": 7,
+      "range": [
+        150,
+        249
+      ],
+      "score": 199,
+      "goal": "吉林 高职专科主段 道路与桥梁工程技术 复核",
+      "consult": "分段样例 idx=7 note=高职专科主段",
+      "review_start_status": 200,
+      "review_start_ok": true
+    },
+    {
+      "sample_no": 6,
+      "province": "四川",
+      "range_index": 7,
+      "range": [
+        150,
+        299
+      ],
+      "score": 224,
+      "goal": "四川 普通类专科主段 化学工程与工艺 复核",
+      "consult": "分段样例 idx=7 note=普通类专科主段",
+      "review_start_status": 200,
+      "review_start_ok": true
+    },
+    {
+      "sample_no": 7,
+      "province": "天津",
+      "range_index": 7,
+      "range": [
+        150,
+        349
+      ],
+      "score": 249,
+      "goal": "天津 高职专科主段（围绕 2025 专科批 150 锚点） 计算机应用技术 复核",
+      "consult": "分段样例 idx=7 note=高职专科主段（围绕 2025 专科批 150 锚点）",
+      "review_start_status": 200,
+      "review_start_ok": true
+    },
+    {
+      "sample_no": 8,
+      "province": "宁夏",
+      "range_index": 7,
+      "range": [
+        150,
+        199
+      ],
+      "score": 174,
+      "goal": "宁夏 专科临界段 现代农业技术 复核",
+      "consult": "分段样例 idx=7 note=专科临界段",
+      "review_start_status": 200,
+      "review_start_ok": true
+    },
+    {
+      "sample_no": 9,
+      "province": "安徽",
+      "range_index": 7,
+      "range": [
+        150,
+        249
+      ],
+      "score": 199,
+      "goal": "安徽 高职专科主段 机电一体化技术 复核",
+      "consult": "分段样例 idx=7 note=高职专科主段",
+      "review_start_status": 200,
+      "review_start_ok": true
+    },
+    {
+      "sample_no": 10,
+      "province": "山东",
+      "range_index": 9,
+      "range": [
+        150,
+        285
+      ],
+      "score": 217,
+      "goal": "山东 普通类二段/专科主段（围绕 2025 二段线 150） 动画 复核",
+      "consult": "分段样例 idx=9 note=普通类二段/专科主段（围绕 2025 二段线 150）",
+      "review_start_status": 200,
+      "review_start_ok": true
+    },
+    {
+      "sample_no": 11,
+      "province": "山西",
+      "range_index": 7,
+      "range": [
+        150,
+        249
+      ],
+      "score": 199,
+      "goal": "山西 高职专科主段 药学 复核",
+      "consult": "分段样例 idx=7 note=高职专科主段",
+      "review_start_status": 200,
+      "review_start_ok": true
+    },
+    {
+      "sample_no": 12,
+      "province": "广东",
+      "range_index": 9,
+      "range": [
+        200,
+        349
+      ],
+      "score": 274,
+      "goal": "广东 专科主段（围绕 2025 历史215 / 物理200） 生物科学 复核",
+      "consult": "分段样例 idx=9 note=专科主段（围绕 2025 历史215 / 物理200）",
+      "review_start_status": 200,
+      "review_start_ok": true
+    },
+    {
+      "sample_no": 13,
+      "province": "广西",
+      "range_index": 7,
+      "range": [
+        150,
+        199
+      ],
+      "score": 174,
+      "goal": "广西 专科临界段 园林技术 复核",
+      "consult": "分段样例 idx=7 note=专科临界段",
+      "review_start_status": 200,
+      "review_start_ok": true
+    },
+    {
+      "sample_no": 14,
+      "province": "新疆",
+      "range_index": 7,
+      "range": [
+        150,
+        219
+      ],
+      "score": 184,
+      "goal": "新疆 高职专科主段 学前教育 复核",
+      "consult": "分段样例 idx=7 note=高职专科主段",
+      "review_start_status": 200,
+      "review_start_ok": true
+    },
+    {
+      "sample_no": 15,
+      "province": "江苏",
+      "range_index": 9,
+      "range": [
+        220,
+        429
+      ],
+      "score": 324,
+      "goal": "江苏 第二阶段/专科主段（2025 专科控制线 220） 数学与应用数学 复核",
+      "consult": "分段样例 idx=9 note=第二阶段/专科主段（2025 专科控制线 220）",
+      "review_start_status": 200,
+      "review_start_ok": true
+    },
+    {
+      "sample_no": 16,
+      "province": "江西",
+      "range_index": 7,
+      "range": [
+        150,
+        249
+      ],
+      "score": 199,
+      "goal": "江西 高职专科主段 大数据工程技术 复核",
+      "consult": "分段样例 idx=7 note=高职专科主段",
+      "review_start_status": 200,
+      "review_start_ok": true
+    },
+    {
+      "sample_no": 17,
+      "province": "河北",
+      "range_index": 9,
+      "range": [
+        200,
+        229
+      ],
+      "score": 214,
+      "goal": "河北 普通类专科主段（围绕 2025 专科线 200） 临床医学 复核",
+      "consult": "分段样例 idx=9 note=普通类专科主段（围绕 2025 专科线 200）",
+      "review_start_status": 200,
+      "review_start_ok": true
+    },
+    {
+      "sample_no": 18,
+      "province": "河南",
+      "range_index": 7,
+      "range": [
+        180,
+        379
+      ],
+      "score": 279,
+      "goal": "河南 专科批段（围绕 2025 高职高专批 180+） 水利水电建筑工程 复核",
+      "consult": "分段样例 idx=7 note=专科批段（围绕 2025 高职高专批 180+）",
+      "review_start_status": 200,
+      "review_start_ok": true
+    },
+    {
+      "sample_no": 19,
+      "province": "浙江",
+      "range_index": 9,
+      "range": [
+        200,
+        267
+      ],
+      "score": 233,
+      "goal": "浙江 二段线下/专科预备段 工商管理 复核",
+      "consult": "分段样例 idx=9 note=二段线下/专科预备段",
+      "review_start_status": 200,
+      "review_start_ok": true
+    },
+    {
+      "sample_no": 20,
+      "province": "海南",
+      "range_index": 7,
+      "range": [
+        150,
+        219
+      ],
+      "score": 184,
+      "goal": "海南 专科临界段 数学与应用数学 复核",
+      "consult": "分段样例 idx=7 note=专科临界段",
+      "review_start_status": 200,
+      "review_start_ok": true
+    },
+    {
+      "sample_no": 21,
+      "province": "湖北",
+      "range_index": 7,
+      "range": [
+        200,
+        340
+      ],
+      "score": 270,
+      "goal": "湖北 高职专科主段（围绕 2025 专科线 200） 机电一体化技术 复核",
+      "consult": "分段样例 idx=7 note=高职专科主段（围绕 2025 专科线 200）",
+      "review_start_status": 200,
+      "review_start_ok": true
+    },
+    {
+      "sample_no": 22,
+      "province": "湖南",
+      "range_index": 0,
+      "range": [
+        440,
+        480
+      ],
+      "score": 460,
+      "goal": "湖南 专科批临界 社会工作 复核",
+      "consult": "分段样例 idx=0 note=专科批临界",
+      "review_start_status": 200,
+      "review_start_ok": true
+    },
+    {
+      "sample_no": 23,
+      "province": "甘肃",
+      "range_index": 7,
+      "range": [
+        150,
+        219
+      ],
+      "score": 184,
+      "goal": "甘肃 专科临界段 小学语文教育 复核",
+      "consult": "分段样例 idx=7 note=专科临界段",
+      "review_start_status": 200,
+      "review_start_ok": true
+    },
+    {
+      "sample_no": 24,
+      "province": "福建",
+      "range_index": 9,
+      "range": [
+        235,
+        319
+      ],
+      "score": 277,
+      "goal": "福建 高职专科主段（围绕 2025 专科线 235） 教育学 复核",
+      "consult": "分段样例 idx=9 note=高职专科主段（围绕 2025 专科线 235）",
+      "review_start_status": 200,
+      "review_start_ok": true
+    },
+    {
+      "sample_no": 25,
+      "province": "西藏",
+      "range_index": 7,
+      "range": [
+        150,
+        179
+      ],
+      "score": 164,
+      "goal": "西藏 专科临界段 会计信息管理 复核",
+      "consult": "分段样例 idx=7 note=专科临界段",
+      "review_start_status": 200,
+      "review_start_ok": true
+    },
+    {
+      "sample_no": 26,
+      "province": "贵州",
+      "range_index": 7,
+      "range": [
+        150,
+        249
+      ],
+      "score": 199,
+      "goal": "贵州 高职专科主段 学前教育 复核",
+      "consult": "分段样例 idx=7 note=高职专科主段",
+      "review_start_status": 200,
+      "review_start_ok": true
+    },
+    {
+      "sample_no": 27,
+      "province": "辽宁",
+      "range_index": 7,
+      "range": [
+        150,
+        299
+      ],
+      "score": 224,
+      "goal": "辽宁 高职专科主段 网络工程 复核",
+      "consult": "分段样例 idx=7 note=高职专科主段",
+      "review_start_status": 200,
+      "review_start_ok": true
+    },
+    {
+      "sample_no": 28,
+      "province": "重庆",
+      "range_index": 7,
+      "range": [
+        150,
+        249
+      ],
+      "score": 199,
+      "goal": "重庆 高职专科主段 护理 复核",
+      "consult": "分段样例 idx=7 note=高职专科主段",
+      "review_start_status": 200,
+      "review_start_ok": true
+    },
+    {
+      "sample_no": 29,
+      "province": "陕西",
+      "range_index": 7,
+      "range": [
+        150,
+        249
+      ],
+      "score": 199,
+      "goal": "陕西 高职专科主段 学前教育 复核",
+      "consult": "分段样例 idx=7 note=高职专科主段",
+      "review_start_status": 200,
+      "review_start_ok": true
+    },
+    {
+      "sample_no": 30,
+      "province": "青海",
+      "range_index": 7,
+      "range": [
+        150,
+        239
+      ],
+      "score": 194,
+      "goal": "青海 专科临界段 汽车检测与维修技术 复核",
+      "consult": "分段样例 idx=7 note=专科临界段",
+      "review_start_status": 200,
+      "review_start_ok": true
+    }
+  ],
+  "portal_deep_samples": [
+    {
+      "province": "上海",
+      "score": 249,
+      "create_order_status": 201,
+      "portal_status_url": "/portal/eyJvcmRlcl9pZCI6IkdLTy0yMDI2MDYyNi1DS1VHIiwiZXhwIjoxNzg1MDI4ODkxfQ.3e7c4d2ead82db98d0308f072e705f37cc14951f16240d82cbb21a00c17d8605/status",
+      "portal_status_ok": true
+    },
+    {
+      "province": "云南",
+      "score": 199,
+      "create_order_status": 201,
+      "portal_status_url": "/portal/eyJvcmRlcl9pZCI6IkdLTy0yMDI2MDYyNi1TTks2IiwiZXhwIjoxNzg1MDI4ODkxfQ.82147b480189f34edeccc3ca763a9d0e18d722753cf56944e3df218c5c408c18/status",
+      "portal_status_ok": true
+    },
+    {
+      "province": "北京",
+      "score": 249,
+      "create_order_status": 201,
+      "portal_status_url": "/portal/eyJvcmRlcl9pZCI6IkdLTy0yMDI2MDYyNi1LQUswIiwiZXhwIjoxNzg1MDI4ODkxfQ.9591615c520d59fd702bead0bc0aecd94fe6dc86ffcf67e98b611560ba746d39/status",
+      "portal_status_ok": true
+    },
+    {
+      "province": "吉林",
+      "score": 199,
+      "create_order_status": 201,
+      "portal_status_url": "/portal/eyJvcmRlcl9pZCI6IkdLTy0yMDI2MDYyNi0xS0dBIiwiZXhwIjoxNzg1MDI4ODkyfQ.2171bb9b76ea594a0cc4d9b42b36b881404898f71626081081d58bb2a76678a7/status",
+      "portal_status_ok": true
+    },
+    {
+      "province": "四川",
+      "score": 224,
+      "create_order_status": 201,
+      "portal_status_url": "/portal/eyJvcmRlcl9pZCI6IkdLTy0yMDI2MDYyNi1SNloyIiwiZXhwIjoxNzg1MDI4ODkyfQ.0eaff51fddfac015ed2b6b028cf12137538d0651fd3f059cd15e195496b69d78/status",
+      "portal_status_ok": true
+    },
+    {
+      "province": "天津",
+      "score": 249,
+      "create_order_status": 201,
+      "portal_status_url": "/portal/eyJvcmRlcl9pZCI6IkdLTy0yMDI2MDYyNi1UMFpIIiwiZXhwIjoxNzg1MDI4ODkyfQ.36db1717b88b9e12cb26c0282d707be25f1cdfd0dfc0ec90455e1bcda2812347/status",
+      "portal_status_ok": true
+    }
+  ],
+  "note": "review/start 30组覆盖全部按样例均衡抽取；公开下单/portal 深层验证仅对 public supported provinces 抽样，内蒙古不在当前公开下单支持范围，422 属契约内行为。"
+}
