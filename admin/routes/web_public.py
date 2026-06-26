@@ -911,7 +911,7 @@ def _render_placeholder_shell(
     max_width: int,
     body_html: str,
 ) -> str:
-    return f"""<!doctype html><html lang=\"zh-CN\"><head><meta charset=\"utf-8\" /><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" /><title>{escape(title)}</title><link rel=\"stylesheet\" href=\"/static/portal-ui.css\" /><style>body{{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f3f7fb;margin:0;padding:32px 20px;color:#142235}}.wrap{{max-width:{max_width}px;margin:0 auto;display:grid;gap:16px}}.panel{{background:#fff;border:1px solid #d7e3f1;border-radius:20px;padding:24px;box-shadow:0 18px 42px rgba(20,34,53,.08)}}.meta{{color:#5b6b88;line-height:1.8}}.actions{{display:flex;gap:12px;flex-wrap:wrap;margin-top:12px}}.btn{{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border-radius:12px;text-decoration:none;font-weight:700}}.btn-primary{{background:#1f6feb;color:#fff}}.btn-secondary{{background:#edf3ff;color:#194fb6}}</style></head><body><main class=\"wrap\">{body_html}</main></body></html>"""
+    return f"""<!doctype html><html lang=\"zh-CN\"><head><meta charset=\"utf-8\" /><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" /><title>{escape(title)}</title><link rel=\"stylesheet\" href=\"/static/portal-ui.css\" /><style>body{{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f3f7fb;margin:0;padding:32px 20px;color:#142235}}.wrap{{max-width:{max_width}px;margin:0 auto;display:grid;gap:16px}}.panel{{background:#fff;border:1px solid #d7e3f1;border-radius:20px;padding:24px;box-shadow:0 18px 42px rgba(20,34,53,.08)}}.meta{{color:#5b6b88;line-height:1.8}}.actions{{display:flex;gap:12px;flex-wrap:wrap;margin-top:12px}}.btn{{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border-radius:12px;text-decoration:none;font-weight:700}}.btn-primary{{background:#1f6feb;color:#fff}}.btn-secondary{{background:#edf3ff;color:#194fb6}}.empty-state{{padding:18px;border-radius:14px;background:#f8fbff;border:1px solid #d7e3f1;color:#5b6b88}}.error-state{{padding:18px;border-radius:14px;background:#fff5f5;border:1px solid #f5c2c7;color:#b42318}}</style></head><body><main class=\"wrap\">{body_html}</main></body></html>"""
 
 
 def _find_legal_doc_path(doc_filename: str) -> Path | None:
@@ -1505,6 +1505,13 @@ def _render_landing_page(request: Request, settings: Settings) -> str:
       }}
       * {{ box-sizing: border-box; }}
       body {{ margin: 0; font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; background: linear-gradient(180deg,#0e1a2b 0,#13243d 38%,var(--bg) 38%,var(--bg) 100%); color: var(--text); }}
+      .global-nav {{ position: sticky; top: 0; z-index: 100; background: rgba(14,26,43,.92); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255,255,255,.08); padding: 12px 20px; }}
+      .global-nav-inner {{ max-width: 1180px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 16px; }}
+      .global-nav-brand {{ font-size: 18px; font-weight: 700; color: #fff; text-decoration: none; }}
+      .global-nav-links {{ display: flex; gap: 20px; align-items: center; }}
+      .global-nav-link {{ color: #b8c8e4; text-decoration: none; font-size: 14px; font-weight: 500; transition: color .18s; }}
+      .global-nav-link:hover {{ color: #fff; }}
+      @media (max-width: 768px) {{ .global-nav {{ padding: 10px 14px; }} .global-nav-brand {{ font-size: 16px; }} .global-nav-links {{ gap: 12px; }} .global-nav-link {{ font-size: 13px; }} }}
       .wrap {{ max-width: 1180px; margin: 0 auto; padding: 40px 20px 72px; }}
       .hero {{ display: grid; grid-template-columns: minmax(0, 1.22fr) minmax(340px, .78fr); gap: 32px; align-items: stretch; }}
       .hero-copy {{ color: #ecf4ff; padding: 40px 8px 18px 0; }}
@@ -1576,6 +1583,15 @@ def _render_landing_page(request: Request, settings: Settings) -> str:
     </style>
   </head>
   <body>
+    <nav class="global-nav" aria-label="全局导航">
+      <div class="global-nav-inner">
+        <a class="global-nav-brand" href="/">高考志愿填报</a>
+        <div class="global-nav-links">
+          <a class="global-nav-link" href="/">首页</a>
+          <a class="global-nav-link" href="/pricing">套餐</a>
+        </div>
+      </div>
+    </nav>
     <main class=\"wrap\">
       <section class=\"hero\">
         <div class=\"hero-copy\">
@@ -2873,6 +2889,10 @@ def _render_status_page(token: str, context: dict[str, Any]) -> str:
       h1 {{ margin:14px 0 10px; font-size:clamp(30px,5vw,42px); letter-spacing:-0.03em; }}
       .lead {{ margin:0; color:var(--muted); line-height:1.8; }}
       .stage-pill {{ display:inline-flex; margin-top:16px; padding:10px 14px; border-radius:999px; background:var(--primary); color:#fff; font-weight:700; }}
+      .progress-bar {{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:18px; }}
+      .progress-step {{ padding:12px 14px; border-radius:14px; background:var(--surface-soft); border:1px solid var(--border); color:var(--muted); text-align:center; }}
+      .progress-step.active {{ background:var(--primary); color:#fff; border-color:var(--primary); }}
+      .progress-step.done {{ background:var(--success-soft); color:var(--success); border-color:var(--success); }}
       .hero-actions {{ display:flex; gap:12px; flex-wrap:wrap; margin-top:18px; }}
       .hero-btn {{ display:inline-flex; align-items:center; justify-content:center; min-height:48px; padding:0 18px; border-radius:14px; text-decoration:none; font-weight:700; }}
       .hero-btn-primary {{ background:var(--primary); color:#fff; }}
@@ -3261,6 +3281,7 @@ def _render_review_start_page(contract: ReviewResultContract, token: str | None)
     )
     score = escape(_review_constraints_display(constraints.get("candidate_score")))
     rank = escape(_review_constraints_display(constraints.get("candidate_rank")))
+    share_hint = "此页链接可直接复制分享"
     body_html = f"""
 <section class=\"panel\">
   <span class=\"eyebrow\">免费复核结果</span>
