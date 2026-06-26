@@ -1467,5 +1467,25 @@
       "kind": "province_official"
     }
   ],
-  "quality_note": "高置信人工整理推荐（基于新疆现有院校池 + 2025 招生章程复核）；新疆教育考试院官方入口已完成 2025 年度复核。"
+  "quality_note": "高置信人工整理推荐（基于新疆现有院校池 + 2025 招生章程复核）；新疆教育考试院官方入口与 2025 最低投档控制分数线公告已完成复核，当前未检索到公开一分一段表。",
+  "score_distribution": {
+    "data_year": 2025,
+    "source_url": "https://www.xjzk.gov.cn/c/2025-06-25/494441.shtml",
+    "source_type": "official_release",
+    "last_updated": "2026-06-26",
+    "subjects": {
+      "物理": {
+        "benchmarks": [],
+        "score_line_at_600": 0,
+        "total_above_bachelor_line": 0,
+        "bachelor_score_line": 421
+      },
+      "历史": {
+        "benchmarks": [],
+        "score_line_at_600": 0,
+        "total_above_bachelor_line": 0,
+        "bachelor_score_line": 451
+      }
+    }
+  }
 }

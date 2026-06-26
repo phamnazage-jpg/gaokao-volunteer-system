@@ -6,7 +6,7 @@
   "source_url": "https://gaokao.chsi.com.cn/",
   "source_type": "manual_summary",
   "confidence": 0.82,
-  "quality_note": "高置信人工整理推荐（基于西藏现有院校池 + 2025 招生章程复核）；西藏教育考试院官方入口已完成 2025 年度复核。",
+  "quality_note": "高置信人工整理推荐（基于西藏现有院校池 + 2025 招生章程复核）；西藏教育考试院官方入口已完成 2025 年度复核。；2026 官方最低控制分数线已接入（A/B 类文史/理工 + 艺体 + 部队生源），当前未检索到公开一分一段表。",
   "trusted_sources": [
     {
       "name": "教育部阳光高考",
@@ -1437,5 +1437,25 @@
         }
       ]
     }
-  ]
+  ],
+  "score_distribution": {
+    "data_year": 2026,
+    "source_url": "http://zsks.edu.xizang.gov.cn/71/73/7866.html",
+    "source_type": "official_release",
+    "last_updated": "2026-06-26",
+    "subjects": {
+      "物理": {
+        "benchmarks": [],
+        "score_line_at_600": 0,
+        "total_above_bachelor_line": 0,
+        "bachelor_score_line": 300
+      },
+      "历史": {
+        "benchmarks": [],
+        "score_line_at_600": 0,
+        "total_above_bachelor_line": 0,
+        "bachelor_score_line": 330
+      }
+    }
+  }
 }

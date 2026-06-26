@@ -1,8 +1,8 @@
 """一分一段表（score_distribution）验证测试。
 
-验证接入了一分一段表的省份：
-- 湖南（2026官方公布）
-- 黑龙江（2026官方公布）
+验证已接入 `score_distribution` 的省份（包含两类）：
+- 官方一分一段/分数段统计已接入的省份
+- 仅官方最低控制分数线已接入、暂未找到公开一分一段表的省份
 
 锁住的契约：
 - score_distribution 字段存在且结构正确
@@ -19,8 +19,9 @@ import pytest
 from data.crowd_db.loader import CrowdDBLoader
 
 
-# 已接入 score_distribution 的省份（2026 官方一分一段）
+# 已接入 score_distribution 的省份（含官方一分一段 / 官方分数线级别接入）
 # 山东不分物理/历史类，历史类 benchmarks 可为空
+# 新疆/西藏当前仅接入官方最低控制分数线，benchmarks 为空属预期
 PROVINCES_WITH_DISTRIBUTION = frozenset({
     "湖南",
     "黑龙江",
@@ -49,6 +50,8 @@ PROVINCES_WITH_DISTRIBUTION = frozenset({
     "陕西",
     "青海",
     "海南",
+    "新疆",
+    "西藏",
 })
 
 REQUIRED_SUBJECTS = {"物理", "历史"}
@@ -127,6 +130,9 @@ def test_score_distribution_source_type_is_official(loader: CrowdDBLoader):
         assert sd.get("source_type") == "official_release", (
             f"{province} score_distribution source_type 应为 official_release"
         )
-        assert sd.get("source_url", "").startswith("https://"), (
-            f"{province} score_distribution source_url 应为 https:// 开头"
+        source_url = sd.get("source_url", "")
+        assert source_url.startswith("https://") or source_url.startswith(
+            "http://zsks.edu.xizang.gov.cn/"
+        ), (
+            f"{province} score_distribution source_url 应为 https:// 或西藏官方 http 地址"
         )
