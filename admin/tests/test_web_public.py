@@ -488,3 +488,34 @@ def test_public_create_order_returns_503_without_creating_orphan_order_when_prov
     assert "payment provider unavailable" in resp.text
     with OrdersDAO.connect(settings.orders_db_path) as dao:
         assert dao.count() == 0
+
+def test_my_orders_page_served(client):
+    """我的订单页必须存在且可访问。"""
+    resp = client.get("/my-orders")
+    assert resp.status_code == 200, resp.text
+    assert "我的订单" in resp.text
+    assert "手机号" in resp.text
+
+
+def test_my_orders_lookup_by_phone(client, settings):
+    """输入手机号查询订单，返回订单列表。"""
+    from admin.routes.web_public import submit_order_info
+    from data.orders.intake_schema import IntakePayload
+
+    # 先创建一笔订单
+    create_resp = client.post(
+        "/api/public/orders",
+        json={
+            "service_version": "standard",
+            "amount_cents": 9900,
+            "customer_phone": "13800138000",
+            "candidate_name": "张三",
+            "candidate_province": "湖南",
+        },
+    )
+    assert create_resp.status_code == 201, create_resp.text
+
+    # 查询我的订单
+    resp = client.get("/my-orders?phone=13800138000")
+    assert resp.status_code == 200, resp.text
+    assert "GKO-" in resp.text or "暂无" in resp.text

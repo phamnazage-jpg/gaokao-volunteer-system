@@ -1426,6 +1426,56 @@ def deletion_policy_page() -> HTMLResponse:
     )
 
 
+@router.get("/my-orders", include_in_schema=False)
+def my_orders_page(
+    request: Request,
+    phone: str | None = None,
+    settings: Settings = Depends(get_settings_dep),
+) -> HTMLResponse:
+    """用户输入手机号查看自己的订单列表。"""
+    from data.orders.masking import mask_phone
+
+    orders_html = ""
+    if phone and phone.strip():
+        with OrdersDAO.connect(settings.orders_db_path) as dao:
+            orders = dao.find_by_phone(phone.strip())
+        if orders:
+            rows = []
+            for order in orders:
+                masked_phone = mask_phone(order.customer_phone) or ""
+                portal_url = f"/portal/{issue_portal_token(order.id, settings.portal_token_secret)}/status"
+                rows.append(
+                    f"<tr><td>{escape(order.id)}</td>"
+                    f"<td>{escape(order.service_version)}</td>"
+                    f"<td>{escape(order.status)}</td>"
+                    f"<td>{escape(masked_phone)}</td>"
+                    f"<td>{escape(str(order.created_at or '')[:16])}</td>"
+                    f'<td><a href="{portal_url}">查看详情</a></td></tr>'
+                )
+            orders_html = (
+                "<section class='panel'><h2>查询结果</h2>"
+                "<table style='width:100%;border-collapse:collapse;font-size:13px;'>"
+                "<thead><tr style='text-align:left;border-bottom:2px solid #d7e3f1;'>"
+                "<th style='padding:8px;'>订单号</th>"
+                "<th style='padding:8px;'>套餐</th>"
+                "<th style='padding:8px;'>状态</th>"
+                "<th style='padding:8px;'>手机号</th>"
+                "<th style='padding:8px;'>创建时间</th>"
+                "<th style='padding:8px;'>操作</th>"
+                "</tr></thead><tbody>" + "".join(rows) + "</tbody></table></section>"
+            )
+        else:
+            orders_html = (
+                "<section class='panel empty-state'>"
+                "<h2>查询结果</h2>"
+                "<p>暂无与此手机号关联的订单。请确认手机号是否正确，或联系客服获取帮助。</p>"
+                "</section>"
+            )
+    phone_value = escape(phone or "")
+    body = f"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>我的订单</title><link rel="stylesheet" href="/static/portal-ui.css" /><style>body{{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f4f7fb;padding:32px 20px;color:#172033;margin:0}}.wrap{{max-width:980px;margin:0 auto;display:grid;gap:18px}}.panel{{background:#fff;border:1px solid #dbe3f0;border-radius:20px;padding:24px;box-shadow:0 18px 42px rgba(20,34,53,.08)}}.field{{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}}.field input{{padding:11px 12px;border-radius:12px;border:1px solid #d7e3f1;font-size:14px;min-width:200px}}.btn{{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border-radius:12px;text-decoration:none;font-weight:700;background:#1f6feb;color:#fff;border:none;cursor:pointer}}.meta{{color:#5b6b88;line-height:1.8}}.empty-state{{padding:18px;border-radius:14px;background:#f8fbff;border:1px solid #d7e3f1;color:#5b6b88}}table{{width:100%;border-collapse:collapse;font-size:13px}}th,td{{padding:8px;text-align:left;border-bottom:1px solid #eef2f7}}th{{font-weight:600;color:#172033}}a{{color:#1f6feb;text-decoration:none}}</style></head><body><main class="wrap"><section class="panel"><h1>我的订单</h1><p class="meta">输入下单时使用的手机号，查看你的所有订单和交付状态。</p><form method="get" action="/my-orders" class="field"><div><label style="font-size:13px;font-weight:600;display:block;margin-bottom:4px;">手机号</label><input type="tel" name="phone" value="{phone_value}" placeholder="例如：13800138000" /></div><button class="btn" type="submit">查询</button></form></section>{orders_html}{_render_footer_links()}</main></body></html>"""
+    return HTMLResponse(body)
+
+
 def _render_landing_page(request: Request, settings: Settings) -> str:
     query = dict(request.query_params)
     consult_text = escape(str(query.get("consult") or ""))
@@ -1589,6 +1639,8 @@ def _render_landing_page(request: Request, settings: Settings) -> str:
         <div class="global-nav-links">
           <a class="global-nav-link" href="/">首页</a>
           <a class="global-nav-link" href="/pricing">套餐</a>
+          <a class="global-nav-link" href="/my-orders">我的订单</a>
+          <a class="global-nav-link" href="mailto:lon22@qq.com">客服</a>
         </div>
       </div>
     </nav>
