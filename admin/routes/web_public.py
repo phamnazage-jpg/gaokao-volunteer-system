@@ -1838,6 +1838,7 @@ def _render_pricing_page(request: Request) -> str:
     <main class=\"wrap\">
       <section class="hero">
         <div class="panel">
+          <div style="margin-bottom:8px;"><a class="btn btn-secondary" style="font-size:13px;min-height:32px;padding:6px 12px;" href="/">返回首页</a></div>
           <h1>服务套餐</h1>
           <p class="lead">先按服务深度选择适合自己的方案：<strong>复核现有方案本身免费</strong>；如果你已经拿到其他方案，先做复核判断风险；如果希望一次拿到完整建议，优先看 99 元完整志愿方案；如果需要更多人工沟通和多轮修订，再选择 199 元深度辅导版。</p>
           <div class="consult-summary">
@@ -2057,6 +2058,7 @@ def _render_checkout_page(service_version: str) -> str:
   <body>
     <main class=\"wrap\">
       <header class=\"header\">
+        <div style="margin-bottom:8px;"><a class="btn btn-secondary" style="font-size:13px;min-height:32px;padding:6px 12px;" href="/">返回首页</a></div>
         <span class=\"eyebrow\">在线下单</span>
         <h1>{escape(service_label)}</h1>
         <p class=\"lead\">{escape(service_desc)} 现在先确认联系人与考生基础信息；支付成功后，再进入资料向导补充分数、位次、偏好和已有方案附件。</p>
@@ -2973,6 +2975,7 @@ def _render_status_page(token: str, context: dict[str, Any]) -> str:
         <section class=\"panel\">
           <span class=\"eyebrow\">订单进度总览</span>
           <h1>{escape(context["stage_title"])}</h1>
+          <div class="progress-bar"><div class="progress-step {'done' if stage not in ('pending_payment',) else 'active'}">1. 支付成功</div><div class="progress-step {'done' if stage in ('processing','report_ready','completed') else ('active' if stage in ('paid','serving','info_submitted') else '')}">2. 资料处理中</div><div class="progress-step {'done' if stage in ('completed',) else ('active' if stage in ('report_ready',) else '')}">3. 报告交付</div></div>
           <p class=\"lead\">{escape(context["stage_subtitle"])}</p>
           <span class=\"stage-pill\">当前阶段：{escape(context["stage"])}</span>
           <div class="hero-actions">
@@ -3336,9 +3339,16 @@ def _render_review_start_page(contract: ReviewResultContract, token: str | None)
     share_hint = "此页链接可直接复制分享"
     body_html = f"""
 <section class=\"panel\">
-  <span class=\"eyebrow\">免费复核结果</span>
+  <div style=\"display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;\">
+    <span class=\"eyebrow\">免费复核结果</span>
+    <a class=\"btn btn-secondary\" style=\"font-size:13px;min-height:32px;padding:6px 12px;\" href=\"/\">返回首页</a>
+  </div>
   <h1>复核结果</h1>
   <p class=\"meta\">基于你当前提交的信息，下面先告诉你当前的风险判断和最适合的下一步。</p>
+  <div style=\"margin-top:12px;padding:12px 14px;border-radius:12px;background:#f0f7ff;border:1px solid #1f6feb;\">
+    <p style=\"margin:0 0 6px;font-size:13px;color:#1f6feb;\"><strong>分享给家人商量</strong></p>
+    <p style=\"margin:0;font-size:12px;color:#5a7cb8;\">{share_hint}。把当前页面链接复制发给家人，一起讨论结果。</p>
+  </div>
 </section>
 
 <section class=\"panel\">
