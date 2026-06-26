@@ -137,3 +137,61 @@ a:hover {
   background: var(--portal-surface-soft);
   border: 1px solid var(--portal-border);
 }
+
+.global-nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(14,26,43,.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255,255,255,.08);
+  padding: 12px 20px;
+}
+
+.global-nav-inner {
+  max-width: 1180px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.global-nav-brand {
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+  text-decoration: none;
+}
+
+.global-nav-links {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.global-nav-link {
+  color: #b8c8e4;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.global-nav-link:hover {
+  color: #fff;
+}
+
+@media (max-width: 768px) {
+  .global-nav {
+    padding: 10px 14px;
+  }
+  .global-nav-brand {
+    font-size: 16px;
+  }
+  .global-nav-links {
+    gap: 12px;
+  }
+  .global-nav-link {
+    font-size: 13px;
+  }
+}
