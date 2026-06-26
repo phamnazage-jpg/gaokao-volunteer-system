@@ -1,7 +1,7 @@
 # CURRENT_STATE
 
 最后更新: 2026-06-26
-状态词: 本地验证完成（v2.1 主链与 6/20/6/21 增量仍成立；crowd_db 全国 31 省口径全部达 high，当前 live 基线为 31 high / 0 usable / 0 skeleton；crowd_db 质量门槛已硬化为综合判定，防静默升级；本地服务启动 + integration/user_simulation E2E 已复跑通过；新增 30 组分段样例复核入口 E2E 已通过）
+状态词: 本地验证完成（v2.1 主链与 6/20/6/21 增量仍成立；crowd_db 全国 31 省口径全部达 high，当前 live 基线为 31 high / 0 usable / 0 skeleton；crowd_db 质量门槛已硬化为综合判定，防静默升级；本地服务启动 + integration/user_simulation E2E 已复跑通过；新增 30 组分段样例复核入口 E2E 已通过；30 组中 26 组公开支持省份已完成完整用户全链路模拟）
 
 本轮增量（当前工作区，基于 HEAD `dbb8fb7` 继续深度升级）:
 
@@ -13,7 +13,8 @@
 - 当前 `score_distribution` 覆盖已达 **31/31 省**；其中 `新疆 / 西藏` 已补齐官方最低控制分数线级别接入，但两省暂未检索到公开一分一段表
 - 本轮本地验证附加证据：`GAOKAO_SKIP_INSTALL=1 bash scripts/dev-verify.sh` => `1297 passed, 3 skipped`；`scripts/integration_test.py` => `overall PASS`；`scripts/user_simulation.py` => `overall PASS`
 - 新增 30 组分段样例 E2E：`reports/score_range_e2e_2026_06_26.json` => `review_start 30/30 通过`，且对 6 组公开支持省份样例做了 `公开下单 -> portal status` 深层抽样，结果 `6/6 通过`
-- 当前工作区未提交修改：`data/crowd_db/xinjiang.json`、`data/crowd_db/xizang.json`、`data/crowd_db/tests/test_score_distribution.py`、`docs/CURRENT_STATE.md`、`docs/CROWD_DB_NATIONALIZATION_SOURCE_OF_TRUTH.md`、`reports/score_range_e2e_2026_06_26.json`
+- 新增 30 组完整全链路样例 E2E：`reports/score_range_fullchain_e2e_2026_06_26.json` => 在 30 组样例中，`26` 组属于当前公开下单支持省份，已全部走通 `下单 -> 支付模拟 -> payment-success -> portal info 提交 -> portal status -> review/start -> review/action(full_plan/cwb)`，结果 `26/26 通过`；其余 `4` 组因不在 `_public_supported_provinces()` 中按契约跳过完整下单链路
+- 当前工作区未提交修改：`data/crowd_db/xinjiang.json`、`data/crowd_db/xizang.json`、`data/crowd_db/tests/test_score_distribution.py`、`docs/CURRENT_STATE.md`、`docs/CROWD_DB_NATIONALIZATION_SOURCE_OF_TRUTH.md`、`reports/score_range_e2e_2026_06_26.json`、`scripts/score_range_fullchain_e2e.py`、`reports/score_range_fullchain_e2e_2026_06_26.json`
 
 真相源优先级:
 
