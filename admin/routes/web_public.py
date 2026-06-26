@@ -1432,6 +1432,7 @@ def _render_landing_page(request: Request, settings: Settings) -> str:
     consult_province = escape(str(query.get("province") or ""))
     consult_score = escape(str(query.get("score") or ""))
     consult_goal = escape(str(query.get("goal") or ""))
+    consult_subjects = escape(str(query.get("subjects") or query.get("subject") or ""))
     portal_token = str(query.get("token") or "").strip()
     latest_review_href = (
         f"/review/start?source=home&amp;token={escape(portal_token)}"
@@ -1516,7 +1517,7 @@ def _render_landing_page(request: Request, settings: Settings) -> str:
       .consult-grid {{ display:grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap:10px; }}
       .consult-field {{ display:flex; flex-direction:column; gap:6px; }}
       .consult-field label {{ color:#d9e7ff; font-size:12px; font-weight:600; }}
-      .consult-field input, .consult-field textarea {{ width:100%; padding:11px 12px; border-radius:12px; border:1px solid rgba(255,255,255,.18); background: rgba(255,255,255,.96); color:#142235; font-size:14px; }}
+      .consult-field input, .consult-field textarea, .consult-field select {{ width:100%; padding:11px 12px; border-radius:12px; border:1px solid rgba(255,255,255,.18); background: rgba(255,255,255,.96); color:#142235; font-size:14px; }}
       .consult-field textarea {{ min-height:74px; resize:vertical; }}
       .consult-actions {{ display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }}
       .consult-privacy {{ margin: 10px 0 0; padding: 10px 12px; border-radius: 12px; background: rgba(223,247,241,.10); border: 1px solid rgba(223,247,241,.30); color: #d9e7ff; font-size: 12.5px; line-height: 1.65; }}
@@ -1607,11 +1608,14 @@ def _render_landing_page(request: Request, settings: Settings) -> str:
               <div class="consult-field"><label>考试省份</label><select name="province">{_province_options_html(consult_province)}</select></div>
               <div class="consult-field"><label>分数 / 位次</label><input name="score" value="{consult_score}" placeholder="例如：578 / 12034" /></div>
             </div>
-            <div class="consult-field" style="margin-top:10px;"><label>目标学校或方向</label><input name="goal" value="{consult_goal}" placeholder="例如：广东工业大学 / 先复核现有方案" /></div>
+            <div class="consult-grid" style="margin-top:10px;">
+              <div class="consult-field"><label>选科组合</label><input name="subjects" value="{consult_subjects}" placeholder="例如：物理、化学、生物" /></div>
+              <div class="consult-field"><label>目标学校或方向</label><input name="goal" value="{consult_goal}" placeholder="例如：广东工业大学 / 先复核现有方案" /></div>
+            </div>
             <p class="hero-note" style="margin-top:10px;">后续资料页可以<strong>上传已有方案文档</strong>，我们会先做免费复核，再决定是否进入付费完整规划。</p>
             <div class="consult-actions">
               <button class="btn btn-primary" type="submit">获取复核与推荐</button>
-              <a class="btn btn-secondary" href="/pricing">直接看付费套餐</a>
+              <a class="btn btn-secondary" href="/pricing">直接做完整规划</a>
             </div>
           </form>
           <p class="consult-privacy-tail">不会收到营销短信，提交后你也可以随时要求删除已填资料。</p>
