@@ -519,3 +519,10 @@ def test_my_orders_lookup_by_phone(client, settings):
     resp = client.get("/my-orders?phone=13800138000")
     assert resp.status_code == 200, resp.text
     assert "GKO-" in resp.text or "暂无" in resp.text
+
+def test_my_reports_page_served(client):
+    """我的报告页必须存在且可访问。"""
+    resp = client.get("/my-reports")
+    assert resp.status_code == 200, resp.text
+    assert "我的报告" in resp.text
+    assert "手机号" in resp.text

@@ -1476,6 +1476,57 @@ def my_orders_page(
     return HTMLResponse(body)
 
 
+@router.get("/my-reports", include_in_schema=False)
+def my_reports_page(
+    request: Request,
+    phone: str | None = None,
+    settings: Settings = Depends(get_settings_dep),
+) -> HTMLResponse:
+    """用户输入手机号查看有报告交付的订单。"""
+    reports_html = ""
+    if phone and phone.strip():
+        with OrdersDAO.connect(settings.orders_db_path) as dao:
+            orders = dao.find_by_phone(phone.strip())
+        delivered = [
+            o
+            for o in orders
+            if o.status in ("delivered", "completed") and o.audit_report
+        ]
+        if delivered:
+            rows = []
+            for order in delivered:
+                token = issue_portal_token(order.id, settings.portal_token_secret)
+                report_url = f"/portal/{token}/report"
+                rows.append(
+                    f"<tr><td>{escape(order.id)}</td>"
+                    f"<td>{escape(order.service_version)}</td>"
+                    f"<td>已交付</td>"
+                    f"<td>{escape(str(order.created_at or '')[:16])}</td>"
+                    f'<td><a href="{report_url}">查看报告</a></td></tr>'
+                )
+            reports_html = (
+                "<section class='panel'><h2>可查看的报告</h2>"
+                "<table style='width:100%;border-collapse:collapse;font-size:13px;'>"
+                "<thead><tr style='text-align:left;border-bottom:2px solid #d7e3f1;'>"
+                "<th style='padding:8px;'>订单号</th>"
+                "<th style='padding:8px;'>套餐</th>"
+                "<th style='padding:8px;'>状态</th>"
+                "<th style='padding:8px;'>创建时间</th>"
+                "<th style='padding:8px;'>操作</th>"
+                "</tr></thead><tbody>" + "".join(rows) + "</tbody></table></section>"
+            )
+        else:
+            reports_html = (
+                "<section class='panel empty-state'>"
+                "<h2>查询结果</h2>"
+                "<p>暂无可查看的报告。报告在订单完成交付后才会显示在这里。如果已完成交付但仍未看到，请联系客服。</p>"
+                "</section>"
+            )
+    phone_value = escape(phone or "")
+    body = f"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>我的报告</title><link rel="stylesheet" href="/static/portal-ui.css" /><style>body{{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f4f7fb;padding:32px 20px;color:#172033;margin:0}}.wrap{{max-width:980px;margin:0 auto;display:grid;gap:18px}}.panel{{background:#fff;border:1px solid #dbe3f0;border-radius:20px;padding:24px;box-shadow:0 18px 42px rgba(20,34,53,.08)}}.field{{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}}.field input{{padding:11px 12px;border-radius:12px;border:1px solid #d7e3f1;font-size:14px;min-width:200px}}.btn{{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border-radius:12px;text-decoration:none;font-weight:700;background:#1f6feb;color:#fff;border:none;cursor:pointer}}.meta{{color:#5b6b88;line-height:1.8}}.empty-state{{padding:18px;border-radius:14px;background:#f8fbff;border:1px solid #d7e3f1;color:#5b6b88}}table{{width:100%;border-collapse:collapse;font-size:13px}}th,td{{padding:8px;text-align:left;border-bottom:1px solid #eef2f7}}th{{font-weight:600;color:#172033}}a{{color:#1f6feb;text-decoration:none}}</style></head><body><main class="wrap"><section class="panel"><div style="margin-bottom:8px;"><a class="btn" style="font-size:13px;min-height:32px;padding:6px 12px;background:#edf3ff;color:#194fb6;" href="/">返回首页</a></div><h1>我的报告</h1><p class="meta">输入下单时使用的手机号，查看已交付的志愿方案报告。</p><form method="get" action="/my-reports" class="field"><div><label style="font-size:13px;font-weight:600;display:block;margin-bottom:4px;">手机号</label><input type="tel" name="phone" value="{phone_value}" placeholder="例如：13800138000" /></div><button class="btn" type="submit">查询</button></form></section>{reports_html}{_render_footer_links()}</main></body></html>"""
+    return HTMLResponse(body)
+
+
 def _render_landing_page(request: Request, settings: Settings) -> str:
     query = dict(request.query_params)
     consult_text = escape(str(query.get("consult") or ""))
@@ -1640,6 +1691,7 @@ def _render_landing_page(request: Request, settings: Settings) -> str:
           <a class="global-nav-link" href="/">首页</a>
           <a class="global-nav-link" href="/pricing">套餐</a>
           <a class="global-nav-link" href="/my-orders">我的订单</a>
+          <a class="global-nav-link" href="/my-reports">我的报告</a>
           <a class="global-nav-link" href="mailto:lon22@qq.com">客服</a>
         </div>
       </div>
@@ -2834,6 +2886,22 @@ def _render_info_page(
 """
 
 
+def _render_delivery_next_steps(token: str, stage: str) -> str:
+    """当报告已交付时，给出明确的下一步行动引导。"""
+    if stage not in ("report_ready", "completed"):
+        return ""
+    return f"""
+        <div style="margin-top:16px;padding:16px;border-radius:14px;background:#f0f7ff;border:1px solid #1f6feb;">
+          <p style="margin:0 0 10px;font-size:14px;font-weight:700;color:#1f6feb;">报告已就绪，你可以：</p>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;">
+            <a class="btn btn-primary" style="font-size:14px;min-height:40px;padding:8px 16px;" href="/portal/{escape(token)}/report.pdf">下载 PDF</a>
+            <a class="btn btn-secondary" style="font-size:14px;min-height:40px;padding:8px 16px;" href="/portal/{escape(token)}/report">在线查看</a>
+            <a class="btn btn-secondary" style="font-size:14px;min-height:40px;padding:8px 16px;" href="/pricing">继续规划其他方案</a>
+          </div>
+          <p style="margin:10px 0 0;font-size:12px;color:#5a7cb8;">如需与家人商量，可复制当前页面链接发送给他们。</p>
+        </div>"""
+
+
 def _render_status_page(token: str, context: dict[str, Any]) -> str:
     order = context["order"]
     stage = str(context["stage"])
@@ -2975,7 +3043,7 @@ def _render_status_page(token: str, context: dict[str, Any]) -> str:
         <section class=\"panel\">
           <span class=\"eyebrow\">订单进度总览</span>
           <h1>{escape(context["stage_title"])}</h1>
-          <div class="progress-bar"><div class="progress-step {'done' if stage not in ('pending_payment',) else 'active'}">1. 支付成功</div><div class="progress-step {'done' if stage in ('processing','report_ready','completed') else ('active' if stage in ('paid','serving','info_submitted') else '')}">2. 资料处理中</div><div class="progress-step {'done' if stage in ('completed',) else ('active' if stage in ('report_ready',) else '')}">3. 报告交付</div></div>
+          <div class="progress-bar"><div class="progress-step {"done" if stage not in ("pending_payment",) else "active"}">1. 支付成功</div><div class="progress-step {"done" if stage in ("processing", "report_ready", "completed") else ("active" if stage in ("paid", "serving", "info_submitted") else "")}">2. 资料处理中</div><div class="progress-step {"done" if stage in ("completed",) else ("active" if stage in ("report_ready",) else "")}">3. 报告交付</div></div>
           <p class=\"lead\">{escape(context["stage_subtitle"])}</p>
           <span class=\"stage-pill\">当前阶段：{escape(context["stage"])}</span>
           <div class="hero-actions">
@@ -3013,11 +3081,12 @@ def _render_status_page(token: str, context: dict[str, Any]) -> str:
         <section class=\"panel\">
           <h2>下一步操作</h2>
           <ul class=\"action-list\">
-            <li><a href="/portal/{escape(token)}/info">填写 / 更新资料</a></li>
-            <li><a href="/review/start?source=status&amp;token={escape(token)}">从状态页进入方案复核</a></li>
-            <li><a href="/portal/{escape(token)}/notifications">查看通知记录</a></li>
+            <li><a href=\"/portal/{escape(token)}/info\">填写 / 更新资料</a></li>
+            <li><a href=\"/review/start?source=status&amp;token={escape(token)}\">从状态页进入方案复核</a></li>
+            <li><a href=\"/portal/{escape(token)}/notifications\">查看通知记录</a></li>
             {report_links}
           </ul>
+          {_render_delivery_next_steps(token, stage)}
         </section>
       </section>
     </main>
