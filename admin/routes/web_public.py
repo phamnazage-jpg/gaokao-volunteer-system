@@ -1527,6 +1527,95 @@ def my_reports_page(
     return HTMLResponse(body)
 
 
+
+@router.get("/data-query", include_in_schema=False)
+def data_query_page(
+    request: Request,
+    settings: Settings = Depends(get_settings_dep),
+) -> HTMLResponse:
+    """数据查询入口页。"""
+    body = (
+        '<!doctype html><html lang="zh-CN"><head><meta charset="utf-8" />'
+        '<meta name="viewport" content="width=device-width, initial-scale=1" />'
+        '<title>数据查询</title>'
+        '<link rel="stylesheet" href="/static/portal-ui.css" />'
+        '<style>body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#f4f7fb;padding:32px 20px;color:#172033;margin:0}'
+        '.wrap{max-width:980px;margin:0 auto;display:grid;gap:18px}'
+        '.panel{background:#fff;border:1px solid #dbe3f0;border-radius:20px;padding:24px;box-shadow:0 18px 42px rgba(20,34,53,.08)}'
+        '.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border-radius:12px;text-decoration:none;font-weight:700;background:#1f6feb;color:#fff;border:none;cursor:pointer}'
+        '.meta{color:#5b6b88;line-height:1.8}'
+        '.query-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:16px}'
+        '.query-card{padding:20px;border-radius:16px;background:#f8fbff;border:1px solid #d7e3f1}'
+        '.query-card h3{margin:0 0 8px;font-size:18px}'
+        '.query-card p{margin:0 0 12px;color:#5b6b88;font-size:14px;line-height:1.6}'
+        'a{color:#1f6feb;text-decoration:none}'
+        '@media(max-width:768px){.query-grid{grid-template-columns:1fr}}'
+        '</style></head><body>'
+        + '<nav class="global-nav" aria-label="全局导航" role="navigation"><div class="global-nav-inner"><a class="global-nav-brand" href="/">高考志愿填报</a><div class="global-nav-links"><a class="global-nav-link" href="/">首页</a><a class="global-nav-link" href="/pricing">套餐</a><a class="global-nav-link" href="/my-orders">我的订单</a><a class="global-nav-link" href="/my-reports">我的报告</a><a class="global-nav-link" href="mailto:lon22@qq.com">客服</a></div></div></nav>'
+        + '<main class="wrap" role="main"><section class="panel">'
+        + '<div style="margin-bottom:8px;"><a class="btn" style="font-size:13px;min-height:32px;padding:6px 12px;background:#edf3ff;color:#194fb6;" href="/">返回首页</a></div>'
+        + '<h1>数据查询</h1><p class="meta">查询高考相关的基础数据，辅助你做志愿填报决策。</p>'
+        + '<div class="query-grid">'
+        + '<div class="query-card"><h3>政策中心</h3><p>查看各省高考政策摘要、批次规则、选科要求和常见误区。</p><a class="btn" style="font-size:13px;min-height:36px;" href="/policy-center?province=广东">进入政策中心</a></div>'
+        + '<div class="query-card"><h3>同分段参考</h3><p>查看某个分数段在各省份的热门学校、专业和城市分布。</p><a class="btn" style="font-size:13px;min-height:36px;" href="/same-score-reference?province=广东&score=578">进入同分段参考</a></div>'
+        + '</div></section>'
+        + _render_footer_links()
+        + '</main></body></html>'
+    )
+    return HTMLResponse(body)
+
+
+@router.get("/compare-reports", include_in_schema=False)
+def compare_reports_page(
+    request: Request,
+    phone: str | None = None,
+    settings: Settings = Depends(get_settings_dep),
+) -> HTMLResponse:
+    """报告对比入口页。"""
+    from data.orders.masking import mask_phone
+    compare_html = ""
+    if phone and phone.strip():
+        with OrdersDAO.connect(settings.orders_db_path) as dao:
+            orders = dao.find_by_phone(phone.strip())
+        delivered = [o for o in orders if o.status in ("delivered", "completed") and o.audit_report]
+        if len(delivered) >= 2:
+            checkboxes = "".join(
+                f'<div style="padding:10px;border-radius:10px;background:#f8fbff;border:1px solid #d7e3f1;margin-bottom:8px;"><input type="checkbox" name="order_ids" value="{escape(o.id)}" /> {escape(o.id)} - {escape(o.service_version)}</div>'
+                for o in delivered
+            )
+            compare_html = f'<section class="panel"><h2>选择要对比的报告</h2><p class="meta">勾选2份或多份报告进行对比。</p>{checkboxes}<button class="btn" type="submit" style="margin-top:8px;">开始对比</button></section>'
+        elif len(delivered) == 1:
+            compare_html = '<section class="panel empty-state"><h2>查询结果</h2><p>目前只有1份已交付报告，至少需要2份才能对比。</p></section>'
+        else:
+            compare_html = '<section class="panel empty-state"><h2>查询结果</h2><p>暂无可对比的报告。至少需要2份已交付报告才能使用对比功能。</p></section>'
+    phone_value = escape(phone or "")
+    body = (
+        '<!doctype html><html lang="zh-CN"><head><meta charset="utf-8" />'
+        '<meta name="viewport" content="width=device-width, initial-scale=1" />'
+        '<title>报告对比</title>'
+        '<link rel="stylesheet" href="/static/portal-ui.css" />'
+        '<style>body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#f4f7fb;padding:32px 20px;color:#172033;margin:0}'
+        '.wrap{max-width:980px;margin:0 auto;display:grid;gap:18px}'
+        '.panel{background:#fff;border:1px solid #dbe3f0;border-radius:20px;padding:24px;box-shadow:0 18px 42px rgba(20,34,53,.08)}'
+        '.field{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}'
+        '.field input{padding:11px 12px;border-radius:12px;border:1px solid #d7e3f1;font-size:14px;min-width:200px}'
+        '.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border-radius:12px;text-decoration:none;font-weight:700;background:#1f6feb;color:#fff;border:none;cursor:pointer}'
+        '.meta{color:#5b6b88;line-height:1.8}'
+        '.empty-state{padding:18px;border-radius:14px;background:#f8fbff;border:1px solid #d7e3f1;color:#5b6b88}'
+        'a{color:#1f6feb;text-decoration:none}'
+        '@media(max-width:768px){.field{flex-direction:column;align-items:stretch}.field input{min-width:100%}}'
+        '</style></head><body>'
+        + '<nav class="global-nav" aria-label="全局导航" role="navigation"><div class="global-nav-inner"><a class="global-nav-brand" href="/">高考志愿填报</a><div class="global-nav-links"><a class="global-nav-link" href="/">首页</a><a class="global-nav-link" href="/pricing">套餐</a><a class="global-nav-link" href="/my-orders">我的订单</a><a class="global-nav-link" href="/my-reports">我的报告</a><a class="global-nav-link" href="mailto:lon22@qq.com">客服</a></div></div></nav>'
+        + f'<main class="wrap" role="main"><section class="panel">'
+        + '<div style="margin-bottom:8px;"><a class="btn" style="font-size:13px;min-height:32px;padding:6px 12px;background:#edf3ff;color:#194fb6;" href="/">返回首页</a></div>'
+        + f'<h1>报告对比</h1><p class="meta">输入手机号，选择多份已交付的报告进行对比。</p>'
+        + f'<form method="get" action="/compare-reports" class="field"><div><label style="font-size:13px;font-weight:600;display:block;margin-bottom:4px;">手机号</label><input type="tel" name="phone" value="{phone_value}" placeholder="例如：13800138000" /></div><button class="btn" type="submit">查询</button></form></section>'
+        + compare_html
+        + _render_footer_links()
+        + '</main></body></html>'
+    )
+    return HTMLResponse(body)
+
 def _render_landing_page(request: Request, settings: Settings) -> str:
     query = dict(request.query_params)
     consult_text = escape(str(query.get("consult") or ""))
