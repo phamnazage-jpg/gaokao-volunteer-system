@@ -1527,7 +1527,6 @@ def my_reports_page(
     return HTMLResponse(body)
 
 
-
 @router.get("/data-query", include_in_schema=False)
 def data_query_page(
     request: Request,
@@ -1537,20 +1536,20 @@ def data_query_page(
     body = (
         '<!doctype html><html lang="zh-CN"><head><meta charset="utf-8" />'
         '<meta name="viewport" content="width=device-width, initial-scale=1" />'
-        '<title>数据查询</title>'
+        "<title>数据查询</title>"
         '<link rel="stylesheet" href="/static/portal-ui.css" />'
-        '<style>body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#f4f7fb;padding:32px 20px;color:#172033;margin:0}'
-        '.wrap{max-width:980px;margin:0 auto;display:grid;gap:18px}'
-        '.panel{background:#fff;border:1px solid #dbe3f0;border-radius:20px;padding:24px;box-shadow:0 18px 42px rgba(20,34,53,.08)}'
-        '.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border-radius:12px;text-decoration:none;font-weight:700;background:#1f6feb;color:#fff;border:none;cursor:pointer}'
-        '.meta{color:#5b6b88;line-height:1.8}'
-        '.query-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:16px}'
-        '.query-card{padding:20px;border-radius:16px;background:#f8fbff;border:1px solid #d7e3f1}'
-        '.query-card h3{margin:0 0 8px;font-size:18px}'
-        '.query-card p{margin:0 0 12px;color:#5b6b88;font-size:14px;line-height:1.6}'
-        'a{color:#1f6feb;text-decoration:none}'
-        '@media(max-width:768px){.query-grid{grid-template-columns:1fr}}'
-        '</style></head><body>'
+        "<style>body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#f4f7fb;padding:32px 20px;color:#172033;margin:0}"
+        ".wrap{max-width:980px;margin:0 auto;display:grid;gap:18px}"
+        ".panel{background:#fff;border:1px solid #dbe3f0;border-radius:20px;padding:24px;box-shadow:0 18px 42px rgba(20,34,53,.08)}"
+        ".btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border-radius:12px;text-decoration:none;font-weight:700;background:#1f6feb;color:#fff;border:none;cursor:pointer}"
+        ".meta{color:#5b6b88;line-height:1.8}"
+        ".query-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:16px}"
+        ".query-card{padding:20px;border-radius:16px;background:#f8fbff;border:1px solid #d7e3f1}"
+        ".query-card h3{margin:0 0 8px;font-size:18px}"
+        ".query-card p{margin:0 0 12px;color:#5b6b88;font-size:14px;line-height:1.6}"
+        "a{color:#1f6feb;text-decoration:none}"
+        "@media(max-width:768px){.query-grid{grid-template-columns:1fr}}"
+        "</style></head><body>"
         + '<nav class="global-nav" aria-label="全局导航" role="navigation"><div class="global-nav-inner"><a class="global-nav-brand" href="/">高考志愿填报</a><div class="global-nav-links"><a class="global-nav-link" href="/">首页</a><a class="global-nav-link" href="/pricing">套餐</a><a class="global-nav-link" href="/my-orders">我的订单</a><a class="global-nav-link" href="/my-reports">我的报告</a><a class="global-nav-link" href="mailto:lon22@qq.com">客服</a></div></div></nav>'
         + '<main class="wrap" role="main"><section class="panel">'
         + '<div style="margin-bottom:8px;"><a class="btn" style="font-size:13px;min-height:32px;padding:6px 12px;background:#edf3ff;color:#194fb6;" href="/">返回首页</a></div>'
@@ -1558,9 +1557,9 @@ def data_query_page(
         + '<div class="query-grid">'
         + '<div class="query-card"><h3>政策中心</h3><p>查看各省高考政策摘要、批次规则、选科要求和常见误区。</p><a class="btn" style="font-size:13px;min-height:36px;" href="/policy-center?province=广东">进入政策中心</a></div>'
         + '<div class="query-card"><h3>同分段参考</h3><p>查看某个分数段在各省份的热门学校、专业和城市分布。</p><a class="btn" style="font-size:13px;min-height:36px;" href="/same-score-reference?province=广东&score=578">进入同分段参考</a></div>'
-        + '</div></section>'
+        + "</div></section>"
         + _render_footer_links()
-        + '</main></body></html>'
+        + "</main></body></html>"
     )
     return HTMLResponse(body)
 
@@ -1573,11 +1572,16 @@ def compare_reports_page(
 ) -> HTMLResponse:
     """报告对比入口页。"""
     from data.orders.masking import mask_phone
+
     compare_html = ""
     if phone and phone.strip():
         with OrdersDAO.connect(settings.orders_db_path) as dao:
             orders = dao.find_by_phone(phone.strip())
-        delivered = [o for o in orders if o.status in ("delivered", "completed") and o.audit_report]
+        delivered = [
+            o
+            for o in orders
+            if o.status in ("delivered", "completed") and o.audit_report
+        ]
         if len(delivered) >= 2:
             checkboxes = "".join(
                 f'<div style="padding:10px;border-radius:10px;background:#f8fbff;border:1px solid #d7e3f1;margin-bottom:8px;"><input type="checkbox" name="order_ids" value="{escape(o.id)}" /> {escape(o.id)} - {escape(o.service_version)}</div>'
@@ -1592,19 +1596,19 @@ def compare_reports_page(
     body = (
         '<!doctype html><html lang="zh-CN"><head><meta charset="utf-8" />'
         '<meta name="viewport" content="width=device-width, initial-scale=1" />'
-        '<title>报告对比</title>'
+        "<title>报告对比</title>"
         '<link rel="stylesheet" href="/static/portal-ui.css" />'
-        '<style>body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#f4f7fb;padding:32px 20px;color:#172033;margin:0}'
-        '.wrap{max-width:980px;margin:0 auto;display:grid;gap:18px}'
-        '.panel{background:#fff;border:1px solid #dbe3f0;border-radius:20px;padding:24px;box-shadow:0 18px 42px rgba(20,34,53,.08)}'
-        '.field{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}'
-        '.field input{padding:11px 12px;border-radius:12px;border:1px solid #d7e3f1;font-size:14px;min-width:200px}'
-        '.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border-radius:12px;text-decoration:none;font-weight:700;background:#1f6feb;color:#fff;border:none;cursor:pointer}'
-        '.meta{color:#5b6b88;line-height:1.8}'
-        '.empty-state{padding:18px;border-radius:14px;background:#f8fbff;border:1px solid #d7e3f1;color:#5b6b88}'
-        'a{color:#1f6feb;text-decoration:none}'
-        '@media(max-width:768px){.field{flex-direction:column;align-items:stretch}.field input{min-width:100%}}'
-        '</style></head><body>'
+        "<style>body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#f4f7fb;padding:32px 20px;color:#172033;margin:0}"
+        ".wrap{max-width:980px;margin:0 auto;display:grid;gap:18px}"
+        ".panel{background:#fff;border:1px solid #dbe3f0;border-radius:20px;padding:24px;box-shadow:0 18px 42px rgba(20,34,53,.08)}"
+        ".field{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}"
+        ".field input{padding:11px 12px;border-radius:12px;border:1px solid #d7e3f1;font-size:14px;min-width:200px}"
+        ".btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border-radius:12px;text-decoration:none;font-weight:700;background:#1f6feb;color:#fff;border:none;cursor:pointer}"
+        ".meta{color:#5b6b88;line-height:1.8}"
+        ".empty-state{padding:18px;border-radius:14px;background:#f8fbff;border:1px solid #d7e3f1;color:#5b6b88}"
+        "a{color:#1f6feb;text-decoration:none}"
+        "@media(max-width:768px){.field{flex-direction:column;align-items:stretch}.field input{min-width:100%}}"
+        "</style></head><body>"
         + '<nav class="global-nav" aria-label="全局导航" role="navigation"><div class="global-nav-inner"><a class="global-nav-brand" href="/">高考志愿填报</a><div class="global-nav-links"><a class="global-nav-link" href="/">首页</a><a class="global-nav-link" href="/pricing">套餐</a><a class="global-nav-link" href="/my-orders">我的订单</a><a class="global-nav-link" href="/my-reports">我的报告</a><a class="global-nav-link" href="mailto:lon22@qq.com">客服</a></div></div></nav>'
         + f'<main class="wrap" role="main"><section class="panel">'
         + '<div style="margin-bottom:8px;"><a class="btn" style="font-size:13px;min-height:32px;padding:6px 12px;background:#edf3ff;color:#194fb6;" href="/">返回首页</a></div>'
@@ -1612,9 +1616,10 @@ def compare_reports_page(
         + f'<form method="get" action="/compare-reports" class="field"><div><label style="font-size:13px;font-weight:600;display:block;margin-bottom:4px;">手机号</label><input type="tel" name="phone" value="{phone_value}" placeholder="例如：13800138000" /></div><button class="btn" type="submit">查询</button></form></section>'
         + compare_html
         + _render_footer_links()
-        + '</main></body></html>'
+        + "</main></body></html>"
     )
     return HTMLResponse(body)
+
 
 def _render_landing_page(request: Request, settings: Settings) -> str:
     query = dict(request.query_params)
@@ -1707,29 +1712,29 @@ def _render_landing_page(request: Request, settings: Settings) -> str:
       .hero-copy {{ color: #ecf4ff; padding: 40px 8px 18px 0; }}
       .eyebrow {{ display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 999px; background: rgba(223,247,241,.12); border: 1px solid rgba(223,247,241,.24); color: #c9fff3; font-size: 13px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }}
       h1 {{ margin: 18px 0 14px; max-width: 760px; font-size: clamp(36px, 6vw, 56px); line-height: 1.04; letter-spacing: -0.04em; }}
-      .sub {{ margin: 0; max-width: 700px; color: #b8c8e4; line-height: 1.82; font-size: 17px; }}
+      .sub {{ margin: 0; max-width: 700px; color: #d4ddea; line-height: 1.82; font-size: 17px; }}
       .hero-actions {{ display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; align-items: center; }}
       .consult-card {{ margin-top: 18px; padding: 18px; border-radius: 18px; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.14); }}
       .consult-card h2 {{ margin: 0 0 8px; font-size: 18px; color: #fff; }}
       .consult-grid {{ display:grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap:10px; }}
       .consult-field {{ display:flex; flex-direction:column; gap:6px; }}
       .consult-field label {{ color:#475569; font-size:13px; font-weight:600; }}
-      .consult-field input, .consult-field textarea, .consult-field select {{ width:100%; padding:11px 12px; border-radius:12px; border:1px solid rgba(255,255,255,.18); background: rgba(255,255,255,.96); color:#142235; font-size:14px; }} .consult-field select {{ -webkit-appearance:none; -moz-appearance:none; appearance:none; background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12"><path fill="%23142235" d="M6 8L2 4h8z"/></svg>'); background-repeat:no-repeat; background-position:right 12px center; padding-right:32px; }}
-      .consult-field textarea {{ min-height:74px; resize:vertical; }}
+      .consult-field input, .consult-field textarea, .consult-field select {{ width:100%; padding:11px 12px; border-radius:12px; border:1px solid rgba(255,255,255,.18); background: #ffffff; color:#142235; font-size:14px; }} .consult-field select {{ -webkit-appearance:none; -moz-appearance:none; appearance:none; background-color:#fff !important; min-height:44px; line-height:1.5; background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12"><path fill="%23142235" d="M6 8L2 4h8z"/></svg>'); background-repeat:no-repeat; background-position:right 12px center; padding-right:32px; }}
+      .consult-field textarea {{ min-height:74px; resize:vertical; }} .consult-field select option {{ background:#fff; color:#142235; }}
       .consult-actions {{ display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }}
-      .consult-privacy {{ margin: 10px 0 0; padding: 10px 12px; border-radius: 12px; background: #f0f7ff; border: 1px solid #c7d7ef; color: #334155; font-size: 13px; line-height: 1.65; }}
+      .consult-privacy {{ margin: 10px 0 0; padding: 10px 12px; border-radius: 12px; background: #f0f7ff; border: 1px solid #c7d7ef; color: #0f172a; font-size: 13px; line-height: 1.65; }}
       .consult-privacy strong {{ color: #1e40af; font-weight: 700; }}
-      .consult-privacy-tail {{ margin: 10px 0 0; color: #64748b; font-size: 12px; line-height: 1.6; }}
+      .consult-privacy-tail {{ margin: 10px 0 0; color: #475569; font-size: 13px; line-height: 1.6; }}
       .btn {{ display: inline-flex; align-items: center; justify-content: center; min-height: 46px; padding: 0 18px; border-radius: 14px; text-decoration: none; font-weight: 700; transition: .18s ease; }}
       .btn-primary {{ min-height: 54px; padding: 0 28px; font-size: 17px; background: linear-gradient(135deg,#2d7cff,#0f4fd6); color: #fff; box-shadow: 0 22px 40px rgba(31,111,235,.42), inset 0 1px 0 rgba(255,255,255,.18); letter-spacing: .01em; }}
       .btn-primary:hover {{ background: linear-gradient(135deg,#276fe7,#0d45bf); transform: translateY(-1px); }}
       .btn-secondary {{ background: rgba(255,255,255,.12); color: #e2e8f0; border: 1px solid rgba(255,255,255,.25); min-height: 44px; padding: 0 14px; font-size: 14px; }}
       .btn-secondary:hover {{ background: rgba(255,255,255,.14); }}
       .btn-text {{ color:#cfe0ff; padding: 0 6px; min-height: 44px; font-size: 14px; text-decoration: underline; text-underline-offset: 4px; }}
-      .hero-note {{ margin-top: 12px; color:#64748b; font-size:13px; line-height:1.6; }}
+      .hero-note {{ margin-top: 12px; color:#e8edf7; font-size:13px; line-height:1.6; }}
       .hero-risk-band {{ display:grid; gap:6px; margin-bottom:16px; padding:12px 14px; border-radius:14px; background: rgba(255,255,255,.7); border:1px solid #f3d49f; }}
-      .hero-risk-band strong {{ font-size:14px; color:#7a5a00; }}
-      .hero-risk-band span {{ color:#7a5c24; font-size:13px; line-height:1.55; }}
+      .hero-risk-band strong {{ font-size:14px; color:#4a3700; }}
+      .hero-risk-band span {{ color:#5c3d00; font-size:13px; line-height:1.55; }}
       .hero-trust {{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; margin-top:18px; }}
       .hero-trust-item {{ padding:12px 14px; border-radius:14px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12); color:#d9e7ff; font-size:13px; line-height:1.5; }}
       .hero-trust-item strong {{ display:block; color:#fff; margin-bottom:4px; font-size:14px; }}
@@ -1824,7 +1829,7 @@ def _render_landing_page(request: Request, settings: Settings) -> str:
             <p class="hero-note" style="margin-top:10px;">后续资料页可以<strong>上传已有方案文档</strong>，我们会先做免费复核，再决定是否进入付费完整规划。</p>
             <div class="consult-actions">
               <button class="btn btn-primary" type="submit">获取复核与推荐</button>
-              <a class="btn btn-secondary" href="/pricing">直接做完整规划</a>
+              <a class="btn btn-primary" style="min-height:48px;padding:0 22px;font-size:15px;" href="/pricing">直接做完整规划</a>
             </div>
           </form>
           <script>
@@ -1901,10 +1906,10 @@ def _render_landing_page(request: Request, settings: Settings) -> str:
         <h2>服务流程</h2>
         <p class="section-intro">你先拿到判断，再决定是否付费进入完整规划。流程越清楚，越不容易在关键节点反复来回确认。</p>
         <div class="flow">
-          <article class="flow-step"><strong>先判断</strong><h3>先判断入口</h3><p>判断你需要的是方案复核（免费）还是完整方案 / 深度辅导（付费）。</p></article>
-          <article class="flow-step"><strong>再确认</strong><h3>确认下单</h3><p>选完整方案或深度辅导时，先填写考生姓名、手机号等最小信息后再支付。</p></article>
-          <article class="flow-step"><strong>补资料</strong><h3>补充资料</h3><p>支付成功后进入资料向导，分步提交分数、位次、偏好与已有方案附件。</p></article>
-          <article class="flow-step"><strong>看交付</strong><h3>查看交付</h3><p>在站内追踪状态、查看通知，并在交付就绪后在线阅读或下载 PDF。</p></article>
+          <article class="flow-step"><strong>1</strong><h3>先判断入口</h3><p>判断你需要的是方案复核（免费）还是完整方案 / 深度辅导（付费）。</p></article>
+          <article class="flow-step"><strong>2</strong><h3>确认下单</h3><p>选完整方案或深度辅导时，先填写考生姓名、手机号等最小信息后再支付。</p></article>
+          <article class="flow-step"><strong>3</strong><h3>补充资料</h3><p>支付成功后进入资料向导，分步提交分数、位次、偏好与已有方案附件。</p></article>
+          <article class="flow-step"><strong>4</strong><h3>查看交付</h3><p>在站内追踪状态、查看通知，并在交付就绪后在线阅读或下载 PDF。</p></article>
         </div>
       </section>
 
