@@ -35,37 +35,39 @@ def test_public_landing_page_served(client):
     assert "咨询入口" not in body
     assert "复核现有方案本身免费" in body
     assert "新方案生成与深度辅导在支付后启动" in body
-    assert "复核免费 / 方案付费" in body
+    assert "先免费复核一次你的现有方案" in body
+    # hero 不再保留"了解服务流程"文字链
+    assert "了解服务流程" not in body
     assert "获取复核与推荐" in body
-    assert "直接看付费套餐" in body
     assert "方案复核（免费）" in body
     assert "深度辅导（付费）" in body
     assert "已有方案？先免费复核" in body
     assert "先告诉我们你的基本情况" not in body
-    assert "告诉我们你的基本情况" in body
-    assert "获取推荐路径" not in body
-    assert "直接看套餐</a>" not in body
-    assert "先看套餐，再决定是否立即下单" not in body
     assert "先审计后规划" not in body
     assert "不会留底" in body
     assert "不会用于生成方案" in body
     assert "不会发邮件推销" in body
     assert "不会收到营销短信" in body
-    assert "了解服务流程" in body
+    assert "了解服务流程" not in body
+    # hero 压缩后的新文案
     assert "最常见的不是“不会选”，而是先选错方向" in body
-    assert "先把方案看清，再决定要不要重做" in body
-    assert "我们先把现有方案看明白" in body
+    assert "先看你的方案值不值得继续" in body
     assert "服务流程" in body
     assert "把风险解释清楚" in body
-    assert "风险重点可解释" in body
-    assert "进度站内可查" in body
-    assert "隐私与删除入口可见" in body
-    assert "01" in body
-    assert "04" in body
     assert "家长决策支持" not in body
     assert "家长联系方式" not in body
     assert "把风险解释给家长听懂" not in body
-    assert '/static/portal-ui.css' in body
+    # 首页省份必须使用下拉，不再是自由文本
+    assert '<select name="province">' in body
+    assert 'placeholder="例如：湖南"' not in body
+    # hero 已移除三张说明卡
+    assert "复核免费 / 方案付费" not in body
+    assert "风险重点可解释" not in body
+    assert "资料与交付站内可追踪" not in body
+    # 流程编号已改为文字版
+    assert ">01<" not in body
+    assert ">04<" not in body
+    assert "/static/portal-ui.css" in body
 
 
 def test_public_pricing_page_served(client):
@@ -96,7 +98,7 @@ def test_public_pricing_page_served(client):
     assert "快速校验" not in body
     assert "复核是免费的吗？包含什么？" in body
     assert "还没决定" in body
-    assert '/static/portal-ui.css' in body
+    assert "/static/portal-ui.css" in body
 
 
 def test_public_checkout_page_served(client):
@@ -112,7 +114,7 @@ def test_public_checkout_page_served(client):
     assert "当前建议" in body
     assert "交付方式" in body
     assert "最小下单" not in body
-    assert '/static/portal-ui.css' in body
+    assert "/static/portal-ui.css" in body
 
 
 def test_public_create_order_endpoint(client, app):
@@ -143,8 +145,9 @@ def test_public_create_order_endpoint(client, app):
     assert created.candidate_name == "张三"
 
 
-
-def test_public_create_order_returns_503_with_friendly_message_when_encryption_key_missing(tmp_path, monkeypatch):
+def test_public_create_order_returns_503_with_friendly_message_when_encryption_key_missing(
+    tmp_path, monkeypatch
+):
     admin_db = tmp_path / "admin.db"
     orders_db = tmp_path / "orders.db"
     share_db = tmp_path / "share.db"
@@ -207,7 +210,6 @@ def test_public_create_order_rejects_missing_minimal_fields(client):
     )
 
 
-
 def test_public_create_order_rejects_price_tampering(client):
     resp = client.post(
         "/api/public/orders",
@@ -227,7 +229,6 @@ def test_public_create_order_rejects_price_tampering(client):
         "amount_cents 与套餐价格不一致" in field["reason"]
         for field in body["detail"]["fields"]
     )
-
 
 
 def test_public_create_order_persists_candidate_province(client, app):
@@ -267,8 +268,6 @@ def test_public_create_order_rejects_unsupported_province(client):
     assert "candidate_province" in resp.text
 
 
-
-
 def test_public_create_order_supports_optional_contact_email(client, app):
     resp = client.post(
         "/api/public/orders",
@@ -287,7 +286,6 @@ def test_public_create_order_supports_optional_contact_email(client, app):
     with OrdersDAO.connect(app.state.settings.orders_db_path) as dao:
         created = dao.get(body["order_id"])
     assert created.customer_email == "guardian@example.com"
-
 
 
 def test_public_checkout_page_renders_audit_package(client):
@@ -330,8 +328,7 @@ def test_public_create_order_rejects_unknown_service_version(client):
     body = resp.json()
     assert body["message"] == "请求数据未通过校验"
     assert any(
-        field["field"] == "body.service_version"
-        for field in body["detail"]["fields"]
+        field["field"] == "body.service_version" for field in body["detail"]["fields"]
     )
 
 
@@ -354,7 +351,9 @@ def test_public_payment_flow_returns_payment_success_page(client, settings):
     complete = client.post(f"/pay/mock/{payment_id}/complete", follow_redirects=False)
     assert complete.status_code == 303, complete.text
     assert complete.headers["location"].endswith("/payment-success")
-    token = complete.headers["location"].split("/portal/")[1].split("/payment-success")[0]
+    token = (
+        complete.headers["location"].split("/portal/")[1].split("/payment-success")[0]
+    )
 
     page = client.get(f"/portal/{token}/payment-success")
     assert page.status_code == 200, page.text
@@ -381,7 +380,9 @@ def test_payment_success_page_shows_audit_copy_for_audit_orders(client, settings
     complete = client.post(f"/pay/mock/{payment_id}/complete", follow_redirects=False)
     assert complete.status_code == 303, complete.text
     assert complete.headers["location"].endswith("/payment-success")
-    token = complete.headers["location"].split("/portal/")[1].split("/payment-success")[0]
+    token = (
+        complete.headers["location"].split("/portal/")[1].split("/payment-success")[0]
+    )
 
     page = client.get(f"/portal/{token}/payment-success")
     assert page.status_code == 200, page.text
@@ -389,7 +390,6 @@ def test_payment_success_page_shows_audit_copy_for_audit_orders(client, settings
     assert "补充基础信息" in page.text
     assert "填写偏好目标" in page.text
     assert "持续查看进度" in page.text
-
 
 
 def test_prod_hides_simulated_payment_entrypoints(tmp_path, monkeypatch):
@@ -442,7 +442,9 @@ def test_prod_hides_simulated_payment_entrypoints(tmp_path, monkeypatch):
         assert exc_info.value.status_code == 404
 
 
-def test_public_create_order_returns_503_without_creating_orphan_order_when_provider_unavailable(tmp_path, monkeypatch):
+def test_public_create_order_returns_503_without_creating_orphan_order_when_provider_unavailable(
+    tmp_path, monkeypatch
+):
     admin_db = tmp_path / "admin.db"
     orders_db = tmp_path / "orders.db"
     share_db = tmp_path / "share.db"

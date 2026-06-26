@@ -10,6 +10,7 @@ def test_landing_page_provides_review_entry_source_link(client):
     assert resp.status_code == 200, resp.text
     assert 'href="/review/start?source=home"' in resp.text
 
+
 def test_landing_page_review_consult_form_targets_review_start(client):
     resp = client.get("/")
     assert resp.status_code == 200, resp.text
@@ -17,7 +18,9 @@ def test_landing_page_review_consult_form_targets_review_start(client):
     assert 'name="source" value="home"' in resp.text
 
 
-def test_landing_page_uses_review_as_workspace_primary_action_when_step1_complete(client, settings):
+def test_landing_page_uses_review_as_workspace_primary_action_when_step1_complete(
+    client, settings
+):
     from admin.routes.web_public import submit_order_info
     from data.orders.intake_schema import IntakePayload
 
@@ -60,10 +63,12 @@ def test_landing_page_uses_review_as_workspace_primary_action_when_step1_complet
     assert landing.status_code == 200, landing.text
     assert "工作台主动作" in landing.text
     assert "开始方案复核" in landing.text
-    assert f'/review/start?source=home&amp;token={token}' in landing.text
+    assert f"/review/start?source=home&amp;token={token}" in landing.text
 
 
-def test_review_start_page_renders_input_constraints_result_and_diversion(client, settings):
+def test_review_start_page_renders_user_facing_result_not_ops_process_page(
+    client, settings
+):
     from admin.routes.web_public import submit_order_info
     from data.orders.intake_schema import IntakePayload
 
@@ -100,20 +105,25 @@ def test_review_start_page_renders_input_constraints_result_and_diversion(client
 
     resp = client.get(f"/review/start?source=status&token={token}")
     assert resp.status_code == 200, resp.text
-    assert "方案复核入口" in resp.text
-    assert "已有方案说明" in resp.text
-    assert "考试省份" in resp.text
-    assert "选科组合" in resp.text
-    assert "高考分数" in resp.text
-    assert "位次" in resp.text
+    # 新口径：这是用户结果页，不是系统入口/流程说明页
+    assert "复核结果" in resp.text or "初步评估结果" in resp.text
+    assert "方案复核入口" not in resp.text
+    assert "审核输入" not in resp.text
+    assert "最小约束" not in resp.text
+    assert "审核输出摘要" not in resp.text
+    assert "下一步分流" not in resp.text
+    # 必须保留用户可理解的结果与下一步
     assert "风险等级" in resp.text
     assert "核心问题" in resp.text
-    assert "下一步分流" in resp.text
-    assert "去冲稳保" in resp.text
-    assert "去补 Step 1" in resp.text
-    assert "去完整规划" in resp.text
+    assert "下一步建议" in resp.text
     assert "已有一版志愿方案，想先看有没有明显风险" in resp.text
     assert "物理 / 化学 / 生物" in resp.text
+    # 不得暴露内部 JSON / review_result_id / action slug
+    assert "review_result_id" not in resp.text
+    assert '"risk_level"' not in resp.text
+    assert "go_step1" not in resp.text
+    assert "go_cwb" not in resp.text
+    assert "go_full_plan" not in resp.text
 
 
 def test_status_page_provides_review_entry_source_link(client, settings):
@@ -128,11 +138,13 @@ def test_status_page_provides_review_entry_source_link(client, settings):
         },
     )
     assert create_resp.status_code == 201, create_resp.text
-    token = create_resp.json()["portal_status_url"].split("/portal/")[1].split("/status")[0]
+    token = (
+        create_resp.json()["portal_status_url"].split("/portal/")[1].split("/status")[0]
+    )
 
     resp = client.get(f"/portal/{token}/status")
     assert resp.status_code == 200, resp.text
-    assert f'/review/start?source=status&amp;token={token}' in resp.text
+    assert f"/review/start?source=status&amp;token={token}" in resp.text
 
 
 def test_report_page_provides_review_entry_source_link(client, settings):
@@ -155,8 +167,12 @@ def test_report_page_provides_review_entry_source_link(client, settings):
     assert paid.status_code == 303, paid.text
 
     with OrdersDAO.connect(settings.orders_db_path) as dao:
-        dao.transition_status(body["order_id"], "serving", actor="test", reason="seed_report_serving")
-        dao.transition_status(body["order_id"], "delivered", actor="test", reason="seed_report_ready")
+        dao.transition_status(
+            body["order_id"], "serving", actor="test", reason="seed_report_serving"
+        )
+        dao.transition_status(
+            body["order_id"], "delivered", actor="test", reason="seed_report_ready"
+        )
         dao.update(
             body["order_id"],
             {
@@ -169,7 +185,7 @@ def test_report_page_provides_review_entry_source_link(client, settings):
 
     resp = client.get(f"/portal/{token}/report")
     assert resp.status_code == 200, resp.text
-    assert '/review/start?source=report&amp;token=' in resp.text
+    assert "/review/start?source=report&amp;token=" in resp.text
 
 
 def test_review_start_persists_result_contract_and_source(client, settings):
@@ -184,16 +200,21 @@ def test_review_start_persists_result_contract_and_source(client, settings):
         },
     )
     assert create_resp.status_code == 201, create_resp.text
-    token = create_resp.json()["portal_status_url"].split("/portal/")[1].split("/status")[0]
+    token = (
+        create_resp.json()["portal_status_url"].split("/portal/")[1].split("/status")[0]
+    )
 
     resp = client.get(f"/review/start?source=status&token={token}")
     assert resp.status_code == 200, resp.text
-    assert "recommended_action" in resp.text
-    assert "go_step1" in resp.text
-    assert "go_cwb" in resp.text
-    assert "go_full_plan" in resp.text
-    assert "review_entry_source" in resp.text
-    assert "status" in resp.text
+    # 页面已改为用户结果页，不再暴露内部 JSON 字段
+    assert "复核结果" in resp.text or "初步评估结果" in resp.text
+    assert "风险等级" in resp.text
+    assert "核心问题" in resp.text
+    assert "下一步建议" in resp.text
+    # 不再暴露内部 action slug
+    assert "go_step1" not in resp.text
+    assert "go_cwb" not in resp.text
+    assert "go_full_plan" not in resp.text
 
 
 def test_review_action_updates_followup_action(client, settings):
@@ -208,7 +229,9 @@ def test_review_action_updates_followup_action(client, settings):
         },
     )
     assert create_resp.status_code == 201, create_resp.text
-    token = create_resp.json()["portal_status_url"].split("/portal/")[1].split("/status")[0]
+    token = (
+        create_resp.json()["portal_status_url"].split("/portal/")[1].split("/status")[0]
+    )
 
     start = client.get(f"/review/start?source=status&token={token}")
     assert start.status_code == 200, start.text
@@ -220,8 +243,6 @@ def test_review_action_updates_followup_action(client, settings):
     )
     assert action.status_code == 303, action.text
     assert action.headers["location"].endswith(f"/portal/{token}/info")
-
-
 
 
 def test_review_action_cwb_redirects_to_real_cwb_page(route_client, client, settings):
@@ -236,7 +257,9 @@ def test_review_action_cwb_redirects_to_real_cwb_page(route_client, client, sett
         },
     )
     assert create_resp.status_code == 201, create_resp.text
-    token = create_resp.json()["portal_status_url"].split("/portal/")[1].split("/status")[0]
+    token = (
+        create_resp.json()["portal_status_url"].split("/portal/")[1].split("/status")[0]
+    )
 
     start = client.get(f"/review/start?source=status&token={token}")
     assert start.status_code == 200, start.text
@@ -267,7 +290,9 @@ def test_cwb_page_is_first_class_three_column_workspace(route_client, client, se
         },
     )
     assert create_resp.status_code == 201, create_resp.text
-    token = create_resp.json()["portal_status_url"].split("/portal/")[1].split("/status")[0]
+    token = (
+        create_resp.json()["portal_status_url"].split("/portal/")[1].split("/status")[0]
+    )
 
     start = client.get(f"/review/start?source=status&token={token}")
     assert start.status_code == 200, start.text
@@ -287,8 +312,9 @@ def test_cwb_page_is_first_class_three_column_workspace(route_client, client, se
     assert "当前建议" in cwb.text
 
 
-
-def test_cwb_page_exposes_review_summary_and_next_actions(route_client, client, settings):
+def test_cwb_page_exposes_review_summary_and_next_actions(
+    route_client, client, settings
+):
     create_resp = client.post(
         "/api/public/orders",
         json={
@@ -300,7 +326,9 @@ def test_cwb_page_exposes_review_summary_and_next_actions(route_client, client, 
         },
     )
     assert create_resp.status_code == 201, create_resp.text
-    token = create_resp.json()["portal_status_url"].split("/portal/")[1].split("/status")[0]
+    token = (
+        create_resp.json()["portal_status_url"].split("/portal/")[1].split("/status")[0]
+    )
 
     client.get(f"/review/start?source=report&token={token}")
     client.post(
@@ -313,11 +341,13 @@ def test_cwb_page_exposes_review_summary_and_next_actions(route_client, client, 
     assert cwb.status_code == 200, cwb.text
     assert "当前复核摘要" in cwb.text
     assert "下一步建议" in cwb.text
-    assert f'/portal/{token}/full-plan' in cwb.text
-    assert f'/portal/{token}/status' in cwb.text
+    assert f"/portal/{token}/full-plan" in cwb.text
+    assert f"/portal/{token}/status" in cwb.text
 
 
-def test_cwb_page_no_longer_claims_placeholder_future_work(route_client, client, settings):
+def test_cwb_page_no_longer_claims_placeholder_future_work(
+    route_client, client, settings
+):
     create_resp = client.post(
         "/api/public/orders",
         json={
@@ -329,7 +359,9 @@ def test_cwb_page_no_longer_claims_placeholder_future_work(route_client, client,
         },
     )
     assert create_resp.status_code == 201, create_resp.text
-    token = create_resp.json()["portal_status_url"].split("/portal/")[1].split("/status")[0]
+    token = (
+        create_resp.json()["portal_status_url"].split("/portal/")[1].split("/status")[0]
+    )
 
     client.get(f"/review/start?source=status&token={token}")
     action = client.post(
@@ -343,8 +375,6 @@ def test_cwb_page_no_longer_claims_placeholder_future_work(route_client, client,
     assert cwb.status_code == 200, cwb.text
     assert "后续再接真实推荐结果" not in cwb.text
     assert "建议冲刺" in cwb.text or "冲刺建议" in cwb.text
-
-
 
 
 def test_cwb_page_links_policy_same_score_and_auxiliary_factors(client, settings):
@@ -362,11 +392,12 @@ def test_cwb_page_links_policy_same_score_and_auxiliary_factors(client, settings
         },
     )
     assert create_resp.status_code == 201, create_resp.text
-    token = create_resp.json()["portal_status_url"].split("/portal/")[1].split("/status")[0]
+    token = (
+        create_resp.json()["portal_status_url"].split("/portal/")[1].split("/status")[0]
+    )
     payment_id = create_resp.json()["checkout_url"].split("/pay/mock/")[1].split("?")[0]
     paid = client.post(f"/pay/mock/{payment_id}/complete", follow_redirects=False)
     assert paid.status_code == 303, paid.text
-
 
     submit_order_info(
         token,
@@ -385,7 +416,9 @@ def test_cwb_page_links_policy_same_score_and_auxiliary_factors(client, settings
         settings,
     )
     client.get(f"/review/start?source=status&token={token}")
-    client.post("/review/action", data={"token": token, "action": "cwb"}, follow_redirects=False)
+    client.post(
+        "/review/action", data={"token": token, "action": "cwb"}, follow_redirects=False
+    )
 
     cwb = client.get(f"/portal/{token}/cwb")
     assert cwb.status_code == 200, cwb.text
@@ -396,8 +429,9 @@ def test_cwb_page_links_policy_same_score_and_auxiliary_factors(client, settings
     assert "家长更希望省内优先" in cwb.text
 
 
-
-def test_review_action_full_plan_redirects_to_real_full_plan_page(route_client, client, settings):
+def test_review_action_full_plan_redirects_to_real_full_plan_page(
+    route_client, client, settings
+):
     create_resp = client.post(
         "/api/public/orders",
         json={
@@ -409,7 +443,9 @@ def test_review_action_full_plan_redirects_to_real_full_plan_page(route_client, 
         },
     )
     assert create_resp.status_code == 201, create_resp.text
-    token = create_resp.json()["portal_status_url"].split("/portal/")[1].split("/status")[0]
+    token = (
+        create_resp.json()["portal_status_url"].split("/portal/")[1].split("/status")[0]
+    )
 
     start = client.get(f"/review/start?source=status&token={token}")
     assert start.status_code == 200, start.text
@@ -429,7 +465,9 @@ def test_review_action_full_plan_redirects_to_real_full_plan_page(route_client, 
     assert "版本历史" in full_plan.text
 
 
-def test_full_plan_page_shows_profile_versions_and_assessment_context(route_client, client, settings):
+def test_full_plan_page_shows_profile_versions_and_assessment_context(
+    route_client, client, settings
+):
     from admin.routes.web_public import submit_order_info
     from data.orders.intake_schema import IntakePayload
 
@@ -444,7 +482,9 @@ def test_full_plan_page_shows_profile_versions_and_assessment_context(route_clie
         },
     )
     assert create_resp.status_code == 201, create_resp.text
-    token = create_resp.json()["portal_status_url"].split("/portal/")[1].split("/status")[0]
+    token = (
+        create_resp.json()["portal_status_url"].split("/portal/")[1].split("/status")[0]
+    )
     payment_id = create_resp.json()["checkout_url"].split("/pay/mock/")[1].split("?")[0]
     paid = client.post(f"/pay/mock/{payment_id}/complete", follow_redirects=False)
     assert paid.status_code == 303, paid.text
@@ -465,7 +505,11 @@ def test_full_plan_page_shows_profile_versions_and_assessment_context(route_clie
         settings,
     )
     client.get(f"/review/start?source=status&token={token}")
-    action = client.post("/review/action", data={"token": token, "action": "full_plan"}, follow_redirects=False)
+    action = client.post(
+        "/review/action",
+        data={"token": token, "action": "full_plan"},
+        follow_redirects=False,
+    )
     assert action.status_code == 303, action.text
 
     full_plan = client.get(action.headers["location"])
@@ -478,8 +522,9 @@ def test_full_plan_page_shows_profile_versions_and_assessment_context(route_clie
     assert "INTJ" in full_plan.text
 
 
-
-def test_full_plan_page_no_longer_claims_entry_only_placeholder(route_client, client, settings):
+def test_full_plan_page_no_longer_claims_entry_only_placeholder(
+    route_client, client, settings
+):
     from admin.routes.web_public import submit_order_info
     from data.orders.intake_schema import IntakePayload
 
@@ -494,7 +539,9 @@ def test_full_plan_page_no_longer_claims_entry_only_placeholder(route_client, cl
         },
     )
     assert create_resp.status_code == 201, create_resp.text
-    token = create_resp.json()["portal_status_url"].split("/portal/")[1].split("/status")[0]
+    token = (
+        create_resp.json()["portal_status_url"].split("/portal/")[1].split("/status")[0]
+    )
     payment_id = create_resp.json()["checkout_url"].split("/pay/mock/")[1].split("?")[0]
     paid = client.post(f"/pay/mock/{payment_id}/complete", follow_redirects=False)
     assert paid.status_code == 303, paid.text
@@ -540,13 +587,21 @@ def test_report_page_shows_version_summary_and_next_actions(client, settings):
     token = body["portal_status_url"].split("/portal/")[1].split("/status")[0]
 
     client.get(f"/review/start?source=report&token={token}")
-    client.post("/review/action", data={"token": token, "action": "full_plan"}, follow_redirects=False)
+    client.post(
+        "/review/action",
+        data={"token": token, "action": "full_plan"},
+        follow_redirects=False,
+    )
     payment_id = body["checkout_url"].split("/pay/mock/")[1].split("?")[0]
     paid = client.post(f"/pay/mock/{payment_id}/complete", follow_redirects=False)
     assert paid.status_code == 303, paid.text
     with OrdersDAO.connect(settings.orders_db_path) as dao:
-        dao.transition_status(body["order_id"], "serving", actor="test", reason="report_ready_serving")
-        dao.transition_status(body["order_id"], "delivered", actor="test", reason="report_ready_delivered")
+        dao.transition_status(
+            body["order_id"], "serving", actor="test", reason="report_ready_serving"
+        )
+        dao.transition_status(
+            body["order_id"], "delivered", actor="test", reason="report_ready_delivered"
+        )
         dao.update(
             body["order_id"],
             {
@@ -563,7 +618,7 @@ def test_report_page_shows_version_summary_and_next_actions(client, settings):
     assert "基于哪个档案版本" in report_page.text
     assert "当前复核摘要" in report_page.text
     assert "下一步建议" in report_page.text
-    assert '/portal/' in report_page.text and '/full-plan' in report_page.text
+    assert "/portal/" in report_page.text and "/full-plan" in report_page.text
 
 
 def test_report_page_routes_followup_step1_to_info(client, settings):
@@ -582,7 +637,9 @@ def test_report_page_routes_followup_step1_to_info(client, settings):
     )
     assert create_resp.status_code == 201, create_resp.text
     payment_id = create_resp.json()["checkout_url"].split("/pay/mock/")[1].split("?")[0]
-    token = create_resp.json()["portal_status_url"].split("/portal/")[1].split("/status")[0]
+    token = (
+        create_resp.json()["portal_status_url"].split("/portal/")[1].split("/status")[0]
+    )
     paid = client.post(f"/pay/mock/{payment_id}/complete", follow_redirects=False)
     assert paid.status_code == 303, paid.text
 
@@ -599,8 +656,12 @@ def test_report_page_routes_followup_step1_to_info(client, settings):
     )
     with OrdersDAO.connect(settings.orders_db_path) as dao:
         order_id = create_resp.json()["order_id"]
-        dao.transition_status(order_id, "serving", actor="test", reason="report_ready_serving")
-        dao.transition_status(order_id, "delivered", actor="test", reason="report_ready_delivered")
+        dao.transition_status(
+            order_id, "serving", actor="test", reason="report_ready_serving"
+        )
+        dao.transition_status(
+            order_id, "delivered", actor="test", reason="report_ready_delivered"
+        )
         dao.update(
             order_id,
             {
@@ -621,7 +682,7 @@ def test_report_page_routes_followup_step1_to_info(client, settings):
 
     report = client.get(f"/portal/{token}/report")
     assert report.status_code == 200, report.text
-    assert f'/portal/{token}/info' in report.text
+    assert f"/portal/{token}/info" in report.text
 
 
 def test_review_result_is_saved_as_independent_lightweight_object(client, settings):
@@ -668,7 +729,9 @@ def test_review_result_has_version_anchor_and_history_summary(client, settings):
         },
     )
     assert create_resp.status_code == 201, create_resp.text
-    token = create_resp.json()["portal_status_url"].split("/portal/")[1].split("/status")[0]
+    token = (
+        create_resp.json()["portal_status_url"].split("/portal/")[1].split("/status")[0]
+    )
 
     first = client.get(f"/review/start?source=home&token={token}")
     assert first.status_code == 200, first.text
@@ -705,8 +768,12 @@ def test_report_page_shows_profile_and_review_versions(client, settings):
     client.get(f"/review/start?source=status&token={token}")
 
     with OrdersDAO.connect(settings.orders_db_path) as dao:
-        dao.transition_status(body["order_id"], "serving", actor="test", reason="report_ready_serving")
-        dao.transition_status(body["order_id"], "delivered", actor="test", reason="report_ready_delivered")
+        dao.transition_status(
+            body["order_id"], "serving", actor="test", reason="report_ready_serving"
+        )
+        dao.transition_status(
+            body["order_id"], "delivered", actor="test", reason="report_ready_delivered"
+        )
         dao.update(
             body["order_id"],
             {
@@ -723,7 +790,6 @@ def test_report_page_shows_profile_and_review_versions(client, settings):
     assert "基于哪个档案版本" in report_page.text
     assert "当前复核摘要" in report_page.text
     assert "最新版本" in report_page.text or "版本历史" in report_page.text
-
 
 
 def test_report_page_shows_latest_profile_state_and_helper_links(client, settings):
@@ -747,7 +813,6 @@ def test_report_page_shows_latest_profile_state_and_helper_links(client, setting
     paid = client.post(f"/pay/mock/{payment_id}/complete", follow_redirects=False)
     assert paid.status_code == 303, paid.text
 
-
     submit_order_info(
         token,
         IntakePayload(
@@ -764,10 +829,18 @@ def test_report_page_shows_latest_profile_state_and_helper_links(client, setting
         settings,
     )
     client.get(f"/review/start?source=report&token={token}")
-    client.post("/review/action", data={"token": token, "action": "full_plan"}, follow_redirects=False)
+    client.post(
+        "/review/action",
+        data={"token": token, "action": "full_plan"},
+        follow_redirects=False,
+    )
     with OrdersDAO.connect(settings.orders_db_path) as dao:
-        dao.transition_status(body["order_id"], "serving", actor="test", reason="report_ready_serving")
-        dao.transition_status(body["order_id"], "delivered", actor="test", reason="report_ready_delivered")
+        dao.transition_status(
+            body["order_id"], "serving", actor="test", reason="report_ready_serving"
+        )
+        dao.transition_status(
+            body["order_id"], "delivered", actor="test", reason="report_ready_delivered"
+        )
         dao.update(
             body["order_id"],
             {
@@ -782,7 +855,10 @@ def test_report_page_shows_latest_profile_state_and_helper_links(client, setting
     assert report_page.status_code == 200, report_page.text
     assert "基于最新档案生成" in report_page.text
     assert "/policy-center?province=湖南" in report_page.text
-    assert "/same-score-reference?province=湖南" in report_page.text and "score=578" in report_page.text
+    assert (
+        "/same-score-reference?province=湖南" in report_page.text
+        and "score=578" in report_page.text
+    )
     assert "辅助判断因子" in report_page.text
     assert "INTJ" in report_page.text
 
@@ -809,7 +885,6 @@ def test_report_page_warns_when_based_on_historical_profile_version(client, sett
     paid = client.post(f"/pay/mock/{payment_id}/complete", follow_redirects=False)
     assert paid.status_code == 303, paid.text
 
-
     submit_order_info(
         token,
         IntakePayload(
@@ -822,8 +897,12 @@ def test_report_page_warns_when_based_on_historical_profile_version(client, sett
         settings,
     )
     with OrdersDAO.connect(settings.orders_db_path) as dao:
-        dao.transition_status(body["order_id"], "serving", actor="test", reason="report_ready_serving")
-        dao.transition_status(body["order_id"], "delivered", actor="test", reason="report_ready_delivered")
+        dao.transition_status(
+            body["order_id"], "serving", actor="test", reason="report_ready_serving"
+        )
+        dao.transition_status(
+            body["order_id"], "delivered", actor="test", reason="report_ready_delivered"
+        )
         dao.update(
             body["order_id"],
             {
@@ -892,7 +971,9 @@ def test_landing_page_shows_recent_review_result_entry_when_present(client, sett
         },
     )
     assert create_resp.status_code == 201, create_resp.text
-    token = create_resp.json()["portal_status_url"].split("/portal/")[1].split("/status")[0]
+    token = (
+        create_resp.json()["portal_status_url"].split("/portal/")[1].split("/status")[0]
+    )
 
     start = client.get(f"/review/start?source=home&token={token}")
     assert start.status_code == 200, start.text
@@ -900,7 +981,7 @@ def test_landing_page_shows_recent_review_result_entry_when_present(client, sett
     landing = client.get(f"/?token={token}")
     assert landing.status_code == 200, landing.text
     assert "最近一次复核结果" in landing.text
-    assert f'/review/start?source=home&amp;token={token}' in landing.text
+    assert f"/review/start?source=home&amp;token={token}" in landing.text
 
 
 def test_landing_page_shows_workspace_primary_action_for_incomplete_step1(client):
@@ -910,7 +991,9 @@ def test_landing_page_shows_workspace_primary_action_for_incomplete_step1(client
     assert "继续补充 Step 1" in resp.text
 
 
-def test_landing_page_shows_workspace_primary_action_for_recent_review_result(route_client, client, settings):
+def test_landing_page_shows_workspace_primary_action_for_recent_review_result(
+    route_client, client, settings
+):
     create_resp = client.post(
         "/api/public/orders",
         json={
@@ -922,7 +1005,9 @@ def test_landing_page_shows_workspace_primary_action_for_recent_review_result(ro
         },
     )
     assert create_resp.status_code == 201, create_resp.text
-    token = create_resp.json()["portal_status_url"].split("/portal/")[1].split("/status")[0]
+    token = (
+        create_resp.json()["portal_status_url"].split("/portal/")[1].split("/status")[0]
+    )
 
     start = client.get(f"/review/start?source=home&token={token}")
     assert start.status_code == 200, start.text
@@ -931,4 +1016,4 @@ def test_landing_page_shows_workspace_primary_action_for_recent_review_result(ro
     assert landing.status_code == 200, landing.text
     assert "工作台主动作" in landing.text
     assert "继续查看最近一次复核" in landing.text
-    assert f'/review/start?source=home&amp;token={token}' in landing.text
+    assert f"/review/start?source=home&amp;token={token}" in landing.text

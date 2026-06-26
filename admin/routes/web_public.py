@@ -1580,58 +1580,42 @@ def _render_landing_page(request: Request, settings: Settings) -> str:
         <div class=\"hero-copy\">
           <div class=\"eyebrow\">新高考志愿填报 · 志愿决策支持</div>
           <h1>高考志愿填报智能规划服务</h1>
-          <p class=\"sub\">先审计现有志愿方案，再判断是否踩线、扎堆或梯度失衡，再决定要不要进入完整规划。先完成线上下单，再进入资料向导补充详细信息，后续可在站内查看报告与交付进度。</p>
+          <p class="sub">先免费复核一次你的现有方案，再决定要不要继续付费。</p>
           <div class="hero-actions">
             <a class="btn btn-primary" href="/review/start?source=home">先做方案复核</a>
             <a class="btn btn-primary" href="/pricing">查看套餐</a>
-            <a class="btn btn-text" href="#service-flow">了解服务流程 →</a>
           </div>
           <p class="hero-note">提交省份、分数、目标后，我们先判断你的方案是否需要复核。复核现有方案本身免费；新方案生成与深度辅导在支付后启动。</p>
-          <div class="consult-card" id="consult-box">
-            <h2>告诉我们你的基本情况</h2>
-            <p class="hero-note" style="margin-top:0;">我们先判断你的现有方案是否需要复核，并说明后续可走的步骤。复核本身免费；新方案生成与深度辅导在支付后启动。</p>
-            <p class="consult-privacy" aria-label="隐私说明">🔒 这些输入只用于判断要不要复核你的方案，<strong>不会留底、不会用于生成方案、不会发邮件推销</strong>。如果你决定不进入付费方案，提交的资料不会保存到我们的数据库。</p>
-            <form action="/review/start" method="get">
-              <input type="hidden" name="source" value="home" />
-              {f'<input type="hidden" name="token" value="{escape(portal_token)}" />' if portal_token else ""}
-              <div class="consult-grid">
-                <div class="consult-field"><label>考试省份</label><input name="province" value="{consult_province}" placeholder="例如：湖南" /></div>
-                <div class="consult-field"><label>分数 / 位次</label><input name="score" value="{consult_score}" placeholder="例如：578 / 12034" /></div>
-              </div>
-              <div class="consult-field" style="margin-top:10px;"><label>当前目标</label><input name="goal" value="{consult_goal}" placeholder="例如：先复核现有方案" /></div>
-              <div class="consult-field" style="margin-top:10px;"><label>补充说明</label><textarea name="consult" placeholder="例如：已有一版方案，想先看有没有明显风险">{consult_text}</textarea></div>
-              <div class="consult-actions">
-                <button class="btn btn-primary" type="submit">获取复核与推荐</button>
-                <a class="btn btn-secondary" href="/pricing">直接看付费套餐</a>
-              </div>
-            </form>
-
-            <p class="consult-privacy-tail">不会收到营销短信，提交后你也可以随时要求删除已填资料。</p>
-          </div>
           {workspace_card_html}{latest_review_html}
-          <div class="hero-trust">
-            <article class="hero-trust-item"><strong>复核免费 / 方案付费</strong><span>免费帮你审现有方案的风险；新方案生成和深度辅导在支付后启动。</span></article>
-            <article class="hero-trust-item"><strong>风险重点可解释</strong><span>重点识别踩线、扎堆、梯度失衡和结构异常，不只给结果。</span></article>
-            <article class="hero-trust-item"><strong>进度站内可查</strong><span>资料、通知、报告、下载入口都能在站内持续追踪。</span></article>
-            <article class="hero-trust-item"><strong>隐私与删除入口可见</strong><span>隐私政策、服务说明与删除申请入口全程可访问。</span></article>
-          </div>
-          <div class="hero-divider"></div>
-          <div class="hero-points">
-            <article class="point lead"><strong>先把方案看清，再决定要不要重做</strong><span>如果你已经拿到一版方案，先做免费复核看是否踩线、扎堆、梯度失衡，再决定是否进入付费的完整规划。</span></article>
-            <article class="point"><strong>重点可解释</strong><span>不只给一份结论，更说明为什么这样选、需要确认什么。</span></article>
-            <article class="point"><strong>资料、通知、报告都在站内</strong><span>支付后只需按提示补充资料，状态、通知、报告、下载入口全部站内可查。</span></article>
-          </div>
         </div>
         <aside class="hero-panel">
           <div class="hero-risk-band"><strong>最常见的不是“不会选”，而是先选错方向</strong><span>我们优先帮你筛出踩线、扎堆、梯度失衡这三类最容易带来后悔成本的风险。</span></div>
-          <h2>我们先把现有方案看明白</h2>
-          <p>不让你在海量院校、专业、城市与预算之间盲目来回切换，先审计现有方案的风险与结构，再决定是否进入更完整的志愿规划。</p>
-          <div class="metric-list">
-            <div class="metric"><strong>资料采集更克制</strong><span>首屏只收真正影响下单的最小信息，详细资料支付后分步完成。</span></div>
-            <div class="metric"><strong>方案表达更可读</strong><span>优先解释为什么这样选，而不是堆给用户一页难消化的数据。</span></div>
-            <div class="metric"><strong>交付链路更透明</strong><span>资料、通知、报告、下载入口都放在同一条可追踪用户路径里。</span></div>
-          </div>
+          <h2>先看你的方案值不值得继续</h2>
+          <p>如果你已经拿到老师、机构或其他平台给出的方案，后续可以直接上传文档继续核查。</p>
         </aside>
+      </section>
+
+      <section class="section" id="consult-box">
+        <h2>先做一次免费复核</h2>
+        <p class="section-intro">先提交最小必要信息，我们会判断你当前方案值不值得继续；如果你已经拿到老师、机构或其他平台给出的方案，后续资料页也可以上传文档继续复核。</p>
+        <div class="consult-card" style="margin-top:0; background:#f8fbff; border:1px solid var(--border);">
+          <p class="consult-privacy" aria-label="隐私说明">🔒 这些输入只用于判断要不要复核你的方案，<strong>不会留底、不会用于生成方案、不会发邮件推销</strong>。如果你决定不进入付费方案，提交的资料不会保存到我们的数据库。</p>
+          <form action="/review/start" method="get">
+            <input type="hidden" name="source" value="home" />
+            {f'<input type="hidden" name="token" value="{escape(portal_token)}" />' if portal_token else ""}
+            <div class="consult-grid">
+              <div class="consult-field"><label>考试省份</label><select name="province">{_province_options_html(consult_province)}</select></div>
+              <div class="consult-field"><label>分数 / 位次</label><input name="score" value="{consult_score}" placeholder="例如：578 / 12034" /></div>
+            </div>
+            <div class="consult-field" style="margin-top:10px;"><label>目标学校或方向</label><input name="goal" value="{consult_goal}" placeholder="例如：广东工业大学 / 先复核现有方案" /></div>
+            <p class="hero-note" style="margin-top:10px;">后续资料页可以<strong>上传已有方案文档</strong>，我们会先做免费复核，再决定是否进入付费完整规划。</p>
+            <div class="consult-actions">
+              <button class="btn btn-primary" type="submit">获取复核与推荐</button>
+              <a class="btn btn-secondary" href="/pricing">直接看付费套餐</a>
+            </div>
+          </form>
+          <p class="consult-privacy-tail">不会收到营销短信，提交后你也可以随时要求删除已填资料。</p>
+        </div>
       </section>
 
       <section class=\"section\">
@@ -1658,21 +1642,12 @@ def _render_landing_page(request: Request, settings: Settings) -> str:
 
       <section id="service-flow" class="section">
         <h2>服务流程</h2>
-        <p class="section-intro">让用户知道每一步会发生什么，比空泛地说“智能系统已接入”更重要。复核免费，方案生成和深度辅导需付费。</p>
+        <p class="section-intro">你先拿到判断，再决定是否付费进入完整规划。流程越清楚，越不容易在关键节点反复来回确认。</p>
         <div class="flow">
-          <article class="flow-step"><strong>01</strong><h3>先判断入口</h3><p>判断你需要的是方案复核（免费）还是完整方案 / 深度辅导（付费）。</p></article>
-          <article class="flow-step"><strong>02</strong><h3>确认下单</h3><p>选完整方案或深度辅导时，先填写考生姓名、手机号等最小信息后再支付。</p></article>
-          <article class="flow-step"><strong>03</strong><h3>补充资料</h3><p>支付成功后进入资料向导，分步提交分数、位次、偏好与已有方案附件。</p></article>
-          <article class="flow-step"><strong>04</strong><h3>查看交付</h3><p>在站内追踪状态、查看通知，并在交付就绪后在线阅读或下载 PDF。</p></article>
-        </div>
-      </section>
-
-      <section class=\"section\">
-        <h2>基础信任说明</h2>
-        <div class=\"trust\">
-          <article class=\"trust-item\"><strong>资料最小化采集</strong><span>支付前只收必要信息，详细资料在支付后按步骤补充。</span></article>
-          <article class=\"trust-item\"><strong>隐私与删除入口可见</strong><span>隐私政策、服务说明和删除申请入口在全站统一可访问。</span></article>
-          <article class=\"trust-item\"><strong>交付状态有记录</strong><span>资料提交、通知、报告状态都会在用户可见页面持续更新。</span></article>
+          <article class="flow-step"><strong>先判断</strong><h3>先判断入口</h3><p>判断你需要的是方案复核（免费）还是完整方案 / 深度辅导（付费）。</p></article>
+          <article class="flow-step"><strong>再确认</strong><h3>确认下单</h3><p>选完整方案或深度辅导时，先填写考生姓名、手机号等最小信息后再支付。</p></article>
+          <article class="flow-step"><strong>补资料</strong><h3>补充资料</h3><p>支付成功后进入资料向导，分步提交分数、位次、偏好与已有方案附件。</p></article>
+          <article class="flow-step"><strong>看交付</strong><h3>查看交付</h3><p>在站内追踪状态、查看通知，并在交付就绪后在线阅读或下载 PDF。</p></article>
         </div>
       </section>
 
@@ -3248,13 +3223,77 @@ def _render_review_start_page(contract: ReviewResultContract, token: str | None)
     )
     constraints = contract.review_constraints or {}
     recommended_label = {
-        "go_cwb": "去冲稳保",
-        "go_step1": "去补 Step 1",
-        "go_full_plan": "去完整规划",
+        "go_cwb": "先去看冲稳保建议",
+        "go_step1": "先补齐基础信息",
+        "go_full_plan": "进入完整规划",
     }[contract.recommended_action]
-    body_html = f"""<section class=\"panel\"><h1>方案复核入口</h1><p class=\"meta\">先看当前方案有什么问题，再决定是去冲稳保、补 Step 1，还是进入完整规划。</p></section><section class=\"panel\"><h2>审核输入</h2><ul><li>已有方案说明：{escape(contract.review_input_summary or "未提供现有方案说明")}</li><li>附件：{attachment_html}</li></ul></section><section class=\"panel\"><h2>最小约束</h2><ul><li>考试省份：{escape(_review_constraints_display(constraints.get("candidate_province")))}</li><li>选科组合：{escape(_review_constraints_subjects_text(constraints.get("candidate_subjects")))}</li><li>高考分数：{escape(_review_constraints_display(constraints.get("candidate_score")))}</li><li>位次：{escape(_review_constraints_display(constraints.get("candidate_rank")))}</li></ul></section><section class=\"panel\"><h2>审核输出摘要</h2><ul><li>风险等级：{escape(contract.risk_level)}</li><li>默认推荐动作：{recommended_label}</li></ul><h3>核心问题</h3><ul>{findings_html}</ul></section><section class=\"panel\"><h2>下一步分流</h2><p class=\"meta\">默认推荐：{recommended_label}。你也可以根据当前情况改走其他路径。</p><div class=\"actions\"><form action=\"/review/action\" method=\"post\">{token_input}<input type=\"hidden\" name=\"action\" value=\"cwb\" /><button class=\"btn btn-primary\" type=\"submit\">去冲稳保</button></form><form action=\"/review/action\" method=\"post\">{token_input}<input type=\"hidden\" name=\"action\" value=\"step1\" /><button class=\"btn btn-secondary\" type=\"submit\">去补 Step 1</button></form><form action=\"/review/action\" method=\"post\">{token_input}<input type=\"hidden\" name=\"action\" value=\"full_plan\" /><button class=\"btn btn-secondary\" type=\"submit\">去完整规划</button></form></div></section><section class=\"panel\"><pre>{escape(json.dumps(contract.model_dump(), ensure_ascii=False, indent=2))}</pre></section>"""
+    primary_action = {
+        "go_cwb": (
+            "去看冲稳保建议",
+            "cwb",
+            "如果你的基础信息已经完整，下一步先看冲稳保梯度更合适。",
+        ),
+        "go_step1": (
+            "先补齐基础信息",
+            "step1",
+            "当前更适合先补齐省份、分数、位次、选科等基础信息，再继续判断梯度风险。",
+        ),
+        "go_full_plan": (
+            "进入完整规划",
+            "full_plan",
+            "如果你已经明确要进入完整服务，可以直接继续到完整规划页。",
+        ),
+    }[contract.recommended_action]
+    summary = escape(contract.review_input_summary or "未提供现有方案说明")
+    province = escape(
+        _review_constraints_display(constraints.get("candidate_province"))
+    )
+    subjects = escape(
+        _review_constraints_subjects_text(constraints.get("candidate_subjects"))
+    )
+    score = escape(_review_constraints_display(constraints.get("candidate_score")))
+    rank = escape(_review_constraints_display(constraints.get("candidate_rank")))
+    body_html = f"""
+<section class=\"panel\">
+  <span class=\"eyebrow\">免费复核结果</span>
+  <h1>复核结果</h1>
+  <p class=\"meta\">我们已经根据你当前提供的信息做了第一轮判断，下面先告诉你当前风险和最适合的下一步，而不是让你继续看系统流程说明。</p>
+</section>
+
+<section class=\"panel\">
+  <h2>你当前提交的信息</h2>
+  <ul>
+    <li>已有方案说明：{summary}</li>
+    <li>考试省份：{province}</li>
+    <li>选科组合：{subjects}</li>
+    <li>高考分数：{score}</li>
+    <li>位次：{rank}</li>
+    <li>附件：{attachment_html}</li>
+  </ul>
+</section>
+
+<section class=\"panel\">
+  <h2>初步评估结果</h2>
+  <ul>
+    <li>风险等级：{escape(contract.risk_level)}</li>
+    <li>当前更建议：{escape(recommended_label)}</li>
+  </ul>
+  <h3>核心问题</h3>
+  <ul>{findings_html}</ul>
+</section>
+
+<section class=\"panel\">
+  <h2>下一步建议</h2>
+  <p class=\"meta\">{escape(primary_action[2])}</p>
+  <div class=\"actions\">
+    <form action=\"/review/action\" method=\"post\">{token_input}<input type=\"hidden\" name=\"action\" value=\"{escape(primary_action[1])}\" /><button class=\"btn btn-primary\" type=\"submit\">{escape(primary_action[0])}</button></form>
+    <form action=\"/review/action\" method=\"post\">{token_input}<input type=\"hidden\" name=\"action\" value=\"cwb\" /><button class=\"btn btn-secondary\" type=\"submit\">查看冲稳保建议</button></form>
+    <form action=\"/review/action\" method=\"post\">{token_input}<input type=\"hidden\" name=\"action\" value=\"full_plan\" /><button class=\"btn btn-secondary\" type=\"submit\">进入完整规划</button></form>
+  </div>
+</section>
+"""
     return _render_placeholder_shell(
-        title="方案复核入口", max_width=960, body_html=body_html
+        title="复核结果", max_width=960, body_html=body_html
     )
 
 
