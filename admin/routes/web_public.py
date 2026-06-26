@@ -1714,7 +1714,7 @@ def _render_landing_page(request: Request, settings: Settings) -> str:
       .consult-grid {{ display:grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap:10px; }}
       .consult-field {{ display:flex; flex-direction:column; gap:6px; }}
       .consult-field label {{ color:#d9e7ff; font-size:12px; font-weight:600; }}
-      .consult-field input, .consult-field textarea, .consult-field select {{ width:100%; padding:11px 12px; border-radius:12px; border:1px solid rgba(255,255,255,.18); background: rgba(255,255,255,.96); color:#142235; font-size:14px; }}
+      .consult-field input, .consult-field textarea, .consult-field select {{ width:100%; padding:11px 12px; border-radius:12px; border:1px solid rgba(255,255,255,.18); background: rgba(255,255,255,.96); color:#142235; font-size:14px; }} .consult-field select {{ -webkit-appearance:none; -moz-appearance:none; appearance:none; background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12"><path fill="%23142235" d="M6 8L2 4h8z"/></svg>'); background-repeat:no-repeat; background-position:right 12px center; padding-right:32px; }}
       .consult-field textarea {{ min-height:74px; resize:vertical; }}
       .consult-actions {{ display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }}
       .consult-privacy {{ margin: 10px 0 0; padding: 10px 12px; border-radius: 12px; background: rgba(223,247,241,.10); border: 1px solid rgba(223,247,241,.30); color: #d9e7ff; font-size: 12.5px; line-height: 1.65; }}
