@@ -1713,20 +1713,20 @@ def _render_landing_page(request: Request, settings: Settings) -> str:
       .consult-card h2 {{ margin: 0 0 8px; font-size: 18px; color: #fff; }}
       .consult-grid {{ display:grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap:10px; }}
       .consult-field {{ display:flex; flex-direction:column; gap:6px; }}
-      .consult-field label {{ color:#d9e7ff; font-size:12px; font-weight:600; }}
+      .consult-field label {{ color:#475569; font-size:13px; font-weight:600; }}
       .consult-field input, .consult-field textarea, .consult-field select {{ width:100%; padding:11px 12px; border-radius:12px; border:1px solid rgba(255,255,255,.18); background: rgba(255,255,255,.96); color:#142235; font-size:14px; }} .consult-field select {{ -webkit-appearance:none; -moz-appearance:none; appearance:none; background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12"><path fill="%23142235" d="M6 8L2 4h8z"/></svg>'); background-repeat:no-repeat; background-position:right 12px center; padding-right:32px; }}
       .consult-field textarea {{ min-height:74px; resize:vertical; }}
       .consult-actions {{ display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }}
-      .consult-privacy {{ margin: 10px 0 0; padding: 10px 12px; border-radius: 12px; background: rgba(223,247,241,.10); border: 1px solid rgba(223,247,241,.30); color: #d9e7ff; font-size: 12.5px; line-height: 1.65; }}
-      .consult-privacy strong {{ color: #c9fff3; font-weight: 700; }}
-      .consult-privacy-tail {{ margin: 10px 0 0; color: #8fb0df; font-size: 12px; line-height: 1.6; }}
+      .consult-privacy {{ margin: 10px 0 0; padding: 10px 12px; border-radius: 12px; background: #f0f7ff; border: 1px solid #c7d7ef; color: #334155; font-size: 13px; line-height: 1.65; }}
+      .consult-privacy strong {{ color: #1e40af; font-weight: 700; }}
+      .consult-privacy-tail {{ margin: 10px 0 0; color: #64748b; font-size: 12px; line-height: 1.6; }}
       .btn {{ display: inline-flex; align-items: center; justify-content: center; min-height: 46px; padding: 0 18px; border-radius: 14px; text-decoration: none; font-weight: 700; transition: .18s ease; }}
       .btn-primary {{ min-height: 54px; padding: 0 28px; font-size: 17px; background: linear-gradient(135deg,#2d7cff,#0f4fd6); color: #fff; box-shadow: 0 22px 40px rgba(31,111,235,.42), inset 0 1px 0 rgba(255,255,255,.18); letter-spacing: .01em; }}
       .btn-primary:hover {{ background: linear-gradient(135deg,#276fe7,#0d45bf); transform: translateY(-1px); }}
-      .btn-secondary {{ background: rgba(255,255,255,.08); color: #fff; border: 1px solid rgba(255,255,255,.18); min-height: 44px; padding: 0 14px; font-size: 14px; }}
+      .btn-secondary {{ background: rgba(255,255,255,.12); color: #e2e8f0; border: 1px solid rgba(255,255,255,.25); min-height: 44px; padding: 0 14px; font-size: 14px; }}
       .btn-secondary:hover {{ background: rgba(255,255,255,.14); }}
       .btn-text {{ color:#cfe0ff; padding: 0 6px; min-height: 44px; font-size: 14px; text-decoration: underline; text-underline-offset: 4px; }}
-      .hero-note {{ margin-top: 12px; color:#8fb0df; font-size:13px; line-height:1.6; }}
+      .hero-note {{ margin-top: 12px; color:#64748b; font-size:13px; line-height:1.6; }}
       .hero-risk-band {{ display:grid; gap:6px; margin-bottom:16px; padding:12px 14px; border-radius:14px; background: rgba(255,255,255,.7); border:1px solid #f3d49f; }}
       .hero-risk-band strong {{ font-size:14px; color:#7a5a00; }}
       .hero-risk-band span {{ color:#7a5c24; font-size:13px; line-height:1.55; }}
