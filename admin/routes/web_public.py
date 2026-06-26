@@ -1472,7 +1472,7 @@ def my_orders_page(
                 "</section>"
             )
     phone_value = escape(phone or "")
-    body = f"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>我的订单</title><link rel="stylesheet" href="/static/portal-ui.css" /><style>body{{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f4f7fb;padding:32px 20px;color:#172033;margin:0}}.wrap{{max-width:980px;margin:0 auto;display:grid;gap:18px}}.panel{{background:#fff;border:1px solid #dbe3f0;border-radius:20px;padding:24px;box-shadow:0 18px 42px rgba(20,34,53,.08)}}.field{{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}}.field input{{padding:11px 12px;border-radius:12px;border:1px solid #d7e3f1;font-size:14px;min-width:200px}}.btn{{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border-radius:12px;text-decoration:none;font-weight:700;background:#1f6feb;color:#fff;border:none;cursor:pointer}}.meta{{color:#5b6b88;line-height:1.8}}.empty-state{{padding:18px;border-radius:14px;background:#f8fbff;border:1px solid #d7e3f1;color:#5b6b88}}table{{width:100%;border-collapse:collapse;font-size:13px}}th,td{{padding:8px;text-align:left;border-bottom:1px solid #eef2f7}}th{{font-weight:600;color:#172033}}a{{color:#1f6feb;text-decoration:none}}</style></head><body><main class="wrap"><section class="panel"><h1>我的订单</h1><p class="meta">输入下单时使用的手机号，查看你的所有订单和交付状态。</p><form method="get" action="/my-orders" class="field"><div><label style="font-size:13px;font-weight:600;display:block;margin-bottom:4px;">手机号</label><input type="tel" name="phone" value="{phone_value}" placeholder="例如：13800138000" /></div><button class="btn" type="submit">查询</button></form></section>{orders_html}{_render_footer_links()}</main></body></html>"""
+    body = f"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>我的订单</title><link rel="stylesheet" href="/static/portal-ui.css" /><style>body{{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f4f7fb;padding:32px 20px;color:#172033;margin:0}}.wrap{{max-width:980px;margin:0 auto;display:grid;gap:18px}}.panel{{background:#fff;border:1px solid #dbe3f0;border-radius:20px;padding:24px;box-shadow:0 18px 42px rgba(20,34,53,.08)}}.field{{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}}.field input{{padding:11px 12px;border-radius:12px;border:1px solid #d7e3f1;font-size:14px;min-width:200px}}.btn{{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border-radius:12px;text-decoration:none;font-weight:700;background:#1f6feb;color:#fff;border:none;cursor:pointer}}.meta{{color:#5b6b88;line-height:1.8}}.empty-state{{padding:18px;border-radius:14px;background:#f8fbff;border:1px solid #d7e3f1;color:#5b6b88}}table{{width:100%;border-collapse:collapse;font-size:13px}}th,td{{padding:8px;text-align:left;border-bottom:1px solid #eef2f7}}th{{font-weight:600;color:#172033}}a{{color:#1f6feb;text-decoration:none}}@media(max-width:768px){{.field{{flex-direction:column;align-items:stretch}}.field input{{min-width:100%}}table{{font-size:12px}}th,td{{padding:6px}}}}</style></head><body><main class="wrap"><section class="panel"><h1>我的订单</h1><p class="meta">输入下单时使用的手机号，查看你的所有订单和交付状态。</p><form method="get" action="/my-orders" class="field"><div><label style="font-size:13px;font-weight:600;display:block;margin-bottom:4px;">手机号</label><input type="tel" name="phone" value="{phone_value}" placeholder="例如：13800138000" /></div><button class="btn" type="submit">查询</button></form></section>{orders_html}{_render_footer_links()}</main></body></html>"""
     return HTMLResponse(body)
 
 
@@ -1523,7 +1523,7 @@ def my_reports_page(
                 "</section>"
             )
     phone_value = escape(phone or "")
-    body = f"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>我的报告</title><link rel="stylesheet" href="/static/portal-ui.css" /><style>body{{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f4f7fb;padding:32px 20px;color:#172033;margin:0}}.wrap{{max-width:980px;margin:0 auto;display:grid;gap:18px}}.panel{{background:#fff;border:1px solid #dbe3f0;border-radius:20px;padding:24px;box-shadow:0 18px 42px rgba(20,34,53,.08)}}.field{{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}}.field input{{padding:11px 12px;border-radius:12px;border:1px solid #d7e3f1;font-size:14px;min-width:200px}}.btn{{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border-radius:12px;text-decoration:none;font-weight:700;background:#1f6feb;color:#fff;border:none;cursor:pointer}}.meta{{color:#5b6b88;line-height:1.8}}.empty-state{{padding:18px;border-radius:14px;background:#f8fbff;border:1px solid #d7e3f1;color:#5b6b88}}table{{width:100%;border-collapse:collapse;font-size:13px}}th,td{{padding:8px;text-align:left;border-bottom:1px solid #eef2f7}}th{{font-weight:600;color:#172033}}a{{color:#1f6feb;text-decoration:none}}</style></head><body><main class="wrap"><section class="panel"><div style="margin-bottom:8px;"><a class="btn" style="font-size:13px;min-height:32px;padding:6px 12px;background:#edf3ff;color:#194fb6;" href="/">返回首页</a></div><h1>我的报告</h1><p class="meta">输入下单时使用的手机号，查看已交付的志愿方案报告。</p><form method="get" action="/my-reports" class="field"><div><label style="font-size:13px;font-weight:600;display:block;margin-bottom:4px;">手机号</label><input type="tel" name="phone" value="{phone_value}" placeholder="例如：13800138000" /></div><button class="btn" type="submit">查询</button></form></section>{reports_html}{_render_footer_links()}</main></body></html>"""
+    body = f"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>我的报告</title><link rel="stylesheet" href="/static/portal-ui.css" /><style>body{{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f4f7fb;padding:32px 20px;color:#172033;margin:0}}.wrap{{max-width:980px;margin:0 auto;display:grid;gap:18px}}.panel{{background:#fff;border:1px solid #dbe3f0;border-radius:20px;padding:24px;box-shadow:0 18px 42px rgba(20,34,53,.08)}}.field{{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}}.field input{{padding:11px 12px;border-radius:12px;border:1px solid #d7e3f1;font-size:14px;min-width:200px}}.btn{{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border-radius:12px;text-decoration:none;font-weight:700;background:#1f6feb;color:#fff;border:none;cursor:pointer}}.meta{{color:#5b6b88;line-height:1.8}}.empty-state{{padding:18px;border-radius:14px;background:#f8fbff;border:1px solid #d7e3f1;color:#5b6b88}}table{{width:100%;border-collapse:collapse;font-size:13px}}th,td{{padding:8px;text-align:left;border-bottom:1px solid #eef2f7}}th{{font-weight:600;color:#172033}}a{{color:#1f6feb;text-decoration:none}}@media(max-width:768px){{.field{{flex-direction:column;align-items:stretch}}.field input{{min-width:100%}}table{{font-size:12px}}th,td{{padding:6px}}}}</style></head><body><main class="wrap"><section class="panel"><div style="margin-bottom:8px;"><a class="btn" style="font-size:13px;min-height:32px;padding:6px 12px;background:#edf3ff;color:#194fb6;" href="/">返回首页</a></div><h1>我的报告</h1><p class="meta">输入下单时使用的手机号，查看已交付的志愿方案报告。</p><form method="get" action="/my-reports" class="field"><div><label style="font-size:13px;font-weight:600;display:block;margin-bottom:4px;">手机号</label><input type="tel" name="phone" value="{phone_value}" placeholder="例如：13800138000" /></div><button class="btn" type="submit">查询</button></form></section>{reports_html}{_render_footer_links()}</main></body></html>"""
     return HTMLResponse(body)
 
 
@@ -1738,6 +1738,46 @@ def _render_landing_page(request: Request, settings: Settings) -> str:
               <a class="btn btn-secondary" href="/pricing">直接做完整规划</a>
             </div>
           </form>
+          <script>
+          (function(){{
+            var form = document.querySelector('#consult-box form[action="/review/start"]');
+            if (!form) return;
+            var province = form.querySelector('select[name="province"]');
+            var score = form.querySelector('input[name="score"]');
+            function validate(){{
+              var errs = [];
+              if (province && !province.value) errs.push('请选择考试省份');
+              if (score && score.value){{
+                var parts = score.value.split('/').map(function(s){{return s.trim();}});
+                var sc = parseInt(parts[0]);
+                if (isNaN(sc) || sc < 0 || sc > 800) errs.push('分数应在 0-800 之间');
+              }}
+              return errs;
+            }}
+            function showErrors(){{
+              var errs = validate();
+              var hint = document.getElementById('consult-error-hint');
+              if (!hint){{
+                hint = document.createElement('div');
+                hint.id = 'consult-error-hint';
+                hint.style.cssText = 'margin-top:6px;padding:8px 10px;border-radius:8px;background:#fff5f5;border:1px solid #f5c2c7;color:#b42318;font-size:12px;';
+                form.appendChild(hint);
+              }}
+              if (errs.length){{
+                hint.innerHTML = errs.join('；');
+                hint.style.display = 'block';
+              }} else {{
+                hint.style.display = 'none';
+              }}
+              return errs.length === 0;
+            }}
+            form.addEventListener('submit', function(e){{
+              if (!showErrors()) e.preventDefault();
+            }});
+            if (province) province.addEventListener('change', showErrors);
+            if (score) score.addEventListener('blur', showErrors);
+          }})();
+          </script>
           <div class="upload-hint" style="margin-top:16px; padding:12px 14px; border-radius:12px; background:rgba(31,111,235,.06); border:1px solid rgba(31,111,235,.18);">
             <p style="margin:0; color:#1f6feb; font-size:13px; line-height:1.5;">如果你已经有老师、机构或其他平台给出的志愿方案文档，可以先<strong>上传已有方案文档</strong>再做免费复核。</p>
             <a class="btn btn-secondary" style="margin-top:8px;" href="/pricing">上传方案文档并进入完整规划</a>
@@ -3430,7 +3470,7 @@ def _render_review_start_page(contract: ReviewResultContract, token: str | None)
     <li>位次：{rank}</li>
     <li>附件：{attachment_html}</li>
   </ul>
-  <p class=\"meta\" style=\"margin-top:10px;color:#1f6feb;\">信息越完整，复核结论越准确。补齐选科和位次后，我们可以给出更具体的风险定位。</p>
+  <div class="error-state" style="margin-top:10px;"><strong>信息不完整</strong>：选科组合或位次为"待补充"。补齐后我们可以给出更具体的风险定位。</div>
 </section>
 
 <section class=\"panel\">
