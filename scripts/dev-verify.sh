@@ -115,6 +115,10 @@ run_checks() {
 
   log "crowd_db quality summary (防漂移监控)"
   python -m data.crowd_db.quality_summary --human
+
+  # P1-7/P1-8: 100-case smoke 作为独立验证步骤，失败不阻断核心门禁
+  log "running 100-case smoke e2e (non-blocking)"
+  python scripts/score_range_fullchain_100_e2e.py --batch smoke || log "WARN: 100-case smoke e2e failed (non-blocking, see /tmp/score-range-fullchain-100-e2e.log)"
 }
 
 main() {
@@ -133,9 +137,14 @@ main() {
 Usage: bash scripts/dev-verify.sh [--skip-install] [--skip-pre-existing]
 
 Default: ensure venv, install requirements, run full pytest with coverage gate + ruff + mypy.
+Also runs the 100-case smoke E2E batch via `python scripts/score_range_fullchain_100_e2e.py --batch smoke`.
 
 Flags:
   --skip-install      Skip the venv / pip install step (use existing venv).
+
+Post-checks:
+  100-case smoke      Runs `python scripts/score_range_fullchain_100_e2e.py --batch smoke`
+                      to validate the real public flow + contract boundary sample set.
   --skip-pre-existing Skip the 8 tests flagged in 2026-06-14 review as
                       pre-existing failures driven by environment drift
                       (subprocess 解释器 / locust 不可用); they are not

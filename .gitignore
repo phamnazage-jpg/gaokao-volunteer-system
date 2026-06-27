@@ -77,3 +77,7 @@ admin/_tmp_test.txt
 /data/alerts/
 /data/portal_uploads/
 /=0.0.20,
+
+# P1-7: 100-case 回归产物写入 /tmp，reports/ 下不应再有动态覆写产物
+reports/score_range_fullchain_100_*
+
