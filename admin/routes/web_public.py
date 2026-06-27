@@ -2544,6 +2544,25 @@ def _render_pricing_page(request: Request) -> str:
         <article class="trust-item"><strong>复核免费 / 方案付费</strong><span>还没决定？回到首页 <a href="/#consult-box">先做一次免费复核</a>，再决定要不要进入付费方案。</span></article>
       </section>
 
+      <section class="section" style="text-align:center;">
+        <h2 style="margin:0 0 8px;font-size:24px;">家长和学生的选择</h2>
+        <div style="display:flex;gap:16px;flex-wrap:wrap;justify-content:center;margin-top:18px;">
+          <div style="flex:1;min-width:200px;max-width:280px;padding:20px;border-radius:18px;background:var(--surface);border:1px solid var(--border);box-shadow:var(--shadow);">
+            <div style="font-size:28px;font-weight:800;color:var(--primary);letter-spacing:-.03em;">31 省</div>
+            <div style="color:var(--muted);font-size:13px;margin-top:4px;">覆盖省级录取数据</div>
+          </div>
+          <div style="flex:1;min-width:200px;max-width:280px;padding:20px;border-radius:18px;background:var(--surface);border:1px solid var(--border);box-shadow:var(--shadow);">
+            <div style="font-size:28px;font-weight:800;color:var(--primary);letter-spacing:-.03em;">3 个版本</div>
+            <div style="color:var(--muted);font-size:13px;margin-top:4px;">从免费复核到深度辅导</div>
+          </div>
+          <div style="flex:1;min-width:200px;max-width:280px;padding:20px;border-radius:18px;background:var(--surface);border:1px solid var(--border);box-shadow:var(--shadow);">
+            <div style="font-size:28px;font-weight:800;color:var(--primary);letter-spacing:-.03em;">站内全流程</div>
+            <div style="color:var(--muted);font-size:13px;margin-top:4px;">下单→支付→资料→交付→追踪</div>
+          </div>
+        </div>
+        <p style="margin:18px 0 0;color:var(--muted);font-size:14px;line-height:1.7;">已有方案？先 <a href="/#consult-box" style="color:var(--primary);font-weight:600;">免费复核</a>，再决定是否进入付费方案。</p>
+      </section>
+
       <section class="faq">
         <article class="faq-item"><h3>复核是免费的吗？包含什么？</h3><p>提交基本情况后我们免费帮你判断你的现有方案是否需要复核，并说明后续可走的步骤。复核本身免费；如需正式 AI 方案审核报告（49 元）或重新生成完整方案（99 元起）才需要支付。</p></article>
         <article class="faq-item"><h3>为什么推荐 99 元完整志愿方案？</h3><p>它覆盖大多数用户最关心的完整资料收集、站内进度追踪与报告交付，是当前最适合线上自助下单的标准路径。99 元是 <em>生成</em> 一份完整方案的价格，不是 <em>查看</em> 价格。</p></article>
@@ -2687,7 +2706,23 @@ def _render_checkout_page(service_version: str) -> str:
     <nav class="global-nav" aria-label="全局导航" role="navigation"><div class="global-nav-inner"><a class="global-nav-brand" href="/">高考志愿填报</a><div class="global-nav-links"><a class="global-nav-link" href="/">首页</a><a class="global-nav-link" href="/pricing">套餐</a><a class="global-nav-link" href="mailto:lon22@qq.com">客服</a></div></div></nav>
     <main class="wrap">
       <header class="header">
-        <div style="margin-bottom:8px;"><a class="btn btn-secondary" style="font-size:13px;min-height:32px;padding:6px 12px;" href="/">返回首页</a></div>
+        <div style="margin-bottom:12px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+          <a class="btn btn-secondary" style="font-size:13px;min-height:32px;padding:6px 12px;" href="/">← 返回首页</a>
+          <div class="stepper" style="display:flex;align-items:center;gap:0;margin-left:auto;">
+            <div class="step active" style="display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:8px 0 0 8px;background:#1f6feb;color:#fff;font-size:13px;font-weight:600;">
+              <span style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,.25);font-size:11px;">1</span>
+              填写信息
+            </div>
+            <div class="step" style="display:flex;align-items:center;gap:6px;padding:6px 12px;background:#e2e8f0;color:#64748b;font-size:13px;border-left:1px solid #cbd5e1;">
+              <span style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:#cbd5e1;color:#94a3b8;font-size:11px;">2</span>
+              支付
+            </div>
+            <div class="step" style="display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:0 8px 8px 0;background:#e2e8f0;color:#64748b;font-size:13px;border-left:1px solid #cbd5e1;">
+              <span style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:#cbd5e1;color:#94a3b8;font-size:11px;">3</span>
+              补充资料
+            </div>
+          </div>
+        </div>
         <span class="eyebrow">在线下单</span>
         <h1>{escape(service_label)}</h1>
         <p class="lead">{escape(service_desc)} 现在先确认联系人与考生基础信息；支付成功后，再进入资料向导补充分数、位次、偏好和已有方案附件。</p>
