@@ -13,6 +13,7 @@ import tempfile
 from pathlib import Path
 
 from fastapi import APIRouter, Depends
+from fastapi.responses import JSONResponse
 
 from admin.config import Settings, get_settings_dep, is_jwt_secret_secure
 
@@ -68,18 +69,28 @@ def _check_settings_valid(settings: Settings) -> bool:
 
 
 @router.get("/health", summary="健康检查")
-def health(settings: Settings = Depends(get_settings_dep)) -> dict:
+def health(settings: Settings = Depends(get_settings_dep)) -> JSONResponse:
     """公开端点。只返回 readiness, 不暴露环境/路径/版本细节。
 
     返回结构:
-    - status: "ok" (主键契约, K8s liveness probe 直接判)
+    - status: "ok" 或 "degraded"（任一 readiness 检查失败时降级）
     - checks: {db_writable, disk_writable, settings_valid} 子对象
+
+    readiness 语义（2026-06-27 P1-4 修复）:
+    - 所有 checks 通过 → status="ok", HTTP 200
+    - 任一 check 失败 → status="degraded", HTTP 503
+    - K8s/systemd readiness probe 应判 HTTP status，不只判 status 字段
     """
-    return {
-        "status": "ok",
-        "checks": {
-            "db_writable": _check_db_writable(settings),
-            "disk_writable": _check_disk_writable(settings),
-            "settings_valid": _check_settings_valid(settings),
-        },
+    checks = {
+        "db_writable": _check_db_writable(settings),
+        "disk_writable": _check_disk_writable(settings),
+        "settings_valid": _check_settings_valid(settings),
     }
+    all_ok = all(checks.values())
+    return JSONResponse(
+        status_code=200 if all_ok else 503,
+        content={
+            "status": "ok" if all_ok else "degraded",
+            "checks": checks,
+        },
+    )

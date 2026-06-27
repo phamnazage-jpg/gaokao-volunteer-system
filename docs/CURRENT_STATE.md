@@ -11,10 +11,11 @@
 - `pytest -q data/crowd_db/tests/test_score_distribution.py data/crowd_db/tests/test_subject_requirements.py data/crowd_db/tests/test_program_type.py data/crowd_db/tests/test_crowd_db_data_quality.py data/crowd_db/tests/test_provenance_query.py` → `57 passed`
 - 2026-06-26 新增深度接入：`广西` / `宁夏` 已补 `score_distribution`（官方一分一档/一分段统计 + 本科线）
 - 当前 `score_distribution` 覆盖已达 **31/31 省**；其中 `新疆 / 西藏` 已补齐官方最低控制分数线级别接入，但两省暂未检索到公开一分一段表
-- 本轮本地验证附加证据：`GAOKAO_SKIP_INSTALL=1 bash scripts/dev-verify.sh` => `1297 passed, 3 skipped`；`scripts/integration_test.py` => `overall PASS`；`scripts/user_simulation.py` => `overall PASS`
+- 本轮本地验证附加证据：`GAOKAO_SKIP_INSTALL=1 bash scripts/dev-verify.sh` => `1302 passed, 3 skipped`；`scripts/integration_test.py` => `overall PASS`；`scripts/user_simulation.py` => `overall PASS`
 - 新增 30 组分段样例 E2E：`reports/score_range_e2e_2026_06_26.json` => `review_start 30/30 通过`，且对 6 组公开支持省份样例做了 `公开下单 -> portal status` 深层抽样，结果 `6/6 通过`
 - 新增 30 组完整全链路样例 E2E：`reports/score_range_fullchain_e2e_2026_06_26.json` => 在 30 组样例中，`26` 组属于当前公开下单支持省份，已全部走通 `下单 -> 支付模拟 -> payment-success -> portal info 提交 -> portal status -> review/start -> review/action(full_plan/cwb)`，结果 `26/26 通过`；其余 `4` 组因不在 `_public_supported_provinces()` 中按契约跳过完整下单链路
-- 当前工作区未提交修改：`data/crowd_db/xinjiang.json`、`data/crowd_db/xizang.json`、`data/crowd_db/tests/test_score_distribution.py`、`docs/CURRENT_STATE.md`、`docs/CROWD_DB_NATIONALIZATION_SOURCE_OF_TRUTH.md`、`reports/score_range_e2e_2026_06_26.json`、`scripts/score_range_fullchain_e2e.py`、`reports/score_range_fullchain_e2e_2026_06_26.json`
+- 新增 100 分数真实用户验证：`reports/SCORE_RANGE_FULLCHAIN_100_VALIDATION_2026-06-26.md` => 全量入口 `100/100` 通过、公开支持省份完整主链路 `87/87` 通过、非公开支持省份合同边界 `13/13` 正确阻断；`scripts/dev-verify.sh` 已纳入 `12` 例 smoke E2E 回归
+- 当前工作区未提交修改：`data/crowd_db/xinjiang.json`、`data/crowd_db/xizang.json`、`data/crowd_db/tests/test_score_distribution.py`、`docs/CURRENT_STATE.md`、`docs/CROWD_DB_NATIONALIZATION_SOURCE_OF_TRUTH.md`、`reports/score_range_e2e_2026_06_26.json`、`scripts/score_range_fullchain_e2e.py`、`reports/score_range_fullchain_e2e_2026_06_26.json`、`scripts/score_range_fullchain_100_e2e.py`、`reports/score_range_fullchain_100_cases_2026_06_25.json`、`reports/score_range_fullchain_100_batches_2026_06_26.json`、`reports/score_range_fullchain_100_batches_2026_06_26.csv`、`reports/score_range_fullchain_100_e2e_smoke_2026_06_26.json`、`reports/score_range_fullchain_100_e2e_2026_06_26.json`、`reports/score_range_fullchain_100_e2e_boundary_2026_06_26.json`、`reports/SCORE_RANGE_FULLCHAIN_100_VALIDATION_2026-06-26.md`、`reports/SCORE_RANGE_FULLCHAIN_100_EXEC_SUMMARY_2026-06-26.md`、`tests/test_score_range_fullchain_100_script.py`、`tests/test_score_range_fullchain_e2e_typing.py`、`tests/test_dev_verify_entrypoint.py`
 
 真相源优先级:
 
@@ -99,16 +100,18 @@
 
 ### 0.5 crowd_db 数据质量契约（6/20 v2.1.3 Q-A 闭环）
 
+> **⚠ 历史快照（2026-06-20~25）**：以下数字为 6/20~6/24 阶段的中间状态，**不再代表当前真相**。
+> 当前真相以本文件顶部为准：`31 high / 0 usable / 0 skeleton`。
+
 - 新增 `data/crowd_db/tests/test_crowd_db_data_quality.py` (CROWD_DB_DATA_QUALITY
   §7 承诺的锁死文件，仓库此前缺失)：
-  - 27 省总数 (23 省 + 4 直辖市)
-  - **当前真实状态**（2026-06-25 实测）：7 high / 20 usable / 0 skeleton
-  - high 白名单：湖南/广东/江苏/山东/河北/浙江/福建
-  - 高考生源大省 (北京/上海/河南/四川/湖北) 当前为 usable，不在 high 集合
+  - ~~27 省总数 (23 省 + 4 直辖市)~~ → 已升级为 **31 省** (23 省 + 4 直辖市 + 4 自治区)
+  - ~~当前真实状态（2026-06-25 实测）：7 high / 20 usable / 0 skeleton~~ → **已升级为 31 high / 0 usable / 0 skeleton**
+  - ~~high 白名单：湖南/广东/江苏/山东/河北/浙江/福建~~ → **当前 31 省全部 high（7 省 S 级 + 24 省 A 级）**
   - 所有 confidence ∈ [0, 1]
   - 所有 data_year = 2025 (待 2026 录取数据正式公布后显式更新)
 - 防止"27 省 crowd_db 均为高置信强推荐数据"合规假象回归
-- **历史轨迹**（仅供审计）：6/20 基线为 4 high + 3 usable + 20 skeleton；6/23 升级到 5 high；6/24 升级到当前 7 high / 20 usable / 0 skeleton
+- **历史轨迹**（仅供审计）：6/20 基线为 4 high + 3 usable + 20 skeleton；6/23 升级到 5 high；6/24 升级到 7 high / 20 usable / 0 skeleton；6/25 升级到 31 high / 0 usable / 0 skeleton
 - 详细质量分布与升级轨迹见 `docs/CROWD_DB_NATIONALIZATION_SOURCE_OF_TRUTH.md`
 
 ### 0.6 crowd_db 可信来源元数据补齐（2026-06-21）
