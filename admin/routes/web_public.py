@@ -950,7 +950,8 @@ def _render_placeholder_shell(
     max_width: int,
     body_html: str,
 ) -> str:
-    return f"""<!doctype html><html lang=\"zh-CN\"><head><meta charset=\"utf-8\" /><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" /><title>{escape(title)}</title><link rel=\"stylesheet\" href=\"/static/portal-ui.css\" /><style>body{{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f3f7fb;margin:0;padding:32px 20px;color:#142235}}.wrap{{max-width:{max_width}px;margin:0 auto;display:grid;gap:16px}}.panel{{background:#fff;border:1px solid #d7e3f1;border-radius:20px;padding:24px;box-shadow:0 18px 42px rgba(20,34,53,.08)}}.meta{{color:#5b6b88;line-height:1.8}}.actions{{display:flex;gap:12px;flex-wrap:wrap;margin-top:12px}}.btn{{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border-radius:12px;text-decoration:none;font-weight:700}}.btn-primary{{background:#1f6feb;color:#fff}}.btn-secondary{{background:#edf3ff;color:#194fb6}}.empty-state{{padding:18px;border-radius:14px;background:#f8fbff;border:1px solid #d7e3f1;color:#5b6b88}}.error-state{{padding:18px;border-radius:14px;background:#fff5f5;border:1px solid #f5c2c7;color:#b42318}}</style></head><body><nav class="global-nav" aria-label="全局导航" role="navigation"><div class="global-nav-inner"><a class="global-nav-brand" href="/">高考志愿填报</a><div class="global-nav-links"><a class="global-nav-link" href="/">首页</a><a class="global-nav-link" href="/pricing">套餐</a><a class="global-nav-link" href="mailto:lon22@qq.com">客服</a></div></div></nav><main class="wrap">{body_html}</main>{_render_global_toast_script()}</body></html>"""
+    top_toolbar = '<div style="margin-bottom:8px;"><a class="btn btn-secondary" style="font-size:13px;min-height:32px;padding:6px 12px;background:#edf3ff;color:#194fb6;" href="/">返回首页</a></div>'
+    return f"""<!doctype html><html lang=\"zh-CN\"><head><meta charset=\"utf-8\" /><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" /><title>{escape(title)}</title><link rel=\"stylesheet\" href=\"/static/portal-ui.css\" /><style>body{{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f3f7fb;margin:0;padding:32px 20px;color:#142235}}.wrap{{max-width:{max_width}px;margin:0 auto;display:grid;gap:16px}}.panel{{background:#fff;border:1px solid #d7e3f1;border-radius:20px;padding:24px;box-shadow:0 18px 42px rgba(20,34,53,.08)}}.meta{{color:#5b6b88;line-height:1.8}}.actions{{display:flex;gap:12px;flex-wrap:wrap;margin-top:12px}}.btn{{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border-radius:12px;text-decoration:none;font-weight:700}}.btn-primary{{background:#1f6feb;color:#fff}}.btn-secondary{{background:#edf3ff;color:#194fb6}}.empty-state{{padding:18px;border-radius:14px;background:#f8fbff;border:1px solid #d7e3f1;color:#5b6b88}}.error-state{{padding:18px;border-radius:14px;background:#fff5f5;border:1px solid #f5c2c7;color:#b42318}}</style></head><body><nav class="global-nav" aria-label="全局导航" role="navigation"><div class="global-nav-inner"><a class="global-nav-brand" href="/">高考志愿填报</a><div class="global-nav-links"><a class="global-nav-link" href="/">首页</a><a class="global-nav-link" href="/pricing">套餐</a><a class="global-nav-link" href="mailto:lon22@qq.com">客服</a></div></div></nav><main class="wrap">{top_toolbar}{body_html}</main>{_render_global_toast_script()}</body></html>"""
 
 
 def _find_legal_doc_path(doc_filename: str) -> Path | None:
@@ -1632,9 +1633,11 @@ def data_query_page(
         + '<h1>数据查询</h1><p class="meta">查询高考相关的基础数据，辅助你做志愿填报决策。</p>'
         + '<div class="query-grid">'
         + '<div class="query-card"><h3>分数线查询</h3><p>查询全国各省本科线、特殊类型控制线等官方录取分数线。</p><a class="btn" style="font-size:13px;min-height:36px;" href="/score-line-query">进入分数线查询</a></div>'
-        + '<div class="query-card"><h3>同分段参考</h3><p>查看某个分数段在各省份的热门学校、专业和城市分布。</p><a class="btn" style="font-size:13px;min-height:36px;" href="/same-score-reference?province=广东&score=578">进入同分段参考</a></div>'
-        + '<div class="query-card"><h3>政策中心</h3><p>查看各省高考政策摘要、批次规则、选科要求和常见误区。</p><a class="btn" style="font-size:13px;min-height:36px;" href="/policy-center?province=广东">进入政策中心</a></div>'
         + '<div class="query-card"><h3>位次估算</h3><p>输入分数，基于一分一段数据估算全省位次（支持省份取决于数据覆盖）。</p><a class="btn" style="font-size:13px;min-height:36px;" href="/rank-estimator">进入位次估算</a></div>'
+        + '<div class="query-card"><h3>专业库</h3><p>搜索教育部公布的专业目录，查看专业代码、学科门类、学位类型。</p><a class="btn" style="font-size:13px;min-height:36px;" href="/majors-query">进入专业库查询</a></div>'
+        + '<div class="query-card"><h3>院校库</h3><p>搜索院校，查看院校代码、招生专业和所属省份。</p><a class="btn" style="font-size:13px;min-height:36px;" href="/schools-query">进入院校库查询</a></div>'
+        + '<div class="query-card"><h3>政策中心</h3><p>查看各省高考政策摘要、批次规则、选科要求和常见误区。</p><a class="btn" style="font-size:13px;min-height:36px;" href="/policy-center?province=广东">进入政策中心</a></div>'
+        + '<div class="query-card"><h3>同分段参考</h3><p>查看某个分数段在各省份的热门学校、专业和城市分布。</p><a class="btn" style="font-size:13px;min-height:36px;" href="/same-score-reference?province=广东&score=578">进入同分段参考</a></div>'
         + "</div></section>"
         + _render_footer_links()
         + "</main>{_render_global_toast_script()}</body></html>"
@@ -1757,6 +1760,109 @@ def rank_estimator_page(
     )
 
     body = f"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>位次估算</title><link rel="stylesheet" href="/static/portal-ui.css" /><style>body{{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#f4f7fb;padding:32px 20px;color:#172033;margin:0}}.wrap{{max-width:980px;margin:0 auto;display:grid;gap:18px}}.panel{{background:#fff;border:1px solid #dbe3f0;border-radius:20px;padding:24px;box-shadow:0 18px 42px rgba(20,34,53,.08)}}.btn{{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border-radius:12px;text-decoration:none;font-weight:700;background:#1f6feb;color:#fff;border:none;cursor:pointer}}.meta{{color:#5b6b88;line-height:1.8}}</style></head><body>{_render_global_nav()}{nav}<main class="wrap" role="main"><section class="panel"><div style="margin-bottom:8px;"><a class="btn btn-secondary" style="font-size:13px;min-height:32px;padding:6px 12px;background:#edf3ff;color:#194fb6;" href="/data-query">返回数据查询</a></div><h1>位次估算</h1><p class="meta">选择省份并输入分数，基于公开一分一段数据估算你的全省位次。</p><form method="get" action="/rank-estimator" style="margin-top:12px;"><select name="province" style="padding:10px;border-radius:10px;border:1px solid #d7e3f1;font-size:14px;"><option value="">请选择省份</option>{province_options}</select><input name="score" type="number" value="{query_score}" placeholder="例如：578" style="padding:10px;border-radius:10px;border:1px solid #d7e3f1;font-size:14px;margin-left:8px;width:120px;" /><button class="btn" type="submit" style="margin-left:8px;">估算</button></form></section>{result_html}</main>{_render_global_toast_script()}</body></html>"""
+    return HTMLResponse(body)
+
+
+@router.get("/majors-query", include_in_schema=False)
+def majors_query_page(
+    request: Request,
+    q: str | None = None,
+    settings: Settings = Depends(get_settings_dep),
+) -> HTMLResponse:
+    """专业库查询页：从 majors_catalog 搜索专业。"""
+    from data.majors_catalog.loader import MajorsCatalogLoader
+    from pathlib import Path as _Path
+
+    nav_html = _render_global_nav()
+    result_html = ""
+    query = (q or "").strip()
+
+    if query:
+        try:
+            loader = MajorsCatalogLoader(catalog_root=_Path("data/majors_catalog"))
+            all_majors = loader.load_national_catalog()
+            # 过滤匹配的
+            matched = [
+                m
+                for m in (all_majors or [])
+                if query.lower() in m.get("name", "").lower()
+                or query.lower() in m.get("category", "").lower()
+                or query.lower() in m.get("discipline", "").lower()
+            ]
+            if matched:
+                rows = []
+                for m in matched:
+                    rows.append(
+                        f"<tr>"
+                        f"<td style='padding:8px;'>{m.get('code', '')}</td>"
+                        f"<td style='padding:8px;'><strong>{m.get('name', '')}</strong></td>"
+                        f"<td style='padding:8px;'>{m.get('discipline', '')}</td>"
+                        f"<td style='padding:8px;'>{m.get('category', '')}</td>"
+                        f"<td style='padding:8px;'>{m.get('degree', '')}</td>"
+                        f"<td style='padding:8px;'>{m.get('status', '')}</td>"
+                        f"</tr>"
+                    )
+                result_html = (
+                    f"<section class='panel'><h2>搜索结果（{len(matched)} 个专业）</h2>"
+                    f"<table style='width:100%;border-collapse:collapse;font-size:13px;'>"
+                    f"<thead><tr style='text-align:left;border-bottom:2px solid #d7e3f1;'>"
+                    f"<th style='padding:8px;'>代码</th><th style='padding:8px;'>专业名称</th>"
+                    f"<th style='padding:8px;'>学科门类</th><th style='padding:8px;'>专业类</th>"
+                    f"<th style='padding:8px;'>学位</th><th style='padding:8px;'>状态</th>"
+                    f"</tr></thead><tbody>{''.join(rows)}</tbody></table></section>"
+                )
+            else:
+                result_html = f"<section class='state-empty' role='status'><h2 class='state-empty__title'>未找到匹配&quot;{escape(query)}&quot;的专业</h2><p class='state-empty__hint'>当前专业目录为 MVP 子集（13 个核心专业），完整目录待后续扩充。</p></section>"
+        except Exception as e:
+            result_html = f"<section class='state-error' role='alert'><h2 class='state-error__title'>查询失败</h2><p class='state-error__hint'>{escape(str(e))}</p></section>"
+
+    body = f"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>专业库查询</title><link rel="stylesheet" href="/static/portal-ui.css" /><style>body{{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#f4f7fb;padding:32px 20px;color:#172033;margin:0}}.wrap{{max-width:980px;margin:0 auto;display:grid;gap:18px}}.panel{{background:#fff;border:1px solid #dbe3f0;border-radius:20px;padding:24px;box-shadow:0 18px 42px rgba(20,34,53,.08)}}.btn{{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border-radius:12px;text-decoration:none;font-weight:700;background:#1f6feb;color:#fff;border:none;cursor:pointer}}.meta{{color:#5b6b88;line-height:1.8}}table{{width:100%;border-collapse:collapse;font-size:13px}}th,td{{padding:8px;text-align:left;border-bottom:1px solid #eef2f7}}th{{font-weight:600}}</style></head><body>{nav_html}{_render_global_nav()}<main class="wrap" role="main"><section class="panel"><div style="margin-bottom:8px;"><a class="btn btn-secondary" style="font-size:13px;min-height:32px;padding:6px 12px;background:#edf3ff;color:#194fb6;" href="/data-query">返回数据查询</a></div><h1>专业库查询</h1><p class="meta">搜索教育部公布的专业目录，查看专业代码、学科门类、学位类型。</p><form method="get" action="/majors-query" style="margin-top:12px;"><input name="q" value="{escape(query)}" placeholder="例如：计算机、经济学、工学" style="padding:10px;border-radius:10px;border:1px solid #d7e3f1;font-size:14px;min-width:240px;" /><button class="btn" type="submit" style="margin-left:8px;">搜索</button></form></section>{result_html}</main>{_render_global_toast_script()}</body></html>"""
+    return HTMLResponse(body)
+
+
+@router.get("/schools-query", include_in_schema=False)
+def schools_query_page(
+    request: Request,
+    q: str | None = None,
+    settings: Settings = Depends(get_settings_dep),
+) -> HTMLResponse:
+    """院校库查询页：从 majors_catalog/schools/ 搜索院校。"""
+    import json as _json
+    from pathlib import Path as _Path
+
+    nav_html = _render_global_nav()
+    result_html = ""
+    query = (q or "").strip()
+
+    if query:
+        try:
+            schools_dir = _Path("data/majors_catalog/schools/2026")
+            school_files = list(schools_dir.glob("*.json"))
+            matched = []
+            for f in school_files:
+                data = _json.loads(f.read_text())
+                if query.lower() in data.get(
+                    "school_name", ""
+                ).lower() or query in data.get("province", ""):
+                    offerings = data.get("offerings", [])
+                    offering_html = "".join(
+                        f"<li>{escape(o.get('major_name', ''))} ({escape(o.get('major_code', ''))})</li>"
+                        for o in offerings
+                    )
+                    matched.append(
+                        f"<section class='panel'><h2>{escape(data.get('school_name', ''))}</h2>"
+                        f"<p class='meta'>院校代码：{escape(data.get('school_code', ''))} · 省份：{escape(data.get('province', ''))} · 招生年份：{escape(str(data.get('admission_year', '')))}</p>"
+                        f"<h3>开设专业（{len(offerings)} 个）</h3>"
+                        f"<ul style='line-height:1.8;'>{offering_html}</ul></section>"
+                    )
+            if matched:
+                result_html = "".join(matched)
+            else:
+                result_html = f"<section class='state-empty' role='status'><h2 class='state-empty__title'>未找到匹配&quot;{escape(query)}&quot;的院校</h2><p class='state-empty__hint'>当前院校目录仅含 MVP 子集，完整目录待后续扩充。</p></section>"
+        except Exception as e:
+            result_html = f"<section class='state-error' role='alert'><h2 class='state-error__title'>查询失败</h2><p class='state-error__hint'>{escape(str(e))}</p></section>"
+
+    body = f"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>院校库查询</title><link rel="stylesheet" href="/static/portal-ui.css" /><style>body{{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#f4f7fb;padding:32px 20px;color:#172033;margin:0}}.wrap{{max-width:980px;margin:0 auto;display:grid;gap:18px}}.panel{{background:#fff;border:1px solid #dbe3f0;border-radius:20px;padding:24px;box-shadow:0 18px 42px rgba(20,34,53,.08)}}.btn{{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border-radius:12px;text-decoration:none;font-weight:700;background:#1f6feb;color:#fff;border:none;cursor:pointer}}.meta{{color:#5b6b88;line-height:1.8}}</style></head><body>{nav_html}{_render_global_nav()}<main class="wrap" role="main"><section class="panel"><div style="margin-bottom:8px;"><a class="btn btn-secondary" style="font-size:13px;min-height:32px;padding:6px 12px;background:#edf3ff;color:#194fb6;" href="/data-query">返回数据查询</a></div><h1>院校库查询</h1><p class="meta">搜索院校，查看院校代码、招生专业和所属省份。</p><form method="get" action="/schools-query" style="margin-top:12px;"><input name="q" value="{escape(query)}" placeholder="例如：北京大学、湖南" style="padding:10px;border-radius:10px;border:1px solid #d7e3f1;font-size:14px;min-width:240px;" /><button class="btn" type="submit" style="margin-left:8px;">搜索</button></form></section>{result_html}</main>{_render_global_toast_script()}</body></html>"""
     return HTMLResponse(body)
 
 
@@ -3555,6 +3661,7 @@ def _render_status_page(token: str, context: dict[str, Any]) -> str:
           <div class="hero-actions">
             <a class="hero-btn hero-btn-primary" href="/review/start?source=status&amp;token={escape(token)}">查看当前进度 / 先复核当前方案</a>
             <a class="hero-btn hero-btn-secondary" href="/portal/{escape(token)}/info">继续补充资料</a>
+            <a class="hero-btn hero-btn-secondary" href="/">返回首页</a>
           </div>
           <div class="hero-meta">
             <div class="hero-meta-item"><strong>订单号</strong><span>{escape(order.id)}</span></div>
