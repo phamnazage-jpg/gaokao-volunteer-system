@@ -2929,9 +2929,11 @@ def _render_simulated_payment_html(
 ) -> str:
     return f"""<!doctype html>
 <html lang=\"zh-CN\">
-  <head><meta charset=\"utf-8\" /><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" /><title>{escape(title)}</title></head>
-  <body style=\"font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f7fb;padding:24px;\">
-    <main style=\"max-width:640px;margin:0 auto;background:#fff;border:1px solid #dbe3f0;border-radius:18px;padding:24px;\">
+  <head><meta charset=\"utf-8\" /><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" /><title>{escape(title)}</title><link rel=\"stylesheet\" href=\"/static/portal-ui.css\" /></head>
+  <body style=\"font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f7fb;padding:24px;margin:0;\">
+    {_render_global_nav()}
+    <main style=\"max-width:640px;margin:24px auto;background:#fff;border:1px solid #dbe3f0;border-radius:18px;padding:24px;\">
+      <div style="margin-bottom:8px;"><a href="/" style="color:#194fb6;font-size:13px;text-decoration:none;">← 返回首页</a></div>
       <h1>{escape(title)}</h1>
       <p>订单支付单号：{escape(payment_id)}</p>
       <p>支付金额：¥{amount_cents / 100:.2f}</p>
