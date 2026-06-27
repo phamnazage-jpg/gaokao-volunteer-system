@@ -2174,7 +2174,7 @@ def _render_landing_page(request: Request, settings: Settings) -> str:
             <p style="margin-top:10px;color:#475569;font-size:13px;line-height:1.6;">后续资料页可以<strong style="color:#1f6feb;">上传已有方案文档</strong>，我们会先做免费复核，再决定是否进入付费完整规划。</p>
             <div class="consult-actions">
               <button class="btn btn-primary" type="submit">获取复核与推荐</button>
-              <a class="btn btn-secondary" style="min-height:48px;padding:0 22px;font-size:15px;" href="/pricing">直接做完整规划</a>
+              <a class="btn btn-secondary" style="min-height:48px;padding:0 22px;font-size:15px;background:#fff;color:#1f6feb;border:2px solid #1f6feb;" href="/pricing">直接做完整规划</a>
             </div>
           </form>
           <script>
@@ -2311,13 +2311,11 @@ def _render_landing_page(request: Request, settings: Settings) -> str:
             display: none;
           }}
           </style>
-          <div class="upload-hint" style="margin-top:16px; padding:16px; border-radius:14px; background:rgba(31,111,235,.06); border:1px solid rgba(31,111,235,.18); display:flex; gap:14px; align-items:flex-start;">
-            <div style="flex-shrink:0; width:40px; height:40px; border-radius:12px; background:#1f6feb; display:flex; align-items:center; justify-content:center; color:#fff; font-size:20px; font-weight:700;">📄</div>
-            <div>
-              <p style="margin:0 0 4px; color:#1f6feb; font-size:14px; font-weight:600; line-height:1.5;">已有方案文档？先上传再做免费复核</p>
-              <p style="margin:0 0 10px; color:#5b6b88; font-size:13px; line-height:1.5;">支持 Word / PDF / 截图格式。上传后我们会先做免费复核，再决定是否进入付费完整规划。</p>
-              <a class="btn btn-secondary" style="font-size:13px;min-height:36px;padding:6px 14px;" href="/pricing">上传方案文档并进入完整规划 →</a>
-            </div>
+          <div class="upload-hint" style="margin-top:16px; padding:20px; border-radius:14px; background:rgba(31,111,235,.06); border:2px dashed rgba(31,111,235,.35); text-align:center;">
+            <div style="font-size:36px; margin-bottom:8px;">📄</div>
+            <p style="margin:0 0 4px; color:#1f6feb; font-size:15px; font-weight:600; line-height:1.5;">已有方案文档？拖拽或点击上传</p>
+            <p style="margin:0 0 12px; color:#5b6b88; font-size:13px; line-height:1.5;">支持 Word / PDF / 截图格式，最大 10MB。上传后先做免费复核，再决定是否进入付费完整规划。</p>
+            <a class="btn btn-secondary" style="font-size:14px;min-height:40px;padding:8px 20px;background:#fff;color:#1f6feb;border:2px solid #1f6feb;" href="/pricing">上传方案文档并进入完整规划 →</a>
           </div>
           <p class="consult-privacy-tail">不会收到营销短信，提交后你也可以随时要求删除已填资料。</p>
         </div>
