@@ -891,8 +891,8 @@ def _render_basic_page(
     sections_html: str,
     footer_token: str | None = None,
 ) -> str:
-    nav = '<nav class="global-nav" aria-label="全局导航" role="navigation"><div class="global-nav-inner"><a class="global-nav-brand" href="/">高考志愿填报</a><div class="global-nav-links"><a class="global-nav-link" href="/">首页</a><a class="global-nav-link" href="/pricing">套餐</a><a class="global-nav-link" href="/my-orders">我的订单</a><a class="global-nav-link" href="/my-reports">我的报告</a><a class="global-nav-link" href="mailto:lon22@qq.com">客服</a></div></div></nav>'
-    back_link = f'<div style="margin-bottom:8px;"><a href="/" style="color:#194fb6;font-size:13px;text-decoration:none;">← 返回首页</a></div>'
+    nav = '<nav class="global-nav" aria-label="全局导航" role="navigation"><div class="global-nav-inner"><a class="global-nav-brand" href="/">高考志愿填报</a><div class="global-nav-links"><a class="global-nav-link" href="/">首页</a><a class="global-nav-link" href="/pricing">套餐</a><a class="global-nav-link" href="mailto:lon22@qq.com">客服</a></div></div></nav>'
+    back_link = '<div style="margin-bottom:8px;"><a href="/" style="color:#194fb6;font-size:13px;text-decoration:none;">← 返回首页</a></div>'
     return (
         "<!doctype html><html lang='zh-CN'><head><meta charset='utf-8' />"
         "<meta name='viewport' content='width=device-width, initial-scale=1' />"
@@ -914,7 +914,7 @@ def _render_placeholder_shell(
     max_width: int,
     body_html: str,
 ) -> str:
-    return f"""<!doctype html><html lang=\"zh-CN\"><head><meta charset=\"utf-8\" /><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" /><title>{escape(title)}</title><link rel=\"stylesheet\" href=\"/static/portal-ui.css\" /><style>body{{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f3f7fb;margin:0;padding:32px 20px;color:#142235}}.wrap{{max-width:{max_width}px;margin:0 auto;display:grid;gap:16px}}.panel{{background:#fff;border:1px solid #d7e3f1;border-radius:20px;padding:24px;box-shadow:0 18px 42px rgba(20,34,53,.08)}}.meta{{color:#5b6b88;line-height:1.8}}.actions{{display:flex;gap:12px;flex-wrap:wrap;margin-top:12px}}.btn{{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border-radius:12px;text-decoration:none;font-weight:700}}.btn-primary{{background:#1f6feb;color:#fff}}.btn-secondary{{background:#edf3ff;color:#194fb6}}.empty-state{{padding:18px;border-radius:14px;background:#f8fbff;border:1px solid #d7e3f1;color:#5b6b88}}.error-state{{padding:18px;border-radius:14px;background:#fff5f5;border:1px solid #f5c2c7;color:#b42318}}</style></head><body><nav class="global-nav" aria-label="全局导航" role="navigation"><div class="global-nav-inner"><a class="global-nav-brand" href="/">高考志愿填报</a><div class="global-nav-links"><a class="global-nav-link" href="/">首页</a><a class="global-nav-link" href="/pricing">套餐</a><a class="global-nav-link" href="/my-orders">我的订单</a><a class="global-nav-link" href="/my-reports">我的报告</a><a class="global-nav-link" href="mailto:lon22@qq.com">客服</a></div></div></nav><main class="wrap">{body_html}</main></body></html>"""
+    return f"""<!doctype html><html lang=\"zh-CN\"><head><meta charset=\"utf-8\" /><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" /><title>{escape(title)}</title><link rel=\"stylesheet\" href=\"/static/portal-ui.css\" /><style>body{{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f3f7fb;margin:0;padding:32px 20px;color:#142235}}.wrap{{max-width:{max_width}px;margin:0 auto;display:grid;gap:16px}}.panel{{background:#fff;border:1px solid #d7e3f1;border-radius:20px;padding:24px;box-shadow:0 18px 42px rgba(20,34,53,.08)}}.meta{{color:#5b6b88;line-height:1.8}}.actions{{display:flex;gap:12px;flex-wrap:wrap;margin-top:12px}}.btn{{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border-radius:12px;text-decoration:none;font-weight:700}}.btn-primary{{background:#1f6feb;color:#fff}}.btn-secondary{{background:#edf3ff;color:#194fb6}}.empty-state{{padding:18px;border-radius:14px;background:#f8fbff;border:1px solid #d7e3f1;color:#5b6b88}}.error-state{{padding:18px;border-radius:14px;background:#fff5f5;border:1px solid #f5c2c7;color:#b42318}}</style></head><body><nav class="global-nav" aria-label="全局导航" role="navigation"><div class="global-nav-inner"><a class="global-nav-brand" href="/">高考志愿填报</a><div class="global-nav-links"><a class="global-nav-link" href="/">首页</a><a class="global-nav-link" href="/pricing">套餐</a><a class="global-nav-link" href="mailto:lon22@qq.com">客服</a></div></div></nav><main class="wrap">{body_html}</main></body></html>"""
 
 
 def _find_legal_doc_path(doc_filename: str) -> Path | None:
@@ -955,7 +955,7 @@ def _render_legal_doc_page(
         raw,
         extensions=["tables", "fenced_code", "sane_lists"],
     )
-    nav = '<nav class="global-nav" aria-label="全局导航" role="navigation"><div class="global-nav-inner"><a class="global-nav-brand" href="/">高考志愿填报</a><div class="global-nav-links"><a class="global-nav-link" href="/">首页</a><a class="global-nav-link" href="/pricing">套餐</a><a class="global-nav-link" href="/my-orders">我的订单</a><a class="global-nav-link" href="/my-reports">我的报告</a><a class="global-nav-link" href="mailto:lon22@qq.com">客服</a></div></div></nav>'
+    nav = '<nav class="global-nav" aria-label="全局导航" role="navigation"><div class="global-nav-inner"><a class="global-nav-brand" href="/">高考志愿填报</a><div class="global-nav-links"><a class="global-nav-link" href="/">首页</a><a class="global-nav-link" href="/pricing">套餐</a><a class="global-nav-link" href="mailto:lon22@qq.com">客服</a></div></div></nav>'
     back_link = '<div style="margin-bottom:8px;"><a href="/" style="color:#194fb6;font-size:13px;text-decoration:none;">← 返回首页</a></div>'
     return (
         "<!doctype html><html lang='zh-CN'><head><meta charset='utf-8' />"
@@ -1138,12 +1138,10 @@ def _profile_version_label_from_payload(payload: dict[str, Any]) -> str:
     latest = _latest_profile_version(payload)
     if latest is not None:
         return str(latest.get("profile_version_id") or "profile-step1-incomplete")
-    return _profile_version_label(
-        {
-            "intake_summary": payload,
-            "profile_minimum_complete": _is_profile_minimum_complete(payload),
-        }
-    )
+    return _profile_version_label({
+        "intake_summary": payload,
+        "profile_minimum_complete": _is_profile_minimum_complete(payload),
+    })
 
 
 def _report_version_profile_reference(
@@ -1178,15 +1176,13 @@ def _ensure_report_version_metadata(
         if str(item.get("report_version_id") or "") == report_version_id:
             updated["latest_report_version_id"] = report_version_id
             return updated
-    versions.append(
-        {
-            "report_version_id": report_version_id,
-            "profile_version_id": profile_version_id,
-            "review_result_version_id": review_result_version_id,
-            "artifact_refs": artifact_refs,
-            "created_at": utc_now_iso(),
-        }
-    )
+    versions.append({
+        "report_version_id": report_version_id,
+        "profile_version_id": profile_version_id,
+        "review_result_version_id": review_result_version_id,
+        "artifact_refs": artifact_refs,
+        "created_at": utc_now_iso(),
+    })
     updated["report_versions"] = versions
     updated["latest_report_version_id"] = report_version_id
     return updated
@@ -1435,101 +1431,139 @@ def deletion_policy_page() -> HTMLResponse:
 @router.get("/my-orders", include_in_schema=False)
 def my_orders_page(
     request: Request,
-    phone: str | None = None,
+    token: str | None = None,
+    phone: str
+    | None = None,  # 已废弃：C 方案下不再支持手机号直查，保留参数仅为兼容旧链接不报错
     settings: Settings = Depends(get_settings_dep),
 ) -> HTMLResponse:
-    """用户输入手机号查看自己的订单列表。"""
-    from data.orders.masking import mask_phone
+    """C 方案：必须持有有效 portal token 才能查看订单。
 
-    orders_html = ""
-    if phone and phone.strip():
+    旧逻辑（手机号直查 → 现签 portal token）已废弃，因为它构成越权：
+    任何知道家长手机号的人都能枚举他人订单和交付物入口。
+
+    现逻辑：
+    - 无 token → 显示说明页，引导用户通过下单时收到的 portal 链接进入
+    - 有 token → 验证 token → 只展示该 token 对应的那一个订单（不查全量）
+    - phone 参数保留仅为兼容旧链接，不再触发任何查询
+    """
+    from data.customer_portal.token import verify_portal_token, PortalTokenError
+
+    nav = '<nav class="global-nav" aria-label="全局导航" role="navigation"><div class="global-nav-inner"><a class="global-nav-brand" href="/">高考志愿填报</a><div class="global-nav-links"><a class="global-nav-link" href="/">首页</a><a class="global-nav-link" href="/pricing">套餐</a><a class="global-nav-link" href="mailto:lon22@qq.com">客服</a></div></div></nav>'
+
+    # 无 token：显示引导说明（不再显示手机号查询表单）
+    if not token:
+        body = f"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>我的订单</title><link rel="stylesheet" href="/static/portal-ui.css" /></head><body>{nav}<main class="wrap" style="max-width:680px;margin:0 auto;padding:32px 20px;display:grid;gap:16px;" role="main"><section class="panel"><div style="margin-bottom:8px;"><a class="btn btn-secondary" style="font-size:13px;min-height:32px;padding:6px 12px;background:#edf3ff;color:#194fb6;" href="/">返回首页</a></div><h1>我的订单</h1><section class="state-empty" role="status"><h2 class="state-empty__title">请通过订单链接进入</h2><p class="state-empty__hint">为保护你的订单隐私，我们不再支持凭手机号查询订单。请使用下单时收到的订单进度链接（短信/页面跳转中已包含），直接进入你的订单状态页。如果链接已丢失，请联系客服核实身份后重新获取。</p></section></section></main></body></html>"""
+        return HTMLResponse(body)
+
+    # 有 token：验证并只展示该 token 对应的订单
+    try:
+        payload = verify_portal_token(token, settings.portal_token_secret)
+        order_id = str(payload["order_id"])
+    except PortalTokenError:
+        body = f"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>我的订单</title><link rel="stylesheet" href="/static/portal-ui.css" /></head><body>{nav}<main class="wrap" style="max-width:680px;margin:0 auto;padding:32px 20px;display:grid;gap:16px;" role="main"><section class="panel"><div style="margin-bottom:8px;"><a class="btn btn-secondary" style="font-size:13px;min-height:32px;padding:6px 12px;background:#edf3ff;color:#194fb6;" href="/">返回首页</a></div><h1>我的订单</h1><section class="state-error" role="alert"><h2 class="state-error__title">链接无效或已过期</h2><p class="state-error__hint">你访问的订单链接无效。请使用下单时收到的最新链接，或联系客服。</p></section></section></main></body></html>"""
+        return HTMLResponse(body, status_code=401)
+
+    from data.orders.dao import OrdersDAO, OrderNotFound
+
+    try:
         with OrdersDAO.connect(settings.orders_db_path) as dao:
-            orders = dao.find_by_phone(phone.strip())
-        if orders:
-            rows = []
-            for order in orders:
-                masked_phone = mask_phone(order.customer_phone) or ""
-                portal_url = f"/portal/{issue_portal_token(order.id, settings.portal_token_secret)}/status"
-                rows.append(
-                    f"<tr><td>{escape(order.id)}</td>"
-                    f"<td>{escape(order.service_version)}</td>"
-                    f"<td>{escape(order.status)}</td>"
-                    f"<td>{escape(masked_phone)}</td>"
-                    f"<td>{escape(str(order.created_at or '')[:16])}</td>"
-                    f'<td><a href="{portal_url}">查看详情</a></td></tr>'
-                )
-            orders_html = (
-                "<section class='panel'><h2>查询结果</h2>"
-                "<table style='width:100%;border-collapse:collapse;font-size:13px;'>"
-                "<thead><tr style='text-align:left;border-bottom:2px solid #d7e3f1;'>"
-                "<th style='padding:8px;'>订单号</th>"
-                "<th style='padding:8px;'>套餐</th>"
-                "<th style='padding:8px;'>状态</th>"
-                "<th style='padding:8px;'>手机号</th>"
-                "<th style='padding:8px;'>创建时间</th>"
-                "<th style='padding:8px;'>操作</th>"
-                "</tr></thead><tbody>" + "".join(rows) + "</tbody></table></section>"
-            )
-        else:
-            orders_html = (
-                "<section class='panel empty-state'>"
-                "<h2>查询结果</h2>"
-                "<p>暂无与此手机号关联的订单。请确认手机号是否正确，或联系客服获取帮助。</p>"
-                "</section>"
-            )
-    phone_value = escape(phone or "")
-    body = f"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>我的订单</title><link rel="stylesheet" href="/static/portal-ui.css" /><style>body{{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f4f7fb;padding:32px 20px;color:#172033;margin:0}}.wrap{{max-width:980px;margin:0 auto;display:grid;gap:18px}}.panel{{background:#fff;border:1px solid #dbe3f0;border-radius:20px;padding:24px;box-shadow:0 18px 42px rgba(20,34,53,.08)}}.field{{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}}.field input{{padding:11px 12px;border-radius:12px;border:1px solid #d7e3f1;font-size:14px;min-width:200px}}.btn{{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border-radius:12px;text-decoration:none;font-weight:700;background:#1f6feb;color:#fff;border:none;cursor:pointer}}.meta{{color:#5b6b88;line-height:1.8}}.empty-state{{padding:18px;border-radius:14px;background:#f8fbff;border:1px solid #d7e3f1;color:#5b6b88}}table{{width:100%;border-collapse:collapse;font-size:13px}}th,td{{padding:8px;text-align:left;border-bottom:1px solid #eef2f7}}th{{font-weight:600;color:#172033}}a{{color:#1f6feb;text-decoration:none}}@media(max-width:768px){{.field{{flex-direction:column;align-items:stretch}}.field input{{min-width:100%}}table{{font-size:12px}}th,td{{padding:6px}}}}</style></head><body><nav class="global-nav" aria-label="全局导航" role="navigation"><div class="global-nav-inner"><a class="global-nav-brand" href="/">高考志愿填报</a><div class="global-nav-links"><a class="global-nav-link" href="/">首页</a><a class="global-nav-link" href="/pricing">套餐</a><a class="global-nav-link" href="/my-orders">我的订单</a><a class="global-nav-link" href="/my-reports">我的报告</a><a class="global-nav-link" href="mailto:lon22@qq.com">客服</a></div></div></nav><main class="wrap" role="main"><section class="panel"><div style="margin-bottom:8px;"><a class="btn" style="font-size:13px;min-height:32px;padding:6px 12px;background:#edf3ff;color:#194fb6;" href="/">返回首页</a></div><h1>我的订单</h1><p class="meta">输入下单时使用的手机号，查看你的所有订单和交付状态。</p><form method="get" action="/my-orders" class="field"><div><label style="font-size:13px;font-weight:600;display:block;margin-bottom:4px;">手机号</label><input type="tel" name="phone" value="{phone_value}" placeholder="例如：13800138000" /></div><button class="btn" type="submit">查询</button></form></section>{orders_html}{_render_footer_links()}</main></body></html>"""
+            order = dao.get(order_id)
+    except OrderNotFound:
+        body = f"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>我的订单</title><link rel="stylesheet" href="/static/portal-ui.css" /></head><body>{nav}<main class="wrap" style="max-width:680px;margin:0 auto;padding:32px 20px;display:grid;gap:16px;" role="main"><section class="panel"><div style="margin-bottom:8px;"><a class="btn btn-secondary" style="font-size:13px;min-height:32px;padding:6px 12px;background:#edf3ff;color:#194fb6;" href="/">返回首页</a></div><h1>我的订单</h1><section class="state-empty" role="status"><h2 class="state-empty__title">订单不存在</h2><p class="state-empty__hint">该订单可能已被删除。如有疑问请联系客服。</p></section></section></main></body></html>"""
+        return HTMLResponse(body, status_code=404)
+
+    # 只展示这一个订单，不查全量，不签发新 token（复用当前 token）
+    status_url = f"/portal/{token}/status"
+    orders_html = (
+        f"<section class='panel'><h2>当前订单</h2>"
+        f"<table style='width:100%;border-collapse:collapse;font-size:13px;'>"
+        f"<thead><tr style='text-align:left;border-bottom:2px solid #d7e3f1;'>"
+        f"<th style='padding:8px;'>订单号</th>"
+        f"<th style='padding:8px;'>套餐</th>"
+        f"<th style='padding:8px;'>状态</th>"
+        f"<th style='padding:8px;'>创建时间</th>"
+        f"<th style='padding:8px;'>操作</th>"
+        f"</tr></thead><tbody>"
+        f"<tr><td style='padding:8px;'>{escape(order.id)}</td>"
+        f"<td style='padding:8px;'>{escape(order.service_version)}</td>"
+        f"<td style='padding:8px;'>{escape(order.status)}</td>"
+        f"<td style='padding:8px;'>{escape(str(order.created_at or '')[:16])}</td>"
+        f"<td style='padding:8px;'><a href=\"{status_url}\">查看详情</a></td></tr>"
+        f"</tbody></table>"
+        f"<p class='meta' style='margin-top:10px;font-size:12px;'>仅显示当前链接对应的订单。如需查看其他订单，请使用对应订单的进度链接。</p>"
+        f"</section>"
+    )
+
+    body = f"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>我的订单</title><link rel="stylesheet" href="/static/portal-ui.css" /><style>body{{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f4f7fb;padding:32px 20px;color:#172033;margin:0}}.wrap{{max-width:980px;margin:0 auto;display:grid;gap:18px}}.panel{{background:#fff;border:1px solid #dbe3f0;border-radius:20px;padding:24px;box-shadow:0 18px 42px rgba(20,34,53,.08)}}.btn{{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border-radius:12px;text-decoration:none;font-weight:700;background:#1f6feb;color:#fff;border:none;cursor:pointer}}.meta{{color:#5b6b88;line-height:1.8}}table{{width:100%;border-collapse:collapse;font-size:13px}}th,td{{padding:8px;text-align:left;border-bottom:1px solid #eef2f7}}th{{font-weight:600;color:#172033}}a{{color:#1f6feb;text-decoration:none}}</style></head><body>{nav}<main class="wrap" role="main"><section class="panel"><div style="margin-bottom:8px;"><a class="btn btn-secondary" style="font-size:13px;min-height:32px;padding:6px 12px;background:#edf3ff;color:#194fb6;" href="/">返回首页</a></div><h1>我的订单</h1></section>{orders_html}</main></body></html>"""
     return HTMLResponse(body)
 
 
 @router.get("/my-reports", include_in_schema=False)
 def my_reports_page(
     request: Request,
-    phone: str | None = None,
+    token: str | None = None,
+    phone: str | None = None,  # 已废弃：C 方案下不再支持手机号直查
     settings: Settings = Depends(get_settings_dep),
 ) -> HTMLResponse:
-    """用户输入手机号查看有报告交付的订单。"""
-    reports_html = ""
-    if phone and phone.strip():
+    """C 方案：必须持有有效 portal token 才能查看报告。
+
+    旧逻辑（手机号直查）已废弃，原因同 my_orders_page。
+    - 无 token → 显示说明页
+    - 有 token → 验证 → 只展示该 token 对应订单的报告（如有交付）
+    """
+    from data.customer_portal.token import verify_portal_token, PortalTokenError
+
+    nav = '<nav class="global-nav" aria-label="全局导航" role="navigation"><div class="global-nav-inner"><a class="global-nav-brand" href="/">高考志愿填报</a><div class="global-nav-links"><a class="global-nav-link" href="/">首页</a><a class="global-nav-link" href="/pricing">套餐</a><a class="global-nav-link" href="mailto:lon22@qq.com">客服</a></div></div></nav>'
+
+    if not token:
+        body = f"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>我的报告</title><link rel="stylesheet" href="/static/portal-ui.css" /></head><body>{nav}<main class="wrap" style="max-width:680px;margin:0 auto;padding:32px 20px;display:grid;gap:16px;" role="main"><section class="panel"><div style="margin-bottom:8px;"><a class="btn btn-secondary" style="font-size:13px;min-height:32px;padding:6px 12px;background:#edf3ff;color:#194fb6;" href="/">返回首页</a></div><h1>我的报告</h1><section class="state-empty" role="status"><h2 class="state-empty__title">请通过订单链接进入</h2><p class="state-empty__hint">为保护你的报告隐私，我们不再支持凭手机号查询报告。请使用下单时收到的订单进度链接进入，在订单状态页查看已交付的报告。如果链接已丢失，请联系客服核实身份后重新获取。</p></section></section></main></body></html>"""
+        return HTMLResponse(body)
+
+    try:
+        payload = verify_portal_token(token, settings.portal_token_secret)
+        order_id = str(payload["order_id"])
+    except PortalTokenError:
+        body = f"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>我的报告</title><link rel="stylesheet" href="/static/portal-ui.css" /></head><body>{nav}<main class="wrap" style="max-width:680px;margin:0 auto;padding:32px 20px;display:grid;gap:16px;" role="main"><section class="panel"><div style="margin-bottom:8px;"><a class="btn btn-secondary" style="font-size:13px;min-height:32px;padding:6px 12px;background:#edf3ff;color:#194fb6;" href="/">返回首页</a></div><h1>我的报告</h1><section class="state-error" role="alert"><h2 class="state-error__title">链接无效或已过期</h2><p class="state-error__hint">你访问的订单链接无效。请使用下单时收到的最新链接，或联系客服。</p></section></section></main></body></html>"""
+        return HTMLResponse(body, status_code=401)
+
+    from data.orders.dao import OrdersDAO, OrderNotFound
+
+    try:
         with OrdersDAO.connect(settings.orders_db_path) as dao:
-            orders = dao.find_by_phone(phone.strip())
-        delivered = [
-            o
-            for o in orders
-            if o.status in ("delivered", "completed") and o.audit_report
-        ]
-        if delivered:
-            rows = []
-            for order in delivered:
-                token = issue_portal_token(order.id, settings.portal_token_secret)
-                report_url = f"/portal/{token}/report"
-                rows.append(
-                    f"<tr><td>{escape(order.id)}</td>"
-                    f"<td>{escape(order.service_version)}</td>"
-                    f"<td>已交付</td>"
-                    f"<td>{escape(str(order.created_at or '')[:16])}</td>"
-                    f'<td><a href="{report_url}">查看报告</a></td></tr>'
-                )
-            reports_html = (
-                "<section class='panel'><h2>可查看的报告</h2>"
-                "<table style='width:100%;border-collapse:collapse;font-size:13px;'>"
-                "<thead><tr style='text-align:left;border-bottom:2px solid #d7e3f1;'>"
-                "<th style='padding:8px;'>订单号</th>"
-                "<th style='padding:8px;'>套餐</th>"
-                "<th style='padding:8px;'>状态</th>"
-                "<th style='padding:8px;'>创建时间</th>"
-                "<th style='padding:8px;'>操作</th>"
-                "</tr></thead><tbody>" + "".join(rows) + "</tbody></table></section>"
-            )
-        else:
-            reports_html = (
-                "<section class='panel empty-state'>"
-                "<h2>查询结果</h2>"
-                "<p>暂无可查看的报告。报告在订单完成交付后才会显示在这里。如果已完成交付但仍未看到，请联系客服。</p>"
-                "</section>"
-            )
-    phone_value = escape(phone or "")
-    body = f"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>我的报告</title><link rel="stylesheet" href="/static/portal-ui.css" /><style>body{{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f4f7fb;padding:32px 20px;color:#172033;margin:0}}.wrap{{max-width:980px;margin:0 auto;display:grid;gap:18px}}.panel{{background:#fff;border:1px solid #dbe3f0;border-radius:20px;padding:24px;box-shadow:0 18px 42px rgba(20,34,53,.08)}}.field{{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}}.field input{{padding:11px 12px;border-radius:12px;border:1px solid #d7e3f1;font-size:14px;min-width:200px}}.btn{{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border-radius:12px;text-decoration:none;font-weight:700;background:#1f6feb;color:#fff;border:none;cursor:pointer}}.meta{{color:#5b6b88;line-height:1.8}}.empty-state{{padding:18px;border-radius:14px;background:#f8fbff;border:1px solid #d7e3f1;color:#5b6b88}}table{{width:100%;border-collapse:collapse;font-size:13px}}th,td{{padding:8px;text-align:left;border-bottom:1px solid #eef2f7}}th{{font-weight:600;color:#172033}}a{{color:#1f6feb;text-decoration:none}}@media(max-width:768px){{.field{{flex-direction:column;align-items:stretch}}.field input{{min-width:100%}}table{{font-size:12px}}th,td{{padding:6px}}}}</style></head><body><nav class="global-nav" aria-label="全局导航" role="navigation"><div class="global-nav-inner"><a class="global-nav-brand" href="/">高考志愿填报</a><div class="global-nav-links"><a class="global-nav-link" href="/">首页</a><a class="global-nav-link" href="/pricing">套餐</a><a class="global-nav-link" href="/my-orders">我的订单</a><a class="global-nav-link" href="/my-reports">我的报告</a><a class="global-nav-link" href="mailto:lon22@qq.com">客服</a></div></div></nav><main class="wrap" role="main"><section class="panel"><div style="margin-bottom:8px;"><a class="btn" style="font-size:13px;min-height:32px;padding:6px 12px;background:#edf3ff;color:#194fb6;" href="/">返回首页</a></div><h1>我的报告</h1><p class="meta">输入下单时使用的手机号，查看已交付的志愿方案报告。</p><form method="get" action="/my-reports" class="field"><div><label style="font-size:13px;font-weight:600;display:block;margin-bottom:4px;">手机号</label><input type="tel" name="phone" value="{phone_value}" placeholder="例如：13800138000" /></div><button class="btn" type="submit">查询</button></form></section>{reports_html}{_render_footer_links()}</main></body></html>"""
+            order = dao.get(order_id)
+    except OrderNotFound:
+        body = f"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>我的报告</title><link rel="stylesheet" href="/static/portal-ui.css" /></head><body>{nav}<main class="wrap" style="max-width:680px;margin:0 auto;padding:32px 20px;display:grid;gap:16px;" role="main"><section class="panel"><div style="margin-bottom:8px;"><a class="btn btn-secondary" style="font-size:13px;min-height:32px;padding:6px 12px;background:#edf3ff;color:#194fb6;" href="/">返回首页</a></div><h1>我的报告</h1><section class="state-empty" role="status"><h2 class="state-empty__title">订单不存在</h2><p class="state-empty__hint">该订单可能已被删除。如有疑问请联系客服。</p></section></section></main></body></html>"""
+        return HTMLResponse(body, status_code=404)
+
+    # 只展示该订单的报告（如果已交付）
+    if order.status in ("delivered", "completed") and order.audit_report:
+        report_url = f"/portal/{token}/report"
+        reports_html = (
+            f"<section class='panel'><h2>当前订单的报告</h2>"
+            f"<table style='width:100%;border-collapse:collapse;font-size:13px;'>"
+            f"<thead><tr style='text-align:left;border-bottom:2px solid #d7e3f1;'>"
+            f"<th style='padding:8px;'>订单号</th>"
+            f"<th style='padding:8px;'>套餐</th>"
+            f"<th style='padding:8px;'>状态</th>"
+            f"<th style='padding:8px;'>创建时间</th>"
+            f"<th style='padding:8px;'>操作</th>"
+            f"</tr></thead><tbody>"
+            f"<tr><td style='padding:8px;'>{escape(order.id)}</td>"
+            f"<td style='padding:8px;'>{escape(order.service_version)}</td>"
+            f"<td style='padding:8px;'>已交付</td>"
+            f"<td style='padding:8px;'>{escape(str(order.created_at or '')[:16])}</td>"
+            f"<td style='padding:8px;'><a href=\"{report_url}\">查看报告</a></td></tr>"
+            f"</tbody></table></section>"
+        )
+    else:
+        reports_html = (
+            "<section class='state-empty' role='status'>"
+            "<h2 class='state-empty__title'>当前订单暂无可查看的报告</h2>"
+            "<p class='state-empty__hint'>报告在订单完成交付后才会显示。请关注订单状态页的进度更新。</p>"
+            "</section>"
+        )
+
+    body = f"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>我的报告</title><link rel="stylesheet" href="/static/portal-ui.css" /><style>body{{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f4f7fb;padding:32px 20px;color:#172033;margin:0}}.wrap{{max-width:980px;margin:0 auto;display:grid;gap:18px}}.panel{{background:#fff;border:1px solid #dbe3f0;border-radius:20px;padding:24px;box-shadow:0 18px 42px rgba(20,34,53,.08)}}.btn{{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border-radius:12px;text-decoration:none;font-weight:700;background:#1f6feb;color:#fff;border:none;cursor:pointer}}table{{width:100%;border-collapse:collapse;font-size:13px}}th,td{{padding:8px;text-align:left;border-bottom:1px solid #eef2f7}}th{{font-weight:600;color:#172033}}a{{color:#1f6feb;text-decoration:none}}</style></head><body>{nav}<main class="wrap" role="main"><section class="panel"><div style="margin-bottom:8px;"><a class="btn btn-secondary" style="font-size:13px;min-height:32px;padding:6px 12px;background:#edf3ff;color:#194fb6;" href="/">返回首页</a></div><h1>我的报告</h1></section>{reports_html}</main></body></html>"""
     return HTMLResponse(body)
 
 
@@ -1538,7 +1572,7 @@ def data_query_page(
     request: Request,
     settings: Settings = Depends(get_settings_dep),
 ) -> HTMLResponse:
-    """数据查询入口页。"""
+    """数据查询入口页：分数线 / 位次 / 政策 / 同分段。"""
     body = (
         '<!doctype html><html lang="zh-CN"><head><meta charset="utf-8" />'
         '<meta name="viewport" content="width=device-width, initial-scale=1" />'
@@ -1556,13 +1590,15 @@ def data_query_page(
         "a{color:#1f6feb;text-decoration:none}"
         "@media(max-width:768px){.query-grid{grid-template-columns:1fr}}"
         "</style></head><body>"
-        + '<nav class="global-nav" aria-label="全局导航" role="navigation"><div class="global-nav-inner"><a class="global-nav-brand" href="/">高考志愿填报</a><div class="global-nav-links"><a class="global-nav-link" href="/">首页</a><a class="global-nav-link" href="/pricing">套餐</a><a class="global-nav-link" href="/my-orders">我的订单</a><a class="global-nav-link" href="/my-reports">我的报告</a><a class="global-nav-link" href="mailto:lon22@qq.com">客服</a></div></div></nav>'
+        + '<nav class="global-nav" aria-label="全局导航" role="navigation"><div class="global-nav-inner"><a class="global-nav-brand" href="/">高考志愿填报</a><div class="global-nav-links"><a class="global-nav-link" href="/">首页</a><a class="global-nav-link" href="/pricing">套餐</a><a class="global-nav-link" href="/data-query">数据查询</a><a class="global-nav-link" href="mailto:lon22@qq.com">客服</a></div></div></nav>'
         + '<main class="wrap" role="main"><section class="panel">'
         + '<div style="margin-bottom:8px;"><a class="btn" style="font-size:13px;min-height:32px;padding:6px 12px;background:#edf3ff;color:#194fb6;" href="/">返回首页</a></div>'
         + '<h1>数据查询</h1><p class="meta">查询高考相关的基础数据，辅助你做志愿填报决策。</p>'
         + '<div class="query-grid">'
-        + '<div class="query-card"><h3>政策中心</h3><p>查看各省高考政策摘要、批次规则、选科要求和常见误区。</p><a class="btn" style="font-size:13px;min-height:36px;" href="/policy-center?province=广东">进入政策中心</a></div>'
+        + '<div class="query-card"><h3>分数线查询</h3><p>查询全国各省本科线、特殊类型控制线等官方录取分数线。</p><a class="btn" style="font-size:13px;min-height:36px;" href="/score-line-query">进入分数线查询</a></div>'
         + '<div class="query-card"><h3>同分段参考</h3><p>查看某个分数段在各省份的热门学校、专业和城市分布。</p><a class="btn" style="font-size:13px;min-height:36px;" href="/same-score-reference?province=广东&score=578">进入同分段参考</a></div>'
+        + '<div class="query-card"><h3>政策中心</h3><p>查看各省高考政策摘要、批次规则、选科要求和常见误区。</p><a class="btn" style="font-size:13px;min-height:36px;" href="/policy-center?province=广东">进入政策中心</a></div>'
+        + '<div class="query-card"><h3>位次估算</h3><p>输入分数，基于一分一段数据估算全省位次（支持省份取决于数据覆盖）。</p><a class="btn" style="font-size:13px;min-height:36px;" href="/rank-estimator">进入位次估算</a></div>'
         + "</div></section>"
         + _render_footer_links()
         + "</main></body></html>"
@@ -1570,66 +1606,160 @@ def data_query_page(
     return HTMLResponse(body)
 
 
+@router.get("/score-line-query", include_in_schema=False)
+def score_line_query_page(
+    request: Request,
+    province: str | None = None,
+    settings: Settings = Depends(get_settings_dep),
+) -> HTMLResponse:
+    """分数线查询页：从 crowd_db 的 score_distribution 读各省本科线。"""
+    from data.crowd_db.loader import CrowdDBLoader
+
+    loader = CrowdDBLoader(warn_low_confidence=False)
+    nav = '<nav class="global-nav" aria-label="全局导航" role="navigation"><div class="global-nav-inner"><a class="global-nav-brand" href="/">高考志愿填报</a><div class="global-nav-links"><a class="global-nav-link" href="/">首页</a><a class="global-nav-link" href="/pricing">套餐</a><a class="global-nav-link" href="/data-query">数据查询</a><a class="global-nav-link" href="mailto:lon22@qq.com">客服</a></div></div></nav>'
+
+    # 查询逻辑
+    result_html = ""
+    query_province = (province or "").strip()
+    if query_province:
+        try:
+            data = loader.load_province(query_province)
+            if data and data.get("score_distribution"):
+                sd = data["score_distribution"]
+                subjects = sd.get("subjects", {})
+                rows = []
+                for subject_name, subj_data in subjects.items():
+                    bsl = subj_data.get("bachelor_score_line", 0)
+                    rows.append(
+                        f"<tr><td style='padding:8px;'>{escape(subject_name)}</td>"
+                        f"<td style='padding:8px;'><strong>{bsl}</strong></td>"
+                        f"<td style='padding:8px;'>{escape(str(sd.get('data_year', '')))}</td>"
+                        f'<td style=\'padding:8px;\'><a href="{escape(str(sd.get("source_url", "")))}" target="_blank">查看来源</a></td></tr>'
+                    )
+                if rows:
+                    result_html = (
+                        f"<section class='panel'><h2>{escape(query_province)} 本科分数线</h2>"
+                        f"<table style='width:100%;border-collapse:collapse;font-size:13px;'>"
+                        f"<thead><tr style='text-align:left;border-bottom:2px solid #d7e3f1;'>"
+                        f"<th style='padding:8px;'>科类</th><th style='padding:8px;'>本科线</th>"
+                        f"<th style='padding:8px;'>数据年份</th><th style='padding:8px;'>来源</th>"
+                        f"</tr></thead><tbody>{''.join(rows)}</tbody></table></section>"
+                    )
+                else:
+                    result_html = "<section class='state-empty' role='status'><h2 class='state-empty__title'>该省份暂无分数线数据</h2><p class='state-empty__hint'>当前 crowd_db 尚未接入该省份的分数线数据。</p></section>"
+            else:
+                result_html = "<section class='state-empty' role='status'><h2 class='state-empty__title'>该省份暂无分数线数据</h2><p class='state-empty__hint'>当前 crowd_db 尚未接入该省份的分数线数据。</p></section>"
+        except Exception:
+            result_html = "<section class='state-error' role='alert'><h2 class='state-error__title'>查询失败</h2><p class='state-error__hint'>数据加载出错，请稍后重试。</p></section>"
+
+    # 省份选项
+    all_provinces = loader.list_supported_provinces()
+    province_options = "".join(
+        f'<option value="{p}" {"selected" if p == query_province else ""}>{p}</option>'
+        for p in all_provinces
+    )
+
+    body = f"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>分数线查询</title><link rel="stylesheet" href="/static/portal-ui.css" /><style>body{{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#f4f7fb;padding:32px 20px;color:#172033;margin:0}}.wrap{{max-width:980px;margin:0 auto;display:grid;gap:18px}}.panel{{background:#fff;border:1px solid #dbe3f0;border-radius:20px;padding:24px;box-shadow:0 18px 42px rgba(20,34,53,.08)}}.btn{{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border-radius:12px;text-decoration:none;font-weight:700;background:#1f6feb;color:#fff;border:none;cursor:pointer}}.meta{{color:#5b6b88;line-height:1.8}}table{{width:100%;border-collapse:collapse;font-size:13px}}th,td{{padding:8px;text-align:left;border-bottom:1px solid #eef2f7}}th{{font-weight:600}}a{{color:#1f6feb;text-decoration:none}}</style></head><body>{nav}<main class="wrap" role="main"><section class="panel"><div style="margin-bottom:8px;"><a class="btn btn-secondary" style="font-size:13px;min-height:32px;padding:6px 12px;background:#edf3ff;color:#194fb6;" href="/data-query">返回数据查询</a></div><h1>分数线查询</h1><p class="meta">选择省份，查看官方公布的本科录取分数线。</p><form method="get" action="/score-line-query" style="margin-top:12px;"><select name="province" style="padding:10px;border-radius:10px;border:1px solid #d7e3f1;font-size:14px;"><option value="">请选择省份</option>{province_options}</select><button class="btn" type="submit" style="margin-left:8px;">查询</button></form></section>{result_html}</main></body></html>"""
+    return HTMLResponse(body)
+
+
+@router.get("/rank-estimator", include_in_schema=False)
+def rank_estimator_page(
+    request: Request,
+    province: str | None = None,
+    score: int | None = None,
+    settings: Settings = Depends(get_settings_dep),
+) -> HTMLResponse:
+    """位次估算页：基于 crowd_db 的 score_distribution.benchmarks 估算位次。"""
+    from data.crowd_db.loader import CrowdDBLoader
+
+    loader = CrowdDBLoader(warn_low_confidence=False)
+    nav = '<nav class="global-nav" aria-label="全局导航" role="navigation"><div class="global-nav-inner"><a class="global-nav-brand" href="/">高考志愿填报</a><div class="global-nav-links"><a class="global-nav-link" href="/">首页</a><a class="global-nav-link" href="/pricing">套餐</a><a class="global-nav-link" href="/data-query">数据查询</a><a class="global-nav-link" href="mailto:lon22@qq.com">客服</a></div></div></nav>'
+
+    result_html = ""
+    query_province = (province or "").strip()
+    query_score = score or 0
+
+    if query_province and query_score:
+        try:
+            data = loader.load_province(query_province)
+            if data and data.get("score_distribution"):
+                sd = data["score_distribution"]
+                subjects = sd.get("subjects", {})
+                estimates = []
+                for subject_name, subj_data in subjects.items():
+                    benchmarks = subj_data.get("benchmarks", [])
+                    # 线性插值估算位次
+                    estimated_rank = None
+                    if benchmarks:
+                        sorted_bms = sorted(
+                            benchmarks, key=lambda b: b.get("score", 0), reverse=True
+                        )
+                        for i, bm in enumerate(sorted_bms):
+                            if query_score >= bm["score"]:
+                                estimated_rank = bm["cumulative_count"]
+                                break
+                        if estimated_rank is None:
+                            estimated_rank = sorted_bms[-1].get("cumulative_count", 0)
+                    if estimated_rank is not None:
+                        estimates.append(
+                            f"<li>{escape(subject_name)}：估算累计位次约 <strong>{estimated_rank:,}</strong> 名（基于{escape(query_province)}一分一段数据插值）</li>"
+                        )
+                if estimates:
+                    result_html = f"<section class='panel'><h2>{escape(query_province)} 分数 {query_score} 位次估算</h2><ul style='line-height:2;'>{''.join(estimates)}</ul><p class='meta' style='font-size:12px;margin-top:8px;'>⚠ 这是基于公开一分一段锚点的估算值，非精确位次。最终位次以官方一分一段表为准。</p></section>"
+                else:
+                    result_html = "<section class='state-empty' role='status'><h2 class='state-empty__title'>该省份暂无位次锚点数据</h2><p class='state-empty__hint'>当前 crowd_db 尚未接入该省份的一分一段表。</p></section>"
+            else:
+                result_html = "<section class='state-empty' role='status'><h2 class='state-empty__title'>该省份暂无位次数据</h2></section>"
+        except Exception:
+            result_html = "<section class='state-error' role='alert'><h2 class='state-error__title'>查询失败</h2></section>"
+
+    all_provinces = loader.list_supported_provinces()
+    province_options = "".join(
+        f'<option value="{p}" {"selected" if p == query_province else ""}>{p}</option>'
+        for p in all_provinces
+    )
+
+    body = f"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>位次估算</title><link rel="stylesheet" href="/static/portal-ui.css" /><style>body{{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#f4f7fb;padding:32px 20px;color:#172033;margin:0}}.wrap{{max-width:980px;margin:0 auto;display:grid;gap:18px}}.panel{{background:#fff;border:1px solid #dbe3f0;border-radius:20px;padding:24px;box-shadow:0 18px 42px rgba(20,34,53,.08)}}.btn{{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border-radius:12px;text-decoration:none;font-weight:700;background:#1f6feb;color:#fff;border:none;cursor:pointer}}.meta{{color:#5b6b88;line-height:1.8}}</style></head><body>{nav}<main class="wrap" role="main"><section class="panel"><div style="margin-bottom:8px;"><a class="btn btn-secondary" style="font-size:13px;min-height:32px;padding:6px 12px;background:#edf3ff;color:#194fb6;" href="/data-query">返回数据查询</a></div><h1>位次估算</h1><p class="meta">选择省份并输入分数，基于公开一分一段数据估算你的全省位次。</p><form method="get" action="/rank-estimator" style="margin-top:12px;"><select name="province" style="padding:10px;border-radius:10px;border:1px solid #d7e3f1;font-size:14px;"><option value="">请选择省份</option>{province_options}</select><input name="score" type="number" value="{query_score}" placeholder="例如：578" style="padding:10px;border-radius:10px;border:1px solid #d7e3f1;font-size:14px;margin-left:8px;width:120px;" /><button class="btn" type="submit" style="margin-left:8px;">估算</button></form></section>{result_html}</main></body></html>"""
+    return HTMLResponse(body)
+
+
 @router.get("/compare-reports", include_in_schema=False)
 def compare_reports_page(
     request: Request,
-    phone: str | None = None,
+    token: str | None = None,
+    phone: str | None = None,  # 已废弃：C 方案下不再支持手机号直查
     settings: Settings = Depends(get_settings_dep),
 ) -> HTMLResponse:
-    """报告对比入口页。"""
-    from data.orders.masking import mask_phone
+    """C 方案：报告对比也必须持有有效 portal token。
 
-    compare_html = ""
-    if phone and phone.strip():
-        with OrdersDAO.connect(settings.orders_db_path) as dao:
-            orders = dao.find_by_phone(phone.strip())
-        delivered = [
-            o
-            for o in orders
-            if o.status in ("delivered", "completed") and o.audit_report
-        ]
-        if len(delivered) >= 2:
-            checkboxes = "".join(
-                f'<div style="padding:10px;border-radius:10px;background:#f8fbff;border:1px solid #d7e3f1;margin-bottom:8px;"><input type="checkbox" name="order_ids" value="{escape(o.id)}" /> {escape(o.id)} - {escape(o.service_version)}</div>'
-                for o in delivered
-            )
-            compare_html = f'<section class="panel"><h2>选择要对比的报告</h2><p class="meta">勾选2份或多份报告进行对比。</p>{checkboxes}<button class="btn" type="submit" style="margin-top:8px;">开始对比</button></section>'
-        elif len(delivered) == 1:
-            compare_html = '<section class="panel empty-state"><h2>查询结果</h2><p>目前只有1份已交付报告，至少需要2份才能对比。</p></section>'
-        else:
-            compare_html = '<section class="panel empty-state"><h2>查询结果</h2><p>暂无可对比的报告。至少需要2份已交付报告才能使用对比功能。</p></section>'
-    phone_value = escape(phone or "")
-    body = (
-        '<!doctype html><html lang="zh-CN"><head><meta charset="utf-8" />'
-        '<meta name="viewport" content="width=device-width, initial-scale=1" />'
-        "<title>报告对比</title>"
-        '<link rel="stylesheet" href="/static/portal-ui.css" />'
-        "<style>body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#f4f7fb;padding:32px 20px;color:#172033;margin:0}"
-        ".wrap{max-width:980px;margin:0 auto;display:grid;gap:18px}"
-        ".panel{background:#fff;border:1px solid #dbe3f0;border-radius:20px;padding:24px;box-shadow:0 18px 42px rgba(20,34,53,.08)}"
-        ".field{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}"
-        ".field input{padding:11px 12px;border-radius:12px;border:1px solid #d7e3f1;font-size:14px;min-width:200px}"
-        ".btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border-radius:12px;text-decoration:none;font-weight:700;background:#1f6feb;color:#fff;border:none;cursor:pointer}"
-        ".meta{color:#5b6b88;line-height:1.8}"
-        ".empty-state{padding:18px;border-radius:14px;background:#f8fbff;border:1px solid #d7e3f1;color:#5b6b88}"
-        "a{color:#1f6feb;text-decoration:none}"
-        "@media(max-width:768px){.field{flex-direction:column;align-items:stretch}.field input{min-width:100%}}"
-        "</style></head><body>"
-        + '<nav class="global-nav" aria-label="全局导航" role="navigation"><div class="global-nav-inner"><a class="global-nav-brand" href="/">高考志愿填报</a><div class="global-nav-links"><a class="global-nav-link" href="/">首页</a><a class="global-nav-link" href="/pricing">套餐</a><a class="global-nav-link" href="/my-orders">我的订单</a><a class="global-nav-link" href="/my-reports">我的报告</a><a class="global-nav-link" href="mailto:lon22@qq.com">客服</a></div></div></nav>'
-        + f'<main class="wrap" role="main"><section class="panel">'
-        + '<div style="margin-bottom:8px;"><a class="btn" style="font-size:13px;min-height:32px;padding:6px 12px;background:#edf3ff;color:#194fb6;" href="/">返回首页</a></div>'
-        + f'<h1>报告对比</h1><p class="meta">输入手机号，选择多份已交付的报告进行对比。</p>'
-        + f'<form method="get" action="/compare-reports" class="field"><div><label style="font-size:13px;font-weight:600;display:block;margin-bottom:4px;">手机号</label><input type="tel" name="phone" value="{phone_value}" placeholder="例如：13800138000" /></div><button class="btn" type="submit">查询</button></form></section>'
-        + compare_html
-        + _render_footer_links()
-        + "</main></body></html>"
-    )
+    旧逻辑（手机号直查）已废弃，原因同 my_orders_page。
+    单个 token 只对应单个订单，因此对比功能在当前单订单 portal 模型下实际不可用——
+    页面如实告知用户，而不是假装可用。
+    """
+    from data.customer_portal.token import verify_portal_token, PortalTokenError
+
+    nav = '<nav class="global-nav" aria-label="全局导航" role="navigation"><div class="global-nav-inner"><a class="global-nav-brand" href="/">高考志愿填报</a><div class="global-nav-links"><a class="global-nav-link" href="/">首页</a><a class="global-nav-link" href="/pricing">套餐</a><a class="global-nav-link" href="mailto:lon22@qq.com">客服</a></div></div></nav>'
+
+    if not token:
+        body = f"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>报告对比</title><link rel="stylesheet" href="/static/portal-ui.css" /></head><body>{nav}<main class="wrap" style="max-width:680px;margin:0 auto;padding:32px 20px;display:grid;gap:16px;" role="main"><section class="panel"><div style="margin-bottom:8px;"><a class="btn btn-secondary" style="font-size:13px;min-height:32px;padding:6px 12px;background:#edf3ff;color:#194fb6;" href="/">返回首页</a></div><h1>报告对比</h1><section class="state-empty" role="status"><h2 class="state-empty__title">请通过订单链接进入</h2><p class="state-empty__hint">为保护你的报告隐私，我们不再支持凭手机号查询报告。请使用下单时收到的订单进度链接进入。</p></section></section></main></body></html>"""
+        return HTMLResponse(body)
+
+    try:
+        payload = verify_portal_token(token, settings.portal_token_secret)
+        str(payload["order_id"])
+    except PortalTokenError:
+        body = f"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>报告对比</title><link rel="stylesheet" href="/static/portal-ui.css" /></head><body>{nav}<main class="wrap" style="max-width:680px;margin:0 auto;padding:32px 20px;display:grid;gap:16px;" role="main"><section class="panel"><div style="margin-bottom:8px;"><a class="btn btn-secondary" style="font-size:13px;min-height:32px;padding:6px 12px;background:#edf3ff;color:#194fb6;" href="/">返回首页</a></div><h1>报告对比</h1><section class="state-error" role="alert"><h2 class="state-error__title">链接无效或已过期</h2><p class="state-error__hint">你访问的订单链接无效。请使用下单时收到的最新链接，或联系客服。</p></section></section></main></body></html>"""
+        return HTMLResponse(body, status_code=401)
+
+    # 单 token = 单订单，对比功能需要 ≥2 份报告，如实告知不可用
+    body = f"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>报告对比</title><link rel="stylesheet" href="/static/portal-ui.css" /></head><body>{nav}<main class="wrap" style="max-width:680px;margin:0 auto;padding:32px 20px;display:grid;gap:16px;" role="main"><section class="panel"><div style="margin-bottom:8px;"><a class="btn btn-secondary" style="font-size:13px;min-height:32px;padding:6px 12px;background:#edf3ff;color:#194fb6;" href="/">返回首页</a></div><h1>报告对比</h1><section class="state-empty" role="status"><h2 class="state-empty__title">当前订单只有 1 份报告，无法对比</h2><p class="state-empty__hint">报告对比需要至少 2 份已交付报告。当前每个订单链接只对应 1 份报告。如果你有多个订单并希望对比，请分别打开各自的报告进行手动对比，或联系客服获取帮助。</p></section></section></main></body></html>"""
     return HTMLResponse(body)
 
 
 def _render_landing_page(request: Request, settings: Settings) -> str:
     query = dict(request.query_params)
-    consult_text = escape(str(query.get("consult") or ""))
+    escape(str(query.get("consult") or ""))
     consult_province = escape(str(query.get("province") or ""))
     consult_score = escape(str(query.get("score") or ""))
     consult_goal = escape(str(query.get("goal") or ""))
@@ -1790,8 +1920,6 @@ def _render_landing_page(request: Request, settings: Settings) -> str:
         <div class="global-nav-links">
           <a class="global-nav-link" href="/">首页</a>
           <a class="global-nav-link" href="/pricing">套餐</a>
-          <a class="global-nav-link" href="/my-orders">我的订单</a>
-          <a class="global-nav-link" href="/my-reports">我的报告</a>
           <a class="global-nav-link" href="mailto:lon22@qq.com">客服</a>
         </div>
       </div>
@@ -1844,40 +1972,134 @@ def _render_landing_page(request: Request, settings: Settings) -> str:
             if (!form) return;
             var province = form.querySelector('select[name="province"]');
             var score = form.querySelector('input[name="score"]');
-            function validate(){{
+            var subjects = form.querySelector('input[name="subjects"]');
+            var goal = form.querySelector('input[name="goal"]');
+
+            function validateField(field, rules) {{
               var errs = [];
-              if (province && !province.value) errs.push('请选择考试省份');
-              if (score && score.value){{
-                var parts = score.value.split('/').map(function(s){{return s.trim();}});
-                var sc = parseInt(parts[0]);
-                if (isNaN(sc) || sc < 0 || sc > 800) errs.push('分数应在 0-800 之间');
+              for (var i = 0; i < rules.length; i++) {{
+                var msg = rules[i](field);
+                if (msg) errs.push(msg);
               }}
               return errs;
             }}
-            function showErrors(){{
-              var errs = validate();
-              var hint = document.getElementById('consult-error-hint');
-              if (!hint){{
+
+            function showFieldError(field, errs) {{
+              if (!field) return;
+              var hintId = field.getAttribute('data-error-id') || (field.name + '-error');
+              field.setAttribute('data-error-id', hintId);
+              var hint = document.getElementById(hintId);
+              if (!hint) {{
                 hint = document.createElement('div');
-                hint.id = 'consult-error-hint';
-                hint.style.cssText = 'margin-top:6px;padding:8px 10px;border-radius:8px;background:#fff5f5;border:1px solid #f5c2c7;color:#b42318;font-size:12px;';
-                form.appendChild(hint);
+                hint.id = hintId;
+                hint.className = 'field-error-hint';
+                hint.setAttribute('role', 'alert');
+                hint.setAttribute('aria-live', 'polite');
+                if (field.parentNode) field.parentNode.appendChild(hint);
               }}
-              if (errs.length){{
-                hint.innerHTML = errs.join('；');
+              if (errs.length) {{
+                hint.textContent = errs.join('；');
                 hint.style.display = 'block';
+                field.style.borderColor = '#b42318';
+                field.setAttribute('aria-invalid', 'true');
               }} else {{
                 hint.style.display = 'none';
+                field.style.borderColor = '';
+                field.removeAttribute('aria-invalid');
               }}
-              return errs.length === 0;
             }}
-            form.addEventListener('submit', function(e){{
-              if (!showErrors()) e.preventDefault();
+
+            function validateProvince() {{
+              return validateField(province, [
+                function(f) {{ return (!f || !f.value || f.value.indexOf('请选择') === 0) ? '请选择考试省份' : null; }}
+              ]);
+            }}
+            function validateScore() {{
+              return validateField(score, [
+                function(f) {{
+                  if (!f || !f.value.trim()) return null; // 分数可选
+                  var parts = f.value.split('/').map(function(s) {{ return s.trim(); }});
+                  var sc = parseInt(parts[0]);
+                  if (isNaN(sc) || sc < 0 || sc > 800) return '分数应在 0-800 之间';
+                  if (parts.length === 2) {{
+                    var rank = parseInt(parts[1]);
+                    if (isNaN(rank) || rank < 1) return '位次应为正整数';
+                  }}
+                  return null;
+                }}
+              ]);
+            }}
+            function validateSubjects() {{
+              return validateField(subjects, [
+                function(f) {{
+                  if (!f || !f.value.trim()) return null;
+                  var count = f.value.split(/[,，、\s]+/).filter(function(s) {{ return s.trim(); }}).length;
+                  if (count > 6) return '选科组合最多 6 科';
+                  return null;
+                }}
+              ]);
+            }}
+            function validateGoal() {{
+              return validateField(goal, [
+                function(f) {{
+                  if (!f || !f.value.trim()) return null;
+                  if (f.value.length > 200) return '目标说明不超过 200 字';
+                  return null;
+                }}
+              ]);
+            }}
+
+            function validateAll() {{
+              var allErrs = [].concat(validateProvince(), validateScore(), validateSubjects(), validateGoal());
+              showFieldError(province, validateProvince());
+              showFieldError(score, validateScore());
+              showFieldError(subjects, validateSubjects());
+              showFieldError(goal, validateGoal());
+              // 全局提示
+              var globalHint = document.getElementById('consult-error-hint');
+              if (!globalHint) {{
+                globalHint = document.createElement('div');
+                globalHint.id = 'consult-error-hint';
+                globalHint.className = 'field-error-hint';
+                globalHint.setAttribute('role', 'alert');
+                form.appendChild(globalHint);
+              }}
+              if (allErrs.length) {{
+                globalHint.innerHTML = allErrs.join('；');
+                globalHint.style.display = 'block';
+              }} else {{
+                globalHint.style.display = 'none';
+              }}
+              return allErrs.length === 0;
+            }}
+
+            form.addEventListener('submit', function(e) {{
+              if (!validateAll()) e.preventDefault();
             }});
-            if (province) province.addEventListener('change', showErrors);
-            if (score) score.addEventListener('blur', showErrors);
+            // 即时校验：每个字段 blur/change 时即时反馈
+            if (province) province.addEventListener('change', function() {{ showFieldError(province, validateProvince()); }});
+            if (score) score.addEventListener('blur', function() {{ showFieldError(score, validateScore()); }});
+            if (subjects) subjects.addEventListener('blur', function() {{ showFieldError(subjects, validateSubjects()); }});
+            if (goal) goal.addEventListener('blur', function() {{ showFieldError(goal, validateGoal()); }});
+            // 输入时清除错误（用户开始修正时立即移除红色提示）
+            if (score) score.addEventListener('input', function() {{ if (score.getAttribute('aria-invalid')) showFieldError(score, validateScore()); }});
+            if (subjects) subjects.addEventListener('input', function() {{ if (subjects.getAttribute('aria-invalid')) showFieldError(subjects, validateSubjects()); }});
+            if (goal) goal.addEventListener('input', function() {{ if (goal.getAttribute('aria-invalid')) showFieldError(goal, validateGoal()); }});
           }})();
           </script>
+          <style>
+          .field-error-hint {{
+            margin-top: 4px;
+            padding: 6px 10px;
+            border-radius: 8px;
+            background: #fff5f5;
+            border: 1px solid #f5c2c7;
+            color: #b42318;
+            font-size: 12px;
+            line-height: 1.5;
+            display: none;
+          }}
+          </style>
           <div class="upload-hint" style="margin-top:16px; padding:12px 14px; border-radius:12px; background:rgba(31,111,235,.06); border:1px solid rgba(31,111,235,.18);">
             <p style="margin:0; color:#1f6feb; font-size:13px; line-height:1.5;">如果你已经有老师、机构或其他平台给出的志愿方案文档，可以先<strong>上传已有方案文档</strong>再做免费复核。</p>
             <a class="btn btn-secondary" style="margin-top:8px;" href="/pricing">上传方案文档并进入完整规划</a>
@@ -2027,7 +2249,7 @@ def _render_pricing_page(request: Request) -> str:
     </style>
   </head>
   <body>
-    <nav class="global-nav" aria-label="全局导航" role="navigation"><div class="global-nav-inner"><a class="global-nav-brand" href="/">高考志愿填报</a><div class="global-nav-links"><a class="global-nav-link" href="/">首页</a><a class="global-nav-link" href="/pricing">套餐</a><a class="global-nav-link" href="/my-orders">我的订单</a><a class="global-nav-link" href="/my-reports">我的报告</a><a class="global-nav-link" href="mailto:lon22@qq.com">客服</a></div></div></nav>
+    <nav class="global-nav" aria-label="全局导航" role="navigation"><div class="global-nav-inner"><a class="global-nav-brand" href="/">高考志愿填报</a><div class="global-nav-links"><a class="global-nav-link" href="/">首页</a><a class="global-nav-link" href="/pricing">套餐</a><a class="global-nav-link" href="mailto:lon22@qq.com">客服</a></div></div></nav>
     <main class="wrap">
       <section class="hero">
         <div class="panel">
@@ -2249,7 +2471,7 @@ def _render_checkout_page(service_version: str) -> str:
     </style>
   </head>
   <body>
-    <nav class="global-nav" aria-label="全局导航" role="navigation"><div class="global-nav-inner"><a class="global-nav-brand" href="/">高考志愿填报</a><div class="global-nav-links"><a class="global-nav-link" href="/">首页</a><a class="global-nav-link" href="/pricing">套餐</a><a class="global-nav-link" href="/my-orders">我的订单</a><a class="global-nav-link" href="/my-reports">我的报告</a><a class="global-nav-link" href="mailto:lon22@qq.com">客服</a></div></div></nav>
+    <nav class="global-nav" aria-label="全局导航" role="navigation"><div class="global-nav-inner"><a class="global-nav-brand" href="/">高考志愿填报</a><div class="global-nav-links"><a class="global-nav-link" href="/">首页</a><a class="global-nav-link" href="/pricing">套餐</a><a class="global-nav-link" href="mailto:lon22@qq.com">客服</a></div></div></nav>
  class="wrap">
       <header class="header">
         <div style="margin-bottom:8px;"><a class="btn btn-secondary" style="font-size:13px;min-height:32px;padding:6px 12px;" href="/">返回首页</a></div>
@@ -2987,7 +3209,86 @@ def _render_info_page(
         updateWizard();
       }}
 
+      function validateStep1Fields() {{
+        var errs = [];
+        var province = document.querySelector('select[name="candidate_province"]');
+        var score = document.querySelector('input[name="candidate_score"]');
+        var rank = document.querySelector('input[name="candidate_rank"]');
+        var subjects = document.querySelector('input[name="candidate_subjects"]');
+        // 只在 submit 模式下强制必填；draft 模式放行
+        // 但即时校验仍然给格式反馈
+        function showFieldError(input, msg) {{
+          if (!input) return;
+          var hintId = input.name + '-inline-error';
+          var hint = document.getElementById(hintId);
+          if (!hint) {{
+            hint = document.createElement('div');
+            hint.id = hintId;
+            hint.className = 'field-error-hint';
+            hint.setAttribute('role', 'alert');
+            input.parentNode.appendChild(hint);
+          }}
+          if (msg) {{
+            hint.textContent = msg;
+            hint.style.display = 'block';
+            input.style.borderColor = '#b42318';
+            input.setAttribute('aria-invalid', 'true');
+          }} else {{
+            hint.style.display = 'none';
+            input.style.borderColor = '';
+            input.removeAttribute('aria-invalid');
+          }}
+        }}
+        // 格式校验（即时反馈）
+        if (score && score.value.trim()) {{
+          var sc = Number(score.value.trim());
+          if (isNaN(sc) || sc < 0 || sc > 800) {{
+            errs.push('分数格式错误');
+            showFieldError(score, '分数应在 0-800 之间');
+          }} else {{
+            showFieldError(score, '');
+          }}
+        }}
+        if (rank && rank.value.trim()) {{
+          var rk = Number(rank.value.trim());
+          if (isNaN(rk) || rk < 1 || rk > 5000000) {{
+            errs.push('位次格式错误');
+            showFieldError(rank, '位次应为 1-5000000 之间的正整数');
+          }} else {{
+            showFieldError(rank, '');
+          }}
+        }}
+        if (subjects && subjects.value.trim()) {{
+          var subjCount = subjects.value.split(/[,，、\\s]+/).filter(function(s){{return s.trim();}}).length;
+          if (subjCount > 6) {{
+            errs.push('选科超过6科');
+            showFieldError(subjects, '选科组合最多 6 科');
+          }} else {{
+            showFieldError(subjects, '');
+          }}
+        }}
+        return errs.length === 0;
+      }}
+
+      // 即时校验绑定
+      (function() {{
+        var score = document.querySelector('input[name="candidate_score"]');
+        var rank = document.querySelector('input[name="candidate_rank"]');
+        var subjects = document.querySelector('input[name="candidate_subjects"]');
+        if (score) score.addEventListener('blur', validateStep1Fields);
+        if (rank) rank.addEventListener('blur', validateStep1Fields);
+        if (subjects) subjects.addEventListener('blur', validateStep1Fields);
+        if (score) score.addEventListener('input', function() {{ if (score.getAttribute('aria-invalid')) validateStep1Fields(); }});
+        if (rank) rank.addEventListener('input', function() {{ if (rank.getAttribute('aria-invalid')) validateStep1Fields(); }});
+        if (subjects) subjects.addEventListener('input', function() {{ if (subjects.getAttribute('aria-invalid')) validateStep1Fields(); }});
+      }})();
+
       async function submitIntake(mode) {{
+        // 提交前校验（draft 也校验格式，但不强制必填）
+        if (!validateStep1Fields()) {{
+          document.getElementById('result').textContent = '资料格式有误，请修正红色提示后再提交。';
+          return;
+        }}
         const payload = collectPayload(mode);
         const resultNode = document.getElementById('result');
         resultNode.textContent = mode === 'draft' ? '正在保存草稿…' : '正在提交资料…';
@@ -3040,7 +3341,28 @@ def _render_delivery_next_steps(token: str, stage: str) -> str:
             <a class="btn btn-secondary" style="font-size:14px;min-height:40px;padding:8px 16px;" href="/portal/{escape(token)}/report">在线查看</a>
             <a class="btn btn-secondary" style="font-size:14px;min-height:40px;padding:8px 16px;" href="/pricing">继续规划其他方案</a>
           </div>
-          <p style="margin:10px 0 0;font-size:12px;color:#5a7cb8;">如需与家人商量，可复制当前页面链接发送给他们。</p>
+          <p style="margin:10px 0 6px;font-size:12px;color:#5a7cb8;">如需与家人商量，可复制当前页面链接或调用系统分享。</p>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button class="btn btn-secondary" id="report-copy-link" style="font-size:12px;min-height:32px;padding:6px 10px;">复制链接</button>
+            <button class="btn btn-secondary" id="report-share-btn" style="font-size:12px;min-height:32px;padding:6px 10px;">系统分享</button>
+          </div>
+          <p id="report-share-status" style="margin:6px 0 0;font-size:12px;color:#5a7cb8;" role="status" aria-live="polite"></p>
+          <script>
+          (function() {{
+            var statusEl = document.getElementById('report-share-status');
+            function setStatus(msg, ok) {{ statusEl.textContent = msg; statusEl.style.color = ok ? '#1f6feb' : '#b42318'; setTimeout(function() {{ if (statusEl.textContent === msg) statusEl.textContent = ''; }}, 3000); }}
+            var copyBtn = document.getElementById('report-copy-link');
+            if (copyBtn) copyBtn.addEventListener('click', function() {{
+              function fallback() {{ try {{ var ta = document.createElement('textarea'); ta.value = window.location.href; ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.focus(); ta.select(); var ok = document.execCommand('copy'); document.body.removeChild(ta); setStatus(ok ? '链接已复制' : '复制失败，请手动复制地址栏', ok); }} catch(e) {{ setStatus('复制失败', false); }} }}
+              if (navigator.clipboard && navigator.clipboard.writeText) {{ navigator.clipboard.writeText(window.location.href).then(function() {{ setStatus('链接已复制', true); }}, function() {{ fallback(); }}); }} else {{ fallback(); }}
+            }});
+            var shareBtn = document.getElementById('report-share-btn');
+            if (shareBtn) shareBtn.addEventListener('click', function() {{
+              if (navigator.share) {{ navigator.share({{ title: '志愿报告', url: window.location.href }}).then(function() {{ setStatus('已通过系统分享发送', true); }}, function() {{ setStatus('分享已取消', false); }}); }}
+              else {{ if (copyBtn) copyBtn.click(); setStatus('当前浏览器不支持系统分享，已改为复制链接', true); }}
+            }});
+          }})();
+          </script>
         </div>"""
 
 
@@ -3550,21 +3872,89 @@ def _render_review_start_page(contract: ReviewResultContract, token: str | None)
     share_hint = "此页链接可直接复制分享"
     body_html = f"""
 <section class="panel">
-  <div style=\"display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;\">
+  <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
     <span class="eyebrow">免费复核结果</span>
-    <a class=\"btn btn-secondary\" style=\"font-size:13px;min-height:32px;padding:6px 12px;\" href=\"/\">返回首页</a>
+    <a class="btn btn-secondary" style="font-size:13px;min-height:32px;padding:6px 12px;" href="/">返回首页</a>
   </div>
   <h1>复核结果</h1>
   <p class="meta">基于你当前提交的信息，下面先告诉你当前的风险判断和最适合的下一步。</p>
-  <div style=\"margin-top:12px;padding:12px 14px;border-radius:12px;background:#f0f7ff;border:1px solid #1f6feb;\">
-    <p style=\"margin:0 0 6px;font-size:13px;color:#1f6feb;\"><strong>分享给家人商量</strong></p>
-    <p style=\"margin:0 0 8px;font-size:12px;color:#5a7cb8;\">{share_hint}。把当前页面链接复制发给家人，一起讨论结果。</p>
-    <div style=\"display:flex;gap:8px;flex-wrap:wrap;\">
-      <button class=\"btn btn-secondary\" style=\"font-size:12px;min-height:32px;padding:6px 10px;\" onclick=\"navigator.clipboard.writeText(window.location.href).then(function(){{alert('链接已复制，可粘贴发送给家人')}})\">复制链接</button>
-      <a class=\"btn btn-secondary\" style=\"font-size:12px;min-height:32px;padding:6px 10px;\" href=\"https://www.wxhelp.com/\" target=\"_blank\">微信分享</a>
+  <div style="margin-top:12px;padding:12px 14px;border-radius:12px;background:#f0f7ff;border:1px solid #1f6feb;">
+    <p style="margin:0 0 6px;font-size:13px;color:#1f6feb;"><strong>分享给家人商量</strong></p>
+    <p style="margin:0 0 8px;font-size:12px;color:#5a7cb8;">{share_hint}。把当前页面链接复制发给家人，或调用系统分享，一起讨论结果。</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <button class="btn btn-secondary" id="copy-link-btn" style="font-size:12px;min-height:32px;padding:6px 10px;">复制链接</button>
+      <button class="btn btn-secondary" id="share-btn" style="font-size:12px;min-height:32px;padding:6px 10px;">系统分享</button>
+      <button class="btn btn-secondary" id="save-draft-btn" style="font-size:12px;min-height:32px;padding:6px 10px;">保存到本地草稿</button>
     </div>
+    <p id="share-status" style="margin:8px 0 0;font-size:12px;color:#5a7cb8;" role="status" aria-live="polite"></p>
   </div>
 </section>
+<script>
+(function() {{
+  var statusEl = document.getElementById('share-status');
+  var url = window.location.href;
+  var summary = "高考志愿复核结果 - 风险等级：{escape(contract.risk_level)}";
+  function setStatus(msg, ok) {{
+    statusEl.textContent = msg;
+    statusEl.style.color = ok ? '#1f6feb' : '#b42318';
+    setTimeout(function() {{ if (statusEl.textContent === msg) statusEl.textContent = ''; }}, 3500);
+  }}
+  // 1) 复制链接：优先 navigator.clipboard，回退到 textarea 兜底（旧浏览器/非 HTTPS）
+  document.getElementById('copy-link-btn').addEventListener('click', function() {{
+    function fallback() {{
+      try {{
+        var ta = document.createElement('textarea');
+        ta.value = url;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.focus(); ta.select();
+        var ok = document.execCommand('copy');
+        document.body.removeChild(ta);
+        setStatus(ok ? '链接已复制，可粘贴发送给家人' : '复制失败，请手动复制地址栏链接', ok);
+      }} catch(e) {{
+        setStatus('复制失败，请手动复制地址栏链接', false);
+      }}
+    }}
+    if (navigator.clipboard && navigator.clipboard.writeText) {{
+      navigator.clipboard.writeText(url).then(
+        function() {{ setStatus('链接已复制，可粘贴发送给家人', true); }},
+        function() {{ fallback(); }}
+      );
+    }} else {{ fallback(); }}
+  }});
+  // 2) 系统分享：调用原生 Web Share API；不支持时回退到复制链接
+  document.getElementById('share-btn').addEventListener('click', function() {{
+    if (navigator.share) {{
+      navigator.share({{ title: summary, text: summary, url: url }}).then(
+        function() {{ setStatus('已通过系统分享发送', true); }},
+        function(err) {{ setStatus('分享已取消或失败：' + (err && err.message || err), false); }}
+      );
+    }} else {{
+      document.getElementById('copy-link-btn').click();
+      setStatus('当前浏览器不支持系统分享，已改为复制链接', true);
+    }}
+  }});
+  // 3) 保存草稿：把当前 URL + 风险摘要落到 localStorage，下次回来可一键恢复
+  document.getElementById('save-draft-btn').addEventListener('click', function() {{
+    try {{
+      var drafts = JSON.parse(localStorage.getItem('gaokao_review_drafts') || '[]');
+      drafts.unshift({{
+        url: url,
+        summary: summary,
+        savedAt: new Date().toISOString(),
+        province: "{escape(province)}",
+        score: "{escape(score)}"
+      }});
+      if (drafts.length > 10) drafts = drafts.slice(0, 10);
+      localStorage.setItem('gaokao_review_drafts', JSON.stringify(drafts));
+      setStatus('已保存到本机草稿（仅此浏览器可见），最多保留 10 条', true);
+    }} catch(e) {{
+      setStatus('保存失败：浏览器禁用了 localStorage', false);
+    }}
+  }});
+}})();
+</script>
 
 <section class="panel">
   <h2>你当前提交的信息</h2>
@@ -3689,7 +4079,74 @@ def _render_cwb_placeholder_page(
         (contract.recommended_action if contract is not None else "go_step1"),
         "先补齐关键信息再继续。",
     )
-    body_html = f"""<section class="panel"><h1>冲稳保建议页</h1><p class="meta">订单号：{escape(order.id)}。这里给出当前复核后的三档策略建议，供你决定下一步是微调梯度还是转入完整规划。</p><div class="actions"><a href=\"{policy_href}\">查看政策中心</a><a href=\"{same_score_href}\">查看同分段参考</a></div></section><section class="panel"><h2>当前建议</h2><p class="meta">{escape(recommendation)}</p><ul>{findings_html}</ul></section><section class="panel"><div style=\"display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;\"><article style=\"padding:16px;border-radius:14px;background:#f8fbff;border:1px solid #d7e3f1;\"><h2>冲刺建议</h2><p class="meta">优先放入最看重但梯度更高的志愿，并保留风险提示。</p></article><article style=\"padding:16px;border-radius:14px;background:#f8fbff;border:1px solid #d7e3f1;\"><h2>稳妥建议</h2><p class="meta">围绕当前位次与政策约束，建立主力可落地选择。</p></article><article style=\"padding:16px;border-radius:14px;background:#f8fbff;border:1px solid #d7e3f1;\"><h2>保底建议</h2><p class="meta">保留最低风险去向，避免出现无可填报结果。</p></article></div></section><section class="panel"><h2>当前复核摘要</h2><pre>{escape(json.dumps(payload, ensure_ascii=False, indent=2))}</pre></section>{auxiliary_html}<section class="panel"><h2>下一步建议</h2><ul><li><a href=\"/portal/{escape(token)}/full-plan\">进入完整规划</a></li><li><a href=\"/portal/{escape(token)}/status\">返回订单状态页</a></li></ul></section>"""
+
+    # 基于考生分数和 crowd_db 生成三档真实建议
+    candidate_score_raw = intake_payload.get("candidate_score") or order.candidate_score
+    candidate_province = (
+        intake_payload.get("candidate_province") or order.candidate_province or "湖南"
+    )
+    candidate_score = None
+    try:
+        candidate_score = int(candidate_score_raw) if candidate_score_raw else None
+    except (ValueError, TypeError):
+        pass
+
+    def _cwb_tier(title: str, offset: int, color: str) -> str:
+        """根据分数偏移生成一档建议，数据来自 crowd_db。"""
+        if candidate_score is None:
+            return (
+                f'<article style="padding:16px;border-radius:14px;background:{color};border:1px solid #d7e3f1;">'
+                f"<h2>{title}</h2>"
+                f'<p class="meta">补齐当前分数后，这里会基于同分段数据给出具体的院校方向建议。</p>'
+                f"</article>"
+            )
+        target_score = candidate_score + offset
+        try:
+            from data.crowd_db.loader import CrowdDBLoader
+
+            loader = CrowdDBLoader(warn_low_confidence=False)
+            recs = loader.find_recommendations(candidate_province, target_score)
+            schools = [
+                f"{r.get('name', '?')} - {r.get('major', '?')}"
+                for r in recs[:3]
+                if isinstance(r, dict)
+            ]
+            if not schools:
+                schools = ["该分段暂无 crowd_db 推荐，请参考同分段参考页"]
+        except Exception:
+            schools = ["数据加载中，请稍后查看"]
+
+        risk_note = ""
+        if offset > 0:
+            risk_note = f'<p class="meta" style="color:#b42318;margin-top:6px;">⚠ 这档分数要求更高（目标分 ≈ {target_score}），存在不被录取的风险，只作为冲刺方向参考。</p>'
+        elif offset < 0:
+            risk_note = f'<p class="meta" style="color:#1f7a4d;margin-top:6px;">✓ 这档分数要求更低（目标分 ≈ {target_score}），录取概率更高，作为保底。</p>'
+        else:
+            risk_note = f'<p class="meta" style="color:#1f6feb;margin-top:6px;">→ 围绕当前分数（{candidate_score}）匹配，作为主力选择。</p>'
+
+        schools_html = "".join(f"<li>{escape(s)}</li>" for s in schools)
+        return (
+            f'<article style="padding:16px;border-radius:14px;background:{color};border:1px solid #d7e3f1;">'
+            f"<h2>{title}</h2>"
+            f'<ul style="margin:8px 0;padding-left:18px;line-height:1.8;">{schools_html}</ul>'
+            f"{risk_note}"
+            f"</article>"
+        )
+
+    cwb_tier_html = (
+        f'<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;">'
+        f"{_cwb_tier('冲刺建议', 20, '#fff5f5')}"
+        f"{_cwb_tier('稳妥建议', 0, '#f0f7ff')}"
+        f"{_cwb_tier('保底建议', -20, '#f0fff4')}"
+        f"</div>"
+    )
+    score_context = (
+        f'<p class="meta">当前分数：{escape(str(candidate_score or "待补充"))} · 省份：{escape(candidate_province)} · 冲刺+20分 / 稳妥0分 / 保底-20分</p>'
+        if candidate_score
+        else ""
+    )
+
+    body_html = f"""<section class="panel"><h1>冲稳保建议页</h1><p class="meta">订单号：{escape(order.id)}。基于你当前分数和同分段数据，这里给出三档策略建议。</p>{score_context}<div class="actions"><a href="{policy_href}">查看政策中心</a><a href="{same_score_href}">查看同分段参考</a></div></section><section class="panel"><h2>当前建议</h2><p class="meta">{escape(recommendation)}</p><ul>{findings_html}</ul></section><section class="panel">{cwb_tier_html}</section><section class="panel"><h2>当前复核摘要</h2><pre>{escape(json.dumps(payload, ensure_ascii=False, indent=2))}</pre></section>{auxiliary_html}<section class="panel"><h2>下一步建议</h2><ul><li><a href="/portal/{escape(token)}/full-plan">进入完整规划</a></li><li><a href="/portal/{escape(token)}/status">返回订单状态页</a></li></ul></section>"""
     return _render_placeholder_shell(
         title="冲稳保建议页", max_width=1080, body_html=body_html
     )

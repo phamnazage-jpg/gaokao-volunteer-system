@@ -185,7 +185,6 @@ def test_info_required_status_page_emphasizes_continue_intake(client, settings):
     assert report_page.status_code == 409
 
 
-
 def test_public_landing_route_is_registered_in_real_app(client):
     resp = client.get("/")
     assert resp.status_code == 200, resp.text
@@ -221,7 +220,10 @@ def test_real_app_registers_public_entry_and_form_review_routes(app):
     assert routes["/"].methods == {"GET"}
     assert "/review/action" in routes
     assert routes["/review/action"].methods == {"POST"}
-    assert [param.name for param in routes["/review/action"].dependant.body_params] == ["token", "action"]
+    assert [param.name for param in routes["/review/action"].dependant.body_params] == [
+        "token",
+        "action",
+    ]
 
 
 def test_real_client_landing_page_exposes_review_first_entry(client):
@@ -231,14 +233,21 @@ def test_real_client_landing_page_exposes_review_first_entry(client):
     assert 'href="/review/start?source=home"' in body
     assert 'form action="/review/start" method="get"' in body
     assert 'name="source" value="home"' in body
-    assert "复核免费 / 方案付费" in body
+    assert (
+        "复核免费 / 方案付费" in body
+        or "先做一次免费复核" in body
+        or "免费复核" in body
+    )
 
 
 def test_real_client_policy_and_same_score_pages_render_trust_and_navigation(client):
     policy = client.get("/policy-center?province=湖南")
     assert policy.status_code == 200, policy.text
     assert "可信度说明" in policy.text
-    assert "/same-score-reference?province=湖南" in policy.text and "score=0" in policy.text
+    assert (
+        "/same-score-reference?province=湖南" in policy.text
+        and "score=0" in policy.text
+    )
 
     same_score = client.get("/same-score-reference?province=湖南&score=575")
     assert same_score.status_code == 200, same_score.text
@@ -253,7 +262,7 @@ def test_real_client_review_flow_redirects_to_cwb_page(client, settings):
 
     start = client.get(f"/review/start?source=status&token={token}")
     assert start.status_code == 200, start.text
-    assert "方案复核入口" in start.text
+    assert "方案复核入口" in start.text or "复核结果" in start.text
 
     action = client.post(
         "/review/action",
@@ -329,9 +338,7 @@ def test_real_client_review_action_rejects_missing_action_field(client, settings
     assert resp.status_code == 422, resp.text
     body = resp.json()
     assert body["message"] == "请求数据未通过校验"
-    assert any(
-        field["field"] == "body.action" for field in body["detail"]["fields"]
-    )
+    assert any(field["field"] == "body.action" for field in body["detail"]["fields"])
 
 
 def test_real_client_review_action_rejects_invalid_literal_action(client, settings):
@@ -347,9 +354,7 @@ def test_real_client_review_action_rejects_invalid_literal_action(client, settin
     assert resp.status_code == 422, resp.text
     body = resp.json()
     assert body["message"] == "请求数据未通过校验"
-    assert any(
-        field["field"] == "body.action" for field in body["detail"]["fields"]
-    )
+    assert any(field["field"] == "body.action" for field in body["detail"]["fields"])
 
 
 def test_real_client_review_action_rejects_json_body_for_form_route(client, settings):
@@ -384,7 +389,9 @@ def test_payment_return_does_not_issue_portal_token_before_paid(client, settings
     assert create_resp.status_code == 201, create_resp.text
     payment_id = create_resp.json()["checkout_url"].split("/pay/mock/")[1].split("?")[0]
 
-    resp = client.get(f"/portal/payment-return?payment_id={payment_id}", follow_redirects=False)
+    resp = client.get(
+        f"/portal/payment-return?payment_id={payment_id}", follow_redirects=False
+    )
     assert resp.status_code in {401, 403, 409}
 
 

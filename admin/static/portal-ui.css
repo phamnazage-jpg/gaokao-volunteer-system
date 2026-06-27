@@ -204,3 +204,167 @@ textarea:focus-visible {
     font-size: 13px;
   }
 }
+
+/* ============================================================
+   通用状态组件库（2026-06-26 第一阶段 P1-2）
+   覆盖：loading / skeleton / empty / error / toast / spinner
+   所有用户端页面可直接 <div class="state-..."> 引用。
+   ============================================================ */
+
+/* —— Loading 容器 —— */
+.state-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 36px 18px;
+  text-align: center;
+  color: #5b6b88;
+  background: #f8fbff;
+  border: 1px solid #d7e3f1;
+  border-radius: 16px;
+}
+.state-loading__spinner {
+  width: 28px;
+  height: 28px;
+  border: 3px solid #dbe7f5;
+  border-top-color: #1f6feb;
+  border-radius: 50%;
+  animation: state-spin 0.9s linear infinite;
+}
+.state-loading__text {
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 0;
+}
+@keyframes state-spin {
+  to { transform: rotate(360deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .state-loading__spinner {
+    animation-duration: 2.5s;
+  }
+}
+
+/* —— Skeleton 占位（首屏数据未到时用）—— */
+.state-skeleton {
+  display: block;
+  padding: 18px;
+  background: #f4f7fb;
+  border: 1px solid #e1e8f3;
+  border-radius: 14px;
+}
+.state-skeleton__line {
+  display: block;
+  height: 14px;
+  margin: 10px 0;
+  border-radius: 7px;
+  background: linear-gradient(90deg, #e6ecf5 0%, #f3f6fb 50%, #e6ecf5 100%);
+  background-size: 200% 100%;
+  animation: state-shimmer 1.4s ease-in-out infinite;
+}
+.state-skeleton__line--short { width: 38%; }
+.state-skeleton__line--mid   { width: 64%; }
+.state-skeleton__line--long  { width: 90%; }
+@keyframes state-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .state-skeleton__line {
+    animation: none;
+    background: #e6ecf5;
+  }
+}
+
+/* —— Empty 空状态 —— */
+.state-empty {
+  padding: 28px 20px;
+  border-radius: 16px;
+  background: #f8fbff;
+  border: 1px solid #d7e3f1;
+  color: #5b6b88;
+  text-align: center;
+}
+.state-empty__title {
+  margin: 0 0 6px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #2c3e5b;
+}
+.state-empty__hint {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+/* —— Error 错误状态 —— */
+.state-error {
+  padding: 20px 18px;
+  border-radius: 14px;
+  background: #fff5f5;
+  border: 1px solid #f5c2c7;
+  color: #b42318;
+}
+.state-error__title {
+  margin: 0 0 6px;
+  font-size: 15px;
+  font-weight: 700;
+}
+.state-error__hint {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.7;
+  color: #8a1f15;
+}
+.state-error a {
+  color: #b42318;
+  text-decoration: underline;
+}
+
+/* —— Toast（全局，aria-live=polite）—— */
+.state-toast-stack {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 9999;
+  pointer-events: none;
+}
+.state-toast {
+  pointer-events: auto;
+  min-width: 220px;
+  max-width: 90vw;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(20, 34, 53, .92);
+  color: #fff;
+  font-size: 13px;
+  line-height: 1.5;
+  box-shadow: 0 12px 30px rgba(20, 34, 53, .18);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity .2s ease, transform .2s ease;
+}
+.state-toast--visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.state-toast--success { background: #1f7a4d; }
+.state-toast--error   { background: #b42318; }
+.state-toast--info    { background: #1f6feb; }
+
+/* —— 工具类：sr-only（可访问性配套）—— */
+.state-sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

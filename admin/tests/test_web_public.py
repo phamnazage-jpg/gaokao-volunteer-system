@@ -417,18 +417,16 @@ def test_prod_hides_simulated_payment_entrypoints(tmp_path, monkeypatch):
     from admin.config import load_settings
 
     settings = load_settings()
-    request = Request(
-        {
-            "type": "http",
-            "method": "POST",
-            "path": "/api/public/payments/mock/webhook",
-            "headers": [],
-            "query_string": b"",
-            "server": ("testserver", 80),
-            "client": ("127.0.0.1", 12345),
-            "scheme": "http",
-        }
-    )
+    request = Request({
+        "type": "http",
+        "method": "POST",
+        "path": "/api/public/payments/mock/webhook",
+        "headers": [],
+        "query_string": b"",
+        "server": ("testserver", 80),
+        "client": ("127.0.0.1", 12345),
+        "scheme": "http",
+    })
 
     for route_call in (
         lambda: mock_payment_page("pay_123", settings),
@@ -489,6 +487,7 @@ def test_public_create_order_returns_503_without_creating_orphan_order_when_prov
     with OrdersDAO.connect(settings.orders_db_path) as dao:
         assert dao.count() == 0
 
+
 def test_my_orders_page_served(client):
     """我的订单页必须存在且可访问。"""
     resp = client.get("/my-orders")
@@ -498,11 +497,7 @@ def test_my_orders_page_served(client):
 
 
 def test_my_orders_lookup_by_phone(client, settings):
-    """输入手机号查询订单，返回订单列表。"""
-    from admin.routes.web_public import submit_order_info
-    from data.orders.intake_schema import IntakePayload
-
-    # 先创建一笔订单
+    """C 方案：手机号直查已废弃，凭手机号访问 /my-orders 应显示引导说明而非订单列表。"""
     create_resp = client.post(
         "/api/public/orders",
         json={
@@ -515,14 +510,15 @@ def test_my_orders_lookup_by_phone(client, settings):
     )
     assert create_resp.status_code == 201, create_resp.text
 
-    # 查询我的订单
+    # 手机号查询不再返回订单列表，而是显示引导说明
     resp = client.get("/my-orders?phone=13800138000")
     assert resp.status_code == 200, resp.text
-    assert "GKO-" in resp.text or "暂无" in resp.text
+    assert "请通过订单链接进入" in resp.text
+
 
 def test_my_reports_page_served(client):
-    """我的报告页必须存在且可访问。"""
+    """C 方案：我的报告页存在但不再显示手机号查询表单。"""
     resp = client.get("/my-reports")
     assert resp.status_code == 200, resp.text
     assert "我的报告" in resp.text
-    assert "手机号" in resp.text
+    assert "请通过订单链接进入" in resp.text
