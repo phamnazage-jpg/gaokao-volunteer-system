@@ -102,7 +102,7 @@ def select_cases(cases: list[dict[str, Any]], batch: str) -> list[dict[str, Any]
 def default_output_path(batch: str) -> Path:
     if batch == "all":
         return OUT
-    return ROOT / "reports" / f"score_range_fullchain_100_e2e_{batch}_2026_06_26.json"
+    return Path(f"/tmp/score_range_fullchain_100_e2e_{batch}.json")
 
 
 def request(

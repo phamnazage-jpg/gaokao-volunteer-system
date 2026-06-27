@@ -87,7 +87,9 @@ def _prepare_backup_sources(settings, tmp_path: Path) -> dict[str, str]:
 
     secrets_dir = tmp_path / "secrets"
     secrets_dir.mkdir(parents=True, exist_ok=True)
-    (secrets_dir / "jwt_secret").write_text("secret", encoding="utf-8")
+    (secrets_dir / "jwt_secret").write_text(
+        "backup-restore-smoke-jwt-secret-32chars!!", encoding="utf-8"
+    )
     (secrets_dir / "orders_fernet_key").write_text("secret-fernet", encoding="utf-8")
     (secrets_dir / "admin_pass").write_text("secret-admin-pass", encoding="utf-8")
 
@@ -145,10 +147,12 @@ def test_backup_snapshot_creates_manifest_and_prunes_old_backups(settings, tmp_p
 
     assert "files/portal_uploads/ORDER-1/score.pdf" in manifest_paths
     assert any(
-        path.startswith("files/order_artifacts/ORDER-1/audit_report/") for path in manifest_paths
+        path.startswith("files/order_artifacts/ORDER-1/audit_report/")
+        for path in manifest_paths
     )
     assert any(
-        path.startswith("files/order_artifacts/ORDER-1/pdf_path/") for path in manifest_paths
+        path.startswith("files/order_artifacts/ORDER-1/pdf_path/")
+        for path in manifest_paths
     )
     assert any(path.startswith("files/examples/") for path in manifest_paths)
 
