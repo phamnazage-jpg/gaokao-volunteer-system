@@ -955,13 +955,15 @@ def _render_legal_doc_page(
         raw,
         extensions=["tables", "fenced_code", "sane_lists"],
     )
+    nav = '<nav class="global-nav" aria-label="全局导航" role="navigation"><div class="global-nav-inner"><a class="global-nav-brand" href="/">高考志愿填报</a><div class="global-nav-links"><a class="global-nav-link" href="/">首页</a><a class="global-nav-link" href="/pricing">套餐</a><a class="global-nav-link" href="/my-orders">我的订单</a><a class="global-nav-link" href="/my-reports">我的报告</a><a class="global-nav-link" href="mailto:lon22@qq.com">客服</a></div></div></nav>'
+    back_link = '<div style="margin-bottom:8px;"><a href="/" style="color:#194fb6;font-size:13px;text-decoration:none;">← 返回首页</a></div>'
     return (
         "<!doctype html><html lang='zh-CN'><head><meta charset='utf-8' />"
         "<meta name='viewport' content='width=device-width, initial-scale=1' />"
         f"<title>{escape(title)}</title>"
         "<link rel='stylesheet' href='/static/portal-ui.css' />"
-        '<style>body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f4f7fb;padding:32px 20px;color:#172033;margin:0}'
-        ".wrap{max-width:920px;margin:0 auto;display:grid;gap:18px}"
+        '<style>body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f4f7fb;padding:0;color:#172033;margin:0}'
+        ".wrap{max-width:920px;margin:0 auto;display:grid;gap:18px;padding:32px 20px}"
         ".panel{background:#fff;border:1px solid #dbe3f0;border-radius:20px;padding:32px;box-shadow:0 18px 42px rgba(20,34,53,.08)}"
         ".eyebrow{display:inline-flex;padding:6px 10px;border-radius:999px;background:#eef6ff;color:#194fb6;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}"
         ".lead{color:#5b6b88;line-height:1.8;margin:8px 0 16px}"
@@ -977,7 +979,8 @@ def _render_legal_doc_page(
         ".legal-doc th{background:#eef4ff;color:#172033;font-weight:600}"
         ".legal-doc code{background:#f1f5fb;padding:1px 4px;border-radius:4px;font-size:12.5px;color:#1f3a68}"
         "</style></head>"
-        "<body><main class='wrap' role='main'>"
+        f"<body>{nav}<main class='wrap' role='main'>"
+        f"{back_link}"
         f"<section class='panel'><span class='eyebrow'>{escape(eyebrow)}</span><h1>{escape(title)}</h1><p class='lead'>{escape(lead)}</p></section>"
         f"<section class='panel legal-doc'>{body_html}</section>"
         f"{_render_footer_links(footer_token)}"
