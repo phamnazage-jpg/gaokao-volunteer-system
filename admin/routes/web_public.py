@@ -2160,16 +2160,16 @@ def _render_landing_page(request: Request, settings: Settings) -> str:
         <p class="section-intro">先提交最小必要信息，我们会判断你当前方案值不值得继续；如果你已经拿到老师、机构或其他平台给出的方案，后续资料页也可以上传文档继续复核。</p>
         <div class="consult-card" style="margin-top:0; background:#f8fbff; border:1px solid var(--border); padding:24px;">
           <p class="consult-privacy" aria-label="隐私说明">🔒 这些输入只用于判断要不要复核你的方案，<strong>不会留底、不会用于生成方案、不会发邮件推销</strong>。如果你决定不进入付费方案，提交的资料不会保存到我们的数据库。</p>
-          <form action="/review/start" method="get">
+          <form action="/review/start" method="get" aria-label="免费复核表单">
             <input type="hidden" name="source" value="home" />
             {f'<input type="hidden" name="token" value="{escape(portal_token)}" />' if portal_token else ""}
             <div class="consult-grid">
-              <div class="consult-field"><label>考试省份</label><select name="province">{_province_options_html(consult_province)}</select></div>
-              <div class="consult-field"><label>分数 / 位次</label><input name="score" value="{consult_score}" placeholder="例如：578 / 12034" /></div>
+              <div class="consult-field"><label for="consult-province">考试省份</label><select id="consult-province" name="province">{_province_options_html(consult_province)}</select></div>
+              <div class="consult-field"><label for="consult-score">分数 / 位次</label><input id="consult-score" name="score" value="{consult_score}" placeholder="例如：578 / 12034" /></div>
             </div>
             <div class="consult-grid" style="margin-top:10px;">
-              <div class="consult-field"><label>选科组合</label><input name="subjects" value="{consult_subjects}" placeholder="例如：物理、化学、生物" /></div>
-              <div class="consult-field"><label>目标学校或方向</label><input name="goal" value="{consult_goal}" placeholder="例如：广东工业大学 / 先复核现有方案" /></div>
+              <div class="consult-field"><label for="consult-subjects">选科组合</label><input id="consult-subjects" name="subjects" value="{consult_subjects}" placeholder="例如：物理、化学、生物" /></div>
+              <div class="consult-field"><label for="consult-goal">目标学校或方向</label><input id="consult-goal" name="goal" value="{consult_goal}" placeholder="例如：广东工业大学 / 先复核现有方案" /></div>
             </div>
             <p class="hero-note" style="margin-top:10px;">后续资料页可以<strong>上传已有方案文档</strong>，我们会先做免费复核，再决定是否进入付费完整规划。</p>
             <div class="consult-actions">

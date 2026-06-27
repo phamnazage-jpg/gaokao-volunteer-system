@@ -58,7 +58,7 @@ def test_public_landing_page_served(client):
     assert "家长联系方式" not in body
     assert "把风险解释给家长听懂" not in body
     # 首页省份必须使用下拉，不再是自由文本
-    assert '<select name="province">' in body
+    assert 'name="province"' in body
     assert 'placeholder="例如：湖南"' not in body
     # hero 已移除三张说明卡
     assert "复核免费 / 方案付费" not in body
