@@ -1770,7 +1770,7 @@ def majors_query_page(
     settings: Settings = Depends(get_settings_dep),
 ) -> HTMLResponse:
     """专业库查询页：从 majors_catalog 搜索专业。"""
-    from data.majors_catalog.loader import MajorsCatalogLoader
+    import json as _json
     from pathlib import Path as _Path
 
     nav_html = _render_global_nav()
@@ -1779,8 +1779,10 @@ def majors_query_page(
 
     if query:
         try:
-            loader = MajorsCatalogLoader(catalog_root=_Path("data/majors_catalog"))
-            all_majors = loader.load_national_catalog()
+            data = _json.loads(
+                _Path("data/majors_catalog/national/latest.json").read_text()
+            )
+            all_majors = data.get("majors", [])
             # 过滤匹配的
             matched = [
                 m
@@ -1870,32 +1872,99 @@ def schools_query_page(
 def compare_reports_page(
     request: Request,
     token: str | None = None,
+    tokens: str | None = None,
     phone: str | None = None,  # 已废弃：C 方案下不再支持手机号直查
     settings: Settings = Depends(get_settings_dep),
 ) -> HTMLResponse:
-    """C 方案：报告对比也必须持有有效 portal token。
-
-    旧逻辑（手机号直查）已废弃，原因同 my_orders_page。
-    单个 token 只对应单个订单，因此对比功能在当前单订单 portal 模型下实际不可用——
-    页面如实告知用户，而不是假装可用。
-    """
+    """报告对比闭环：支持用户输入多个 portal token 进行真实对比。"""
     from data.customer_portal.token import verify_portal_token, PortalTokenError
 
-    nav = '<nav class="global-nav" aria-label="全局导航" role="navigation"><div class="global-nav-inner"><a class="global-nav-brand" href="/">高考志愿填报</a><div class="global-nav-links"><a class="global-nav-link" href="/">首页</a><a class="global-nav-link" href="/pricing">套餐</a><a class="global-nav-link" href="mailto:lon22@qq.com">客服</a></div></div></nav>'
+    nav = _render_global_nav()
 
-    if not token:
-        body = f"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>报告对比</title><link rel="stylesheet" href="/static/portal-ui.css" /></head><body>{_render_global_nav()}{nav}<main class="wrap" style="max-width:680px;margin:0 auto;padding:32px 20px;display:grid;gap:16px;" role="main"><section class="panel"><div style="margin-bottom:8px;"><a class="btn btn-secondary" style="font-size:13px;min-height:32px;padding:6px 12px;background:#edf3ff;color:#194fb6;" href="/">返回首页</a></div><h1>报告对比</h1><section class="state-empty" role="status"><h2 class="state-empty__title">请通过订单链接进入</h2><p class="state-empty__hint">为保护你的报告隐私，我们不再支持凭手机号查询报告。请使用下单时收到的订单进度链接进入。</p></section></section></main>{_render_global_toast_script()}</body></html>"""
+    # 解析 token 列表（query param tokens=token1,token2,...）
+    token_list = []
+    if tokens:
+        token_list = [t.strip() for t in tokens.split(",") if t.strip()]
+    elif token:
+        token_list = [token]
+
+    # 无 token：显示输入表单
+    if not token_list:
+        body = f"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>报告对比</title><link rel="stylesheet" href="/static/portal-ui.css" /></head><body>{nav}<main class="wrap" style="max-width:760px;margin:0 auto;padding:32px 20px;display:grid;gap:16px;" role="main"><section class="panel"><div style="margin-bottom:8px;"><a class="btn btn-secondary" style="font-size:13px;min-height:32px;padding:6px 12px;background:#edf3ff;color:#194fb6;" href="/">返回首页</a></div><h1>报告对比</h1><section class="state-empty" role="status"><h2 class="state-empty__title">请输入 2 份以上报告链接中的 token</h2><p class="state-empty__hint">为保护你的报告隐私，我们不再支持凭手机号查询报告。请把多个订单链接中的 token 复制到这里（逗号分隔），系统会并排对比这些报告的关键信息。</p></section><form method="get" action="/compare-reports" style="margin-top:16px;"><textarea name="tokens" placeholder="token1,token2,token3" style="width:100%;min-height:120px;padding:12px;border-radius:12px;border:1px solid #d7e3f1;font-size:14px;"></textarea><div style="margin-top:12px;"><button class="btn" type="submit">开始对比</button></div></form></section></main>{_render_global_toast_script()}</body></html>"""
         return HTMLResponse(body)
 
-    try:
-        payload = verify_portal_token(token, settings.portal_token_secret)
-        str(payload["order_id"])
-    except PortalTokenError:
-        body = f"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>报告对比</title><link rel="stylesheet" href="/static/portal-ui.css" /></head><body>{_render_global_nav()}{nav}<main class="wrap" style="max-width:680px;margin:0 auto;padding:32px 20px;display:grid;gap:16px;" role="main"><section class="panel"><div style="margin-bottom:8px;"><a class="btn btn-secondary" style="font-size:13px;min-height:32px;padding:6px 12px;background:#edf3ff;color:#194fb6;" href="/">返回首页</a></div><h1>报告对比</h1><section class="state-error" role="alert"><h2 class="state-error__title">链接无效或已过期</h2><p class="state-error__hint">你访问的订单链接无效。请使用下单时收到的最新链接，或联系客服。</p></section></section></main>{_render_global_toast_script()}</body></html>"""
-        return HTMLResponse(body, status_code=401)
+    # 验证每个 token 并收集数据
+    compare_rows = []
+    invalid_tokens = []
+    from data.orders.dao import OrdersDAO, OrderNotFound
 
-    # 单 token = 单订单，对比功能需要 ≥2 份报告，如实告知不可用
-    body = f"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>报告对比</title><link rel="stylesheet" href="/static/portal-ui.css" /></head><body>{_render_global_nav()}{nav}<main class="wrap" style="max-width:680px;margin:0 auto;padding:32px 20px;display:grid;gap:16px;" role="main"><section class="panel"><div style="margin-bottom:8px;"><a class="btn btn-secondary" style="font-size:13px;min-height:32px;padding:6px 12px;background:#edf3ff;color:#194fb6;" href="/">返回首页</a></div><h1>报告对比</h1><section class="state-empty" role="status"><h2 class="state-empty__title">当前订单只有 1 份报告，无法对比</h2><p class="state-empty__hint">报告对比需要至少 2 份已交付报告。当前每个订单链接只对应 1 份报告。如果你有多个订单并希望对比，请分别打开各自的报告进行手动对比，或联系客服获取帮助。</p></section></section></main>{_render_global_toast_script()}</body></html>"""
+    for tk in token_list:
+        try:
+            payload = verify_portal_token(tk, settings.portal_token_secret)
+            order_id = str(payload["order_id"])
+            with OrdersDAO.connect(settings.orders_db_path) as dao:
+                order = dao.get(order_id)
+            context = _build_portal_context(order, settings)
+            intake = context.get("intake_summary") or {}
+            latest_review = _load_latest_review_result(order.id, settings)
+            compare_rows.append({
+                "token": tk,
+                "order_id": order.id,
+                "service_version": order.service_version,
+                "status": order.status,
+                "score": intake.get("candidate_score") or order.candidate_score or "-",
+                "rank": intake.get("candidate_rank") or order.candidate_rank or "-",
+                "subjects": ", ".join(
+                    intake.get("candidate_subjects") or order.candidate_subjects or []
+                )
+                or "-",
+                "target_cities": ", ".join(intake.get("target_cities") or []) or "-",
+                "target_majors": ", ".join(intake.get("target_majors") or []) or "-",
+                "latest_review": latest_review.review_result_id
+                if latest_review
+                else "-",
+                "has_pdf": "是" if context.get("report_pdf_ready") else "否",
+                "report_url": f"/portal/{tk}/report",
+                "status_url": f"/portal/{tk}/status",
+            })
+        except (PortalTokenError, OrderNotFound):
+            invalid_tokens.append(tk)
+
+    # 对比结果
+    if len(compare_rows) < 2:
+        body = f"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>报告对比</title><link rel="stylesheet" href="/static/portal-ui.css" /></head><body>{nav}<main class="wrap" style="max-width:760px;margin:0 auto;padding:32px 20px;display:grid;gap:16px;" role="main"><section class="panel"><div style="margin-bottom:8px;"><a class="btn btn-secondary" style="font-size:13px;min-height:32px;padding:6px 12px;background:#edf3ff;color:#194fb6;" href="/">返回首页</a></div><h1>报告对比</h1><section class="state-empty" role="status"><h2 class="state-empty__title">有效报告不足 2 份，无法对比</h2><p class="state-empty__hint">请提供至少 2 个有效的 portal token。无效 token：{escape(", ".join(invalid_tokens) or "无")}</p></section></section></main>{_render_global_toast_script()}</body></html>"""
+        return HTMLResponse(body)
+
+    # 构建对比表（以列为报告）
+    headers = [f"报告 {i + 1}" for i in range(len(compare_rows))]
+    fields = [
+        ("订单号", "order_id"),
+        ("套餐", "service_version"),
+        ("状态", "status"),
+        ("分数", "score"),
+        ("位次", "rank"),
+        ("选科", "subjects"),
+        ("目标城市", "target_cities"),
+        ("目标专业", "target_majors"),
+        ("最近复核版本", "latest_review"),
+        ("是否有 PDF", "has_pdf"),
+    ]
+    rows_html = []
+    for label, key in fields:
+        cells = "".join(
+            f"<td style='padding:10px;border-bottom:1px solid #eef2f7;'>{escape(str(row[key]))}</td>"
+            for row in compare_rows
+        )
+        rows_html.append(
+            f"<tr><th style='padding:10px;text-align:left;background:#f8fbff;border-bottom:1px solid #d7e3f1;'>{label}</th>{cells}</tr>"
+        )
+
+    quick_links = "".join(
+        f"<li><a href='{escape(row['report_url'])}'>查看 {escape(row['order_id'])} 报告</a> · <a href='{escape(row['status_url'])}'>查看状态</a></li>"
+        for row in compare_rows
+    )
+
+    body = f"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>报告对比</title><link rel="stylesheet" href="/static/portal-ui.css" /><style>body{{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#f4f7fb;padding:32px 20px;color:#172033;margin:0}}.wrap{{max-width:1100px;margin:0 auto;display:grid;gap:18px}}.panel{{background:#fff;border:1px solid #dbe3f0;border-radius:20px;padding:24px;box-shadow:0 18px 42px rgba(20,34,53,.08)}}table{{width:100%;border-collapse:collapse;font-size:13px}}th,td{{padding:8px;text-align:left;border-bottom:1px solid #eef2f7;vertical-align:top}}th{{font-weight:600}}.btn{{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border-radius:12px;text-decoration:none;font-weight:700;background:#1f6feb;color:#fff;border:none;cursor:pointer}}.meta{{color:#5b6b88;line-height:1.8}}</style></head><body>{nav}<main class="wrap" role="main"><section class="panel"><div style="margin-bottom:8px;"><a class="btn btn-secondary" style="font-size:13px;min-height:32px;padding:6px 12px;background:#edf3ff;color:#194fb6;" href="/">返回首页</a></div><h1>报告对比</h1><p class="meta">已对比 {len(compare_rows)} 份有效报告。无效 token：{escape(", ".join(invalid_tokens) or "无")}</p><table><thead><tr><th style='padding:10px;background:#f8fbff;border-bottom:2px solid #d7e3f1;'>字段</th>{"".join(f"<th style='padding:10px;background:#f8fbff;border-bottom:2px solid #d7e3f1;'>{escape(h)}</th>" for h in headers)}</tr></thead><tbody>{"".join(rows_html)}</tbody></table></section><section class='panel'><h2>快速跳转</h2><ul style='line-height:1.8;'>{quick_links}</ul></section></main>{_render_global_toast_script()}</body></html>"""
     return HTMLResponse(body)
 
 
