@@ -911,7 +911,7 @@ def _render_placeholder_shell(
     max_width: int,
     body_html: str,
 ) -> str:
-    return f"""<!doctype html><html lang=\"zh-CN\"><head><meta charset=\"utf-8\" /><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" /><title>{escape(title)}</title><link rel=\"stylesheet\" href=\"/static/portal-ui.css\" /><style>body{{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f3f7fb;margin:0;padding:32px 20px;color:#142235}}.wrap{{max-width:{max_width}px;margin:0 auto;display:grid;gap:16px}}.panel{{background:#fff;border:1px solid #d7e3f1;border-radius:20px;padding:24px;box-shadow:0 18px 42px rgba(20,34,53,.08)}}.meta{{color:#5b6b88;line-height:1.8}}.actions{{display:flex;gap:12px;flex-wrap:wrap;margin-top:12px}}.btn{{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border-radius:12px;text-decoration:none;font-weight:700}}.btn-primary{{background:#1f6feb;color:#fff}}.btn-secondary{{background:#edf3ff;color:#194fb6}}.empty-state{{padding:18px;border-radius:14px;background:#f8fbff;border:1px solid #d7e3f1;color:#5b6b88}}.error-state{{padding:18px;border-radius:14px;background:#fff5f5;border:1px solid #f5c2c7;color:#b42318}}</style></head><body><nav class="global-nav" aria-label="全局导航" role="navigation"><div class="global-nav-inner"><a class="global-nav-brand" href="/">高考志愿填报</a><div class="global-nav-links"><a class="global-nav-link" href="/">首页</a><a class="global-nav-link" href="/pricing">套餐</a><a class="global-nav-link" href="/my-orders">我的订单</a><a class="global-nav-link" href="/my-reports">我的报告</a><a class="global-nav-link" href="mailto:lon22@qq.com">客服</a></div></div></nav><main class=\"wrap\">{body_html}</main></body></html>"""
+    return f"""<!doctype html><html lang=\"zh-CN\"><head><meta charset=\"utf-8\" /><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" /><title>{escape(title)}</title><link rel=\"stylesheet\" href=\"/static/portal-ui.css\" /><style>body{{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f3f7fb;margin:0;padding:32px 20px;color:#142235}}.wrap{{max-width:{max_width}px;margin:0 auto;display:grid;gap:16px}}.panel{{background:#fff;border:1px solid #d7e3f1;border-radius:20px;padding:24px;box-shadow:0 18px 42px rgba(20,34,53,.08)}}.meta{{color:#5b6b88;line-height:1.8}}.actions{{display:flex;gap:12px;flex-wrap:wrap;margin-top:12px}}.btn{{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border-radius:12px;text-decoration:none;font-weight:700}}.btn-primary{{background:#1f6feb;color:#fff}}.btn-secondary{{background:#edf3ff;color:#194fb6}}.empty-state{{padding:18px;border-radius:14px;background:#f8fbff;border:1px solid #d7e3f1;color:#5b6b88}}.error-state{{padding:18px;border-radius:14px;background:#fff5f5;border:1px solid #f5c2c7;color:#b42318}}</style></head><body><nav class="global-nav" aria-label="全局导航" role="navigation"><div class="global-nav-inner"><a class="global-nav-brand" href="/">高考志愿填报</a><div class="global-nav-links"><a class="global-nav-link" href="/">首页</a><a class="global-nav-link" href="/pricing">套餐</a><a class="global-nav-link" href="/my-orders">我的订单</a><a class="global-nav-link" href="/my-reports">我的报告</a><a class="global-nav-link" href="mailto:lon22@qq.com">客服</a></div></div></nav><main class="wrap">{body_html}</main></body></html>"""
 
 
 def _find_legal_doc_path(doc_filename: str) -> Path | None:
@@ -1349,7 +1349,7 @@ def policy_center_page(province: str = "湖南") -> HTMLResponse:
         else "<section class='panel'><h2>当前省份暂不支持</h2><p class='meta'>公开政策摘要与同分段参考当前未覆盖该省份，请勿继续使用本页作为填报依据。</p></section>"
     )
     same_score_href = f"/same-score-reference?province={escape(safe_province)}&score=0"
-    body = f"""<!doctype html><html lang=\"zh-CN\"><head><meta charset=\"utf-8\" /><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" /><title>政策中心</title><link rel=\"stylesheet\" href=\"/static/portal-ui.css\" /><style>body{{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f4f7fb;padding:32px 20px;color:#172033;margin:0}}.wrap{{max-width:980px;margin:0 auto;display:grid;gap:18px}}.panel{{background:#fff;border:1px solid #dbe3f0;border-radius:20px;padding:24px;box-shadow:0 18px 42px rgba(20,34,53,.08)}}.eyebrow{{display:inline-flex;padding:6px 10px;border-radius:999px;background:#eef6ff;color:#194fb6;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}}.meta{{color:#5b6b88;line-height:1.8}}.actions{{display:flex;gap:12px;flex-wrap:wrap}}a{{color:#1f6feb;text-decoration:none}}</style></head><body><main class=\"wrap\"><section class=\"panel\"><span class=\"eyebrow\">政策中心</span><h1>政策中心</h1><p class=\"meta\">适用省份：{escape(safe_province)}</p>{trust_banner}<div class=\"actions\"><a href=\"{same_score_href}\">查看同分段参考</a><a href=\"/\">返回首页</a></div></section>{support_notice}<section class=\"panel\"><h2>时间节点</h2><ul><li>查分后先核对成绩、位次与选科要求。</li><li>正式填报前再次确认批次与专业组选科约束。</li></ul></section><section class=\"panel\"><h2>批次规则</h2><p class=\"meta\">当前只整理普通类主链的关键规则；特殊批次、艺体类等未覆盖内容需另行核对。</p></section><section class=\"panel\"><h2>选科要求</h2><p class=\"meta\">先核对目标专业组选科要求，再判断是否要调整冲稳保结构。</p></section><section class=\"panel\"><h2>常见误区</h2><ul><li>不要把同分段参考当成最终结论。</li><li>不要用去年的批次规则替代当年正式发布口径。</li></ul><p class=\"meta\">以{escape(safe_province)}省教育考试院官方信息为准。</p></section>{_render_footer_links()}</main></body></html>"""
+    body = f"""<!doctype html><html lang=\"zh-CN\"><head><meta charset=\"utf-8\" /><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" /><title>政策中心</title><link rel=\"stylesheet\" href=\"/static/portal-ui.css\" /><style>body{{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f4f7fb;padding:32px 20px;color:#172033;margin:0}}.wrap{{max-width:980px;margin:0 auto;display:grid;gap:18px}}.panel{{background:#fff;border:1px solid #dbe3f0;border-radius:20px;padding:24px;box-shadow:0 18px 42px rgba(20,34,53,.08)}}.eyebrow{{display:inline-flex;padding:6px 10px;border-radius:999px;background:#eef6ff;color:#194fb6;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}}.meta{{color:#5b6b88;line-height:1.8}}.actions{{display:flex;gap:12px;flex-wrap:wrap}}a{{color:#1f6feb;text-decoration:none}}</style></head><body><main class="wrap"><section class="panel"><span class="eyebrow">政策中心</span><h1>政策中心</h1><p class="meta">适用省份：{escape(safe_province)}</p>{trust_banner}<div class="actions"><a href=\"{same_score_href}\">查看同分段参考</a><a href=\"/\">返回首页</a></div></section>{support_notice}<section class="panel"><h2>时间节点</h2><ul><li>查分后先核对成绩、位次与选科要求。</li><li>正式填报前再次确认批次与专业组选科约束。</li></ul></section><section class="panel"><h2>批次规则</h2><p class="meta">当前只整理普通类主链的关键规则；特殊批次、艺体类等未覆盖内容需另行核对。</p></section><section class="panel"><h2>选科要求</h2><p class="meta">先核对目标专业组选科要求，再判断是否要调整冲稳保结构。</p></section><section class="panel"><h2>常见误区</h2><ul><li>不要把同分段参考当成最终结论。</li><li>不要用去年的批次规则替代当年正式发布口径。</li></ul><p class="meta">以{escape(safe_province)}省教育考试院官方信息为准。</p></section>{_render_footer_links()}</main></body></html>"""
     return HTMLResponse(body)
 
 
@@ -1409,7 +1409,7 @@ def same_score_reference_page(province: str = "湖南", score: int = 0) -> HTMLR
         else "<section class='panel'><h2>当前省份暂不支持</h2><p class='meta'>公开同分段参考当前未覆盖该省份；请勿把当前页面的“暂无”视为普通空数据。</p></section>"
     )
     policy_href = f"/policy-center?province={escape(safe_province)}"
-    body = f"""<!doctype html><html lang=\"zh-CN\"><head><meta charset=\"utf-8\" /><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" /><title>同分段参考</title><link rel=\"stylesheet\" href=\"/static/portal-ui.css\" /><style>body{{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f4f7fb;padding:32px 20px;color:#172033;margin:0}}.wrap{{max-width:1000px;margin:0 auto;display:grid;gap:18px}}.panel{{background:#fff;border:1px solid #dbe3f0;border-radius:20px;padding:24px;box-shadow:0 18px 42px rgba(20,34,53,.08)}}.eyebrow{{display:inline-flex;padding:6px 10px;border-radius:999px;background:#eef6ff;color:#194fb6;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}}.meta{{color:#5b6b88;line-height:1.8}}.actions{{display:flex;gap:12px;flex-wrap:wrap}}a{{color:#1f6feb;text-decoration:none}}</style></head><body><main class=\"wrap\"><section class=\"panel\"><span class=\"eyebrow\">同分段参考</span><h1>同分段参考</h1><p class=\"meta\">适用省份：{escape(safe_province)} · 置信等级：{escape(confidence_label)} · 数据说明：仅作参考，不替代正式填报判断</p>{trust_banner}<div class=\"actions\"><a href=\"{policy_href}\">查看政策中心</a><a href=\"/\">返回首页</a></div></section>{unsupported_notice}<section class=\"panel\"><h2>同分段热门学校</h2><p>{escape("、".join([item for item in schools if item]) or "暂无")}</p></section><section class=\"panel\"><h2>同分段热门专业</h2><p>{escape("、".join([item for item in majors if item]) or "暂无")}</p></section><section class=\"panel\"><h2>同分段热门城市</h2><p>{escape("、".join([item for item in cities if item]) or "暂无")}</p></section><section class=\"panel\"><h2>扎堆风险提示</h2><p class=\"meta\">若热门学校/专业高度集中，建议回到审核页或冲稳保页重新看梯度风险。</p></section>{_render_footer_links()}</main></body></html>"""
+    body = f"""<!doctype html><html lang=\"zh-CN\"><head><meta charset=\"utf-8\" /><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" /><title>同分段参考</title><link rel=\"stylesheet\" href=\"/static/portal-ui.css\" /><style>body{{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f4f7fb;padding:32px 20px;color:#172033;margin:0}}.wrap{{max-width:1000px;margin:0 auto;display:grid;gap:18px}}.panel{{background:#fff;border:1px solid #dbe3f0;border-radius:20px;padding:24px;box-shadow:0 18px 42px rgba(20,34,53,.08)}}.eyebrow{{display:inline-flex;padding:6px 10px;border-radius:999px;background:#eef6ff;color:#194fb6;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}}.meta{{color:#5b6b88;line-height:1.8}}.actions{{display:flex;gap:12px;flex-wrap:wrap}}a{{color:#1f6feb;text-decoration:none}}</style></head><body><main class="wrap"><section class="panel"><span class="eyebrow">同分段参考</span><h1>同分段参考</h1><p class="meta">适用省份：{escape(safe_province)} · 置信等级：{escape(confidence_label)} · 数据说明：仅作参考，不替代正式填报判断</p>{trust_banner}<div class="actions"><a href=\"{policy_href}\">查看政策中心</a><a href=\"/\">返回首页</a></div></section>{unsupported_notice}<section class="panel"><h2>同分段热门学校</h2><p>{escape("、".join([item for item in schools if item]) or "暂无")}</p></section><section class="panel"><h2>同分段热门专业</h2><p>{escape("、".join([item for item in majors if item]) or "暂无")}</p></section><section class="panel"><h2>同分段热门城市</h2><p>{escape("、".join([item for item in cities if item]) or "暂无")}</p></section><section class="panel"><h2>扎堆风险提示</h2><p class="meta">若热门学校/专业高度集中，建议回到审核页或冲稳保页重新看梯度风险。</p></section>{_render_footer_links()}</main></body></html>"""
     return HTMLResponse(body)
 
 
@@ -1790,10 +1790,10 @@ def _render_landing_page(request: Request, settings: Settings) -> str:
         </div>
       </div>
     </nav>
-    <main class=\"wrap\">
-      <section class=\"hero\">
-        <div class=\"hero-copy\">
-          <div class=\"eyebrow\">新高考志愿填报 · 志愿决策支持</div>
+    <main class="wrap">
+      <section class="hero">
+        <div class="hero-copy">
+          <div class="eyebrow">新高考志愿填报 · 志愿决策支持</div>
           <h1>高考志愿填报智能规划服务</h1>
           <p class="sub">先免费复核一次你的现有方案，再决定要不要继续付费。</p>
           <div class="hero-actions">
@@ -1880,22 +1880,22 @@ def _render_landing_page(request: Request, settings: Settings) -> str:
         </div>
       </section>
 
-      <section class=\"section\">
+      <section class="section">
         <h2>为什么选择我们</h2>
-        <p class=\"section-intro\">高考志愿填报不是只看一个分数，而是要在时间、信息、风险和沟通成本之间做平衡。我们的特点不是只“生成方案”，而是先帮你审计现有方案、识别扎堆和踩线风险，再决定是否进入更完整的规划与交付。</p>
+        <p class="section-intro">高考志愿填报不是只看一个分数，而是要在时间、信息、风险和沟通成本之间做平衡。我们的特点不是只“生成方案”，而是先帮你审计现有方案、识别扎堆和踩线风险，再决定是否进入更完整的规划与交付。</p>
         <div class=\"grid-3\">
-          <article class=\"card\">
-          <span class=\"tag\">方案审计</span>
+          <article class="card">
+          <span class="tag">方案审计</span>
           <h3>先判断现有方案值不值得继续</h3>
           <p>如果你已经拿到老师、机构或 AI 给出的方案，我们会先审计是否踩线、是否扎堆、是否存在明显结构风险，再决定下一步。</p>
           </article>
-          <article class=\"card\">
-            <span class=\"tag\">风险沟通</span>
+          <article class="card">
+            <span class="tag">风险沟通</span>
             <h3>把风险解释清楚</h3>
             <p>不只输出结果，还会说明冲稳保梯度、可能踩线的位置，以及需要重点确认的选择风险。</p>
           </article>
-          <article class=\"card\">
-            <span class=\"tag\">交付透明</span>
+          <article class="card">
+            <span class="tag">交付透明</span>
             <h3>过程可追踪</h3>
             <p>从下单、资料填写、通知到报告查看，都能在站内看到当前进度，减少反复追问。</p>
           </article>
@@ -2022,7 +2022,7 @@ def _render_pricing_page(request: Request) -> str:
   </head>
   <body>
     <nav class="global-nav" aria-label="全局导航" role="navigation"><div class="global-nav-inner"><a class="global-nav-brand" href="/">高考志愿填报</a><div class="global-nav-links"><a class="global-nav-link" href="/">首页</a><a class="global-nav-link" href="/pricing">套餐</a><a class="global-nav-link" href="/my-orders">我的订单</a><a class="global-nav-link" href="/my-reports">我的报告</a><a class="global-nav-link" href="mailto:lon22@qq.com">客服</a></div></div></nav>
-    <main class=\"wrap\">
+    <main class="wrap">
       <section class="hero">
         <div class="panel">
           <div style="margin-bottom:8px;"><a class="btn btn-secondary" style="font-size:13px;min-height:32px;padding:6px 12px;" href="/">返回首页</a></div>
@@ -2243,92 +2243,91 @@ def _render_checkout_page(service_version: str) -> str:
     </style>
   </head>
   <body>
-    <main
     <nav class="global-nav" aria-label="全局导航" role="navigation"><div class="global-nav-inner"><a class="global-nav-brand" href="/">高考志愿填报</a><div class="global-nav-links"><a class="global-nav-link" href="/">首页</a><a class="global-nav-link" href="/pricing">套餐</a><a class="global-nav-link" href="/my-orders">我的订单</a><a class="global-nav-link" href="/my-reports">我的报告</a><a class="global-nav-link" href="mailto:lon22@qq.com">客服</a></div></div></nav>
- class=\"wrap\">
-      <header class=\"header\">
+ class="wrap">
+      <header class="header">
         <div style="margin-bottom:8px;"><a class="btn btn-secondary" style="font-size:13px;min-height:32px;padding:6px 12px;" href="/">返回首页</a></div>
-        <span class=\"eyebrow\">在线下单</span>
+        <span class="eyebrow">在线下单</span>
         <h1>{escape(service_label)}</h1>
-        <p class=\"lead\">{escape(service_desc)} 现在先确认联系人与考生基础信息；支付成功后，再进入资料向导补充分数、位次、偏好和已有方案附件。</p>
+        <p class="lead">{escape(service_desc)} 现在先确认联系人与考生基础信息；支付成功后，再进入资料向导补充分数、位次、偏好和已有方案附件。</p>
       </header>
 
-      <section class=\"layout\">
+      <section class="layout">
         <section class=\"panel form-panel\">
           <h2>填写下单信息</h2>
-          <p class=\"helper\">当前这一步只收会影响下单与后续联系的必要信息，不要求你一次性填完整个长表单。</p>
-          <div class=\"form-proof\">
-            <article class=\"form-proof-item\"><strong>先下单再补资料</strong><span>先把关键联系信息确认下来，再进入资料向导补充分数、位次和偏好。</span></article>
-            <article class=\"form-proof-item\"><strong>状态站内可追踪</strong><span>支付、通知、交付状态都能在站内持续查看，不必反复追问进度。</span></article>
-            <article class=\"form-proof-item\"><strong>隐私入口始终可见</strong><span>隐私政策、服务说明与删除申请入口在这条链路上持续可访问。</span></article>
+          <p class="helper">当前这一步只收会影响下单与后续联系的必要信息，不要求你一次性填完整个长表单。</p>
+          <div class="form-proof">
+            <article class="form-proof-item"><strong>先下单再补资料</strong><span>先把关键联系信息确认下来，再进入资料向导补充分数、位次和偏好。</span></article>
+            <article class="form-proof-item"><strong>状态站内可追踪</strong><span>支付、通知、交付状态都能在站内持续查看，不必反复追问进度。</span></article>
+            <article class="form-proof-item"><strong>隐私入口始终可见</strong><span>隐私政策、服务说明与删除申请入口在这条链路上持续可访问。</span></article>
           </div>
-          <div class=\"trust-strip\">
-            <article class=\"trust-card\"><strong>步骤更短</strong><span>先支付，再补详细资料。</span></article>
-            <article class=\"trust-card\"><strong>进度可追踪</strong><span>资料、通知和交付状态都可站内查看。</span></article>
-            <article class=\"trust-card\"><strong>入口可核查</strong><span>隐私政策、服务说明、删除申请入口全程可见。</span></article>
+          <div class="trust-strip">
+            <article class="trust-card"><strong>步骤更短</strong><span>先支付，再补详细资料。</span></article>
+            <article class="trust-card"><strong>进度可追踪</strong><span>资料、通知和交付状态都可站内查看。</span></article>
+            <article class="trust-card"><strong>入口可核查</strong><span>隐私政策、服务说明、删除申请入口全程可见。</span></article>
           </div>
           <form id=\"checkout-form\">
-            <div class=\"grid\">
-              <div class=\"field\">
-                <label>考生姓名<span class=\"required\">*</span></label>
+            <div class="grid">
+              <div class="field">
+                <label>考生姓名<span class="required">*</span></label>
                 <input name=\"candidate_name\" required maxlength=\"32\" placeholder=\"请输入考生姓名\" />
-                <div class=\"error\" data-error=\"candidate_name\"></div>
+                <div class="error" data-error=\"candidate_name\"></div>
               </div>
-              <div class=\"field\">
-                <label>手机号<span class=\"required\">*</span></label>
+              <div class="field">
+                <label>手机号<span class="required">*</span></label>
                 <input name=\"customer_phone\" required inputmode=\"tel\" maxlength=\"20\" placeholder=\"请输入便于联系的手机号\" />
-                <div class=\"error\" data-error=\"customer_phone\"></div>
+                <div class="error" data-error=\"customer_phone\"></div>
               </div>
             </div>
-            <div class=\"grid\">
-              <div class=\"field\">
+            <div class="grid">
+              <div class="field">
                 <label>称呼</label>
                 <input name=\"customer_name\" maxlength=\"32\" placeholder=\"可选，例如：张同学 / 张家长\" />
               </div>
-              <div class=\"field\">
+              <div class="field">
                 <label>邮箱（接收通知）</label>
                 <input name=\"customer_email\" type=\"email\" maxlength=\"120\" placeholder=\"可选，用于接收交付提醒\" />
               </div>
             </div>
-            <div class=\"grid\">
-              <div class=\"field\">
+            <div class="grid">
+              <div class="field">
                 <label>考试省份</label>
                 <select name=\"candidate_province\">{province_html}</select>
-                <div class=\"hint\">如果你暂时还没决定，也可以支付后在资料向导中补充。</div>
+                <div class="hint">如果你暂时还没决定，也可以支付后在资料向导中补充。</div>
               </div>
-              <div class=\"field\">
+              <div class="field">
                 <label>备注</label>
                 <textarea name=\"notes\" maxlength=\"500\" placeholder=\"可选，例如希望重点关注的城市、专业或顾虑\"></textarea>
               </div>
             </div>
-            <div class=\"actions\">
+            <div class="actions">
               <button type=\"submit\" id=\"submit-btn\">立即支付 ¥{amount / 100:.0f}</button>
-              <span class=\"hint\">提交后会进入支付与资料完善流程。</span>
+              <span class="hint">提交后会进入支付与资料完善流程。</span>
             </div>
           </form>
           <p id=\"result\"></p>
-          <div class=\"service-note\">服务保障：支付后可进入资料向导继续补充详细信息；提交资料后，后续状态、通知与交付入口都将在站内持续更新。</div>
+          <div class="service-note">服务保障：支付后可进入资料向导继续补充详细信息；提交资料后，后续状态、通知与交付入口都将在站内持续更新。</div>
           {_render_footer_links()}
         </section>
 
         <aside class=\"panel summary\">
           <h2>订单摘要</h2>
           <p>你当前选择的是 <strong>{escape(service_label)}</strong>。这一步先确认下单人与考生基础信息，支付成功后再继续补完整资料。</p>
-          <div class=\"summary-badges\">
-            <div class=\"summary-badge\"><strong>当前建议</strong><span>如果你已经有现成方案，49 元审核版适合先判断风险；99 元适合直接进入完整线上规划。</span></div>
-            <div class=\"summary-badge\"><strong>交付方式</strong><span>站内资料向导、通知状态、在线报告与 PDF 下载入口。</span></div>
+          <div class="summary-badges">
+            <div class="summary-badge"><strong>当前建议</strong><span>如果你已经有现成方案，49 元审核版适合先判断风险；99 元适合直接进入完整线上规划。</span></div>
+            <div class="summary-badge"><strong>交付方式</strong><span>站内资料向导、通知状态、在线报告与 PDF 下载入口。</span></div>
           </div>
-          <div class=\"summary-list\">
-            <div class=\"summary-item\"><strong>适合谁</strong><span>{escape(service_desc)}</span></div>
-            <div class=\"summary-item\"><strong>你会得到什么</strong><span>站内资料向导、通知状态、报告在线查看和 PDF 下载入口。</span></div>
-            <div class=\"summary-item\"><strong>下单后下一步</strong><span>支付成功 → 进入资料向导 → 查看状态与交付。</span></div>
+          <div class="summary-list">
+            <div class="summary-item"><strong>适合谁</strong><span>{escape(service_desc)}</span></div>
+            <div class="summary-item"><strong>你会得到什么</strong><span>站内资料向导、通知状态、报告在线查看和 PDF 下载入口。</span></div>
+            <div class="summary-item"><strong>下单后下一步</strong><span>支付成功 → 进入资料向导 → 查看状态与交付。</span></div>
           </div>
-          <div class=\"price-box\">
+          <div class="price-box">
             <div>
-              <div class=\"label\">当前应付</div>
-              <div class=\"amount\">¥{amount / 100:.0f}</div>
+              <div class="label">当前应付</div>
+              <div class="amount">¥{amount / 100:.0f}</div>
             </div>
-            <div class=\"label\">完成支付后即可继续补完整资料</div>
+            <div class="label">完成支付后即可继续补完整资料</div>
           </div>
         </aside>
       </section>
@@ -2438,22 +2437,22 @@ def _render_payment_success_page(token: str, context: dict[str, Any]) -> str:
     </style>
   </head>
   <body>
-    <main class=\"wrap\">
-      <section class=\"panel\">
-        <span class=\"eyebrow\">支付成功</span>
+    <main class="wrap">
+      <section class="panel">
+        <span class="eyebrow">支付成功</span>
         <h1>订单已创建，下一步继续补资料</h1>
-        <p class=\"lead\">支付状态：{payment_status}。{escape(next_hint)}</p>
-        <div class=\"hero-actions\">
+        <p class="lead">支付状态：{payment_status}。{escape(next_hint)}</p>
+        <div class="hero-actions">
           <a class=\"btn btn-primary\" href=\"{next_href}\">{escape(next_action)}</a>
           <a class=\"btn btn-secondary\" href=\"/portal/{escape(token)}/status\">查看订单进度</a>
         </div>
       </section>
-      <section class=\"panel\">
+      <section class="panel">
         <h2 style=\"margin:0 0 10px;\">你现在要做什么</h2>
-        <div class=\"grid\">
-          <div class=\"item\"><strong>补充基础信息</strong><span class=\"meta\">先填分数、位次、选科。</span></div>
-          <div class=\"item\"><strong>填写偏好目标</strong><span class=\"meta\">补充城市、专业或院校偏好。</span></div>
-          <div class=\"item\"><strong>持续查看进度</strong><span class=\"meta\">资料提交后可继续查看状态、通知和报告。</span></div>
+        <div class="grid">
+          <div class="item"><strong>补充基础信息</strong><span class="meta">先填分数、位次、选科。</span></div>
+          <div class="item"><strong>填写偏好目标</strong><span class="meta">补充城市、专业或院校偏好。</span></div>
+          <div class="item"><strong>持续查看进度</strong><span class="meta">资料提交后可继续查看状态、通知和报告。</span></div>
         </div>
       </section>
     </main>
@@ -2754,14 +2753,14 @@ def _render_info_page(
     </style>
   </head>
   <body>
-    <main class=\"wrap\">
-      <section class=\"hero\">
+    <main class="wrap">
+      <section class="hero">
         <section class=\"panel main-panel\">
-          <span class=\"eyebrow\">资料填写向导</span>
+          <span class="eyebrow">资料填写向导</span>
           <h1>考生资料填写</h1>
-          <p class=\"helper\" style=\"margin:8px 0 0;\">资料填写向导</p>
-          <p class=\"lead\">支付完成后，请按向导逐步补充分数、位次、偏好与已有方案信息。我们会把这份资料作为后续方案分析与交付的基础。</p>
-          <section class=\"progress-box\"><strong>当前还需要补充：</strong><span>{escape("、".join(missing_items) or "资料已基本完整，可以继续提交")}</span></section>
+          <p class="helper" style=\"margin:8px 0 0;\">资料填写向导</p>
+          <p class="lead">支付完成后，请按向导逐步补充分数、位次、偏好与已有方案信息。我们会把这份资料作为后续方案分析与交付的基础。</p>
+          <section class="progress-box"><strong>当前还需要补充：</strong><span>{escape("、".join(missing_items) or "资料已基本完整，可以继续提交")}</span></section>
 
           <section class="wizard-head">
             <h2>五步资料向导</h2>
@@ -2873,14 +2872,14 @@ def _render_info_page(
 
         <aside class=\"panel status-card\">
           <h2>当前资料状态</h2>
-          <span class=\"status-pill\">{escape(stage_title)}</span>
+          <span class="status-pill">{escape(stage_title)}</span>
           <p style=\"margin-top:12px;\">{escape(stage_subtitle)}</p>
-          <div class=\"status-list\">
-            <div class=\"status-item\"><strong>订单号</strong><span>{escape(order.id)}</span></div>
-            <div class=\"status-item\"><strong>当前服务版本</strong><span>{escape(order.service_version)}</span></div>
-            <div class=\"status-item\"><strong>你可以怎么做</strong><span>保存草稿、继续补资料，或在最后一步统一提交进入后续处理。</span></div>
+          <div class="status-list">
+            <div class="status-item"><strong>订单号</strong><span>{escape(order.id)}</span></div>
+            <div class="status-item"><strong>当前服务版本</strong><span>{escape(order.service_version)}</span></div>
+            <div class="status-item"><strong>你可以怎么做</strong><span>保存草稿、继续补资料，或在最后一步统一提交进入后续处理。</span></div>
           </div>
-          <div class=\"compliance-note\">提交资料即表示：监护人已知情并同意将考生资料用于志愿填报服务；当前版本号：{escape(consent_version)}</div>
+          <div class="compliance-note">提交资料即表示：监护人已知情并同意将考生资料用于志愿填报服务；当前版本号：{escape(consent_version)}</div>
         </aside>
       </section>
     </main>
@@ -3071,7 +3070,7 @@ def _render_status_page(token: str, context: dict[str, Any]) -> str:
         <h2>通知已发送</h2>
         <p><strong>{title}</strong></p>
         <p>{body}</p>
-        <p class=\"meta\">发送时间：{sent_at}</p>
+        <p class="meta">发送时间：{sent_at}</p>
       </section>"""
     summary_html = ""
     intake_summary = context.get("intake_summary") or {}
@@ -3099,22 +3098,22 @@ def _render_status_page(token: str, context: dict[str, Any]) -> str:
             )
         attachment_html = "".join(attachment_lines) or "<li class='empty'>暂无附件</li>"
         summary_html = f"""
-      <section class=\"panel\">
+      <section class="panel">
         <h2>当前资料摘要</h2>
-        <ul class=\"summary-list\">{"".join(summary_items)}</ul>
+        <ul class="summary-list">{"".join(summary_items)}</ul>
         <h3>已上传附件</h3>
-        <ul class=\"attachment-list\">{attachment_html}</ul>
+        <ul class="attachment-list">{attachment_html}</ul>
       </section>"""
     payment_status = escape(str(context.get("payment_status") or "pending"))
     delivery_html = f"""
-      <section class=\"panel\">
+      <section class="panel">
         <h2>支付与交付状态</h2>
-        <div class=\"status-grid\">
-          <div class=\"status-item\"><strong>支付状态</strong><span>{payment_status}</span></div>
-          <div class=\"status-item\"><strong>资料状态</strong><span>{escape(context["stage_title"])}</span></div>
-          <div class=\"status-item\"><strong>HTML 报告</strong><span>{"已就绪" if context["report_html_ready"] else "未就绪"}</span></div>
-          <div class=\"status-item\"><strong>PDF 报告</strong><span>{"已就绪" if context["report_pdf_ready"] else "未就绪"}</span></div>
-          <div class=\"status-item\"><strong>交付阶段</strong><span>{escape(context["stage"])}</span></div>
+        <div class="status-grid">
+          <div class="status-item"><strong>支付状态</strong><span>{payment_status}</span></div>
+          <div class="status-item"><strong>资料状态</strong><span>{escape(context["stage_title"])}</span></div>
+          <div class="status-item"><strong>HTML 报告</strong><span>{"已就绪" if context["report_html_ready"] else "未就绪"}</span></div>
+          <div class="status-item"><strong>PDF 报告</strong><span>{"已就绪" if context["report_pdf_ready"] else "未就绪"}</span></div>
+          <div class="status-item"><strong>交付阶段</strong><span>{escape(context["stage"])}</span></div>
         </div>
       </section>"""
     return f"""<!doctype html>
@@ -3175,14 +3174,14 @@ def _render_status_page(token: str, context: dict[str, Any]) -> str:
     </style>
   </head>
   <body>
-    <main class=\"wrap\">
-      <section class=\"hero\">
-        <section class=\"panel\">
-          <span class=\"eyebrow\">订单进度总览</span>
+    <main class="wrap">
+      <section class="hero">
+        <section class="panel">
+          <span class="eyebrow">订单进度总览</span>
           <h1>{escape(context["stage_title"])}</h1>
           <div class="progress-bar"><div class="progress-step {"done" if stage not in ("pending_payment",) else "active"}">1. 支付成功</div><div class="progress-step {"done" if stage in ("processing", "report_ready", "completed") else ("active" if stage in ("paid", "serving", "info_submitted") else "")}">2. 资料处理中</div><div class="progress-step {"done" if stage in ("completed",) else ("active" if stage in ("report_ready",) else "")}">3. 报告交付</div></div>
-          <p class=\"lead\">{escape(context["stage_subtitle"])}</p>
-          <span class=\"stage-pill\">当前阶段：{escape(context["stage"])}</span>
+          <p class="lead">{escape(context["stage_subtitle"])}</p>
+          <span class="stage-pill">当前阶段：{escape(context["stage"])}</span>
           <div class="hero-actions">
             <a class="hero-btn hero-btn-primary" href="/review/start?source=status&amp;token={escape(token)}">查看当前进度 / 先复核当前方案</a>
             <a class="hero-btn hero-btn-secondary" href="/portal/{escape(token)}/info">继续补充资料</a>
@@ -3194,9 +3193,9 @@ def _render_status_page(token: str, context: dict[str, Any]) -> str:
             <div class="hero-meta-item"><strong>Step 1 最小建档</strong><span>{"已完成" if context["profile_minimum_complete"] else "未完成"}</span></div>
           </div>
         </section>
-        <aside class=\"panel\">
+        <aside class="panel">
           <h2>下一步建议</h2>
-          <ul class=\"action-list\">
+          <ul class="action-list">
             <li>如资料还未完善，可返回资料页继续补充。</li>
             <li>如报告尚未就绪，请以后续通知与状态页更新为准。</li>
             <li>如交付已完成，可优先查看报告与 PDF 下载入口。</li>
@@ -3204,7 +3203,7 @@ def _render_status_page(token: str, context: dict[str, Any]) -> str:
         </aside>
       </section>
 
-      <section class=\"sections\">
+      <section class="sections">
         {summary_html}
         <div id=\"delivery-status\">{delivery_html}</div>
         {station_notice_html}
@@ -3215,9 +3214,9 @@ def _render_status_page(token: str, context: dict[str, Any]) -> str:
             <li>缺失字段：{escape("、".join(context["profile_missing_fields"]) or "无")}</li>
           </ul>
         </section>
-        <section class=\"panel\">
+        <section class="panel">
           <h2>下一步操作</h2>
-          <ul class=\"action-list\">
+          <ul class="action-list">
             <li><a href=\"/portal/{escape(token)}/info\">填写 / 更新资料</a></li>
             <li><a href=\"/review/start?source=status&amp;token={escape(token)}\">从状态页进入方案复核</a></li>
             <li><a href=\"/portal/{escape(token)}/notifications\">查看通知记录</a></li>
@@ -3250,12 +3249,12 @@ def _render_notification_audit_page(token: str, order: Order, events: list[Any])
     return f"""<!doctype html>
 <html lang=\"zh-CN\"><head><meta charset=\"utf-8\" /><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" /><title>通知审计</title><link rel=\"stylesheet\" href=\"/static/portal-ui.css\" /><style>body{{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f4f7fb;margin:0;padding:32px 20px;color:#172033}}.wrap{{max-width:1100px;margin:0 auto;display:grid;gap:16px}}.panel{{background:#fff;border:1px solid #dbe3f0;border-radius:20px;padding:24px;box-shadow:0 18px 42px rgba(20,34,53,.08)}}.meta{{color:#5b6b88;line-height:1.7}}table{{width:100%;border-collapse:collapse}}th,td{{padding:12px 10px;border-bottom:1px solid #e5edf7;text-align:left;font-size:14px}}th{{color:#475569;font-size:13px;text-transform:uppercase;letter-spacing:.03em}}.toolbar{{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap}}</style></head>
   <body>
-    <main class=\"wrap\">
-      <section class=\"panel\">
-        <div class=\"toolbar\"><div><h1>通知审计</h1><p class=\"meta\">订单号：{escape(order.id)} · 服务版本：{escape(order.service_version)}</p></div><div><a href=\"/portal/{escape(token)}/status\">返回订单状态页</a></div></div>
-        <p class=\"meta\">这里只展示通知摘要，方便你确认系统是否已经发出站内提醒或邮件通知；原始 payload 与附件路径不会在前台显示。</p>
+    <main class="wrap">
+      <section class="panel">
+        <div class="toolbar"><div><h1>通知审计</h1><p class="meta">订单号：{escape(order.id)} · 服务版本：{escape(order.service_version)}</p></div><div><a href=\"/portal/{escape(token)}/status\">返回订单状态页</a></div></div>
+        <p class="meta">这里只展示通知摘要，方便你确认系统是否已经发出站内提醒或邮件通知；原始 payload 与附件路径不会在前台显示。</p>
       </section>
-      <section class=\"panel\" style=\"overflow:auto\">
+      <section class="panel" style=\"overflow:auto\">
         <table>
           <thead>
             <tr>
@@ -3360,7 +3359,7 @@ def _render_report_shell(
     policy_href, same_score_href = _helper_entry_hrefs(payload, order)
     auxiliary_html = _render_auxiliary_factor_section(payload)
     version_state = _profile_version_state(payload, profile_version)
-    return f"""<!doctype html><html lang=\"zh-CN\"><head><meta charset=\"utf-8\" /><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" /><title>志愿报告资产页</title><link rel=\"stylesheet\" href=\"/static/portal-ui.css\" /><style>body{{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f3f7fb;margin:0;padding:32px 20px;color:#142235}}.wrap{{max-width:1100px;margin:0 auto;display:grid;gap:16px}}.panel{{background:#fff;border:1px solid #d7e3f1;border-radius:20px;padding:24px;box-shadow:0 18px 42px rgba(20,34,53,.08)}}.meta{{color:#5b6b88;line-height:1.8}}.actions{{display:flex;gap:12px;flex-wrap:wrap;margin-top:12px}}.btn{{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border-radius:14px;text-decoration:none;font-weight:700;background:#1f6feb;color:#fff}}.btn.secondary{{background:#eef6ff;color:#1f4fb6}}ul{{padding-left:20px;line-height:1.8}}pre{{white-space:pre-wrap;background:#f8fbff;border:1px solid #d7e3f1;border-radius:16px;padding:16px;overflow:auto}}</style></head><body><main class=\"wrap\"><section class=\"panel\"><h1>志愿报告资产页</h1><p class=\"meta\">报告版本：{escape(report_version)} · 基于哪个档案版本：{escape(profile_version)} · 当前复核版本：{escape(review_version)}</p><p class=\"meta\">{escape(version_state)} · {history_summary}</p><div class=\"actions\"><a class=\"btn\" href=\"{next_href}\">继续下一步</a><a class=\"btn secondary\" href=\"{policy_href}\">查看政策中心</a><a class=\"btn secondary\" href=\"{same_score_href}\">查看同分段参考</a></div></section><section class=\"panel\"><h2>当前复核摘要</h2>{review_summary}</section>{auxiliary_html}<section class=\"panel\"><h2>原始报告内容</h2>{report_body_html}</section><section class=\"panel\"><h2>下一步建议</h2><ul><li><a href=\"/portal/{escape(token)}/info\">回到资料页继续补充</a></li><li><a href=\"{next_href}\">继续当前主路径</a></li><li><a href=\"/review/start?source=report&amp;token={escape(token)}\">重新发起方案复核</a></li></ul></section>{_render_footer_links(token)}</main></body></html>"""
+    return f"""<!doctype html><html lang=\"zh-CN\"><head><meta charset=\"utf-8\" /><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" /><title>志愿报告资产页</title><link rel=\"stylesheet\" href=\"/static/portal-ui.css\" /><style>body{{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f3f7fb;margin:0;padding:32px 20px;color:#142235}}.wrap{{max-width:1100px;margin:0 auto;display:grid;gap:16px}}.panel{{background:#fff;border:1px solid #d7e3f1;border-radius:20px;padding:24px;box-shadow:0 18px 42px rgba(20,34,53,.08)}}.meta{{color:#5b6b88;line-height:1.8}}.actions{{display:flex;gap:12px;flex-wrap:wrap;margin-top:12px}}.btn{{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border-radius:14px;text-decoration:none;font-weight:700;background:#1f6feb;color:#fff}}.btn.secondary{{background:#eef6ff;color:#1f4fb6}}ul{{padding-left:20px;line-height:1.8}}pre{{white-space:pre-wrap;background:#f8fbff;border:1px solid #d7e3f1;border-radius:16px;padding:16px;overflow:auto}}</style></head><body><main class="wrap"><section class="panel"><h1>志愿报告资产页</h1><p class="meta">报告版本：{escape(report_version)} · 基于哪个档案版本：{escape(profile_version)} · 当前复核版本：{escape(review_version)}</p><p class="meta">{escape(version_state)} · {history_summary}</p><div class="actions"><a class="btn" href=\"{next_href}\">继续下一步</a><a class=\"btn secondary\" href=\"{policy_href}\">查看政策中心</a><a class=\"btn secondary\" href=\"{same_score_href}\">查看同分段参考</a></div></section><section class="panel"><h2>当前复核摘要</h2>{review_summary}</section>{auxiliary_html}<section class="panel"><h2>原始报告内容</h2>{report_body_html}</section><section class="panel"><h2>下一步建议</h2><ul><li><a href=\"/portal/{escape(token)}/info\">回到资料页继续补充</a></li><li><a href=\"{next_href}\">继续当前主路径</a></li><li><a href=\"/review/start?source=report&amp;token={escape(token)}\">重新发起方案复核</a></li></ul></section>{_render_footer_links(token)}</main></body></html>"""
 
 
 def _render_report_page(order: Order, settings: Settings) -> str:
@@ -3544,13 +3543,13 @@ def _render_review_start_page(contract: ReviewResultContract, token: str | None)
     rank = escape(_review_constraints_display(constraints.get("candidate_rank")))
     share_hint = "此页链接可直接复制分享"
     body_html = f"""
-<section class=\"panel\">
+<section class="panel">
   <div style=\"display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;\">
-    <span class=\"eyebrow\">免费复核结果</span>
+    <span class="eyebrow">免费复核结果</span>
     <a class=\"btn btn-secondary\" style=\"font-size:13px;min-height:32px;padding:6px 12px;\" href=\"/\">返回首页</a>
   </div>
   <h1>复核结果</h1>
-  <p class=\"meta\">基于你当前提交的信息，下面先告诉你当前的风险判断和最适合的下一步。</p>
+  <p class="meta">基于你当前提交的信息，下面先告诉你当前的风险判断和最适合的下一步。</p>
   <div style=\"margin-top:12px;padding:12px 14px;border-radius:12px;background:#f0f7ff;border:1px solid #1f6feb;\">
     <p style=\"margin:0 0 6px;font-size:13px;color:#1f6feb;\"><strong>分享给家人商量</strong></p>
     <p style=\"margin:0 0 8px;font-size:12px;color:#5a7cb8;\">{share_hint}。把当前页面链接复制发给家人，一起讨论结果。</p>
@@ -3561,7 +3560,7 @@ def _render_review_start_page(contract: ReviewResultContract, token: str | None)
   </div>
 </section>
 
-<section class=\"panel\">
+<section class="panel">
   <h2>你当前提交的信息</h2>
   <ul>
     <li>已有方案说明：{summary}</li>
@@ -3574,7 +3573,7 @@ def _render_review_start_page(contract: ReviewResultContract, token: str | None)
   <div class="error-state" style="margin-top:10px;"><strong>信息不完整</strong>：选科组合或位次为"待补充"。补齐后我们可以给出更具体的风险定位。</div>
 </section>
 
-<section class=\"panel\">
+<section class="panel">
   <h2>初步评估结果</h2>
   <ul>
     <li><strong>风险等级：{escape(contract.risk_level)}</strong></li>
@@ -3582,18 +3581,18 @@ def _render_review_start_page(contract: ReviewResultContract, token: str | None)
   </ul>
   <h3>核心问题</h3>
   <ul>{findings_html}</ul>
-  <p class=\"meta\" style=\"margin-top:8px;\">风险等级说明：低 = 当前方案结构基本合理，微调即可；中 = 存在踩线或扎堆风险，需要进一步判断；高 = 存在明显梯度失衡或结构风险，建议尽快调整。</p>
+  <p class="meta" style=\"margin-top:8px;\">风险等级说明：低 = 当前方案结构基本合理，微调即可；中 = 存在踩线或扎堆风险，需要进一步判断；高 = 存在明显梯度失衡或结构风险，建议尽快调整。</p>
 </section>
 
-<section class=\"panel\">
+<section class="panel">
   <h2>下一步建议</h2>
-  <p class=\"meta\">{escape(primary_action[2])}</p>
-  <div class=\"actions\">
+  <p class="meta">{escape(primary_action[2])}</p>
+  <div class="actions">
     <form action=\"/review/action\" method=\"post\">{token_input}<input type=\"hidden\" name=\"action\" value=\"{escape(primary_action[1])}\" /><button class=\"btn btn-primary\" type=\"submit\">{escape(primary_action[0])}</button></form>
     <form action=\"/review/action\" method=\"post\">{token_input}<input type=\"hidden\" name=\"action\" value=\"cwb\" /><button class=\"btn btn-secondary\" type=\"submit\">查看冲稳保建议</button></form>
     <a class=\"btn btn-secondary\" href=\"/pricing\">进入完整规划（付费）</a>
   </div>
-  <p class=\"meta\" style=\"margin-top:10px;\">免费复核帮你判断风险方向；完整规划和深度辅导在支付后启动，会给你逐志愿解析、冲稳保梯度表和交付报告。</p>
+  <p class="meta" style=\"margin-top:10px;\">免费复核帮你判断风险方向；完整规划和深度辅导在支付后启动，会给你逐志愿解析、冲稳保梯度表和交付报告。</p>
 </section>
 """
     return _render_placeholder_shell(
@@ -3684,7 +3683,7 @@ def _render_cwb_placeholder_page(
         (contract.recommended_action if contract is not None else "go_step1"),
         "先补齐关键信息再继续。",
     )
-    body_html = f"""<section class=\"panel\"><h1>冲稳保建议页</h1><p class=\"meta\">订单号：{escape(order.id)}。这里给出当前复核后的三档策略建议，供你决定下一步是微调梯度还是转入完整规划。</p><div class=\"actions\"><a href=\"{policy_href}\">查看政策中心</a><a href=\"{same_score_href}\">查看同分段参考</a></div></section><section class=\"panel\"><h2>当前建议</h2><p class=\"meta\">{escape(recommendation)}</p><ul>{findings_html}</ul></section><section class=\"panel\"><div style=\"display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;\"><article style=\"padding:16px;border-radius:14px;background:#f8fbff;border:1px solid #d7e3f1;\"><h2>冲刺建议</h2><p class=\"meta\">优先放入最看重但梯度更高的志愿，并保留风险提示。</p></article><article style=\"padding:16px;border-radius:14px;background:#f8fbff;border:1px solid #d7e3f1;\"><h2>稳妥建议</h2><p class=\"meta\">围绕当前位次与政策约束，建立主力可落地选择。</p></article><article style=\"padding:16px;border-radius:14px;background:#f8fbff;border:1px solid #d7e3f1;\"><h2>保底建议</h2><p class=\"meta\">保留最低风险去向，避免出现无可填报结果。</p></article></div></section><section class=\"panel\"><h2>当前复核摘要</h2><pre>{escape(json.dumps(payload, ensure_ascii=False, indent=2))}</pre></section>{auxiliary_html}<section class=\"panel\"><h2>下一步建议</h2><ul><li><a href=\"/portal/{escape(token)}/full-plan\">进入完整规划</a></li><li><a href=\"/portal/{escape(token)}/status\">返回订单状态页</a></li></ul></section>"""
+    body_html = f"""<section class="panel"><h1>冲稳保建议页</h1><p class="meta">订单号：{escape(order.id)}。这里给出当前复核后的三档策略建议，供你决定下一步是微调梯度还是转入完整规划。</p><div class="actions"><a href=\"{policy_href}\">查看政策中心</a><a href=\"{same_score_href}\">查看同分段参考</a></div></section><section class="panel"><h2>当前建议</h2><p class="meta">{escape(recommendation)}</p><ul>{findings_html}</ul></section><section class="panel"><div style=\"display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;\"><article style=\"padding:16px;border-radius:14px;background:#f8fbff;border:1px solid #d7e3f1;\"><h2>冲刺建议</h2><p class="meta">优先放入最看重但梯度更高的志愿，并保留风险提示。</p></article><article style=\"padding:16px;border-radius:14px;background:#f8fbff;border:1px solid #d7e3f1;\"><h2>稳妥建议</h2><p class="meta">围绕当前位次与政策约束，建立主力可落地选择。</p></article><article style=\"padding:16px;border-radius:14px;background:#f8fbff;border:1px solid #d7e3f1;\"><h2>保底建议</h2><p class="meta">保留最低风险去向，避免出现无可填报结果。</p></article></div></section><section class="panel"><h2>当前复核摘要</h2><pre>{escape(json.dumps(payload, ensure_ascii=False, indent=2))}</pre></section>{auxiliary_html}<section class="panel"><h2>下一步建议</h2><ul><li><a href=\"/portal/{escape(token)}/full-plan\">进入完整规划</a></li><li><a href=\"/portal/{escape(token)}/status\">返回订单状态页</a></li></ul></section>"""
     return _render_placeholder_shell(
         title="冲稳保建议页", max_width=1080, body_html=body_html
     )
@@ -3719,7 +3718,7 @@ def _render_full_plan_placeholder_page(
     planning_summary = (
         "当前资料已进入完整规划阶段，可继续围绕学校、专业、预算与家庭约束做结构化取舍。"
     )
-    body_html = f"""<section class=\"panel\"><h1>完整规划建议页</h1><p class=\"meta\">订单号：{escape(order.id)}。这里承接复核后的完整规划建议，不再只是入口说明。</p><p class=\"meta\">{escape(planning_summary)}</p><ul><li>Step 1 最小建档：{"已完成" if context.get("profile_minimum_complete") else "未完成"}</li><li>缺失字段：{escape(missing)}</li></ul></section><section class=\"panel\"><h2>方案优先级</h2><ul><li>先按省份 / 分数 / 位次确认基本梯度</li><li>再按院校偏好、专业偏好与家庭约束收敛方案</li><li>最后结合已有方案与附件做增量修订</li></ul></section><section class=\"panel\"><h2>版本历史</h2><ul>{version_lines}</ul></section>{auxiliary_html}<section class=\"panel\"><h2>当前复核摘要</h2><pre>{escape(json.dumps(payload, ensure_ascii=False, indent=2))}</pre></section><section class=\"panel\"><a href=\"/portal/{escape(token)}/info\">继续补充资料</a></section>"""
+    body_html = f"""<section class="panel"><h1>完整规划建议页</h1><p class="meta">订单号：{escape(order.id)}。这里承接复核后的完整规划建议，不再只是入口说明。</p><p class="meta">{escape(planning_summary)}</p><ul><li>Step 1 最小建档：{"已完成" if context.get("profile_minimum_complete") else "未完成"}</li><li>缺失字段：{escape(missing)}</li></ul></section><section class="panel"><h2>方案优先级</h2><ul><li>先按省份 / 分数 / 位次确认基本梯度</li><li>再按院校偏好、专业偏好与家庭约束收敛方案</li><li>最后结合已有方案与附件做增量修订</li></ul></section><section class="panel"><h2>版本历史</h2><ul>{version_lines}</ul></section>{auxiliary_html}<section class="panel"><h2>当前复核摘要</h2><pre>{escape(json.dumps(payload, ensure_ascii=False, indent=2))}</pre></section><section class="panel"><a href=\"/portal/{escape(token)}/info\">继续补充资料</a></section>"""
     return _render_placeholder_shell(
         title="完整规划建议页", max_width=960, body_html=body_html
     )
