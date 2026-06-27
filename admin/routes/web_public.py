@@ -2780,7 +2780,7 @@ def _render_checkout_page(service_version: str) -> str:
             <div style="display:flex;gap:16px;flex-wrap:wrap;">
               <div style="flex:1;min-width:200px;">
                 <strong style="display:block;margin-bottom:4px;">💳 支付方式</strong>
-                <span style="font-size:13px;">支持支付宝（沙箱模拟支付）</span>
+                <span style="font-size:13px;">支持支付宝在线支付</span>
               </div>
               <div style="flex:1;min-width:200px;">
                 <strong style="display:block;margin-bottom:4px;">↩️ 退款政策</strong>
