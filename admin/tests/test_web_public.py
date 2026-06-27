@@ -89,9 +89,9 @@ def test_public_pricing_page_served(client):
     assert "复核免费 / 方案付费" in body
     assert 'href="/#consult-box"' in body
     assert "先做一次免费复核" in body
-    assert "先做付费审核" in body
+    assert "选择付费审核" in body
     assert "支付并启动方案生成" in body
-    assert "了解深度辅导" in body
+    assert "选择深度辅导" in body
     assert "先做快速审核" not in body
     assert "立即开始完整规划" not in body
     assert "先审计再决定" not in body
@@ -108,9 +108,9 @@ def test_public_checkout_page_served(client):
     body = resp.text
     assert "完整志愿方案" in body
     assert "订单摘要" in body
-    assert "服务保障" in body
+    assert "退款政策" in body
     assert "立即支付" in body
-    assert "状态站内可追踪" in body
+    assert "先下单再补资料" in body
     assert "当前建议" in body
     assert "交付方式" in body
     assert "最小下单" not in body

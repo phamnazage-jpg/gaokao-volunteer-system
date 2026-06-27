@@ -2171,10 +2171,10 @@ def _render_landing_page(request: Request, settings: Settings) -> str:
               <div class="consult-field"><label for="consult-subjects">选科组合</label><input id="consult-subjects" name="subjects" value="{consult_subjects}" placeholder="例如：物理、化学、生物" /></div>
               <div class="consult-field"><label for="consult-goal">目标学校或方向</label><input id="consult-goal" name="goal" value="{consult_goal}" placeholder="例如：广东工业大学 / 先复核现有方案" /></div>
             </div>
-            <p class="hero-note" style="margin-top:10px;">后续资料页可以<strong>上传已有方案文档</strong>，我们会先做免费复核，再决定是否进入付费完整规划。</p>
+            <p style="margin-top:10px;color:#475569;font-size:13px;line-height:1.6;">后续资料页可以<strong style="color:#1f6feb;">上传已有方案文档</strong>，我们会先做免费复核，再决定是否进入付费完整规划。</p>
             <div class="consult-actions">
               <button class="btn btn-primary" type="submit">获取复核与推荐</button>
-              <a class="btn btn-primary" style="min-height:48px;padding:0 22px;font-size:15px;" href="/pricing">直接做完整规划</a>
+              <a class="btn btn-secondary" style="min-height:48px;padding:0 22px;font-size:15px;" href="/pricing">直接做完整规划</a>
             </div>
           </form>
           <script>
@@ -2311,9 +2311,13 @@ def _render_landing_page(request: Request, settings: Settings) -> str:
             display: none;
           }}
           </style>
-          <div class="upload-hint" style="margin-top:16px; padding:12px 14px; border-radius:12px; background:rgba(31,111,235,.06); border:1px solid rgba(31,111,235,.18);">
-            <p style="margin:0; color:#1f6feb; font-size:13px; line-height:1.5;">如果你已经有老师、机构或其他平台给出的志愿方案文档，可以先<strong>上传已有方案文档</strong>再做免费复核。</p>
-            <a class="btn btn-secondary" style="margin-top:8px;" href="/pricing">上传方案文档并进入完整规划</a>
+          <div class="upload-hint" style="margin-top:16px; padding:16px; border-radius:14px; background:rgba(31,111,235,.06); border:1px solid rgba(31,111,235,.18); display:flex; gap:14px; align-items:flex-start;">
+            <div style="flex-shrink:0; width:40px; height:40px; border-radius:12px; background:#1f6feb; display:flex; align-items:center; justify-content:center; color:#fff; font-size:20px; font-weight:700;">📄</div>
+            <div>
+              <p style="margin:0 0 4px; color:#1f6feb; font-size:14px; font-weight:600; line-height:1.5;">已有方案文档？先上传再做免费复核</p>
+              <p style="margin:0 0 10px; color:#5b6b88; font-size:13px; line-height:1.5;">支持 Word / PDF / 截图格式。上传后我们会先做免费复核，再决定是否进入付费完整规划。</p>
+              <a class="btn btn-secondary" style="font-size:13px;min-height:36px;padding:6px 14px;" href="/pricing">上传方案文档并进入完整规划 →</a>
+            </div>
           </div>
           <p class="consult-privacy-tail">不会收到营销短信，提交后你也可以随时要求删除已填资料。</p>
         </div>
@@ -2495,7 +2499,7 @@ def _render_pricing_page(request: Request) -> str:
         <article class="card" data-package="audit">
           <div class="eyebrow">复核 / 风险</div>
           <h2>49元 AI方案审核</h2>
-          <div class="price">¥49<small>/ 次</small></div>
+          <div class="price">¥49<small>/ 份</small></div>
           <p class="desc">适合已经拿到其他 AI 志愿方案，想先判断方案是否踩线、是否扎堆、是否存在明显风险的家庭。审核只针对你提供的现有方案，不会重新生成志愿表。</p>
           <ul class="feature-list">
             <li>针对你提供的现有方案做风险复核</li>
@@ -2503,14 +2507,14 @@ def _render_pricing_page(request: Request) -> str:
             <li>给出是否值得继续深做的判断</li>
             <li>不重新生成志愿表（生成需选 99 元）</li>
           </ul>
-          <a class="button secondary" href="/checkout/audit">先做付费审核</a>
+          <a class="button secondary" href="/checkout/audit">选择付费审核</a>
         </article>
 
         <article class="card recommended" data-package="standard">
           <span class="badge">推荐方案</span>
           <div class="eyebrow">生成 / 完整</div>
           <h2>99元 完整志愿方案</h2>
-          <div class="price">¥99<small>/ 单</small></div>
+          <div class="price">¥99<small>/ 份</small></div>
           <p class="desc">适合大多数希望一次拿到完整志愿建议的家庭：先完成线上下单，再在资料向导里补充分数、位次、偏好与已有方案信息。方案生成与详细报告在支付后启动。</p>
           <ul class="feature-list">
             <li>适合首次系统化做志愿规划的用户</li>
@@ -2524,7 +2528,7 @@ def _render_pricing_page(request: Request) -> str:
         <article class="card" data-package="premium">
           <div class="eyebrow">生成 / 深度</div>
           <h2>199元 深度辅导版</h2>
-          <div class="price">¥199<small>/ 单</small></div>
+          <div class="price">¥199<small>/ 份</small></div>
           <p class="desc">适合志愿范围复杂、目标城市/专业冲突较大，或需要更多人工沟通、反复修订和深度解释的家庭。在 99 元完整方案基础上提供多轮修订和深度解释。</p>
           <ul class="feature-list">
             <li>适合目标复杂或分歧较大的家庭</li>
@@ -2532,7 +2536,7 @@ def _render_pricing_page(request: Request) -> str:
             <li>留出多轮沟通与补充说明空间</li>
             <li>更强调过程解释与决策支持</li>
           </ul>
-          <a class="button secondary" href="/checkout/premium">了解深度辅导</a>
+          <a class="button secondary" href="/checkout/premium">选择深度辅导</a>
         </article>
       </section>
 
@@ -2683,7 +2687,7 @@ def _render_checkout_page(service_version: str) -> str:
   </head>
   <body>
     <nav class="global-nav" aria-label="全局导航" role="navigation"><div class="global-nav-inner"><a class="global-nav-brand" href="/">高考志愿填报</a><div class="global-nav-links"><a class="global-nav-link" href="/">首页</a><a class="global-nav-link" href="/pricing">套餐</a><a class="global-nav-link" href="mailto:lon22@qq.com">客服</a></div></div></nav>
- class="wrap">
+    <main class="wrap">
       <header class="header">
         <div style="margin-bottom:8px;"><a class="btn btn-secondary" style="font-size:13px;min-height:32px;padding:6px 12px;" href="/">返回首页</a></div>
         <span class="eyebrow">在线下单</span>
@@ -2697,13 +2701,7 @@ def _render_checkout_page(service_version: str) -> str:
           <p class="helper">当前这一步只收会影响下单与后续联系的必要信息，不要求你一次性填完整个长表单。</p>
           <div class="form-proof">
             <article class="form-proof-item"><strong>先下单再补资料</strong><span>先把关键联系信息确认下来，再进入资料向导补充分数、位次和偏好。</span></article>
-            <article class="form-proof-item"><strong>状态站内可追踪</strong><span>支付、通知、交付状态都能在站内持续查看，不必反复追问进度。</span></article>
             <article class="form-proof-item"><strong>隐私入口始终可见</strong><span>隐私政策、服务说明与删除申请入口在这条链路上持续可访问。</span></article>
-          </div>
-          <div class="trust-strip">
-            <article class="trust-card"><strong>步骤更短</strong><span>先支付，再补详细资料。</span></article>
-            <article class="trust-card"><strong>进度可追踪</strong><span>资料、通知和交付状态都可站内查看。</span></article>
-            <article class="trust-card"><strong>入口可核查</strong><span>隐私政策、服务说明、删除申请入口全程可见。</span></article>
           </div>
           <form id=\"checkout-form\">
             <div class="grid">
@@ -2730,7 +2728,7 @@ def _render_checkout_page(service_version: str) -> str:
             </div>
             <div class="grid">
               <div class="field">
-                <label>考试省份</label>
+                <label>考试省份<span class="required">*</span></label>
                 <select name=\"candidate_province\">{province_html}</select>
                 <div class="hint">如果你暂时还没决定，也可以支付后在资料向导中补充。</div>
               </div>
@@ -2745,7 +2743,23 @@ def _render_checkout_page(service_version: str) -> str:
             </div>
           </form>
           <p id=\"result\"></p>
-          <div class="service-note">服务保障：支付后可进入资料向导继续补充详细信息；提交资料后，后续状态、通知与交付入口都将在站内持续更新。</div>
+          <div class="service-note">
+            <div style="display:flex;gap:16px;flex-wrap:wrap;">
+              <div style="flex:1;min-width:200px;">
+                <strong style="display:block;margin-bottom:4px;">💳 支付方式</strong>
+                <span style="font-size:13px;">支持支付宝（沙箱模拟支付）</span>
+              </div>
+              <div style="flex:1;min-width:200px;">
+                <strong style="display:block;margin-bottom:4px;">↩️ 退款政策</strong>
+                <span style="font-size:13px;">报告交付前可全额退款；交付后如有不满意，联系客服协商处理。</span>
+              </div>
+              <div style="flex:1;min-width:200px;">
+                <strong style="display:block;margin-bottom:4px;">🔒 支付安全</strong>
+                <span style="font-size:13px;">通过官方支付渠道处理，不存储银行卡信息。</span>
+              </div>
+            </div>
+            <p style="margin:12px 0 0;font-size:13px;">支付后可进入资料向导继续补充详细信息；提交资料后，后续状态、通知与交付入口都将在站内持续更新。</p>
+          </div>
           {_render_footer_links()}
         </section>
 
