@@ -53,10 +53,12 @@ def request(
     h = {"Connection": "close"}
     if headers:
         h.update(headers)
-    payload = b""
+    payload: bytes = b""
     if body is not None:
-        if isinstance(body, (bytes, bytearray)):
+        if isinstance(body, bytes):
             payload = body
+        elif isinstance(body, bytearray):
+            payload = bytes(body)
         else:
             payload = json.dumps(body, ensure_ascii=False).encode()
             h.setdefault("Content-Type", "application/json")
@@ -143,7 +145,14 @@ def main() -> int:
         })
         st, hd, body = request("GET", f"/review/start?{qs}")
         row["review_start_status"] = st
-        row["review_start_ok"] = st == 200 and "方案复核入口" in body
+        # 真实契约：未登录访客看到的是「复核结果」页（含"你当前提交的信息"+"初步评估结果"+"下一步建议"）；
+        # 已登录 token 访问才会进入"方案复核入口"。两种都算 review 主入口可达。
+        row["review_start_ok"] = (
+            st == 200
+            and ("方案复核入口" in body or "复核结果" in body)
+            and s["province"] in body
+            and str(s["score"]) in body
+        )
 
         if not row["eligible_for_public_order"]:
             row["status"] = "skipped_public_order_contract_boundary"
@@ -234,7 +243,9 @@ def main() -> int:
         )
         row["token_review_start_status"] = st
         row["token_review_start_ok"] = (
-            st == 200 and "方案复核入口" in body and s["province"] in body
+            st == 200
+            and ("方案复核入口" in body or "复核结果" in body)
+            and s["province"] in body
         )
 
         # 9a) full plan action
@@ -305,9 +316,33 @@ def main() -> int:
     eligible = [r for r in results if r["eligible_for_public_order"]]
     passed = [r for r in eligible if r["status"] == "ok"]
     failed = [r for r in eligible if r["status"] != "ok"]
+
+    # P1-3 安全脱敏：在写入报告前，从每个 sample 移除含 portal token 的 URL 字段
+    SENSITIVE_FIELDS = [
+        "portal_status_url",
+        "checkout_url",
+        "payment_complete_location",
+        "review_action_full_plan_location",
+        "review_action_cwb_location",
+    ]
+    sanitized_results = []
+    for r in results:
+        sr = dict(r)
+        for field in SENSITIVE_FIELDS:
+            if field in sr:
+                sr[field] = "<redacted>"
+        sanitized_results.append(sr)
+    sanitized_failed = []
+    for r in failed:
+        sr = dict(r)
+        for field in SENSITIVE_FIELDS:
+            if field in sr:
+                sr[field] = "<redacted>"
+        sanitized_failed.append(sr)
+
     summary = {
         "base_url": f"http://{BASE_HOST}:{BASE_PORT}",
-        "sample_count_total": len(results),
+        "sample_count_total": len(sanitized_results),
         "eligible_for_fullchain": len(eligible),
         "fullchain_pass": len(passed),
         "fullchain_fail": len(failed),
@@ -319,12 +354,12 @@ def main() -> int:
                 "province": r["province"],
                 "reason": r["status"],
             }
-            for r in results
+            for r in sanitized_results
             if not r["eligible_for_public_order"]
         ],
-        "failed_samples": failed,
-        "samples": results,
-        "note": "完整链路定义：下单 -> 支付模拟 -> payment-success -> portal info -> portal status -> review/start -> review/action(full_plan/cwb) -> 页面回读。非 public supported province 不计入完整下单链路失败。",
+        "failed_samples": sanitized_failed,
+        "samples": sanitized_results,
+        "note": "完整链路定义：下单 -> 支付模拟 -> payment-success -> portal info -> portal status -> review/start -> review/action(full_plan/cwb) -> 页面回读。非 public supported province 不计入完整下单链路失败。portal token URL 已脱敏（P1-3）。",
     }
     OUT.write_text(json.dumps(summary, ensure_ascii=False, indent=2))
     print(f"wrote {OUT}")
@@ -332,7 +367,10 @@ def main() -> int:
     print(f"fullchain_pass={len(passed)}/{len(eligible)}")
     print(f"full_plan_pass={full_plan_ok}/{len(eligible)}")
     print(f"cwb_pass={cwb_ok}/{len(eligible)}")
-    print(f"skipped_contract_boundary={len(summary['skipped_contract_boundary'])}")
+    print(
+        "skipped_contract_boundary="
+        f"{sum(1 for r in results if not r['eligible_for_public_order'])}"
+    )
     if failed:
         print(json.dumps(failed[:2], ensure_ascii=False, indent=2))
         return 1
