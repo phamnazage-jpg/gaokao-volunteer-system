@@ -1,0 +1,69 @@
+{
+  "version": "2026.06.27",
+  "last_verified": "2025-06",
+  "rules": [
+    {
+      "rule_id": "special.batch.early_admission",
+      "description": "定向培养计划通常在提前批录取，考生须在提前批志愿填报期内填报",
+      "severity": "warning",
+      "applies_to": ["rural_medical", "public_agriculture", "fire_rescue", "railway_directed", "judicial_directed"],
+      "check": "填报批次必须为提前批或专科提前批"
+    },
+    {
+      "rule_id": "special.rural_medical.hukou_requirement",
+      "description": "农村订单定向免费医学生要求本人及父母具有农村户籍，且连续3年以上",
+      "severity": "fatal",
+      "applies_to": ["rural_medical"],
+      "check": "考生户籍须为农村，连续3年以上"
+    },
+    {
+      "rule_id": "special.rural_medical.service_commitment",
+      "description": "定向医学生毕业后须回户籍地基层卫生院服务6年",
+      "severity": "warning",
+      "applies_to": ["rural_medical"],
+      "check": "需签署定向服务协议，服务期6年"
+    },
+    {
+      "rule_id": "special.public_agriculture.service_commitment",
+      "description": "公费农科生毕业后须回户籍所在市县乡镇农业系统工作5年",
+      "severity": "warning",
+      "applies_to": ["public_agriculture"],
+      "check": "需签署定向服务协议，服务期5年"
+    },
+    {
+      "rule_id": "special.fire_rescue.physical_check",
+      "description": "消防定向允许矫正视力，体测标准比警校宽松",
+      "severity": "info",
+      "applies_to": ["fire_rescue"],
+      "check": "视力允许矫正达标，不需裸眼4.8"
+    },
+    {
+      "rule_id": "special.railway_directed.score_threshold",
+      "description": "铁路定向专科分数门槛极低（200-350分），本科400-460分",
+      "severity": "info",
+      "applies_to": ["railway_directed"],
+      "check": "专科200+分可报，本科400+分可报"
+    },
+    {
+      "rule_id": "special.judicial_directed.no_police_exam",
+      "description": "司法系统定向不需要参加公安联考",
+      "severity": "info",
+      "applies_to": ["judicial_directed"],
+      "check": "定向招录，不需要公安联考"
+    },
+    {
+      "rule_id": "special.general.tuition_free",
+      "description": "公费农科生/定向医学生通常学费全免+住宿费全免+生活补贴",
+      "severity": "info",
+      "applies_to": ["rural_medical", "public_agriculture"],
+      "check": "学费减免政策以各省当年公布为准"
+    },
+    {
+      "rule_id": "special.general.no_exam_for_employment",
+      "description": "所有定向培养计划毕业即就业，不需要参加公务员/事业单位统考",
+      "severity": "info",
+      "applies_to": ["rural_medical", "public_agriculture", "fire_rescue", "railway_directed", "judicial_directed"],
+      "check": "毕业直接入编/入职"
+    }
+  ]
+}
