@@ -22,16 +22,17 @@ class TestSpecialProgramsLoader:
             data_path=_DATA_PATH, rules_path=_RULES_PATH
         )
 
-    def test_loads_5_program_types(self):
+    def test_loads_8_program_types(self):
         programs = self.loader.list_programs()
         types = {p["program_type"] for p in programs}
-        assert types == {
-            "rural_medical",
-            "public_agriculture",
-            "fire_rescue",
-            "railway_directed",
-            "judicial_directed",
-        }
+        assert "rural_medical" in types
+        assert "public_agriculture" in types
+        assert "fire_rescue" in types
+        assert "railway_directed" in types
+        assert "judicial_directed" in types
+        assert "military_nco" in types
+        assert "public_teacher" in types
+        assert "enterprise_order" in types
 
     def test_get_program(self):
         p = self.loader.get_program("rural_medical")

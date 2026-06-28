@@ -94,6 +94,63 @@
       "warnings": ["低配版警校", "不用公安联考"],
       "source": "各省司法厅/基层司法局",
       "last_verified": "2025-06"
+    },
+    {
+      "program_type": "military_nco",
+      "program_name": "定向培养军士（士官）",
+      "batch": "专科提前批",
+      "applicable_provinces": ["全国"],
+      "description": "依托普通高等学校为军队培养储备军士，毕业直接补充到部队专业技术军士岗位。",
+      "key_features": {
+        "tuition": "公办正规学费，入学即享军龄",
+        "employment": "毕业直接进入部队服役，军士待遇",
+        "service_years": null,
+        "exam_required": false,
+        "politics_check": "政治考核+体格检查",
+        "physical_check": "军队体检标准，比军校略宽"
+      },
+      "applicable_to": "全国31省考生，专科线即可，分数380-450分段集中，男生为主（少量女生）",
+      "warnings": ["48所院校遍布全国", "专科提前批填报", "毕业即服役"],
+      "source": "国防部征兵办公室/各省征兵办/教育考试院",
+      "last_verified": "2025-06"
+    },
+    {
+      "program_type": "public_teacher",
+      "program_name": "公费师范生（部属+省属+优师计划）",
+      "batch": "本科提前批",
+      "applicable_provinces": ["全国"],
+      "description": "教育部直属6所师范大学+各省属师范大学公费培养，毕业有编有岗。",
+      "key_features": {
+        "tuition": "学费全免+住宿费全免+生活补贴",
+        "employment": "毕业到协议确定的中小学任教，有编有岗",
+        "service_years": 6,
+        "exam_required": false,
+        "politics_check": "常规",
+        "physical_check": "常规体检"
+      },
+      "applicable_to": "全国考生，部属师范需一本以上分数，省属师范分数更低",
+      "warnings": ["须回生源省份任教", "服务期6年", "优师计划须到欠发达地区任教"],
+      "source": "教育部/各省教育厅",
+      "last_verified": "2025-06"
+    },
+    {
+      "program_type": "enterprise_order",
+      "program_name": "央企/国企订单培养计划",
+      "batch": "专科批/本科批",
+      "applicable_provinces": ["全国"],
+      "description": "邮政/电网/电信/交通/石油等央企国企与高职院校合作订单培养，毕业即就业。",
+      "key_features": {
+        "tuition": "公办正规学费",
+        "employment": "毕业按协议进入合作企业（国家电网/中国邮政/中国电信/中石化等）",
+        "service_years": null,
+        "exam_required": false,
+        "politics_check": "常规",
+        "physical_check": "常规体检"
+      },
+      "applicable_to": "全国考生，专科批分数即可（400分左右），部分订单班录取线超本科线",
+      "warnings": ["入学即签就业协议", "岗位以一线技术/运维为主", "毕业不愁就业"],
+      "source": "各央企国企招聘平台/合作院校招生网",
+      "last_verified": "2025-06"
     }
   ],
   "program_schools": {
@@ -129,6 +186,75 @@
     "judicial_directed": [
       {"school": "中央司法警官学院", "province": "全国", "score_min": 480, "score_subject": "综合", "major": "法学（司法行政方向）", "batch": "本科提前批"},
       {"school": "各省司法警官职业学院", "province": "全国", "score_min": 300, "score_subject": "综合", "major": "刑事执行/社区矫正", "batch": "专科提前批"}
+    ],
+    "military_nco": [
+      {"school": "北京电子科技职业学院", "province": "北京", "score_min": 400, "score_subject": "综合", "major": "电子信息工程技术（军士）", "batch": "专科提前批"},
+      {"school": "北京工业职业技术学院", "province": "北京", "score_min": 390, "score_subject": "综合", "major": "机电一体化技术（军士）", "batch": "专科提前批"},
+      {"school": "河南交通职业技术学院", "province": "河南", "score_min": 380, "score_subject": "理科", "major": "汽车检测与维修（军士）", "batch": "专科提前批"},
+      {"school": "河南医学高等专科学校", "province": "河南", "score_min": 400, "score_subject": "理科", "major": "护理（军士）", "batch": "专科提前批"},
+      {"school": "武汉船舶职业技术学院", "province": "湖北", "score_min": 390, "score_subject": "物理类", "major": "船舶工程技术（军士）", "batch": "专科提前批"},
+      {"school": "武汉交通职业学院", "province": "湖北", "score_min": 380, "score_subject": "物理类", "major": "航海技术（军士）", "batch": "专科提前批"},
+      {"school": "湖北交通职业技术学院", "province": "湖北", "score_min": 385, "score_subject": "物理类", "major": "轮机工程技术（军士）", "batch": "专科提前批"},
+      {"school": "武昌职业学院", "province": "湖北", "score_min": 370, "score_subject": "物理类", "major": "通信技术（军士）", "batch": "专科提前批"},
+      {"school": "西安航空职业技术学院", "province": "陕西", "score_min": 400, "score_subject": "理科", "major": "飞机维修（军士）", "batch": "专科提前批"},
+      {"school": "西安航空学院", "province": "陕西", "score_min": 420, "score_subject": "理科", "major": "航空机械（军士）", "batch": "专科提前批"},
+      {"school": "延安职业技术学院", "province": "陕西", "score_min": 360, "score_subject": "理科", "major": "石油工程技术（军士）", "batch": "专科提前批"},
+      {"school": "辽宁交通高等专科学校", "province": "辽宁", "score_min": 380, "score_subject": "物理类", "major": "道路桥梁工程（军士）", "batch": "专科提前批"},
+      {"school": "渤海船舶职业学院", "province": "辽宁", "score_min": 370, "score_subject": "物理类", "major": "船舶舾装（军士）", "batch": "专科提前批"},
+      {"school": "长春职业技术学院", "province": "吉林", "score_min": 360, "score_subject": "综合", "major": "汽车技术服务（军士）", "batch": "专科提前批"},
+      {"school": "山东交通职业学院", "province": "山东", "score_min": 390, "score_subject": "综合改革", "major": "汽车检测与维修（军士）", "batch": "专科提前批"},
+      {"school": "山东信息职业技术学院", "province": "山东", "score_min": 380, "score_subject": "综合改革", "major": "应用电子技术（军士）", "batch": "专科提前批"},
+      {"school": "潍坊工程职业学院", "province": "山东", "score_min": 375, "score_subject": "综合改革", "major": "机电一体化（军士）", "batch": "专科提前批"},
+      {"school": "潍坊科技学院", "province": "山东", "score_min": 400, "score_subject": "综合改革", "major": "机械设计制造（军士）", "batch": "专科提前批"},
+      {"school": "威海职业学院", "province": "山东", "score_min": 370, "score_subject": "综合改革", "major": "焊接技术（军士）", "batch": "专科提前批"},
+      {"school": "滨州职业学院", "province": "山东", "score_min": 365, "score_subject": "综合改革", "major": "化工技术（军士）", "batch": "专科提前批"},
+      {"school": "泰山职业技术学院", "province": "山东", "score_min": 360, "score_subject": "综合改革", "major": "机电一体化（军士）", "batch": "专科提前批"},
+      {"school": "江苏海事职业技术学院", "province": "江苏", "score_min": 400, "score_subject": "物理类", "major": "航海技术（军士）", "batch": "专科提前批"},
+      {"school": "南京信息职业技术学院", "province": "江苏", "score_min": 410, "score_subject": "物理类", "major": "通信技术（军士）", "batch": "专科提前批"},
+      {"school": "江苏信息职业技术学院", "province": "江苏", "score_min": 390, "score_subject": "物理类", "major": "微电子技术（军士）", "batch": "专科提前批"},
+      {"school": "浙江交通职业技术学院", "province": "浙江", "score_min": 400, "score_subject": "综合改革", "major": "道路桥梁工程（军士）", "batch": "专科提前批"},
+      {"school": "浙江建设职业技术学院", "province": "浙江", "score_min": 385, "score_subject": "综合改革", "major": "建筑工程（军士）", "batch": "专科提前批"},
+      {"school": "安徽交通职业技术学院", "province": "安徽", "score_min": 380, "score_subject": "理科", "major": "汽车技术（军士）", "batch": "专科提前批"},
+      {"school": "阜阳职业技术学院", "province": "安徽", "score_min": 360, "score_subject": "理科", "major": "机电一体化（军士）", "batch": "专科提前批"},
+      {"school": "东华理工大学", "province": "江西", "score_min": 420, "score_subject": "理科", "major": "核工程（军士）", "batch": "专科提前批"},
+      {"school": "南昌工程学院", "province": "江西", "score_min": 400, "score_subject": "理科", "major": "水利水电工程（军士）", "batch": "专科提前批"},
+      {"school": "江西航空职业技术学院", "province": "江西", "score_min": 380, "score_subject": "理科", "major": "飞机维修（军士）", "batch": "专科提前批"},
+      {"school": "江西信息应用职业技术学院", "province": "江西", "score_min": 370, "score_subject": "理科", "major": "气象技术（军士）", "batch": "专科提前批"},
+      {"school": "长沙航空职业技术学院", "province": "湖南", "score_min": 410, "score_subject": "物理类", "major": "飞机维修（军士）", "batch": "专科提前批"},
+      {"school": "湖南汽车工程职业大学", "province": "湖南", "score_min": 390, "score_subject": "物理类", "major": "汽车工程（军士）", "batch": "专科提前批"},
+      {"school": "张家界航空工业职业技术学院", "province": "湖南", "score_min": 370, "score_subject": "物理类", "major": "航空机械（军士）", "batch": "专科提前批"},
+      {"school": "湖南体育职业学院", "province": "湖南", "score_min": 350, "score_subject": "物理类", "major": "体育保健（军士）", "batch": "专科提前批"},
+      {"school": "湖南国防工业职业技术学院", "province": "湖南", "score_min": 380, "score_subject": "物理类", "major": "武器制造（军士）", "batch": "专科提前批"},
+      {"school": "重庆机电职业技术大学", "province": "重庆", "score_min": 380, "score_subject": "物理类", "major": "机电一体化（军士）", "batch": "专科提前批"},
+      {"school": "重庆医药高等专科学校", "province": "重庆", "score_min": 410, "score_subject": "物理类", "major": "药学（军士）", "batch": "专科提前批"},
+      {"school": "重庆航天职业技术学院", "province": "重庆", "score_min": 390, "score_subject": "物理类", "major": "航天技术（军士）", "batch": "专科提前批"},
+      {"school": "重庆交通职业学院", "province": "重庆", "score_min": 370, "score_subject": "物理类", "major": "道路桥梁（军士）", "batch": "专科提前批"},
+      {"school": "四川邮电职业技术学院", "province": "四川", "score_min": 400, "score_subject": "理科", "major": "通信技术（军士）", "batch": "专科提前批"},
+      {"school": "成都航空职业技术学院", "province": "四川", "score_min": 410, "score_subject": "理科", "major": "飞机维修（军士）", "batch": "专科提前批"},
+      {"school": "兰州资源环境职业技术大学", "province": "甘肃", "score_min": 370, "score_subject": "理科", "major": "气象技术（军士）", "batch": "专科提前批"},
+      {"school": "宁夏职业技术学院", "province": "宁夏", "score_min": 350, "score_subject": "理科", "major": "机电一体化（军士）", "batch": "专科提前批"},
+      {"school": "宁夏工商职业技术学院", "province": "宁夏", "score_min": 340, "score_subject": "理科", "major": "化工技术（军士）", "batch": "专科提前批"},
+      {"school": "新疆石河子职业技术学院", "province": "新疆", "score_min": 330, "score_subject": "理科", "major": "农业机械（军士）", "batch": "专科提前批"},
+      {"school": "西藏职业技术学院", "province": "西藏", "score_min": 300, "score_subject": "理科", "major": "水利水电（军士）", "batch": "专科提前批"}
+    ],
+    "public_teacher": [
+      {"school": "北京师范大学", "province": "全国", "score_min": 580, "score_subject": "综合", "major": "汉语言文学（公费师范）", "batch": "本科提前批"},
+      {"school": "华东师范大学", "province": "全国", "score_min": 570, "score_subject": "综合", "major": "数学与应用数学（公费师范）", "batch": "本科提前批"},
+      {"school": "华中师范大学", "province": "全国", "score_min": 540, "score_subject": "综合", "major": "英语（公费师范）", "batch": "本科提前批"},
+      {"school": "东北师范大学", "province": "全国", "score_min": 530, "score_subject": "综合", "major": "思想政治教育（公费师范）", "batch": "本科提前批"},
+      {"school": "陕西师范大学", "province": "全国", "score_min": 530, "score_subject": "综合", "major": "历史学（公费师范）", "batch": "本科提前批"},
+      {"school": "西南大学", "province": "全国", "score_min": 530, "score_subject": "综合", "major": "物理学（公费师范）", "batch": "本科提前批"},
+      {"school": "各省属师范大学", "province": "全国", "score_min": 480, "score_subject": "综合", "major": "各师范专业（省级公费师范）", "batch": "本科提前批"}
+    ],
+    "enterprise_order": [
+      {"school": "石家庄邮电职业技术学院", "province": "河北", "score_min": 400, "score_subject": "物理类", "major": "邮政通信管理（中国邮政订单）", "batch": "专科批"},
+      {"school": "郑州电力高等专科学校", "province": "河南", "score_min": 420, "score_subject": "理科", "major": "电力系统自动化（国家电网订单）", "batch": "专科批"},
+      {"school": "重庆电力高等专科学校", "province": "重庆", "score_min": 400, "score_subject": "物理类", "major": "供用电技术（国家电网订单）", "batch": "专科批"},
+      {"school": "西安电力高等专科学校", "province": "陕西", "score_min": 410, "score_subject": "理科", "major": "发电厂及电力系统（国家电网订单）", "batch": "专科批"},
+      {"school": "长沙民政职业技术学院", "province": "湖南", "score_min": 400, "score_subject": "物理类", "major": "现代殡葬技术与管理（民政部定向）", "batch": "专科批"},
+      {"school": "四川邮电职业技术学院", "province": "四川", "score_min": 400, "score_subject": "理科", "major": "通信工程设计与监理（中国电信订单）", "batch": "专科批"},
+      {"school": "浙江交通职业技术学院", "province": "浙江", "score_min": 410, "score_subject": "综合改革", "major": "道路桥梁工程（交通系统订单）", "batch": "专科批"},
+      {"school": "辽宁石油化工大学", "province": "辽宁", "score_min": 430, "score_subject": "理科", "major": "石油工程（中石化定向）", "batch": "本科批"}
     ]
   }
 }

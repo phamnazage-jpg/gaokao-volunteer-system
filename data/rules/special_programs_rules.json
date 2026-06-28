@@ -62,8 +62,50 @@
       "rule_id": "special.general.no_exam_for_employment",
       "description": "所有定向培养计划毕业即就业，不需要参加公务员/事业单位统考",
       "severity": "info",
-      "applies_to": ["rural_medical", "public_agriculture", "fire_rescue", "railway_directed", "judicial_directed"],
+      "applies_to": ["rural_medical", "public_agriculture", "fire_rescue", "railway_directed", "judicial_directed", "military_nco", "public_teacher", "enterprise_order"],
       "check": "毕业直接入编/入职"
+    },
+    {
+      "rule_id": "special.military_nco.physical_check",
+      "description": "定向培养军士需通过军队体检和政审，标准比军校略宽但比普通专科严格",
+      "severity": "warning",
+      "applies_to": ["military_nco"],
+      "check": "需通过政治考核+体格检查，年龄不超过20周岁，未婚"
+    },
+    {
+      "rule_id": "special.military_nco.batch",
+      "description": "定向培养军士在专科提前批录取，执行专科最低控制分数线",
+      "severity": "warning",
+      "applies_to": ["military_nco"],
+      "check": "批次为专科提前批"
+    },
+    {
+      "rule_id": "special.public_teacher.service_commitment",
+      "description": "公费师范生毕业后须回生源省份中小学任教6年，有编有岗",
+      "severity": "warning",
+      "applies_to": ["public_teacher"],
+      "check": "须签署协议，服务期6年，违约记入诚信档案"
+    },
+    {
+      "rule_id": "special.public_teacher.tuition_free",
+      "description": "公费师范生学费全免+住宿费全免+生活补贴",
+      "severity": "info",
+      "applies_to": ["public_teacher"],
+      "check": "部属师范和省属师范均享受学费减免"
+    },
+    {
+      "rule_id": "special.enterprise_order.employment_contract",
+      "description": "央企订单班入学即签就业协议，毕业按协议进入合作企业",
+      "severity": "info",
+      "applies_to": ["enterprise_order"],
+      "check": "入学前签订就业协议，岗位以一线技术/运维为主"
+    },
+    {
+      "rule_id": "special.enterprise_order.score_advantage",
+      "description": "央企订单班录取线常超本科线，部分热门方向竞争激烈",
+      "severity": "info",
+      "applies_to": ["enterprise_order"],
+      "check": "订单班分数线可能高于同校普通专业"
     }
   ]
 }
