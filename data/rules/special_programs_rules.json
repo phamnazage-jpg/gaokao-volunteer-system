@@ -6,162 +6,308 @@
       "rule_id": "special.batch.early_admission",
       "description": "定向培养计划通常在提前批录取，考生须在提前批志愿填报期内填报",
       "severity": "warning",
-      "applies_to": ["rural_medical", "public_agriculture", "fire_rescue", "railway_directed", "judicial_directed"],
+      "applies_to": [
+        "rural_medical",
+        "public_agriculture",
+        "fire_rescue",
+        "railway_directed",
+        "judicial_directed"
+      ],
       "check": "填报批次必须为提前批或专科提前批"
     },
     {
       "rule_id": "special.rural_medical.hukou_requirement",
       "description": "农村订单定向免费医学生要求本人及父母具有农村户籍，且连续3年以上",
       "severity": "fatal",
-      "applies_to": ["rural_medical"],
+      "applies_to": [
+        "rural_medical"
+      ],
       "check": "考生户籍须为农村，连续3年以上"
     },
     {
       "rule_id": "special.rural_medical.service_commitment",
       "description": "定向医学生毕业后须回户籍地基层卫生院服务6年",
       "severity": "warning",
-      "applies_to": ["rural_medical"],
+      "applies_to": [
+        "rural_medical"
+      ],
       "check": "需签署定向服务协议，服务期6年"
     },
     {
       "rule_id": "special.public_agriculture.service_commitment",
       "description": "公费农科生毕业后须回户籍所在市县乡镇农业系统工作5年",
       "severity": "warning",
-      "applies_to": ["public_agriculture"],
+      "applies_to": [
+        "public_agriculture"
+      ],
       "check": "需签署定向服务协议，服务期5年"
     },
     {
       "rule_id": "special.fire_rescue.physical_check",
       "description": "消防定向允许矫正视力，体测标准比警校宽松",
       "severity": "info",
-      "applies_to": ["fire_rescue"],
+      "applies_to": [
+        "fire_rescue"
+      ],
       "check": "视力允许矫正达标，不需裸眼4.8"
     },
     {
       "rule_id": "special.railway_directed.score_threshold",
       "description": "铁路定向专科分数门槛极低（200-350分），本科400-460分",
       "severity": "info",
-      "applies_to": ["railway_directed"],
+      "applies_to": [
+        "railway_directed"
+      ],
       "check": "专科200+分可报，本科400+分可报"
     },
     {
       "rule_id": "special.judicial_directed.no_police_exam",
       "description": "司法系统定向不需要参加公安联考",
       "severity": "info",
-      "applies_to": ["judicial_directed"],
+      "applies_to": [
+        "judicial_directed"
+      ],
       "check": "定向招录，不需要公安联考"
     },
     {
       "rule_id": "special.general.tuition_free",
       "description": "公费农科生/定向医学生通常学费全免+住宿费全免+生活补贴",
       "severity": "info",
-      "applies_to": ["rural_medical", "public_agriculture"],
+      "applies_to": [
+        "rural_medical",
+        "public_agriculture"
+      ],
       "check": "学费减免政策以各省当年公布为准"
     },
     {
       "rule_id": "special.general.no_exam_for_employment",
       "description": "所有定向培养计划毕业即就业，不需要参加公务员/事业单位统考",
       "severity": "info",
-      "applies_to": ["rural_medical", "public_agriculture", "fire_rescue", "railway_directed", "judicial_directed", "military_nco", "public_teacher", "enterprise_order"],
+      "applies_to": [
+        "rural_medical",
+        "public_agriculture",
+        "fire_rescue",
+        "railway_directed",
+        "judicial_directed",
+        "military_nco",
+        "public_teacher",
+        "enterprise_order"
+      ],
       "check": "毕业直接入编/入职"
     },
     {
       "rule_id": "special.military_nco.physical_check",
       "description": "定向培养军士需通过军队体检和政审，标准比军校略宽但比普通专科严格",
       "severity": "warning",
-      "applies_to": ["military_nco"],
+      "applies_to": [
+        "military_nco"
+      ],
       "check": "需通过政治考核+体格检查，年龄不超过20周岁，未婚"
     },
     {
       "rule_id": "special.military_nco.batch",
       "description": "定向培养军士在专科提前批录取，执行专科最低控制分数线",
       "severity": "warning",
-      "applies_to": ["military_nco"],
+      "applies_to": [
+        "military_nco"
+      ],
       "check": "批次为专科提前批"
     },
     {
       "rule_id": "special.public_teacher.service_commitment",
       "description": "公费师范生毕业后须回生源省份中小学任教6年，有编有岗",
       "severity": "warning",
-      "applies_to": ["public_teacher"],
+      "applies_to": [
+        "public_teacher"
+      ],
       "check": "须签署协议，服务期6年，违约记入诚信档案"
     },
     {
       "rule_id": "special.public_teacher.tuition_free",
       "description": "公费师范生学费全免+住宿费全免+生活补贴",
       "severity": "info",
-      "applies_to": ["public_teacher"],
+      "applies_to": [
+        "public_teacher"
+      ],
       "check": "部属师范和省属师范均享受学费减免"
     },
     {
       "rule_id": "special.enterprise_order.employment_contract",
       "description": "央企订单班入学即签就业协议，毕业按协议进入合作企业",
       "severity": "info",
-      "applies_to": ["enterprise_order"],
+      "applies_to": [
+        "enterprise_order"
+      ],
       "check": "入学前签订就业协议，岗位以一线技术/运维为主"
     },
     {
       "rule_id": "special.enterprise_order.score_advantage",
       "description": "央企订单班录取线常超本科线，部分热门方向竞争激烈",
       "severity": "info",
-      "applies_to": ["enterprise_order"],
+      "applies_to": [
+        "enterprise_order"
+      ],
       "check": "订单班分数线可能高于同校普通专业"
     },
     {
       "rule_id": "special.minority_prep.ethnicity_requirement",
       "description": "少数民族预科班仅限少数民族考生报考",
       "severity": "fatal",
-      "applies_to": ["minority_prep"],
+      "applies_to": [
+        "minority_prep"
+      ],
       "check": "考生须为少数民族身份"
     },
     {
       "rule_id": "special.minority_prep.score_reduction",
       "description": "少数民族预科可降分20-80分录取，民族大学预科线更低",
       "severity": "info",
-      "applies_to": ["minority_prep"],
+      "applies_to": [
+        "minority_prep"
+      ],
       "check": "降分幅度以各省当年公布为准"
     },
     {
       "rule_id": "special.targeted_poverty.hukou_requirement",
       "description": "三大专项计划要求农村户籍+当地连续学籍，国家专项面向脱贫县",
       "severity": "fatal",
-      "applies_to": ["targeted_poverty"],
+      "applies_to": [
+        "targeted_poverty"
+      ],
       "check": "须满足户籍+学籍年限要求，以各省实施区域为准"
     },
     {
       "rule_id": "special.targeted_poverty.score_advantage",
       "description": "三大专项可降分进入985/211，地方专项降幅最大",
       "severity": "info",
-      "applies_to": ["targeted_poverty"],
+      "applies_to": [
+        "targeted_poverty"
+      ],
       "check": "降分幅度以各省当年公布为准"
     },
     {
       "rule_id": "special.tibet_directed.service_commitment",
       "description": "非西藏生源定向西藏就业，毕业后须到西藏工作至少5年",
       "severity": "warning",
-      "applies_to": ["tibet_directed"],
+      "applies_to": [
+        "tibet_directed"
+      ],
       "check": "须签定向就业协议，不可转专业，服务期5年"
     },
     {
       "rule_id": "special.tibet_directed.score_reduction",
       "description": "非西藏生源定向西藏最低可降至调档线下40分录取",
       "severity": "info",
-      "applies_to": ["tibet_directed"],
+      "applies_to": [
+        "tibet_directed"
+      ],
       "check": "降分幅度以各省当年公布为准"
     },
     {
       "rule_id": "special.strong_foundation.exam_required",
       "description": "强基计划需参加学校单独组织的校测（笔试+面试），按高考成绩85%+校测15%综合录取",
       "severity": "warning",
-      "applies_to": ["strong_foundation"],
+      "applies_to": [
+        "strong_foundation"
+      ],
       "check": "需提前报名参加校测，不是纯高考录取"
     },
     {
       "rule_id": "special.strong_foundation.subjects",
       "description": "强基计划聚焦基础学科：数学/物理/化学/生物/历史/哲学/古文字",
       "severity": "info",
-      "applies_to": ["strong_foundation"],
+      "applies_to": [
+        "strong_foundation"
+      ],
       "check": "专业限定为基础学科，不适合想读工科/商科的考生"
+    },
+    {
+      "rule_id": "special.military_academy.age_limit",
+      "title": "军校年龄限制",
+      "description": "报考军队院校的考生年龄不超过20周岁（截止当年8月31日），且必须未婚。超龄或已婚者不予录取。",
+      "provinces": "全国",
+      "program_type": "military_academy",
+      "category": "提前批-军校"
+    },
+    {
+      "rule_id": "special.military_academy.physical_exam",
+      "title": "军校军检要求",
+      "description": "军队院校招生须参加军检，包括体格检查和心理检测。视力要求裸眼≥4.5（指挥类专业≥4.8），身高男≥162cm女≥160cm，体重不超过标准体重±25%。",
+      "provinces": "全国",
+      "program_type": "military_academy",
+      "category": "提前批-军校"
+    },
+    {
+      "rule_id": "special.military_academy.political_check",
+      "title": "军校政审要求",
+      "description": "报考军校须通过政治考核，审查考生本人及家庭主要成员、主要社会关系成员的政治表现。未通过政审者不能参加军检。",
+      "provinces": "全国",
+      "program_type": "military_academy",
+      "category": "提前批-军校"
+    },
+    {
+      "rule_id": "special.military_academy.score_advantage",
+      "title": "军校分数优势",
+      "description": "军校录取分数通常比同层次普通院校低30-80分，部分偏远地区军校降幅更大。但国防科技大学等顶尖军校录取线接近985。",
+      "provinces": "全国",
+      "program_type": "military_academy",
+      "category": "提前批-军校"
+    },
+    {
+      "rule_id": "special.police_academy.physical_test",
+      "title": "公安院校体能测试项目",
+      "description": "公安院校招生须参加体能测试，项目包括：50米跑、立定跳远、1000米跑（男）/800米跑（女）、引体向上（男）/仰卧起坐（女）。4项中3项合格即可。",
+      "provinces": "全国",
+      "program_type": "police_academy",
+      "category": "提前批-公安"
+    },
+    {
+      "rule_id": "special.police_academy.entry_exam",
+      "title": "公安联考入警率",
+      "description": "公安院校公安专业毕业生参加全国公安机关人民警察考试（公安联考），入警率90%+。非公安专业毕业生不能参加公安联考。这是公安院校的核心吸引力。",
+      "provinces": "全国",
+      "program_type": "police_academy",
+      "category": "提前批-公安"
+    },
+    {
+      "rule_id": "special.police_academy.major_choice",
+      "title": "公安专业vs非公安专业",
+      "description": "只有公安专业（治安学/侦查学/网络安全与执法/公安管理学等）才能参加公安联考。非公安专业（法学/计算机等）不能参加联考，毕业自主就业。报考时务必确认是否为公安专业。",
+      "provinces": "全国",
+      "program_type": "police_academy",
+      "category": "提前批-公安"
+    },
+    {
+      "rule_id": "special.national_plan.eligibility",
+      "title": "国家专项计划报考资格",
+      "description": "国家专项计划要求：考生具有实施区域（832个脱贫县）当地连续3年以上户籍+户籍所在县高中连续3年学籍并实际就读+父母或法定监护人具有当地户籍。三项条件须同时满足。",
+      "provinces": "全国（832个脱贫县）",
+      "program_type": "targeted_poverty",
+      "category": "专项计划"
+    },
+    {
+      "rule_id": "special.local_plan.eligibility",
+      "title": "地方专项计划报考资格",
+      "description": "地方专项计划要求：考生具有实施区域农村户籍+户籍所在县高中连续3年学籍并实际就读。各省自定具体实施区域，通常覆盖本省农村地区。",
+      "provinces": "各省自定",
+      "program_type": "targeted_poverty",
+      "category": "专项计划"
+    },
+    {
+      "rule_id": "special.university_plan.application",
+      "title": "高校专项计划报名流程",
+      "description": "高校专项计划须在4-5月通过阳光高考平台单独报名，部分高校需参加面试或笔试（如清华自强计划/北大筑梦计划）。录取在本科提前批或本科批单设志愿。",
+      "provinces": "全国（95所高校）",
+      "program_type": "targeted_poverty",
+      "category": "专项计划"
+    },
+    {
+      "rule_id": "special.special_plan.score_detail",
+      "title": "三大专项计划降分幅度对比",
+      "description": "国家专项通常降10-30分（面向脱贫县），地方专项通常降15-40分（面向农村户籍），高校专项通常降20-60分（需单独报名+校测）。三大专项可同时报考但录取顺序不同。",
+      "provinces": "全国",
+      "program_type": "targeted_poverty",
+      "category": "专项计划"
     }
   ]
 }

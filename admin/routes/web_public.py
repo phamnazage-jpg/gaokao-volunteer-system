@@ -1186,10 +1186,12 @@ def _profile_version_label_from_payload(payload: dict[str, Any]) -> str:
     latest = _latest_profile_version(payload)
     if latest is not None:
         return str(latest.get("profile_version_id") or "profile-step1-incomplete")
-    return _profile_version_label({
-        "intake_summary": payload,
-        "profile_minimum_complete": _is_profile_minimum_complete(payload),
-    })
+    return _profile_version_label(
+        {
+            "intake_summary": payload,
+            "profile_minimum_complete": _is_profile_minimum_complete(payload),
+        }
+    )
 
 
 def _report_version_profile_reference(
@@ -1224,13 +1226,15 @@ def _ensure_report_version_metadata(
         if str(item.get("report_version_id") or "") == report_version_id:
             updated["latest_report_version_id"] = report_version_id
             return updated
-    versions.append({
-        "report_version_id": report_version_id,
-        "profile_version_id": profile_version_id,
-        "review_result_version_id": review_result_version_id,
-        "artifact_refs": artifact_refs,
-        "created_at": utc_now_iso(),
-    })
+    versions.append(
+        {
+            "report_version_id": report_version_id,
+            "profile_version_id": profile_version_id,
+            "review_result_version_id": review_result_version_id,
+            "artifact_refs": artifact_refs,
+            "created_at": utc_now_iso(),
+        }
+    )
     updated["report_versions"] = versions
     updated["latest_report_version_id"] = report_version_id
     return updated
@@ -1399,7 +1403,7 @@ def policy_center_page(province: str = "湖南") -> HTMLResponse:
         else "<section class='panel'><h2>当前省份暂不支持</h2><p class='meta'>公开政策摘要与同分段参考当前未覆盖该省份，请勿继续使用本页作为填报依据。</p></section>"
     )
     same_score_href = f"/same-score-reference?province={escape(safe_province)}&score=0"
-    body = f"""<!doctype html><html lang=\"zh-CN\"><head><meta charset=\"utf-8\" /><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" /><title>政策中心</title><link rel=\"stylesheet\" href=\"/static/portal-ui.css\" /><style>body{{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f4f7fb;padding:32px 20px;color:#172033;margin:0}}.wrap{{max-width:980px;margin:0 auto;display:grid;gap:18px}}.panel{{background:#fff;border:1px solid #dbe3f0;border-radius:20px;padding:24px;box-shadow:0 18px 42px rgba(20,34,53,.08)}}.eyebrow{{display:inline-flex;padding:6px 10px;border-radius:999px;background:#eef6ff;color:#194fb6;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}}.meta{{color:#5b6b88;line-height:1.8}}.actions{{display:flex;gap:12px;flex-wrap:wrap}}a{{color:#1f6feb;text-decoration:none}}</style></head><body>{_render_global_nav()}<main class="wrap"><section class="panel"><span class="eyebrow">政策中心</span><h1>政策中心</h1><p class="meta">适用省份：{escape(safe_province)}</p>{trust_banner}<div class="actions"><a href=\"{same_score_href}\">查看同分段参考</a><a href=\"/\">返回首页</a></div></section>{support_notice}<section class="panel"><h2>时间节点</h2><ul><li>查分后先核对成绩、位次与选科要求。</li><li>正式填报前再次确认批次与专业组选科约束。</li></ul></section><section class="panel"><h2>批次规则</h2><p class="meta">当前只整理普通类主链的关键规则；特殊批次、艺体类等未覆盖内容需另行核对。</p></section><section class="panel"><h2>选科要求</h2><p class="meta">先核对目标专业组选科要求，再判断是否要调整冲稳保结构。</p></section><section class="panel"><h2>常见误区</h2><ul><li>不要把同分段参考当成最终结论。</li><li>不要用去年的批次规则替代当年正式发布口径。</li></ul><p class="meta">以{escape(safe_province)}省教育考试院官方信息为准。</p></section>{_render_footer_links()}</main>{_render_global_toast_script()}</body></html>"""
+    body = f"""<!doctype html><html lang=\"zh-CN\"><head><meta charset=\"utf-8\" /><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" /><title>政策中心</title><link rel=\"stylesheet\" href=\"/static/portal-ui.css\" /><style>body{{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f4f7fb;padding:32px 20px;color:#172033;margin:0}}.wrap{{max-width:980px;margin:0 auto;display:grid;gap:18px}}.panel{{background:#fff;border:1px solid #dbe3f0;border-radius:20px;padding:24px;box-shadow:0 18px 42px rgba(20,34,53,.08)}}.eyebrow{{display:inline-flex;padding:6px 10px;border-radius:999px;background:#eef6ff;color:#194fb6;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}}.meta{{color:#5b6b88;line-height:1.8}}.actions{{display:flex;gap:12px;flex-wrap:wrap}}a{{color:#1f6feb;text-decoration:none}}</style></head><body>{_render_global_nav()}<main class="wrap"><section class="panel"><span class="eyebrow">政策中心</span><h1>政策中心</h1><p class="meta">适用省份：{escape(safe_province)}</p>{trust_banner}<div class="actions"><a href=\"{same_score_href}\">查看同分段参考</a><a href=\"/\">返回首页</a></div></section>{support_notice}<section class="panel"><h2>时间节点</h2><ul><li>查分后先核对成绩、位次与选科要求。</li><li>正式填报前再次确认批次与专业组选科约束。</li></ul></section><section class="panel"><h2>批次规则</h2><p class="meta">当前只整理普通类主链的关键规则；特殊批次、艺体类等未覆盖内容需另行核对。</p></section><section class="panel"><h2>提前批与专项计划</h2><p class="meta">提前批和专项计划是可以降分进入好学校的特殊渠道，但各有报考条件限制。以下列出主要类型：</p><ul><li><strong>军校（本科提前批）</strong>：入学即入伍，毕业分配工作。需通过政审+军检，年龄不超过20周岁。比同层次普通院校低30-80分。</li><li><strong>公安院校（本科提前批）</strong>：毕业参加公安联考入警率90%+，需通过体检+体能测试+政审。注意只有公安专业才能参加联考。</li><li><strong>国家专项计划</strong>：面向脱贫县农村考生，需当地连续3年户籍+学籍。通常降10-30分。</li><li><strong>地方专项计划</strong>：面向农村户籍考生，各省自定实施区域。通常降15-40分。</li><li><strong>高校专项计划</strong>：教育部直属高校面向农村考生，需4-5月提前报名。通常降20-60分。</li><li><strong>公费师范生</strong>：免学费+住宿费+补贴，毕业包分配有编有岗，需回生源省任教6年。</li><li><strong>免费医学定向</strong>：免学费，毕业回基层卫生院事业编，需服务6年。</li></ul><p class="meta">具体资格要求、体检标准和降分幅度以当地教育考试院和各院校官方招生简章为准。</p></section><section class="panel"><h2>选科要求</h2><p class="meta">先核对目标专业组选科要求，再判断是否要调整冲稳保结构。</p></section><section class="panel"><h2>常见误区</h2><ul><li>不要把同分段参考当成最终结论。</li><li>不要用去年的批次规则替代当年正式发布口径。</li></ul><p class="meta">以{escape(safe_province)}省教育考试院官方信息为准。</p></section>{_render_footer_links()}</main>{_render_global_toast_script()}</body></html>"""
     return HTMLResponse(body)
 
 
@@ -1918,26 +1922,34 @@ def compare_reports_page(
             context = _build_portal_context(order, settings)
             intake = context.get("intake_summary") or {}
             latest_review = _load_latest_review_result(order.id, settings)
-            compare_rows.append({
-                "token": tk,
-                "order_id": order.id,
-                "service_version": order.service_version,
-                "status": order.status,
-                "score": intake.get("candidate_score") or order.candidate_score or "-",
-                "rank": intake.get("candidate_rank") or order.candidate_rank or "-",
-                "subjects": ", ".join(
-                    intake.get("candidate_subjects") or order.candidate_subjects or []
-                )
-                or "-",
-                "target_cities": ", ".join(intake.get("target_cities") or []) or "-",
-                "target_majors": ", ".join(intake.get("target_majors") or []) or "-",
-                "latest_review": latest_review.review_result_id
-                if latest_review
-                else "-",
-                "has_pdf": "是" if context.get("report_pdf_ready") else "否",
-                "report_url": f"/portal/{tk}/report",
-                "status_url": f"/portal/{tk}/status",
-            })
+            compare_rows.append(
+                {
+                    "token": tk,
+                    "order_id": order.id,
+                    "service_version": order.service_version,
+                    "status": order.status,
+                    "score": intake.get("candidate_score")
+                    or order.candidate_score
+                    or "-",
+                    "rank": intake.get("candidate_rank") or order.candidate_rank or "-",
+                    "subjects": ", ".join(
+                        intake.get("candidate_subjects")
+                        or order.candidate_subjects
+                        or []
+                    )
+                    or "-",
+                    "target_cities": ", ".join(intake.get("target_cities") or [])
+                    or "-",
+                    "target_majors": ", ".join(intake.get("target_majors") or [])
+                    or "-",
+                    "latest_review": latest_review.review_result_id
+                    if latest_review
+                    else "-",
+                    "has_pdf": "是" if context.get("report_pdf_ready") else "否",
+                    "report_url": f"/portal/{tk}/report",
+                    "status_url": f"/portal/{tk}/status",
+                }
+            )
         except (PortalTokenError, OrderNotFound):
             invalid_tokens.append(tk)
 

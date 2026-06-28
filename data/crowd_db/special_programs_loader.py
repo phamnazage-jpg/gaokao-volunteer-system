@@ -153,3 +153,33 @@ class SpecialProgramsLoader:
         # 按 match_score 降序
         recommendations.sort(key=lambda x: x.get("match_score", 0), reverse=True)
         return recommendations
+
+
+    def list_programs_by_batch(self, batch: str) -> list[dict[str, Any]]:
+        """按批次筛选项目（如"本科提前批"/"专科提前批"/"本科批"）。"""
+        return [p for p in self.list_programs() if batch in p.get("batch", "")]
+
+    def list_programs_by_category(self, category: str) -> list[dict[str, Any]]:
+        """按类别筛选规则关联的项目（如"提前批-军校"/"专项计划"）。"""
+        rule_types = set()
+        for r in self.rules.get("rules", []):
+            if r.get("category") == category:
+                pt = r.get("program_type")
+                if pt:
+                    rule_types.add(pt)
+        return [p for p in self.list_programs() if p.get("program_type") in rule_types]
+
+    def list_categories(self) -> list[str]:
+        """列出所有规则类别。"""
+        return sorted(set(
+            r.get("category", "")
+            for r in self.rules.get("rules", [])
+            if r.get("category")
+        ))
+
+    def get_rules_by_category(self, category: str) -> list[dict[str, Any]]:
+        """按类别获取规则。"""
+        return [
+            r for r in self.rules.get("rules", [])
+            if r.get("category") == category
+        ]

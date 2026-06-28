@@ -51,7 +51,7 @@
             "reselect_subject": [],
             "note": "首选历史，无强制再选"
           },
-          "program_type": null
+          "program_type": "军校"
         },
         {
           "name": "厦门大学",
@@ -92,7 +92,7 @@
             ],
             "note": "首选物理，再选化学"
           },
-          "program_type": null
+          "program_type": "公安院校"
         },
         {
           "name": "厦门大学",
