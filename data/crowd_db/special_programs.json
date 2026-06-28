@@ -151,6 +151,63 @@
       "warnings": ["入学即签就业协议", "岗位以一线技术/运维为主", "毕业不愁就业"],
       "source": "各央企国企招聘平台/合作院校招生网",
       "last_verified": "2025-06"
+    },
+    {
+      "program_type": "minority_prep",
+      "program_name": "少数民族预科班/民族班",
+      "batch": "本科批",
+      "applicable_provinces": ["全国"],
+      "description": "面向少数民族考生的预科培养计划，降分录取，先读1年预科再转入本科。",
+      "key_features": {
+        "tuition": "公办正规学费",
+        "employment": "正常本科毕业就业，无定向约束",
+        "service_years": null,
+        "exam_required": false,
+        "politics_check": "常规",
+        "physical_check": "常规体检"
+      },
+      "applicable_to": "少数民族考生，预科可降分20-80分录取，民族大学预科线更低",
+      "warnings": ["仅限少数民族考生", "预科1年后转入正式本科"],
+      "source": "教育部/各省民族事务委员会",
+      "last_verified": "2025-06"
+    },
+    {
+      "program_type": "targeted_poverty",
+      "program_name": "三大专项计划（国家专项/地方专项/高校专项）",
+      "batch": "本科提前批/本科批",
+      "applicable_provinces": ["全国"],
+      "description": "面向农村/脱贫地区考生的专项招生计划，可降分进入985/211院校。",
+      "key_features": {
+        "tuition": "公办正规学费",
+        "employment": "正常本科毕业就业，无定向约束",
+        "service_years": null,
+        "exam_required": false,
+        "politics_check": "常规",
+        "physical_check": "常规体检"
+      },
+      "applicable_to": "农村户籍、脱贫地区考生，需满足户籍+学籍年限要求",
+      "warnings": ["国家专项面向脱贫县", "地方专项面向农村户籍", "高校专项需提前单独报名"],
+      "source": "教育部/各省教育考试院",
+      "last_verified": "2025-06"
+    },
+    {
+      "program_type": "tibet_directed",
+      "program_name": "非西藏生源定向西藏就业",
+      "batch": "本科批",
+      "applicable_provinces": ["全国"],
+      "description": "非西藏生源定向西藏就业计划，降分录取，毕业须到西藏工作。",
+      "key_features": {
+        "tuition": "公办正规学费",
+        "employment": "毕业定向到西藏就业",
+        "service_years": 5,
+        "exam_required": false,
+        "politics_check": "常规",
+        "physical_check": "常规体检"
+      },
+      "applicable_to": "非西藏生源考生，最低可降至调档线下40分录取",
+      "warnings": ["须签定向就业协议", "毕业须到西藏工作至少5年", "不可转专业"],
+      "source": "教育部/西藏人社厅",
+      "last_verified": "2025-06"
     }
   ],
   "program_schools": {
@@ -254,7 +311,37 @@
       {"school": "长沙民政职业技术学院", "province": "湖南", "score_min": 400, "score_subject": "物理类", "major": "现代殡葬技术与管理（民政部定向）", "batch": "专科批"},
       {"school": "四川邮电职业技术学院", "province": "四川", "score_min": 400, "score_subject": "理科", "major": "通信工程设计与监理（中国电信订单）", "batch": "专科批"},
       {"school": "浙江交通职业技术学院", "province": "浙江", "score_min": 410, "score_subject": "综合改革", "major": "道路桥梁工程（交通系统订单）", "batch": "专科批"},
-      {"school": "辽宁石油化工大学", "province": "辽宁", "score_min": 430, "score_subject": "理科", "major": "石油工程（中石化定向）", "batch": "本科批"}
+      {"school": "辽宁石油化工大学", "province": "辽宁", "score_min": 430, "score_subject": "理科", "major": "石油工程（中石化定向）", "batch": "本科批"},
+      {"school": "长沙电力职业技术学院", "province": "湖南", "score_min": 400, "score_subject": "物理类", "major": "电力系统继电保护（国家电网订单）", "batch": "专科批"},
+      {"school": "武汉电力职业技术学院", "province": "湖北", "score_min": 410, "score_subject": "物理类", "major": "发电厂及电力系统（国家电网订单）", "batch": "专科批"},
+      {"school": "山东电力高等专科学校", "province": "山东", "score_min": 420, "score_subject": "综合改革", "major": "电力系统自动化（国家电网订单）", "batch": "专科批"},
+      {"school": "江西电力职业技术学院", "province": "江西", "score_min": 390, "score_subject": "理科", "major": "供用电技术（国家电网订单）", "batch": "专科批"},
+      {"school": "三峡电力职业学院", "province": "湖北", "score_min": 360, "score_subject": "物理类", "major": "电力系统自动化（中国能建订单）", "batch": "专科批"},
+      {"school": "黄河水利职业技术学院", "province": "河南", "score_min": 380, "score_subject": "理科", "major": "水利水电工程（黄河水利委员会订单）", "batch": "专科批"},
+      {"school": "安徽邮电职业技术学院", "province": "安徽", "score_min": 380, "score_subject": "理科", "major": "通信技术（中国电信订单）", "batch": "专科批"},
+      {"school": "广东水利电力职业技术学院", "province": "广东", "score_min": 400, "score_subject": "物理类", "major": "水利水电工程（南方电网订单）", "batch": "专科批"},
+      {"school": "广西电力职业技术学院", "province": "广西", "score_min": 360, "score_subject": "理科", "major": "电力系统自动化（南方电网订单）", "batch": "专科批"},
+      {"school": "北京社会管理职业学院", "province": "北京", "score_min": 380, "score_subject": "综合", "major": "民政管理（民政部定向）", "batch": "专科批"},
+      {"school": "长沙航空职业技术学院", "province": "湖南", "score_min": 410, "score_subject": "物理类", "major": "飞机维修（中国航发订单）", "batch": "专科批"},
+      {"school": "广州民航职业技术学院", "province": "广东", "score_min": 420, "score_subject": "物理类", "major": "飞机机电设备维修（南方航空订单）", "batch": "专科批"},
+      {"school": "上海民航职业技术学院", "province": "上海", "score_min": 430, "score_subject": "综合", "major": "民航安全技术管理（东方航空订单）", "batch": "专科批"}
+    ],
+    "minority_prep": [
+      {"school": "中央民族大学", "province": "全国", "score_min": 500, "score_subject": "综合", "major": "预科班（少数民族）", "batch": "本科批"},
+      {"school": "大连民族大学", "province": "全国", "score_min": 460, "score_subject": "综合", "major": "预科班（少数民族）", "batch": "本科批"},
+      {"school": "中南民族大学", "province": "全国", "score_min": 480, "score_subject": "综合", "major": "预科班（少数民族）", "batch": "本科批"},
+      {"school": "西南民族大学", "province": "全国", "score_min": 470, "score_subject": "综合", "major": "预科班（少数民族）", "batch": "本科批"},
+      {"school": "西北民族大学", "province": "全国", "score_min": 450, "score_subject": "综合", "major": "预科班（少数民族）", "batch": "本科批"},
+      {"school": "北方民族大学", "province": "全国", "score_min": 440, "score_subject": "综合", "major": "预科班（少数民族）", "batch": "本科批"},
+      {"school": "吉林大学", "province": "全国", "score_min": 530, "score_subject": "综合", "major": "少数民族预科班", "batch": "本科批"}
+    ],
+    "targeted_poverty": [
+      {"school": "全国重点大学（各985/211）", "province": "全国", "score_min": 500, "score_subject": "综合", "major": "国家专项计划（各专业）", "batch": "本科提前批/本科批"},
+      {"school": "省属重点大学", "province": "全国", "score_min": 460, "score_subject": "综合", "major": "地方专项计划（各专业）", "batch": "本科批"},
+      {"school": "教育部直属高校", "province": "全国", "score_min": 520, "score_subject": "综合", "major": "高校专项计划（各专业）", "batch": "本科批"}
+    ],
+    "tibet_directed": [
+      {"school": "全国本科院校（面向西藏定向）", "province": "全国", "score_min": 420, "score_subject": "综合", "major": "非西藏生源定向西藏就业（各专业）", "batch": "本科批"}
     ]
   }
 }

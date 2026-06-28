@@ -25,14 +25,21 @@ class TestSpecialProgramsLoader:
     def test_loads_8_program_types(self):
         programs = self.loader.list_programs()
         types = {p["program_type"] for p in programs}
-        assert "rural_medical" in types
-        assert "public_agriculture" in types
-        assert "fire_rescue" in types
-        assert "railway_directed" in types
-        assert "judicial_directed" in types
-        assert "military_nco" in types
-        assert "public_teacher" in types
-        assert "enterprise_order" in types
+        expected = {
+            "rural_medical",
+            "public_agriculture",
+            "fire_rescue",
+            "railway_directed",
+            "judicial_directed",
+            "military_nco",
+            "public_teacher",
+            "enterprise_order",
+            "minority_prep",
+            "targeted_poverty",
+            "tibet_directed",
+        }
+        for t in expected:
+            assert t in types, f"缺少项目类型: {t}"
 
     def test_get_program(self):
         p = self.loader.get_program("rural_medical")

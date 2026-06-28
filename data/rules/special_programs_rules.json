@@ -106,6 +106,48 @@
       "severity": "info",
       "applies_to": ["enterprise_order"],
       "check": "订单班分数线可能高于同校普通专业"
+    },
+    {
+      "rule_id": "special.minority_prep.ethnicity_requirement",
+      "description": "少数民族预科班仅限少数民族考生报考",
+      "severity": "fatal",
+      "applies_to": ["minority_prep"],
+      "check": "考生须为少数民族身份"
+    },
+    {
+      "rule_id": "special.minority_prep.score_reduction",
+      "description": "少数民族预科可降分20-80分录取，民族大学预科线更低",
+      "severity": "info",
+      "applies_to": ["minority_prep"],
+      "check": "降分幅度以各省当年公布为准"
+    },
+    {
+      "rule_id": "special.targeted_poverty.hukou_requirement",
+      "description": "三大专项计划要求农村户籍+当地连续学籍，国家专项面向脱贫县",
+      "severity": "fatal",
+      "applies_to": ["targeted_poverty"],
+      "check": "须满足户籍+学籍年限要求，以各省实施区域为准"
+    },
+    {
+      "rule_id": "special.targeted_poverty.score_advantage",
+      "description": "三大专项可降分进入985/211，地方专项降幅最大",
+      "severity": "info",
+      "applies_to": ["targeted_poverty"],
+      "check": "降分幅度以各省当年公布为准"
+    },
+    {
+      "rule_id": "special.tibet_directed.service_commitment",
+      "description": "非西藏生源定向西藏就业，毕业后须到西藏工作至少5年",
+      "severity": "warning",
+      "applies_to": ["tibet_directed"],
+      "check": "须签定向就业协议，不可转专业，服务期5年"
+    },
+    {
+      "rule_id": "special.tibet_directed.score_reduction",
+      "description": "非西藏生源定向西藏最低可降至调档线下40分录取",
+      "severity": "info",
+      "applies_to": ["tibet_directed"],
+      "check": "降分幅度以各省当年公布为准"
     }
   ]
 }
