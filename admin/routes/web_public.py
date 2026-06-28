@@ -32,7 +32,6 @@ from data.llm import (
     LLMClient,
     LLMError,
     build_audit_prompt,
-    build_cwb_prompt,
     build_full_plan_prompt,
 )
 from data.notifications.email_service import DeliveryNotificationService
@@ -427,7 +426,9 @@ def full_plan_placeholder_page(
     context = _build_portal_context(order, settings)
     contract = _load_latest_review_result(order.id, settings)
     return HTMLResponse(
-        _render_full_plan_placeholder_page(token, order, context, contract)
+        _render_full_plan_placeholder_page(
+            token, order, context, contract, settings=settings
+        )
     )
 
 
@@ -4573,6 +4574,7 @@ def _render_full_plan_placeholder_page(
     order: Order,
     context: dict[str, Any],
     contract: ReviewResultContract | None,
+    settings: Settings | None = None,
 ) -> str:
     payload = (
         contract.model_dump()
@@ -4594,10 +4596,77 @@ def _render_full_plan_placeholder_page(
         or "<li>暂无版本历史</li>"
     )
     auxiliary_html = _render_auxiliary_factor_section(intake_payload)
+
+    # LLM 生成完整规划方案（如果配置了 LLM）
+    llm_plan_html = ""
+    llm_client = LLMClient(settings) if settings else None
+    if llm_client and llm_client.is_configured:
+        try:
+            intake_summary = context.get("intake_summary") or {}
+            crowd_recs = _get_crowd_db_recs_for_review(intake_summary)
+            system, user = build_full_plan_prompt(
+                province=str(
+                    intake_summary.get("candidate_province")
+                    or order.candidate_province
+                    or "湖南"
+                ),
+                score=int(
+                    intake_summary.get("candidate_score") or order.candidate_score or 0
+                )
+                if intake_summary.get("candidate_score") or order.candidate_score
+                else 0,
+                rank=int(
+                    intake_summary.get("candidate_rank") or order.candidate_rank or 0
+                )
+                if intake_summary.get("candidate_rank") or order.candidate_rank
+                else None,
+                subjects=list(intake_summary.get("candidate_subjects") or []),
+                target_cities=list(intake_summary.get("target_cities") or []),
+                target_majors=list(intake_summary.get("target_majors") or []),
+                family_background=str(intake_summary.get("family_background") or ""),
+                interest_assessment=str(
+                    intake_summary.get("interest_assessment_result") or ""
+                ),
+                existing_plan=str(intake_summary.get("existing_plan_summary") or ""),
+                crowd_db_recs=crowd_recs,
+            )
+            resp = llm_client.chat_with_system(system, user, temperature=0.5)
+            plan_data = json.loads(resp.content)
+            volunteers = plan_data.get("volunteers") or []
+            vol_rows = []
+            for v in volunteers:
+                tier_badge = {"冲": "🔴", "稳": "🟢", "保": "🔵"}.get(
+                    v.get("tier", ""), "•"
+                )
+                vol_rows.append(
+                    f'<tr><td style="padding:8px;">{tier_badge} {escape(v.get("tier", ""))}</td>'
+                    f'<td style="padding:8px;"><strong>{escape(v.get("school", ""))}</strong></td>'
+                    f'<td style="padding:8px;">{escape(v.get("major", ""))}</td>'
+                    f'<td style="padding:8px;color:#5b6b88;font-size:12px;">{escape(v.get("reason", ""))}</td>'
+                    f"</tr>"
+                )
+            llm_plan_html = (
+                f'<section class="panel"><h2>🤖 AI 生成的完整志愿方案</h2>'
+                f'<p class="meta">{escape(plan_data.get("overall_assessment", ""))}</p>'
+                f'<p class="meta" style="margin-top:6px;"><strong>核心策略：</strong>{escape(plan_data.get("strategy", ""))}</p>'
+                f'<table style="width:100%;border-collapse:collapse;font-size:13px;margin-top:12px;">'
+                f'<thead><tr style="text-align:left;border-bottom:2px solid #d7e3f1;">'
+                f'<th style="padding:8px;">档位</th><th style="padding:8px;">院校</th>'
+                f'<th style="padding:8px;">专业</th><th style="padding:8px;">推荐理由</th>'
+                f"</tr></thead><tbody>{''.join(vol_rows)}</tbody></table>"
+                f"</section>"
+            )
+            warnings = plan_data.get("warnings") or []
+            if warnings:
+                warn_html = "".join(f"<li>{escape(str(w))}</li>" for w in warnings[:5])
+                llm_plan_html += f'<section class="panel"><h2>⚠️ 注意事项</h2><ul>{warn_html}</ul></section>'
+        except (LLMError, json.JSONDecodeError, TypeError, ValueError):
+            llm_plan_html = '<section class="panel"><h2>AI 方案生成</h2><p class="meta">AI 方案生成暂时不可用，请稍后重试或联系客服。</p></section>'
+
     planning_summary = (
         "当前资料已进入完整规划阶段，可继续围绕学校、专业、预算与家庭约束做结构化取舍。"
     )
-    body_html = f"""<section class="panel"><h1>完整规划建议页</h1><p class="meta">订单号：{escape(order.id)}。这里承接复核后的完整规划建议，不再只是入口说明。</p><p class="meta">{escape(planning_summary)}</p><ul><li>Step 1 最小建档：{"已完成" if context.get("profile_minimum_complete") else "未完成"}</li><li>缺失字段：{escape(missing)}</li></ul></section><section class="panel"><h2>方案优先级</h2><ul><li>先按省份 / 分数 / 位次确认基本梯度</li><li>再按院校偏好、专业偏好与家庭约束收敛方案</li><li>最后结合已有方案与附件做增量修订</li></ul></section><section class="panel"><h2>版本历史</h2><ul>{version_lines}</ul></section>{auxiliary_html}<section class="panel"><h2>当前复核摘要</h2><pre>{escape(json.dumps(payload, ensure_ascii=False, indent=2))}</pre></section><section class="panel"><a href=\"/portal/{escape(token)}/info\">继续补充资料</a></section>"""
+    body_html = f"""<section class="panel"><h1>完整规划建议页</h1><p class="meta">订单号：{escape(order.id)}。这里承接复核后的完整规划建议，不再只是入口说明。</p><p class="meta">{escape(planning_summary)}</p><ul><li>Step 1 最小建档：{"已完成" if context.get("profile_minimum_complete") else "未完成"}</li><li>缺失字段：{escape(missing)}</li></ul></section>{llm_plan_html}<section class="panel"><h2>方案优先级</h2><ul><li>先按省份 / 分数 / 位次确认基本梯度</li><li>再按院校偏好、专业偏好与家庭约束收敛方案</li><li>最后结合已有方案与附件做增量修订</li></ul></section><section class="panel"><h2>版本历史</h2><ul>{version_lines}</ul></section>{auxiliary_html}<section class="panel"><h2>当前复核摘要</h2><pre>{escape(json.dumps(payload, ensure_ascii=False, indent=2))}</pre></section><section class="panel"><a href=\"/portal/{escape(token)}/info\">继续补充资料</a></section>"""
     return _render_placeholder_shell(
         title="完整规划建议页", max_width=960, body_html=body_html
     )

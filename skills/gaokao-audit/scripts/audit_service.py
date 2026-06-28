@@ -39,17 +39,19 @@ class AuditResult:
 
 
 class AuditService:
-    """组合解析、政策检查与扎堆检测的审核主服务。"""
+    """组合解析、政策检查、扎堆检测与 LLM 风险分析的审核主服务。"""
 
     def __init__(
         self,
         parser: PlanParser | None = None,
         checker: CheckerIntegration | None = None,
         detector: CrowdDetector | None = None,
+        llm_client: Any = None,
     ) -> None:
         self.parser = parser or PlanParser()
         self.checker = checker or CheckerIntegration()
         self.detector = detector or CrowdDetector()
+        self._llm_client = llm_client
 
     def audit(self, plan_text: str, format: str = "text") -> AuditResult:
         if format not in _ALLOWED_FORMATS:
@@ -80,7 +82,7 @@ class AuditService:
             serious_count=serious_count,
         )
 
-        return AuditResult(
+        result = AuditResult(
             province=parsed.province,
             candidate_score=parsed.score,
             candidate_rank=parsed.rank,
@@ -95,6 +97,13 @@ class AuditService:
             suggestions=suggestions,
             overall_score=overall_score,
         )
+
+        # LLM 增强审核：如果 LLM 已配置，调用 LLM 做深度风险分析，增强 suggestions
+        llm_suggestions = self._llm_enhance_audit(result, plan_text)
+        if llm_suggestions:
+            result.suggestions = llm_suggestions + result.suggestions
+
+        return result
 
     def build_report_payload(
         self,
@@ -120,6 +129,47 @@ class AuditService:
         payload["info_count"] = len(result.policy_general_warnings)
         return payload
 
+    def _llm_enhance_audit(self, result: AuditResult, plan_text: str) -> List[str]:
+        """如果 LLM 已配置，调用 LLM 做深度风险分析，返回额外建议列表。"""
+        if self._llm_client is None or not getattr(
+            self._llm_client, "is_configured", False
+        ):
+            return []
+        try:
+            from data.llm.prompts import build_audit_prompt
+            import json as _json
+
+            system, user = build_audit_prompt(
+                province=result.province or "未知",
+                score=result.candidate_score,
+                rank=result.candidate_rank,
+                subjects=[result.subjects] if result.subjects else [],
+                existing_plan=plan_text[:2000],
+                crowd_db_recs=None,
+            )
+            resp = self._llm_client.chat_with_system(system, user, temperature=0.3)
+            data = _json.loads(resp.content)
+            llm_findings = [
+                str(x).strip()
+                for x in (data.get("key_findings") or [])
+                if str(x).strip()
+            ]
+            llm_suggestions = [
+                str(x).strip()
+                for x in (data.get("suggestions") or [])
+                if str(x).strip()
+            ]
+            combined: List[str] = []
+            if llm_findings:
+                combined.append("🤖 LLM 风险分析发现：")
+                combined.extend(f"  • {f}" for f in llm_findings[:3])
+            if llm_suggestions:
+                combined.append("🤖 LLM 建议操作：")
+                combined.extend(f"  • {s}" for s in llm_suggestions[:3])
+            return combined
+        except Exception:
+            return []
+
     def _detect_crowd_risks(self, parsed: ParsedPlan) -> List[CrowdRisk]:
         if not parsed.province or not parsed.score or not parsed.volunteers:
             return []
@@ -132,25 +182,21 @@ class AuditService:
     def _check_data_trace(self, parsed: ParsedPlan) -> List[Dict[str, str]]:
         issues: List[Dict[str, str]] = []
         if not parsed.source:
-            issues.append(
-                {
-                    "location": "AI来源",
-                    "description": "未明确标注AI来源（千问/元宝/百度/豆包）",
-                    "recommendation": "补充原始方案来自哪个大厂AI，避免人工复核时误判来源。",
-                }
-            )
+            issues.append({
+                "location": "AI来源",
+                "description": "未明确标注AI来源（千问/元宝/百度/豆包）",
+                "recommendation": "补充原始方案来自哪个大厂AI，避免人工复核时误判来源。",
+            })
         if (
             parsed.score
             and "2025" not in parsed.raw_text
             and "2024" not in parsed.raw_text
         ):
-            issues.append(
-                {
-                    "location": "分数/位次依据",
-                    "description": "未明确数据年份（建议标注2025年参考位次）",
-                    "recommendation": "补充分数线或位次所对应的年份，避免跨年份数据混用。",
-                }
-            )
+            issues.append({
+                "location": "分数/位次依据",
+                "description": "未明确数据年份（建议标注2025年参考位次）",
+                "recommendation": "补充分数线或位次所对应的年份，避免跨年份数据混用。",
+            })
         return issues
 
     def _build_candidate_info(self, result: AuditResult) -> str:
