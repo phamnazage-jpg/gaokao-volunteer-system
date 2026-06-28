@@ -29,6 +29,8 @@ def test_load_settings_prod_rejects_dev_jwt_secret(monkeypatch, tmp_path):
     monkeypatch.setenv("GAOKAO_PORTAL_TOKEN_SECRET", "y" * 32)
     monkeypatch.setenv("GAOKAO_ADMIN_PASS", "StrongPass1!")
     monkeypatch.setenv("GAOKAO_PAYMENT_PROVIDER", "alipay")
+    monkeypatch.setenv("GAOKAO_LLM_PROVIDER", "dashscope")
+    monkeypatch.setenv("GAOKAO_LLM_API_KEY", "sk-test")
     monkeypatch.setenv("GAOKAO_ORDERS_DB_PATH", str(tmp_path / "orders.db"))
     monkeypatch.setenv("GAOKAO_DB_PATH", str(tmp_path / "admin.db"))
 
@@ -47,6 +49,8 @@ def test_load_settings_prod_rejects_short_jwt_secret(monkeypatch, tmp_path):
     monkeypatch.setenv("GAOKAO_PORTAL_TOKEN_SECRET", "y" * 32)
     monkeypatch.setenv("GAOKAO_ADMIN_PASS", "StrongPass1!")
     monkeypatch.setenv("GAOKAO_PAYMENT_PROVIDER", "alipay")
+    monkeypatch.setenv("GAOKAO_LLM_PROVIDER", "dashscope")
+    monkeypatch.setenv("GAOKAO_LLM_API_KEY", "sk-test")
     monkeypatch.setenv("GAOKAO_ORDERS_DB_PATH", str(tmp_path / "orders.db"))
     monkeypatch.setenv("GAOKAO_DB_PATH", str(tmp_path / "admin.db"))
 
@@ -65,6 +69,8 @@ def test_load_settings_prod_rejects_default_admin_password(monkeypatch, tmp_path
     monkeypatch.setenv("GAOKAO_PORTAL_TOKEN_SECRET", "y" * 32)
     monkeypatch.setenv("GAOKAO_ADMIN_PASS", "admin123")
     monkeypatch.setenv("GAOKAO_PAYMENT_PROVIDER", "alipay")
+    monkeypatch.setenv("GAOKAO_LLM_PROVIDER", "dashscope")
+    monkeypatch.setenv("GAOKAO_LLM_API_KEY", "sk-test")
     monkeypatch.setenv("GAOKAO_ORDERS_DB_PATH", str(tmp_path / "orders.db"))
     monkeypatch.setenv("GAOKAO_DB_PATH", str(tmp_path / "admin.db"))
 

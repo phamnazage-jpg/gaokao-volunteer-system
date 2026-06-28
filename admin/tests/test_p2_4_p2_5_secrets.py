@@ -18,7 +18,12 @@ import pytest
 
 def _reload_settings():
     """重新加载 Settings(确保读取最新环境变量)。"""
+    import os
     from admin.config import load_settings
+
+    # LLM 是生产必需项；本测试聚焦 portal/payment secret，不希望被 LLM 校验提前拦截
+    os.environ.setdefault("GAOKAO_LLM_PROVIDER", "dashscope")
+    os.environ.setdefault("GAOKAO_LLM_API_KEY", "sk-test")
 
     return load_settings()
 

@@ -28,6 +28,13 @@ from data.customer_portal.token import (
     verify_portal_token,
 )
 from data.crowd_db.loader import CrowdDBLoader
+from data.llm import (
+    LLMClient,
+    LLMError,
+    build_audit_prompt,
+    build_cwb_prompt,
+    build_full_plan_prompt,
+)
 from data.notifications.email_service import DeliveryNotificationService
 from data.orders import crypto
 from data.orders.dao import OrderNotFound, OrdersDAO
@@ -118,6 +125,9 @@ class ReviewResultContract(BaseModel):
     review_input_summary: str = ""
     review_input_attachments: list[str] = Field(default_factory=list)
     review_constraints: dict[str, Any] = Field(default_factory=dict)
+    llm_generated: bool = False
+    llm_summary: str = ""
+    llm_cwb_suggestions: dict[str, list[str]] = Field(default_factory=dict)
 
 
 class ReviewActionRequest(BaseModel):
@@ -4006,6 +4016,108 @@ def _review_constraints_display(value: Any) -> str:
     return text or "待补充"
 
 
+def _get_crowd_db_recs_for_review(constraints: dict[str, Any]) -> list[dict[str, Any]]:
+    """根据当前约束从 crowd_db 取同分段参考。"""
+    province = str(constraints.get("candidate_province") or "").strip()
+    score = constraints.get("candidate_score")
+    if not province or score in (None, ""):
+        return []
+    try:
+        score_int = int(score)
+    except (TypeError, ValueError):
+        return []
+    try:
+        loader = CrowdDBLoader(warn_low_confidence=False)
+        return loader.find_recommendations(province, score_int)
+    except Exception:
+        return []
+
+
+def _llm_review_contract(
+    *,
+    settings: Settings,
+    review_result_id: str,
+    source: Literal["home", "status", "report", "direct"],
+    resolved_summary: str,
+    resolved_constraints: dict[str, Any],
+    resolved_attachments: list[str],
+) -> ReviewResultContract | None:
+    """尝试用 LLM 生成审核结果；未配置或失败时返回 None。"""
+    client = LLMClient(settings)
+    if not client.is_configured:
+        return None
+
+    province = (
+        str(resolved_constraints.get("candidate_province") or "").strip() or "湖南"
+    )
+    score = resolved_constraints.get("candidate_score")
+    rank = resolved_constraints.get("candidate_rank")
+    subjects = list(resolved_constraints.get("candidate_subjects") or [])
+    crowd_recs = _get_crowd_db_recs_for_review(resolved_constraints)
+    system, user = build_audit_prompt(
+        province=province,
+        score=int(score) if score not in (None, "") else None,
+        rank=int(rank) if rank not in (None, "") else None,
+        subjects=[str(s) for s in subjects],
+        existing_plan=resolved_summary,
+        crowd_db_recs=crowd_recs,
+    )
+    try:
+        resp = client.chat_with_system(system, user, temperature=0.3)
+        data = json.loads(resp.content)
+    except (LLMError, json.JSONDecodeError, TypeError, ValueError):
+        return None
+
+    risk_level = str(data.get("risk_level") or "medium").lower()
+    if risk_level not in {"low", "medium", "high"}:
+        risk_level = "medium"
+    findings = [
+        str(x).strip() for x in list(data.get("key_findings") or []) if str(x).strip()
+    ][:5]
+    if not findings:
+        findings = [str(data.get("risk_summary") or "当前方案可继续复核")]
+
+    cwb = data.get("cwb_suggestions") or {}
+    cwb_suggestions = {
+        "rush": [
+            f"{item.get('school', '?')} - {item.get('major', '?')}"
+            for item in list(cwb.get("rush") or [])
+            if isinstance(item, dict)
+        ],
+        "stable": [
+            f"{item.get('school', '?')} - {item.get('major', '?')}"
+            for item in list(cwb.get("stable") or [])
+            if isinstance(item, dict)
+        ],
+        "safety": [
+            f"{item.get('school', '?')} - {item.get('major', '?')}"
+            for item in list(cwb.get("safety") or [])
+            if isinstance(item, dict)
+        ],
+    }
+
+    profile_ready = _is_profile_minimum_complete(resolved_constraints)
+    recommended_action: Literal["go_cwb", "go_step1", "go_full_plan"] = (
+        "go_cwb" if profile_ready else "go_step1"
+    )
+
+    return ReviewResultContract(
+        review_result_id=review_result_id,
+        risk_level=risk_level,
+        top_findings=findings,
+        recommended_action=recommended_action,
+        available_actions=["go_cwb", "go_step1", "go_full_plan"],
+        review_entry_source=source,
+        review_followup_action="none",
+        review_input_summary=resolved_summary or "未提供现有方案说明",
+        review_input_attachments=resolved_attachments,
+        review_constraints=resolved_constraints,
+        llm_generated=True,
+        llm_summary=str(data.get("risk_summary") or ""),
+        llm_cwb_suggestions=cwb_suggestions,
+    )
+
+
 def _start_review_result(
     *,
     source: Literal["home", "status", "report", "direct"],
@@ -4049,23 +4161,34 @@ def _start_review_result(
     recommended_action: Literal["go_cwb", "go_step1", "go_full_plan"] = (
         "go_cwb" if profile_ready else "go_step1"
     )
-    top_finding = (
-        "Step 1 已齐全，可直接进入冲稳保微调，再决定是否进入完整规划。"
-        if profile_ready
-        else "当前方案建议先补充 Step 1 后再继续判断梯度风险。"
-    )
-    contract = ReviewResultContract(
+
+    # 优先尝试 LLM 生成审核结果；未配置或失败时回退到规则默认逻辑
+    contract = _llm_review_contract(
+        settings=settings,
         review_result_id=review_result_id,
-        risk_level="medium",
-        top_findings=[top_finding],
-        recommended_action=recommended_action,
-        available_actions=["go_cwb", "go_step1", "go_full_plan"],
-        review_entry_source=source,
-        review_followup_action="none",
-        review_input_summary=resolved_summary or "未提供现有方案说明",
-        review_input_attachments=resolved_attachments,
-        review_constraints=resolved_constraints,
+        source=source,
+        resolved_summary=resolved_summary,
+        resolved_constraints=resolved_constraints,
+        resolved_attachments=resolved_attachments,
     )
+    if contract is None:
+        top_finding = (
+            "Step 1 已齐全，可直接进入冲稳保微调，再决定是否进入完整规划。"
+            if profile_ready
+            else "当前方案建议先补充 Step 1 后再继续判断梯度风险。"
+        )
+        contract = ReviewResultContract(
+            review_result_id=review_result_id,
+            risk_level="medium",
+            top_findings=[top_finding],
+            recommended_action=recommended_action,
+            available_actions=["go_cwb", "go_step1", "go_full_plan"],
+            review_entry_source=source,
+            review_followup_action="none",
+            review_input_summary=resolved_summary or "未提供现有方案说明",
+            review_input_attachments=resolved_attachments,
+            review_constraints=resolved_constraints,
+        )
     if token:
         order = _resolve_order_from_token(token, settings)
         intake_store = IntakeStore.for_db(settings.orders_db_path)
@@ -4103,6 +4226,11 @@ def _render_review_start_page(contract: ReviewResultContract, token: str | None)
             if str(item).strip()
         )
         or "无附件"
+    )
+    llm_summary_html = (
+        f'<section class="panel"><h2>AI 风险总结</h2><p class="meta">{escape(contract.llm_summary)}</p></section>'
+        if contract.llm_generated and contract.llm_summary
+        else ""
     )
     constraints = contract.review_constraints or {}
     recommended_label = {
@@ -4156,6 +4284,7 @@ def _render_review_start_page(contract: ReviewResultContract, token: str | None)
     <p id="share-status" style="margin:8px 0 0;font-size:12px;color:#5a7cb8;" role="status" aria-live="polite"></p>
   </div>
 </section>
+{llm_summary_html}
 <script>
 (function() {{
   var statusEl = document.getElementById('share-status');
@@ -4359,7 +4488,26 @@ def _render_cwb_placeholder_page(
         pass
 
     def _cwb_tier(title: str, offset: int, color: str) -> str:
-        """根据分数偏移生成一档建议，数据来自 crowd_db。"""
+        """根据分数偏移生成一档建议，优先使用 LLM 建议，fallback 到 crowd_db。"""
+        # 1. 优先使用 LLM 生成的三档建议
+        tier_key = {"冲刺建议": "rush", "稳妥建议": "stable", "保底建议": "safety"}.get(
+            title
+        )
+        if contract is not None and contract.llm_cwb_suggestions and tier_key:
+            llm_suggestions = contract.llm_cwb_suggestions.get(tier_key) or []
+            if llm_suggestions:
+                schools_html = "".join(
+                    f"<li>{escape(s)}</li>" for s in llm_suggestions[:3]
+                )
+                return (
+                    f'<article style="padding:16px;border-radius:14px;background:{color};border:1px solid #d7e3f1;">'
+                    f"<h2>{title}</h2>"
+                    f'<ul style="margin:8px 0;padding-left:18px;line-height:1.8;">{schools_html}</ul>'
+                    f'<p class="meta" style="margin-top:6px;color:#1f6feb;">🤖 LLM 结合你的分数、位次和同分段数据生成</p>'
+                    f"</article>"
+                )
+
+        # 2. fallback 到 crowd_db
         if candidate_score is None:
             return (
                 f'<article style="padding:16px;border-radius:14px;background:{color};border:1px solid #d7e3f1;">'
@@ -4367,6 +4515,7 @@ def _render_cwb_placeholder_page(
                 f'<p class="meta">补齐当前分数后，这里会基于同分段数据给出具体的院校方向建议。</p>'
                 f"</article>"
             )
+
         target_score = candidate_score + offset
         try:
             from data.crowd_db.loader import CrowdDBLoader

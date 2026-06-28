@@ -70,15 +70,13 @@ class RouteClient:
             (key.lower().encode("utf-8"), value.encode("utf-8"))
             for key, value in (headers or {}).items()
         ]
-        return Request(
-            {
-                "type": "http",
-                "method": method,
-                "path": split.path,
-                "query_string": split.query.encode("utf-8"),
-                "headers": raw_headers,
-            }
-        )
+        return Request({
+            "type": "http",
+            "method": method,
+            "path": split.path,
+            "query_string": split.query.encode("utf-8"),
+            "headers": raw_headers,
+        })
 
     @staticmethod
     def _html_response(response) -> RouteResponse:
@@ -354,6 +352,8 @@ def settings(tmp_path, secure_secret, monkeypatch):
     monkeypatch.setenv("GAOKAO_ALERT_WEBHOOK_URLS", "")
     monkeypatch.setenv("GAOKAO_ORDERS_FERNET_KEY", "test-secret-for-web-self-service")
     monkeypatch.setenv("GAOKAO_JWT_SECRET", secure_secret)
+    monkeypatch.setenv("GAOKAO_LLM_PROVIDER", "dashscope")
+    monkeypatch.setenv("GAOKAO_LLM_API_KEY", "sk-test")
     monkeypatch.setenv("GAOKAO_JWT_EXP_MIN", "5")
     monkeypatch.setenv("GAOKAO_ADMIN_PASS", "test-pass-123")
     monkeypatch.setenv("GAOKAO_OPS_ALERT_LOG", ops_alert_log)

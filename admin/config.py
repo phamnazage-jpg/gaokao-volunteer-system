@@ -73,6 +73,12 @@ class Settings:
     consent_version: str  # 当前同意协议版本号，与 docs/PRIVACY_POLICY_DRAFT.md 版本对齐
     consent_scope_portal: str  # portal 资料提交默认 scope
     consent_scope_channel_prefix: str  # 后台代录 scope 前缀
+    llm_provider: str  # openai|dashscope|anthropic|none
+    llm_api_key: str
+    llm_base_url: str
+    llm_model: str
+    llm_timeout_seconds: int
+    llm_max_tokens: int
 
 
 def _resolve_payment_webhook_secret(env: str) -> str:
@@ -190,6 +196,31 @@ def _enforce_payment_provider_policy(settings: Settings) -> None:
         )
 
 
+_ALLOWED_LLM_PROVIDERS = {"openai", "dashscope", "anthropic", "none"}
+
+
+def _enforce_llm_provider_policy(settings: Settings) -> None:
+    """生产环境 LLM provider 必须显式配置且不为 none，否则无法生成志愿方案。"""
+    provider = (settings.llm_provider or "none").strip().lower()
+    if provider not in _ALLOWED_LLM_PROVIDERS:
+        raise RuntimeError(
+            f"GAOKAO_LLM_PROVIDER={provider} 不在受支持列表 "
+            f"{sorted(_ALLOWED_LLM_PROVIDERS)}"
+        )
+    if settings.env == "prod" and provider == "none":
+        raise RuntimeError(
+            "生产环境 GAOKAO_LLM_PROVIDER=none 被禁止："
+            "产品需要 LLM 自动生成志愿方案，必须配置有效的供应商 "
+            "(openai/dashscope/anthropic)"
+        )
+    if provider != "none" and not settings.llm_api_key:
+        if settings.env == "prod":
+            raise RuntimeError(
+                f"生产环境 GAOKAO_LLM_PROVIDER={provider} 但 GAOKAO_LLM_API_KEY 为空，"
+                "无法调用 LLM 服务"
+            )
+
+
 def load_settings() -> Settings:
     """从环境变量加载配置。
 
@@ -293,6 +324,14 @@ def load_settings() -> Settings:
         consent_scope_channel_prefix=os.getenv(
             "GAOKAO_CONSENT_SCOPE_CHANNEL_PREFIX", "channel-intake"
         ),
+        llm_provider=os.getenv("GAOKAO_LLM_PROVIDER", "none"),
+        llm_api_key=os.getenv("GAOKAO_LLM_API_KEY", ""),
+        llm_base_url=os.getenv(
+            "GAOKAO_LLM_BASE_URL", "https://dashscope.aliyuncs.com/compatible-mode/v1"
+        ),
+        llm_model=os.getenv("GAOKAO_LLM_MODEL", "qwen-plus"),
+        llm_timeout_seconds=int(os.getenv("GAOKAO_LLM_TIMEOUT", "60")),
+        llm_max_tokens=int(os.getenv("GAOKAO_LLM_MAX_TOKENS", "4096")),
     )
     # 生产环境 post-load 校验:webhook / portal token / JWT / admin password
     # / payment provider 必须满足强度门槛, 任一不满足 fail-closed (P0-2/P2-4/P2-5/6/20)。
@@ -301,6 +340,7 @@ def load_settings() -> Settings:
     _enforce_jwt_secret_policy(settings)
     _enforce_default_admin_password_policy(settings)
     _enforce_payment_provider_policy(settings)
+    _enforce_llm_provider_policy(settings)
     return settings
 
 
@@ -335,14 +375,12 @@ def is_default_admin_password_secure(settings: Settings) -> tuple[bool, str]:
     if settings.env == "prod" and password == _DEFAULT_ADMIN_PASSWORD:
         return False, "生产环境禁止使用默认管理员密码 admin123"
     if settings.env == "prod":
-        classes = sum(
-            (
-                any(ch.islower() for ch in password),
-                any(ch.isupper() for ch in password),
-                any(ch.isdigit() for ch in password),
-                any(ch in string.punctuation for ch in password),
-            )
-        )
+        classes = sum((
+            any(ch.islower() for ch in password),
+            any(ch.isupper() for ch in password),
+            any(ch.isdigit() for ch in password),
+            any(ch in string.punctuation for ch in password),
+        ))
         if classes < 3:
             return False, "生产环境默认管理员密码至少覆盖 3 类字符（大小写/数字/符号）"
     if settings.env == "dev" and password == _DEFAULT_ADMIN_PASSWORD:

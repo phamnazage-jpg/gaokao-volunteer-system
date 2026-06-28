@@ -119,7 +119,6 @@ def test_dashboard_page_served(client, auth_headers):
     assert "接口: <code>/api/stats/dashboard</code>" not in body
 
 
-
 def test_dashboard_static_js_served(client):
     """前端脚本包含趋势切换与 3 张分布图渲染逻辑。"""
     resp = client.get("/static/dashboard.js")
@@ -242,6 +241,8 @@ def test_prod_rejects_default_admin_password(tmp_path, monkeypatch):
     monkeypatch.setenv("GAOKAO_ADMIN_USER", "admin")
     monkeypatch.setenv("GAOKAO_ADMIN_PASS", "admin123")
     monkeypatch.setenv("GAOKAO_PAYMENT_PROVIDER", "alipay")
+    monkeypatch.setenv("GAOKAO_LLM_PROVIDER", "dashscope")
+    monkeypatch.setenv("GAOKAO_LLM_API_KEY", "sk-test")
     # 显式提供合规 webhook secret,避免被 P2-5 fail-closed 提前拦截,
     # 让本测试聚焦于管理员密码策略。
     monkeypatch.setenv("GAOKAO_PAYMENT_WEBHOOK_SECRET", "P" + "r" * 31 + "!" * 32)
