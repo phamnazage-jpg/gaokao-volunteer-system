@@ -4279,7 +4279,7 @@ def _render_review_start_page(contract: ReviewResultContract, token: str | None)
     <p style="margin:0 0 8px;font-size:12px;color:#5a7cb8;">{share_hint}。把当前页面链接复制发给家人，或调用系统分享，一起讨论结果。</p>
     <div style="display:flex;gap:8px;flex-wrap:wrap;">
       <button class="btn btn-secondary" id="copy-link-btn" style="font-size:12px;min-height:32px;padding:6px 10px;">复制链接</button>
-      <button class="btn btn-secondary" id="share-btn" style="font-size:12px;min-height:32px;padding:6px 10px;">系统分享</button>
+      <button class="btn btn-secondary" id="share-btn" style="font-size:12px;min-height:32px;padding:6px 10px;">微信分享</button>
       <button class="btn btn-secondary" id="save-draft-btn" style="font-size:12px;min-height:32px;padding:6px 10px;">保存到本地草稿</button>
     </div>
     <p id="share-status" style="margin:8px 0 0;font-size:12px;color:#5a7cb8;" role="status" aria-live="polite"></p>
