@@ -79,6 +79,13 @@ class Settings:
     llm_model: str
     llm_timeout_seconds: int
     llm_max_tokens: int
+    # 多模型 fallback（逗号分隔的额外模型，按顺序尝试）
+    llm_fallback_models: str  # 例: "qwen-turbo,gpt-4o-mini,deepseek-chat"
+    llm_fallback_providers: (
+        str  # 例: "dashscope,openai,deepseek"（与 fallback_models 对应）
+    )
+    llm_fallback_api_keys: str  # 例: "key1,key2,key3"（与 fallback_models 对应）
+    llm_fallback_base_urls: str  # 例: "url1,url2,url3"（与 fallback_models 对应）
 
 
 def _resolve_payment_webhook_secret(env: str) -> str:
@@ -332,6 +339,10 @@ def load_settings() -> Settings:
         llm_model=os.getenv("GAOKAO_LLM_MODEL", "qwen-plus"),
         llm_timeout_seconds=int(os.getenv("GAOKAO_LLM_TIMEOUT", "60")),
         llm_max_tokens=int(os.getenv("GAOKAO_LLM_MAX_TOKENS", "4096")),
+        llm_fallback_models=os.getenv("GAOKAO_LLM_FALLBACK_MODELS", ""),
+        llm_fallback_providers=os.getenv("GAOKAO_LLM_FALLBACK_PROVIDERS", ""),
+        llm_fallback_api_keys=os.getenv("GAOKAO_LLM_FALLBACK_API_KEYS", ""),
+        llm_fallback_base_urls=os.getenv("GAOKAO_LLM_FALLBACK_BASE_URLS", ""),
     )
     # 生产环境 post-load 校验:webhook / portal token / JWT / admin password
     # / payment provider 必须满足强度门槛, 任一不满足 fail-closed (P0-2/P2-4/P2-5/6/20)。

@@ -22,6 +22,10 @@ class MockSettings:
     llm_model: str = "qwen-plus"
     llm_timeout_seconds: int = 60
     llm_max_tokens: int = 4096
+    llm_fallback_models: str = ""
+    llm_fallback_providers: str = ""
+    llm_fallback_api_keys: str = ""
+    llm_fallback_base_urls: str = ""
 
 
 class TestLLMClient:
@@ -160,3 +164,75 @@ class TestPrompts:
         assert "家长希望省内优先" in user
         assert "volunteers" in user
         assert "至少 8 条" in user
+
+
+class TestFallback:
+    def test_fallback_config_parsed(self):
+        """fallback 配置被正确解析为供应商链。"""
+        settings = MockSettings(
+            llm_provider="dashscope",
+            llm_api_key="key-main",
+            llm_model="qwen-plus",
+            llm_fallback_models="gpt-4o-mini,deepseek-chat",
+            llm_fallback_providers="openai,deepseek",
+            llm_fallback_api_keys="key-openai,key-deepseek",
+            llm_fallback_base_urls="https://api.openai.com/v1,https://api.deepseek.com/v1",
+        )
+        client = LLMClient(settings)
+        assert client.provider_count == 3
+        assert client._providers[0]["model"] == "qwen-plus"
+        assert client._providers[1]["model"] == "gpt-4o-mini"
+        assert client._providers[2]["model"] == "deepseek-chat"
+        assert client._providers[1]["api_key"] == "key-openai"
+        assert client._providers[2]["provider"] == "deepseek"
+
+    def test_fallback_no_config(self):
+        """无 fallback 配置时只有主供应商。"""
+        client = LLMClient(MockSettings(llm_provider="openai", llm_api_key="sk-test"))
+        assert client.provider_count == 1
+
+    def test_fallback_falls_through_to_second_provider(self):
+        """主供应商失败时，自动尝试第二个供应商。"""
+        settings = MockSettings(
+            llm_provider="dashscope",
+            llm_api_key="key-main",
+            llm_model="qwen-plus",
+            llm_fallback_models="gpt-4o-mini",
+            llm_fallback_providers="openai",
+            llm_fallback_api_keys="key-openai",
+            llm_fallback_base_urls="https://api.openai.com/v1",
+        )
+        client = LLMClient(settings)
+
+        call_count = {"n": 0}
+
+        def mock_call_side_effect(**kwargs):
+            call_count["n"] += 1
+            if call_count["n"] == 1:
+                raise LLMError("first provider failed")
+            return LLMResponse(content="fallback success", model="gpt-4o-mini")
+
+        with patch.object(
+            client, "_call_single_provider", side_effect=mock_call_side_effect
+        ):
+            result = client.chat([{"role": "user", "content": "test"}])
+            assert result.content == "fallback success"
+            assert call_count["n"] == 2
+
+    def test_fallback_all_fail_raises(self):
+        """全部供应商都失败时抛出聚合错误。"""
+        settings = MockSettings(
+            llm_provider="dashscope",
+            llm_api_key="key-main",
+            llm_model="qwen-plus",
+            llm_fallback_models="gpt-4o-mini",
+            llm_fallback_providers="openai",
+            llm_fallback_api_keys="key-openai",
+        )
+        client = LLMClient(settings)
+
+        with patch.object(
+            client, "_call_single_provider", side_effect=LLMError("all fail")
+        ):
+            with pytest.raises(LLMError, match="全部 2 个"):
+                client.chat([{"role": "user", "content": "test"}])
