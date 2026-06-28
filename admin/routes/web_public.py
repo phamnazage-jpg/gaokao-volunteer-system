@@ -1971,7 +1971,7 @@ def compare_reports_page(
         )
 
     quick_links = "".join(
-        f"<li><a href='{escape(row['report_url'])}'>查看 {escape(row['order_id'])} 报告</a> · <a href='{escape(row['status_url'])}'>查看状态</a></li>"
+        f"<li><a href='{escape(str(row['report_url']))}'>查看 {escape(str(row['order_id']))} 报告</a> · <a href='{escape(str(row['status_url']))}'>查看状态</a></li>"
         for row in compare_rows
     )
 
@@ -4024,7 +4024,7 @@ def _get_crowd_db_recs_for_review(constraints: dict[str, Any]) -> list[dict[str,
     if not province or score in (None, ""):
         return []
     try:
-        score_int = int(score)
+        score_int = int(str(score))
     except (TypeError, ValueError):
         return []
     try:
@@ -4057,8 +4057,8 @@ def _llm_review_contract(
     crowd_recs = _get_crowd_db_recs_for_review(resolved_constraints)
     system, user = build_audit_prompt(
         province=province,
-        score=int(score) if score not in (None, "") else None,
-        rank=int(rank) if rank not in (None, "") else None,
+        score=int(str(score)) if score not in (None, "") else None,
+        rank=int(str(rank)) if rank not in (None, "") else None,
         subjects=[str(s) for s in subjects],
         existing_plan=resolved_summary,
         crowd_db_recs=crowd_recs,
@@ -4077,7 +4077,6 @@ def _llm_review_contract(
     ][:5]
     if not findings:
         findings = [str(data.get("risk_summary") or "当前方案可继续复核")]
-
     cwb = data.get("cwb_suggestions") or {}
     cwb_suggestions = {
         "rush": [
@@ -4104,7 +4103,7 @@ def _llm_review_contract(
 
     return ReviewResultContract(
         review_result_id=review_result_id,
-        risk_level=risk_level,
+        risk_level=risk_level,  # type: ignore[arg-type]
         top_findings=findings,
         recommended_action=recommended_action,
         available_actions=["go_cwb", "go_step1", "go_full_plan"],

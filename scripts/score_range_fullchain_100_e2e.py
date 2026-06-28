@@ -14,6 +14,16 @@ from pathlib import Path
 from typing import Any
 
 ROOT = Path(__file__).resolve().parent.parent
+
+
+def _rel_or_abs(p: Path) -> str:
+    """Return path relative to ROOT if possible, else absolute string."""
+    try:
+        return str(p.relative_to(ROOT))
+    except ValueError:
+        return str(p)
+
+
 MANIFEST = ROOT / "reports" / "score_range_fullchain_100_cases_2026_06_25.json"
 # P1-7 修复：默认回归产物写入 /tmp（gitignored），不覆写受版本控制的 reports/
 OUT = Path("/tmp/score_range_fullchain_100_e2e.json")
@@ -473,8 +483,8 @@ def main() -> int:
         "cwb_pass": cwb_pass,
         "failed_samples": failed,
         "samples": results,
-        "batch_plan_json": str(args.batch_json.relative_to(ROOT)),
-        "batch_plan_csv": str(args.batch_csv.relative_to(ROOT)),
+        "batch_plan_json": _rel_or_abs(args.batch_json),
+        "batch_plan_csv": _rel_or_abs(args.batch_csv),
         "note": "fullchain=公开支持省份完整下单链路；contract_boundary=非公开支持省份仅验证复核入口与合同边界。",
     }
     output_path.write_text(
