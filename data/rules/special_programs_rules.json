@@ -148,6 +148,20 @@
       "severity": "info",
       "applies_to": ["tibet_directed"],
       "check": "降分幅度以各省当年公布为准"
+    },
+    {
+      "rule_id": "special.strong_foundation.exam_required",
+      "description": "强基计划需参加学校单独组织的校测（笔试+面试），按高考成绩85%+校测15%综合录取",
+      "severity": "warning",
+      "applies_to": ["strong_foundation"],
+      "check": "需提前报名参加校测，不是纯高考录取"
+    },
+    {
+      "rule_id": "special.strong_foundation.subjects",
+      "description": "强基计划聚焦基础学科：数学/物理/化学/生物/历史/哲学/古文字",
+      "severity": "info",
+      "applies_to": ["strong_foundation"],
+      "check": "专业限定为基础学科，不适合想读工科/商科的考生"
     }
   ]
 }

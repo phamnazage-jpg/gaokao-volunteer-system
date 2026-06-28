@@ -37,6 +37,7 @@ class TestSpecialProgramsLoader:
             "minority_prep",
             "targeted_poverty",
             "tibet_directed",
+            "strong_foundation",
         }
         for t in expected:
             assert t in types, f"缺少项目类型: {t}"

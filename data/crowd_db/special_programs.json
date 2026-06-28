@@ -208,6 +208,25 @@
       "warnings": ["须签定向就业协议", "毕业须到西藏工作至少5年", "不可转专业"],
       "source": "教育部/西藏人社厅",
       "last_verified": "2025-06"
+    },
+    {
+      "program_type": "strong_foundation",
+      "program_name": "强基计划",
+      "batch": "本科提前批",
+      "applicable_provinces": ["全国"],
+      "description": "教育部基础学科招生改革试点，39所重点大学面向基础学科拔尖学生单独招生。",
+      "key_features": {
+        "tuition": "公办正规学费",
+        "employment": "正常本科毕业就业或继续深造，无定向约束",
+        "service_years": null,
+        "exam_required": true,
+        "politics_check": "常规",
+        "physical_check": "常规体检"
+      },
+      "applicable_to": "高分考生（一本线以上80-150分），对基础学科有兴趣和天赋",
+      "warnings": ["需参加学校单独校测", "聚焦数学/物理/化学/生物/历史/哲学/古文字等基础学科", "39所985院校"],
+      "source": "教育部/各强基计划高校",
+      "last_verified": "2025-06"
     }
   ],
   "program_schools": {
@@ -342,6 +361,22 @@
     ],
     "tibet_directed": [
       {"school": "全国本科院校（面向西藏定向）", "province": "全国", "score_min": 420, "score_subject": "综合", "major": "非西藏生源定向西藏就业（各专业）", "batch": "本科批"}
+    ],
+    "strong_foundation": [
+      {"school": "北京大学", "province": "全国", "score_min": 660, "score_subject": "综合", "major": "数学类/物理学/化学/生物科学（强基）", "batch": "本科提前批"},
+      {"school": "清华大学", "province": "全国", "score_min": 660, "score_subject": "综合", "major": "数学与应用数学/物理学/化学（强基）", "batch": "本科提前批"},
+      {"school": "复旦大学", "province": "全国", "score_min": 640, "score_subject": "综合", "major": "汉语言文学/历史学/哲学（强基）", "batch": "本科提前批"},
+      {"school": "上海交通大学", "province": "全国", "score_min": 640, "score_subject": "综合", "major": "数学/物理/生物（强基）", "batch": "本科提前批"},
+      {"school": "浙江大学", "province": "全国", "score_min": 640, "score_subject": "综合", "major": "数学/化学/生物（强基）", "batch": "本科提前批"},
+      {"school": "中国科学技术大学", "province": "全国", "score_min": 640, "score_subject": "综合", "major": "数学/物理/化学（强基）", "batch": "本科提前批"},
+      {"school": "南京大学", "province": "全国", "score_min": 630, "score_subject": "综合", "major": "数学/物理/化学（强基）", "batch": "本科提前批"},
+      {"school": "武汉大学", "province": "全国", "score_min": 620, "score_subject": "综合", "major": "数学/化学/生物（强基）", "batch": "本科提前批"},
+      {"school": "华中科技大学", "province": "全国", "score_min": 620, "score_subject": "综合", "major": "数学/物理/生物医学（强基）", "batch": "本科提前批"},
+      {"school": "中山大学", "province": "全国", "score_min": 620, "score_subject": "综合", "major": "数学/化学/生物（强基）", "batch": "本科提前批"},
+      {"school": "四川大学", "province": "全国", "score_min": 610, "score_subject": "综合", "major": "数学/化学/生物医学（强基）", "batch": "本科提前批"},
+      {"school": "中南大学", "province": "全国", "score_min": 600, "score_subject": "综合", "major": "数学/材料/生物（强基）", "batch": "本科提前批"},
+      {"school": "湖南大学", "province": "全国", "score_min": 600, "score_subject": "综合", "major": "数学/化学（强基）", "batch": "本科提前批"},
+      {"school": "国防科技大学", "province": "全国", "score_min": 630, "score_subject": "综合", "major": "数学/物理（强基）", "batch": "本科提前批"}
     ]
   }
 }

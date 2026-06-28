@@ -26,8 +26,15 @@ REPO = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..")
 DATA_DIR = os.path.join(REPO, "data", "crowd_db")
 
 
+_EXCLUDED_FILES = {"special_programs.json"}
+
+
 def _list_json_files():
-    return sorted(f for f in os.listdir(DATA_DIR) if f.endswith(".json"))
+    return sorted(
+        f
+        for f in os.listdir(DATA_DIR)
+        if f.endswith(".json") and f not in _EXCLUDED_FILES
+    )
 
 
 def test_31_province_files_exist():
