@@ -25,6 +25,102 @@ _STATIC_DIR = Path(__file__).resolve().parent.parent / "static"
 _DASHBOARD_HTML = _STATIC_DIR / "dashboard.html"
 
 
+@router.get("/admin/login", include_in_schema=False)
+def admin_login_page() -> HTMLResponse:
+    """管理后台 Web 登录页。"""
+    html = """<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>管理后台登录</title>
+<link rel="stylesheet" href="/static/portal-ui.css" />
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0e1a2b;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.login-card{background:#fff;border-radius:24px;box-shadow:0 24px 52px rgba(20,34,53,.16);padding:40px;max-width:400px;width:100%}
+.login-card h1{font-size:24px;color:#142235;margin-bottom:8px}
+.login-card .sub{color:#5b6b88;font-size:14px;margin-bottom:28px}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:13px;font-weight:600;color:#334155;margin-bottom:6px}
+.field input{width:100%;padding:12px 14px;border-radius:12px;border:1px solid #d7e3f1;font-size:14px;background:#f8fbff;transition:border-color .18s}
+.field input:focus{outline:none;border-color:#1f6feb;box-shadow:0 0 0 4px rgba(31,111,235,.12)}
+.btn-login{width:100%;min-height:48px;border-radius:14px;border:none;background:linear-gradient(135deg,#2d7cff,#0f4fd6);color:#fff;font-size:16px;font-weight:700;cursor:pointer;transition:.18s;margin-top:8px}
+.btn-login:hover{transform:translateY(-1px);box-shadow:0 12px 28px rgba(31,111,235,.32)}
+.btn-login:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.error-msg{margin-top:16px;padding:12px 14px;border-radius:12px;background:#fef2f2;border:1px solid #fecaca;color:#b42318;font-size:13px;display:none}
+.error-msg.show{display:block}
+.back-home{display:block;margin-top:20px;text-align:center;color:#5b6b88;font-size:13px;text-decoration:none}
+.back-home:hover{color:#1f6feb}
+</style>
+</head>
+<body>
+<div class="login-card">
+<h1>管理后台</h1>
+<p class="sub">请输入管理员账号密码登录</p>
+<form id="login-form">
+<div class="field">
+<label>用户名</label>
+<input type="text" id="username" name="username" placeholder="admin" required autocomplete="username" />
+</div>
+<div class="field">
+<label>密码</label>
+<input type="password" id="password" name="password" placeholder="请输入密码" required autocomplete="current-password" />
+</div>
+<div id="error-msg" class="error-msg"></div>
+<button type="submit" class="btn-login" id="login-btn">登录</button>
+</form>
+<a class="back-home" href="/">← 返回首页</a>
+</div>
+<script>
+(function(){
+var form=document.getElementById('login-form');
+var errEl=document.getElementById('error-msg');
+var btn=document.getElementById('login-btn');
+form.addEventListener('submit',function(e){
+e.preventDefault();
+var u=document.getElementById('username').value.trim();
+var p=document.getElementById('password').value;
+if(!u||!p){showError('请输入用户名和密码');return;}
+btn.disabled=true;
+btn.textContent='登录中...';
+errEl.classList.remove('show');
+fetch('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:u,password:p})})
+.then(function(resp){return resp.json().then(function(d){return{ok:resp.ok,data:d};});})
+.then(function(r){
+if(r.ok&&r.data.access_token){
+var token=r.data.access_token;
+var expires=Date.now()+(r.data.expires_in||3600)*1000;
+try{
+localStorage.setItem('admin_token',token);
+localStorage.setItem('admin_token_expires',String(expires));
+sessionStorage.setItem('admin_token',token);
+}catch(e){}
+window.location.href='/admin/dashboard?t='+encodeURIComponent(token);
+}else{
+var msg=(r.data&&r.data.message)||'登录失败，请检查用户名和密码';
+showError(msg);
+btn.disabled=false;
+btn.textContent='登录';
+}
+})
+.catch(function(){
+showError('网络异常，请稍后重试');
+btn.disabled=false;
+btn.textContent='登录';
+});
+});
+function showError(msg){
+errEl.textContent=msg;
+errEl.classList.add('show');
+}
+})();
+</script>
+</body>
+</html>"""
+    return HTMLResponse(html)
+
+
 @router.get("/dashboard", include_in_schema=False)
 @router.get("/admin/dashboard", include_in_schema=False)
 def dashboard_page(_: AdminUser = Depends(require_role("admin"))) -> FileResponse:

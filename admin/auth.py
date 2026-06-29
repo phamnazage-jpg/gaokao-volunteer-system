@@ -118,13 +118,22 @@ def get_current_user(
     """FastAPI 依赖:从 Authorization: Bearer *** JWT,返回 AdminUser。
 
     缺失/无效/过期一律 401 (走业务错误码 E012xx 系列).
+    支持从 URL query 参数 ``t`` 获取 token（仅用于管理后台 Web 页面场景）。
     """
-    if credentials is None or credentials.scheme.lower() != "bearer":
+    raw_token: str | None = None
+    if credentials is not None and credentials.scheme.lower() == "bearer":
+        raw_token = credentials.credentials
+    # fallback: URL query 参数 t（管理后台 Web 登录页跳转场景）
+    if raw_token is None:
+        query_token = request.query_params.get("t")
+        if query_token:
+            raw_token = query_token
+    if raw_token is None:
         raise BusinessError(
             AUTH_TOKEN_INVALID, detail={"reason": "missing bearer token"}
         )
     try:
-        claims = decode_token(credentials.credentials, settings)
+        claims = decode_token(raw_token, settings)
     except TokenError as e:
         _raise_token_error(e)
         raise AssertionError("unreachable")
