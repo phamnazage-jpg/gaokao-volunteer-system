@@ -4245,29 +4245,68 @@ def _render_review_start_page(contract: ReviewResultContract, token: str | None)
         else ""
     )
     constraints = contract.review_constraints or {}
+    profile_ready = bool(constraints.get("candidate_province") and constraints.get("candidate_score"))
     recommended_label = {
         "go_cwb": "先去看冲稳保建议",
         "go_step1": "先补齐基础信息",
         "go_full_plan": "进入完整规划",
     }[contract.recommended_action]
-    primary_action = {
-        "go_cwb": (
-            "去看冲稳保建议",
-            "cwb",
-            "如果你的基础信息已经完整，下一步先看冲稳保梯度更合适。",
-        ),
-        "go_step1": (
-            "先补齐基础信息",
-            "step1",
-            "当前更适合先补齐省份、分数、位次、选科等基础信息，再继续判断梯度风险。",
-        ),
-        "go_full_plan": (
-            "进入完整规划",
-            "full_plan",
-            "如果你已经明确要进入完整服务，可以直接继续到完整规划页。",
-        ),
-    }[contract.recommended_action]
+    # 根据是否有token决定按钮行为：无token时跳首页表单，有token时走portal流程
+    if token is None:
+        # 免费复核无订单场景：引导用户先去首页完善信息或下单
+        primary_action = (
+            "完善信息后重新复核",
+            "home",
+            "当前是免费复核，建议先完善分数、位次、选科等信息，或选择付费服务获得完整分析。",
+        )
+        primary_href = "/"
+    else:
+        # 有订单场景：跳转到portal相应页面
+        primary_action = {
+            "go_cwb": (
+                "去看冲稳保建议",
+                "cwb",
+                "如果你的基础信息已经完整，下一步先看冲稳保梯度更合适。",
+            ),
+            "go_step1": (
+                "先补齐基础信息",
+                "step1",
+                "当前更适合先补齐省份、分数、位次、选科等基础信息，再继续判断梯度风险。",
+            ),
+            "go_full_plan": (
+                "进入完整规划",
+                "full_plan",
+                "如果你已经明确要进入完整服务，可以直接继续到完整规划页。",
+            ),
+        }[contract.recommended_action]
+        primary_href = {
+            "go_cwb": f"/portal/{token}/cwb",
+            "go_step1": f"/portal/{token}/info",
+            "go_full_plan": f"/portal/{token}/full-plan",
+        }[contract.recommended_action]
     summary = escape(contract.review_input_summary or "未提供现有方案说明")
+    # 按钮逻辑：无token时隐藏冲稳保按钮（需要先创建订单）
+    cwb_btn = (
+        f'<a class="btn btn-secondary" href="/portal/{token}/cwb">查看冲稳保建议</a>'
+        if token else ""
+    )
+    # 风险等级视觉映射
+    risk_level_map = {
+        "low": ("偏低（风险可控）", "#1f6feb", "#eef6ff", "#d7e3f1"),
+        "medium": ("中等（需要关注）", "#f59e0b", "#fffbeb", "#fcd34d"),
+        "high": ("偏高（尽快调整）", "#dc2626", "#fef2f2", "#fecaca"),
+    }
+    risk_label, risk_color, risk_bg, risk_border = risk_level_map.get(
+        contract.risk_level.lower(), risk_level_map["medium"]
+    )
+    
+    # 建议标签
+    recommended_label = {
+        "go_cwb": "先去看冲稳保建议",
+        "go_step1": "先补齐基础信息",  
+        "go_full_plan": "进入完整规划",
+    }[contract.recommended_action]
+    
     province = escape(
         _review_constraints_display(constraints.get("candidate_province"))
     )
@@ -4275,6 +4314,16 @@ def _render_review_start_page(contract: ReviewResultContract, token: str | None)
         _review_constraints_subjects_text(constraints.get("candidate_subjects"))
     )
     score = escape(_review_constraints_display(constraints.get("candidate_score")))
+    # 信息完整性提示
+    info_complete_html = (
+        '<div style="margin-top:16px;padding:14px;border-radius:12px;background:#fffbeb;border:1px solid #fcd34d;">'
+        '<p style="margin:0;font-size:14px;color:#92400e;"><strong>⚠ 信息不完整</strong>：选科组合或位次为"待补充"，无法给出具体录取差距分析。</p>'
+        '</div>'
+    ) if not profile_ready else (
+        '<div style="margin-top:16px;padding:14px;border-radius:12px;background:#ecfdf5;border:1px solid #a7f3d0;">'
+        '<p style="margin:0;font-size:14px;color:#065f46;"><strong>✓ 信息完整</strong>：已具备生成冲稳保建议的条件。</p>'
+        '</div>'
+    )
     rank = escape(_review_constraints_display(constraints.get("candidate_rank")))
     share_hint = "此页链接可直接复制分享"
     body_html = f"""
@@ -4366,23 +4415,37 @@ def _render_review_start_page(contract: ReviewResultContract, token: str | None)
 
 <section class="panel">
   <h2>你当前提交的信息</h2>
-  <ul>
-    <li>已有方案说明：{summary}</li>
-    <li>考试省份：{province}</li>
-    <li>选科组合：{subjects}</li>
-    <li>高考分数：{score}</li>
-    <li>位次：{rank}</li>
-    <li>附件：{attachment_html}</li>
-  </ul>
-  <div class="error-state" style="margin-top:10px;"><strong>信息不完整</strong>：选科组合或位次为"待补充"。补齐后我们可以给出更具体的风险定位。</div>
+  <div style="display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));">
+    <div style="padding:12px 14px;border-radius:12px;background:#f8fbff;border:1px solid #d7e3f1;">
+      <p style="margin:0;font-size:12px;color:#5b6b88;">目标院校/方案</p>
+      <p style="margin:4px 0 0;font-size:16px;font-weight:600;color:#172033;">{summary}</p>
+    </div>
+    <div style="padding:12px 14px;border-radius:12px;background:#f8fbff;border:1px solid #d7e3f1;">
+      <p style="margin:0;font-size:12px;color:#5b6b88;">考试省份</p>
+      <p style="margin:4px 0 0;font-size:16px;font-weight:600;color:#172033;">{province}</p>
+    </div>
+    <div style="padding:12px 14px;border-radius:12px;background:#f8fbff;border:1px solid #d7e3f1;">
+      <p style="margin:0;font-size:12px;color:#5b6b88;">高考分数</p>
+      <p style="margin:4px 0 0;font-size:16px;font-weight:600;color:#172033;">{score}</p>
+    </div>
+    <div style="padding:12px 14px;border-radius:12px;background:#f8fbff;border:1px solid #d7e3f1;">
+      <p style="margin:0;font-size:12px;color:#5b6b88;">选科组合</p>
+      <p style="margin:4px 0 0;font-size:16px;font-weight:600;color:#172033;">{subjects}</p>
+    </div>
+    <div style="padding:12px 14px;border-radius:12px;background:#f8fbff;border:1px solid #d7e3f1;">
+      <p style="margin:0;font-size:12px;color:#5b6b88;">位次</p>
+      <p style="margin:4px 0 0;font-size:16px;font-weight:600;color:#172033;">{rank}</p>
+    </div>
+  </div>
+  {info_complete_html}
 </section>
 
 <section class="panel">
   <h2>初步评估结果</h2>
-  <ul>
-    <li><strong>风险等级：{escape(contract.risk_level)}</strong></li>
-    <li>当前最建议的下一步：{escape(recommended_label)}</li>
-  </ul>
+  <div style="margin:16px 0;padding:18px 20px;border-radius:14px;background:{risk_bg};border:1px solid {risk_border};">
+    <p style="margin:0;font-size:20px;font-weight:700;color:{risk_color};">风险等级：{risk_label}</p>
+    <p style="margin:8px 0 0;font-size:14px;color:#5b6b88;">当前建议：{escape(recommended_label)}</p>
+  </div>
   <h3>核心问题</h3>
   <ul>{findings_html}</ul>
   <p class="meta" style=\"margin-top:8px;\">风险等级说明：低 = 当前方案结构基本合理，微调即可；中 = 存在踩线或扎堆风险，需要进一步判断；高 = 存在明显梯度失衡或结构风险，建议尽快调整。</p>
@@ -4392,11 +4455,11 @@ def _render_review_start_page(contract: ReviewResultContract, token: str | None)
   <h2>下一步建议</h2>
   <p class="meta">{escape(primary_action[2])}</p>
   <div class="actions">
-    <form action=\"/review/action\" method=\"post\">{token_input}<input type=\"hidden\" name=\"action\" value=\"{escape(primary_action[1])}\" /><button class=\"btn btn-primary\" type=\"submit\">{escape(primary_action[0])}</button></form>
-    <form action=\"/review/action\" method=\"post\">{token_input}<input type=\"hidden\" name=\"action\" value=\"cwb\" /><button class=\"btn btn-secondary\" type=\"submit\">查看冲稳保建议</button></form>
-    <a class=\"btn btn-secondary\" href=\"/pricing\">进入完整规划（付费）</a>
+    <a class="btn btn-primary" href="{primary_href}">{escape(primary_action[0])}</a>
+    {cwb_btn}
+    <a class="btn btn-secondary" href="/pricing">进入完整规划（付费）</a>
   </div>
-  <p class="meta" style=\"margin-top:10px;\">免费复核帮你判断风险方向；完整规划和深度辅导在支付后启动，会给你逐志愿解析、冲稳保梯度表和交付报告。</p>
+  <p class="meta" style="margin-top:10px;">免费复核帮你判断风险方向；完整规划和深度辅导在支付后启动，会给你逐志愿解析、冲稳保梯度表和交付报告。</p>
 </section>
 """
     return _render_placeholder_shell(
