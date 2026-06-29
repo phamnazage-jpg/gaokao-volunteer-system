@@ -308,6 +308,46 @@
       "provinces": "全国",
       "program_type": "targeted_poverty",
       "category": "专项计划"
+    },
+    {
+      "rule_id": "special.public_teacher.categories",
+      "title": "公费师范生三种类型",
+      "description": "公费师范生分为：①部属公费师范生（北师大/华东师大/华中师大/陕师大/东北师大/西南大学），可免试在职攻读教育硕士；②省属公费师范生，毕业回到定向县任教；③优师计划，定向脱贫县和中西部陆地边境县任教。",
+      "provinces": "全国",
+      "program_type": "public_teacher",
+      "category": "提前批-公费师范"
+    },
+    {
+      "rule_id": "special.public_teacher.master_degree",
+      "title": "部属公费师范生免试读研",
+      "description": "部属师范大学公费师范生在任教满一学期后，可免国家统考申请在职攻读教育硕士专业学位，考核通过后获得研究生学历和硕士学位。",
+      "provinces": "全国",
+      "program_type": "public_teacher",
+      "category": "提前批-公费师范"
+    },
+    {
+      "rule_id": "special.public_teacher.score_requirement",
+      "title": "公费师范生分数要求",
+      "description": "部属公费师范生录取线通常在一本线以上30-80分（北师大/华东师大接近985线），省属公费师范生通常在一本线附近或二本线以上。分数优势不如军校/公安明显，但毕业包分配是核心吸引力。",
+      "provinces": "全国",
+      "program_type": "public_teacher",
+      "category": "提前批-公费师范"
+    },
+    {
+      "rule_id": "special.rural_medical.score_requirement",
+      "title": "免费医学定向分数要求",
+      "description": "免费医学定向通常在一本线附近或二本线以上录取，中西部省份降幅更大（20-50分）。农村户籍考生优先录取。毕业后回定向县基层卫生院工作6年，有事业编制。",
+      "provinces": "中西部省份（约22省）",
+      "program_type": "rural_medical",
+      "category": "提前批-免费医学定向"
+    },
+    {
+      "rule_id": "special.rural_medical.career_path",
+      "title": "免费医学定向职业发展",
+      "description": "免费医学定向生毕业后纳入定向县基层医疗卫生机构事业编制，服务期满后可继续留在基层或自主选择。部分省份允许服务期内在职攻读全科医学研究生。",
+      "provinces": "中西部省份",
+      "program_type": "rural_medical",
+      "category": "提前批-免费医学定向"
     }
   ]
 }
