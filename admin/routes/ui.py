@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
 from typing import Any, Callable, Optional, cast
 
@@ -11,12 +12,16 @@ from fastapi.responses import FileResponse, HTMLResponse
 from admin.auth import require_role
 from admin.db import AdminUser
 from admin.config import Settings, get_settings_dep
+from admin.errors import DATA_NOT_FOUND, DATA_VALIDATION_FAILED
+from admin.errors.exceptions import BusinessError
+from data.customer_portal.token import PortalTokenError, verify_portal_token
+from admin.routes.web_public import _load_latest_review_result, _resolve_order_from_token
 from admin.share_page import (
     load_report_from_directory,
     render_share_page,
     status_code_for_result,
 )
-from data.share.short_link import route_short_link_with_report
+from data.share.short_link import ShortLinkService, build_url, route_short_link_with_report
 
 
 router = APIRouter(tags=["ui"])
@@ -169,6 +174,145 @@ def _resolve_report_loader(
         return load_report_from_directory(report_id, report_dir)
 
     return _loader
+
+
+@router.post("/api/share-link", summary="创建正式分享链接", status_code=201)
+def create_share_link(
+    payload: dict[str, Any],
+    request: Request,
+    current_user: AdminUser = Depends(require_role("admin")),
+    settings: Settings = Depends(get_settings_dep),
+) -> dict[str, Any]:
+    result_type = str(payload.get("result_type") or "").strip()
+    target_token = str(payload.get("target_token") or "").strip()
+    permission = str(payload.get("permission") or "read").strip()
+    ttl_days_raw = payload.get("ttl_days")
+    if result_type not in {"review_result", "report"}:
+        raise BusinessError(
+            DATA_VALIDATION_FAILED,
+            detail={"reason": "result_type must be review_result or report"},
+        )
+    if not target_token:
+        raise BusinessError(
+            DATA_VALIDATION_FAILED,
+            detail={"reason": "target_token is required"},
+        )
+    ttl_days: int | None = None
+    if ttl_days_raw is not None:
+        try:
+            ttl_days = int(ttl_days_raw)
+        except (TypeError, ValueError) as exc:
+            raise BusinessError(
+                DATA_VALIDATION_FAILED,
+                detail={"reason": "ttl_days must be integer"},
+            ) from exc
+        if ttl_days <= 0:
+            raise BusinessError(
+                DATA_VALIDATION_FAILED,
+                detail={"reason": "ttl_days must be > 0"},
+            )
+
+    try:
+        order = _resolve_order_from_token(target_token, settings)
+    except Exception as exc:
+        if isinstance(exc, BusinessError):
+            raise
+        if getattr(exc, "status_code", None) in {401, 404}:
+            raise BusinessError(
+                DATA_NOT_FOUND,
+                detail={"reason": "target_token not found"},
+            ) from exc
+        raise
+
+    share_payload: dict[str, Any]
+    target_id: str
+    if result_type == "review_result":
+        contract = _load_latest_review_result(order.id, settings)
+        if contract is None:
+            raise BusinessError(
+                DATA_NOT_FOUND,
+                detail={"reason": "review_result not found"},
+            )
+        target_id = contract.review_result_id
+        share_payload = {
+            "title": "高考志愿复核结果",
+            "summary": f"风险等级：{contract.risk_level}",
+            "candidate_name": order.candidate_name,
+            "score": contract.review_constraints.get("candidate_score"),
+            "rank": contract.review_constraints.get("candidate_rank"),
+            "province": contract.review_constraints.get("candidate_province"),
+            "year": 2026,
+            "result_type": "review_result",
+            "risk_level": contract.risk_level,
+            "recommendations": [
+                {"school": item, "major": "复核摘要", "prob": None}
+                for item in contract.top_findings[:3]
+            ],
+        }
+    else:
+        if order.status not in {"delivered", "completed"} or not order.audit_report:
+            raise BusinessError(
+                DATA_NOT_FOUND,
+                detail={"reason": "report not ready"},
+            )
+        target_id = order.id
+        share_payload = {
+            "title": "高考志愿报告分享",
+            "summary": f"订单 {order.id} - {order.service_version}",
+            "candidate_name": order.candidate_name,
+            "province": order.candidate_province,
+            "report_id": order.id,
+            "year": 2026,
+            "result_type": "report",
+        }
+
+    svc = ShortLinkService(db_path=settings.share_db_path)
+    link = svc.create(
+        report_id=target_id,
+        owner_id=current_user.username,
+        permission=permission,
+        ttl_days=ttl_days,
+        note=f"{result_type}:{order.id}",
+    )
+    base_url = str(request.base_url).rstrip("/") if request is not None else "http://testserver"
+    share_url = build_url(link.code, base=base_url)
+    report_dir = Path(settings.share_report_dir)
+    report_dir.mkdir(parents=True, exist_ok=True)
+    report_file = report_dir / f"{target_id}.json"
+    report_file.write_text(
+        json.dumps({**share_payload, "share_url": share_url}, ensure_ascii=False),
+        encoding="utf-8",
+    )
+    return {
+        "code": link.code,
+        "share_url": share_url,
+        "permission": link.permission,
+        "result_type": result_type,
+        "target_type": result_type,
+        "target_id": target_id,
+        "expires_at_iso": link.to_dict().get("expires_at_iso"),
+        "owner_id": link.owner_id,
+        "revoked": bool(link.revoked),
+    }
+
+
+@router.post("/api/share-link/{code}/revoke", summary="撤销正式分享链接")
+def revoke_share_link(
+    code: str,
+    current_user: AdminUser = Depends(require_role("admin")),
+    settings: Settings = Depends(get_settings_dep),
+) -> dict[str, Any]:
+    svc = ShortLinkService(db_path=settings.share_db_path)
+    revoked = svc.revoke(code, owner_id=current_user.username)
+    link = svc.get(code)
+    if link is None:
+        raise BusinessError(DATA_NOT_FOUND, detail={"code": code})
+    return {
+        "code": code,
+        "revoked": bool(link.revoked),
+        "changed": revoked,
+        "owner_id": link.owner_id,
+    }
 
 
 def _render_admin_new_order_page() -> str:

@@ -930,6 +930,89 @@ def _render_footer_links(token: str | None = None) -> str:
     )
 
 
+def _render_share_link_script(*, result_type: str, token: str, copy_id: str, share_id: str, status_id: str, title: str) -> str:
+    escaped_title = escape(title)
+    escaped_token = escape(token)
+    escaped_result_type = escape(result_type)
+    escaped_copy = escape(copy_id)
+    escaped_share = escape(share_id)
+    escaped_status = escape(status_id)
+    return f"""<script>
+(function() {{
+  var statusEl = document.getElementById('{escaped_status}');
+  var latestShareUrl = '';
+  function setStatus(msg, ok) {{
+    if (!statusEl) return;
+    statusEl.textContent = msg;
+    statusEl.style.color = ok ? '#1f6feb' : '#b42318';
+  }}
+  async function ensureShareUrl() {{
+    if (latestShareUrl) return latestShareUrl;
+    const resp = await fetch('/api/share-link', {{
+      method: 'POST',
+      credentials: 'include',
+      headers: {{ 'Content-Type': 'application/json' }},
+      body: JSON.stringify({{ result_type: '{escaped_result_type}', target_token: '{escaped_token}', permission: 'read', ttl_days: 7 }})
+    }});
+    const body = await resp.json();
+    if (!resp.ok) {{
+      throw new Error(body?.message || body?.detail?.reason || '正式分享链接生成失败');
+    }}
+    latestShareUrl = body.share_url || '';
+    return latestShareUrl;
+  }}
+  async function copyUrl(url) {{
+    try {{
+      if (navigator.clipboard && navigator.clipboard.writeText) {{
+        await navigator.clipboard.writeText(url);
+        setStatus('已生成正式分享链接并复制', true);
+        return;
+      }}
+    }} catch (err) {{}}
+    try {{
+      var ta = document.createElement('textarea');
+      ta.value = url;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      var ok = document.execCommand('copy');
+      document.body.removeChild(ta);
+      setStatus(ok ? '已生成正式分享链接并复制' : '生成成功，请手动复制链接', ok);
+    }} catch (err) {{
+      setStatus('生成成功，请手动复制链接', false);
+    }}
+  }}
+  var copyBtn = document.getElementById('{escaped_copy}');
+  if (copyBtn) copyBtn.addEventListener('click', async function() {{
+    try {{
+      const shareUrl = await ensureShareUrl();
+      await copyUrl(shareUrl);
+    }} catch (err) {{
+      setStatus('正式分享链接生成失败', false);
+    }}
+  }});
+  var shareBtn = document.getElementById('{escaped_share}');
+  if (shareBtn) shareBtn.addEventListener('click', async function() {{
+    try {{
+      const shareUrl = await ensureShareUrl();
+      if (navigator.share) {{
+        navigator.share({{ title: '{escaped_title}', text: '{escaped_title}', url: shareUrl }}).then(
+          function() {{ setStatus('已通过系统分享发送正式链接', true); }},
+          function() {{ copyUrl(shareUrl); }}
+        );
+      }} else {{
+        await copyUrl(shareUrl);
+      }}
+    }} catch (err) {{
+      setStatus('正式分享链接生成失败', false);
+    }}
+  }});
+}})();
+</script>"""
+
+
 def _render_basic_page(
     *,
     title: str,
@@ -3630,28 +3713,13 @@ def _render_delivery_next_steps(token: str, stage: str) -> str:
             <a class="btn btn-secondary" style="font-size:14px;min-height:40px;padding:8px 16px;" href="/portal/{escape(token)}/report">在线查看</a>
             <a class="btn btn-secondary" style="font-size:14px;min-height:40px;padding:8px 16px;" href="/pricing">继续规划其他方案</a>
           </div>
-          <p style="margin:10px 0 6px;font-size:12px;color:#5a7cb8;">如需与家人商量，可复制当前页面链接或调用系统分享。</p>
+          <p style="margin:10px 0 6px;font-size:12px;color:#5a7cb8;">如需与家人商量，可生成正式分享链接并发送给家人。</p>
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
-            <button class="btn btn-secondary" id="report-copy-link" style="font-size:12px;min-height:32px;padding:6px 10px;">复制链接</button>
-            <button class="btn btn-secondary" id="report-share-btn" style="font-size:12px;min-height:32px;padding:6px 10px;">系统分享</button>
+            <button class="btn btn-secondary" id="report-copy-link" style="font-size:12px;min-height:32px;padding:6px 10px;">复制正式分享链接</button>
+            <button class="btn btn-secondary" id="report-share-btn" style="font-size:12px;min-height:32px;padding:6px 10px;">系统分享正式链接</button>
           </div>
           <p id="report-share-status" style="margin:6px 0 0;font-size:12px;color:#5a7cb8;" role="status" aria-live="polite"></p>
-          <script>
-          (function() {{
-            var statusEl = document.getElementById('report-share-status');
-            function setStatus(msg, ok) {{ statusEl.textContent = msg; statusEl.style.color = ok ? '#1f6feb' : '#b42318'; setTimeout(function() {{ if (statusEl.textContent === msg) statusEl.textContent = ''; }}, 3000); }}
-            var copyBtn = document.getElementById('report-copy-link');
-            if (copyBtn) copyBtn.addEventListener('click', function() {{
-              function fallback() {{ try {{ var ta = document.createElement('textarea'); ta.value = window.location.href; ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.focus(); ta.select(); var ok = document.execCommand('copy'); document.body.removeChild(ta); setStatus(ok ? '链接已复制' : '复制失败，请手动复制地址栏', ok); }} catch(e) {{ setStatus('复制失败', false); }} }}
-              if (navigator.clipboard && navigator.clipboard.writeText) {{ navigator.clipboard.writeText(window.location.href).then(function() {{ setStatus('链接已复制', true); }}, function() {{ fallback(); }}); }} else {{ fallback(); }}
-            }});
-            var shareBtn = document.getElementById('report-share-btn');
-            if (shareBtn) shareBtn.addEventListener('click', function() {{
-              if (navigator.share) {{ navigator.share({{ title: '志愿报告', url: window.location.href }}).then(function() {{ setStatus('已通过系统分享发送', true); }}, function() {{ setStatus('分享已取消', false); }}); }}
-              else {{ if (copyBtn) copyBtn.click(); setStatus('当前浏览器不支持系统分享，已改为复制链接', true); }}
-            }});
-          }})();
-          </script>
+          {_render_share_link_script(result_type="report", token=token, copy_id="report-copy-link", share_id="report-share-btn", status_id="report-share-status", title="志愿报告分享")}
         </div>"""
 
 
@@ -4327,7 +4395,7 @@ def _render_review_start_page(contract: ReviewResultContract, token: str | None)
         '</div>'
     )
     rank = escape(_review_constraints_display(constraints.get("candidate_rank")))
-    share_hint = "此页链接可直接复制分享"
+    share_hint = "此页可生成正式分享链接"
     body_html = f"""
 <section class="panel">
   <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
@@ -4338,78 +4406,71 @@ def _render_review_start_page(contract: ReviewResultContract, token: str | None)
   <p class="meta">基于你当前提交的信息，下面先告诉你当前的风险判断和最适合的下一步。</p>
   <div style="margin-top:12px;padding:12px 14px;border-radius:12px;background:#f0f7ff;border:1px solid #1f6feb;">
     <p style="margin:0 0 6px;font-size:13px;color:#1f6feb;"><strong>分享给家人商量</strong></p>
-    <p style="margin:0 0 8px;font-size:12px;color:#5a7cb8;">{share_hint}。把当前页面链接复制发给家人，或调用系统分享，一起讨论结果。</p>
+    <p style="margin:0 0 8px;font-size:12px;color:#5a7cb8;">{share_hint}。生成的将是独立分享链接，而不是当前页面地址。</p>
     <div style="display:flex;gap:8px;flex-wrap:wrap;">
-      <button class="btn btn-secondary" id="copy-link-btn" style="font-size:12px;min-height:32px;padding:6px 10px;">复制链接</button>
-      <button class="btn btn-secondary" id="share-btn" style="font-size:12px;min-height:32px;padding:6px 10px;">微信分享</button>
+      <button class="btn btn-secondary" id="copy-link-btn" style="font-size:12px;min-height:32px;padding:6px 10px;">复制正式分享链接</button>
+      <button class="btn btn-secondary" id="share-btn" style="font-size:12px;min-height:32px;padding:6px 10px;">系统分享正式链接</button>
       <button class="btn btn-secondary" id="save-draft-btn" style="font-size:12px;min-height:32px;padding:6px 10px;">保存到本地草稿</button>
     </div>
     <p id="share-status" style="margin:8px 0 0;font-size:12px;color:#5a7cb8;" role="status" aria-live="polite"></p>
   </div>
 </section>
 {llm_summary_html}
+<section class="panel">
+  <h2>你当前提交的信息</h2>
+  <ul>
+    <li>已有方案说明：{summary}</li>
+    <li>考试省份：{province}</li>
+    <li>选科组合：{subjects}</li>
+    <li>高考分数：{score}</li>
+    <li>位次：{rank}</li>
+    <li>附件：{attachment_html}</li>
+  </ul>
+  {info_complete_html}
+</section>
+
+<section class="panel">
+  <h2>初步评估结果</h2>
+  <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:0 0 16px;">
+    <span style="display:inline-flex;padding:8px 14px;border-radius:999px;background:{risk_bg};border:1px solid {risk_border};color:{risk_color};font-weight:700;font-size:13px;">风险等级：{risk_label}</span>
+    <span style="display:inline-flex;padding:8px 14px;border-radius:999px;background:#f1f5f9;border:1px solid #cbd5e1;color:#475569;font-weight:600;font-size:13px;">建议：{recommended_label}</span>
+  </div>
+  <ul>{findings_html}</ul>
+  <p class="meta" style="margin-top:8px;">风险等级说明：低 = 当前方案结构基本合理，微调即可；中 = 存在踩线或扎堆风险，需要进一步判断；高 = 存在明显梯度失衡或结构风险，建议尽快调整。</p>
+</section>
+
+<section class="panel">
+  <h2>下一步建议</h2>
+  <p class="meta">{escape(primary_action[2])}</p>
+  <div class="actions">
+    <form action="/review/action" method="post">{token_input}<input type="hidden" name="action" value="{escape(primary_action[1])}" /><button class="btn btn-primary" type="submit">{escape(primary_action[0])}</button></form>
+    <form action="/review/action" method="post">{token_input}<input type="hidden" name="action" value="cwb" /><button class="btn btn-secondary" type="submit">查看冲稳保建议</button></form>
+    <a class="btn btn-secondary" href="/pricing">进入完整规划（付费）</a>
+  </div>
+  <p class="meta" style="margin-top:10px;">免费复核帮你判断风险方向；完整规划和深度辅导在支付后启动，会给你逐志愿解析、冲稳保梯度表和交付报告。</p>
+</section>
+{_render_share_link_script(result_type="review_result", token=token or "", copy_id="copy-link-btn", share_id="share-btn", status_id="share-status", title="高考志愿复核结果")}
 <script>
 (function() {{
-  var statusEl = document.getElementById('share-status');
-  var url = window.location.href;
-  var summary = "高考志愿复核结果 - 风险等级：{escape(contract.risk_level)}";
-  function setStatus(msg, ok) {{
-    statusEl.textContent = msg;
-    statusEl.style.color = ok ? '#1f6feb' : '#b42318';
-    setTimeout(function() {{ if (statusEl.textContent === msg) statusEl.textContent = ''; }}, 3500);
-  }}
-  // 1) 复制链接：优先 navigator.clipboard，回退到 textarea 兜底（旧浏览器/非 HTTPS）
-  document.getElementById('copy-link-btn').addEventListener('click', function() {{
-    function fallback() {{
-      try {{
-        var ta = document.createElement('textarea');
-        ta.value = url;
-        ta.style.position = 'fixed';
-        ta.style.opacity = '0';
-        document.body.appendChild(ta);
-        ta.focus(); ta.select();
-        var ok = document.execCommand('copy');
-        document.body.removeChild(ta);
-        setStatus(ok ? '链接已复制，可粘贴发送给家人' : '复制失败，请手动复制地址栏链接', ok);
-      }} catch(e) {{
-        setStatus('复制失败，请手动复制地址栏链接', false);
-      }}
-    }}
-    if (navigator.clipboard && navigator.clipboard.writeText) {{
-      navigator.clipboard.writeText(url).then(
-        function() {{ setStatus('链接已复制，可粘贴发送给家人', true); }},
-        function() {{ fallback(); }}
-      );
-    }} else {{ fallback(); }}
-  }});
-  // 2) 系统分享：调用原生 Web Share API；不支持时回退到复制链接
-  document.getElementById('share-btn').addEventListener('click', function() {{
-    if (navigator.share) {{
-      navigator.share({{ title: summary, text: summary, url: url }}).then(
-        function() {{ setStatus('已通过系统分享发送', true); }},
-        function(err) {{ setStatus('分享已取消或失败：' + (err && err.message || err), false); }}
-      );
-    }} else {{
-      document.getElementById('copy-link-btn').click();
-      setStatus('当前浏览器不支持系统分享，已改为复制链接', true);
-    }}
-  }});
-  // 3) 保存草稿：把当前 URL + 风险摘要落到 localStorage，下次回来可一键恢复
   document.getElementById('save-draft-btn').addEventListener('click', function() {{
     try {{
-      var drafts = JSON.parse(localStorage.getItem('gaokao_review_drafts') || '[]');
-      drafts.unshift({{
-        url: url,
-        summary: summary,
+      localStorage.setItem('gaokao-review-draft', JSON.stringify({{
+        url: window.location.href,
         savedAt: new Date().toISOString(),
-        province: "{escape(province)}",
-        score: "{escape(score)}"
-      }});
-      if (drafts.length > 10) drafts = drafts.slice(0, 10);
-      localStorage.setItem('gaokao_review_drafts', JSON.stringify(drafts));
-      setStatus('已保存到本机草稿（仅此浏览器可见），最多保留 10 条', true);
-    }} catch(e) {{
-      setStatus('保存失败：浏览器禁用了 localStorage', false);
+        summary: '{escape(contract.review_input_summary or "")}',
+        riskLevel: '{escape(contract.risk_level)}'
+      }}));
+      const statusEl = document.getElementById('share-status');
+      if (statusEl) {{
+        statusEl.textContent = '已保存到本地草稿，可稍后回来看';
+        statusEl.style.color = '#1f6feb';
+      }}
+    }} catch (e) {{
+      const statusEl = document.getElementById('share-status');
+      if (statusEl) {{
+        statusEl.textContent = '本地草稿保存失败';
+        statusEl.style.color = '#b42318';
+      }}
     }}
   }});
 }})();
