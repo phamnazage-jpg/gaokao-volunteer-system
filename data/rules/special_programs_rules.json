@@ -348,6 +348,46 @@
       "provinces": "中西部省份",
       "program_type": "rural_medical",
       "category": "提前批-免费医学定向"
+    },
+    {
+      "rule_id": "special.navigation.physical_check",
+      "title": "航海类体检要求",
+      "description": "航海类专业体检严格：航海技术要求裸眼视力≥4.7，轮机工程≥4.6，色觉正常，身高男≥165cm女≥160cm。部分院校航海技术专业只招男生。",
+      "provinces": "全国",
+      "program_type": "navigation",
+      "category": "提前批-航海"
+    },
+    {
+      "rule_id": "special.navigation.score_advantage",
+      "title": "航海类分数优势",
+      "description": "航海类专业录取分数通常低于同校普通专业20-50分，是降分进入211/985院校的渠道之一。大连海事大学航海类专业在部分省份一本线附近即可录取。",
+      "provinces": "全国",
+      "program_type": "navigation",
+      "category": "提前批-航海"
+    },
+    {
+      "rule_id": "special.sino_foreign.tuition_range",
+      "title": "中外合作办学学费范围",
+      "description": "中外合作办学学费：独立法人院校（宁波诺丁汉/西交利物浦等）8-15万/年；非独立法人项目（北理工犹他/电子科大格拉斯哥等）3-8万/年。4年总费用通常30-60万。",
+      "provinces": "全国",
+      "program_type": "sino_foreign",
+      "category": "中外合作办学"
+    },
+    {
+      "rule_id": "special.sino_foreign.accreditation",
+      "title": "中外合作办学资质核查",
+      "description": "报考前务必在教育部中外合作办学监管工作信息平台（cust.ucas.ac.cn）核查项目和机构是否获得教育部批准。未获批准的项目无法获得双学位认证。",
+      "provinces": "全国",
+      "program_type": "sino_foreign",
+      "category": "中外合作办学"
+    },
+    {
+      "rule_id": "special.sino_foreign.score_advantage",
+      "title": "中外合作办学分数优势",
+      "description": "中外合作办学录取分数通常低于同校普通专业30-80分。例如某985院校普通批650分，其中外合作专业可能580-600分即可录取，但需承担高额学费。",
+      "provinces": "全国",
+      "program_type": "sino_foreign",
+      "category": "中外合作办学"
     }
   ]
 }

@@ -364,6 +364,59 @@
       ],
       "source": "公安部/教育部/各公安院校招生简章",
       "last_verified": "2025-06"
+    },
+    {
+      "program_type": "navigation",
+      "program_name": "航海类提前批",
+      "batch": "本科提前批/专科提前批",
+      "applicable_provinces": [
+        "全国"
+      ],
+      "description": "大连海事大学、武汉理工大学、上海海事大学等航海类专业在提前批招生，涵盖航海技术、轮机工程、船舶电子电气工程。毕业进入航运业，起薪较高但工作环境特殊（需长期海上作业）。",
+      "key_features": {
+        "tuition": "公办正规学费（部分院校有航海类专项奖学金）",
+        "employment": "毕业进入航运/海事/港口企业，就业率高",
+        "service_years": null,
+        "exam_required": false,
+        "politics_check": "常规",
+        "physical_check": "体检：视力裸眼≥4.7（航海技术）或≥4.6（轮机工程），色觉正常，身高男≥165cm女≥160cm"
+      },
+      "applicable_to": "体检合格的考生，男生为主（航海类专业有性别限制）",
+      "warnings": [
+        "航海类专业工作环境特殊，需长期海上作业",
+        "体检要求严格（视力/色觉/身高）",
+        "部分院校只招男生",
+        "录取分数通常低于同校普通专业20-50分"
+      ],
+      "source": "交通运输部/各海事大学招生简章",
+      "last_verified": "2025-06"
+    },
+    {
+      "program_type": "sino_foreign",
+      "program_name": "中外合作办学",
+      "batch": "本科批",
+      "applicable_provinces": [
+        "全国"
+      ],
+      "description": "经教育部批准的中外合作办学项目和机构，如宁波诺丁汉大学、西交利物浦大学、上海纽约大学、昆山杜克大学等，以及各高校内设的中外合作专业（如北理工犹他学院、电子科大格拉斯哥学院等）。",
+      "key_features": {
+        "tuition": "学费较高：5-15万/年（独立法人院校），3-8万/年（非独立法人项目）",
+        "employment": "毕业可获中外双学位，出国深造率高",
+        "service_years": null,
+        "exam_required": false,
+        "politics_check": "常规",
+        "physical_check": "常规体检"
+      },
+      "applicable_to": "家庭经济条件较好、有意出国深造或进入外企的考生",
+      "warnings": [
+        "学费远高于普通专业（5-15万/年）",
+        "部分院校需提前申请或面试",
+        "录取分数通常低于同校普通专业30-80分",
+        "毕业可获得中外双学位，出国深造有优势",
+        "务必确认项目是否经教育部批准（查涉外监管网）"
+      ],
+      "source": "教育部中外合作办学监管平台/各院校招生简章",
+      "last_verified": "2025-06"
     }
   ],
   "program_schools": {
@@ -1384,6 +1437,8 @@
       }
     ],
     "military_academy": [],
-    "police_academy": []
+    "police_academy": [],
+    "navigation": [],
+    "sino_foreign": []
   }
 }
