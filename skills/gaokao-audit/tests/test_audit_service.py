@@ -179,3 +179,47 @@ def test_build_report_payload_renders_template(
     assert "AUDIT-UNIT-001" in rendered
     assert payload["crowd_risks"][0]["school"] in rendered
     assert payload["crowd_risks"][0]["risk_emoji"] in rendered
+
+
+def test_llm_enhance_audit_handles_markdown_json_fence() -> None:
+    """回归测试：LLM 返回 ```json ... ``` 包裹时，_llm_enhance_audit 必须正确解析。
+
+    历史 bug: 直接 json.loads(resp.content) 会因 markdown fence 失败，
+    被外层 except Exception 静默吞掉，导致 LLM 增强永远不生效。
+    """
+    from data.llm.client import LLMResponse
+
+    class _FakeLLMClient:
+        """模拟 LLM 返回 markdown-fenced JSON。"""
+
+        is_configured = True
+
+        def chat_with_system(self, system, user, *, temperature=0.3):
+            return LLMResponse(
+                content=(
+                    "```json\n"
+                    "{\n"
+                    '  "key_findings": ["梯度严重失衡", "专业扎堆严重"],\n'
+                    '  "suggestions": ["放弃前两所985志愿", "增加专业梯度"]\n'
+                    "}\n"
+                    "```"
+                ),
+                usage={},
+                model="fake",
+                raw={},
+            )
+
+    svc = AuditService(llm_client=_FakeLLMClient())
+    result = AuditResult(
+        province="湖南",
+        candidate_score=520,
+        candidate_rank=58000,
+        subjects="物理+化学+生物",
+    )
+
+    enhanced = svc._llm_enhance_audit(result, plan_text="1. 湖南大学 - 计算机")
+
+    # 必须能解析出 LLM 输出，不能再因 markdown fence 静默失败
+    assert any("🤖 LLM" in s for s in enhanced), f"LLM 增强未生效: {enhanced}"
+    assert any("梯度严重失衡" in s for s in enhanced)
+    assert any("放弃前两所985志愿" in s for s in enhanced)

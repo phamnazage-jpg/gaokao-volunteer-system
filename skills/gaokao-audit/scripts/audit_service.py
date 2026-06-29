@@ -148,7 +148,19 @@ class AuditService:
                 crowd_db_recs=None,
             )
             resp = self._llm_client.chat_with_system(system, user, temperature=0.3)
-            data = _json.loads(resp.content)
+            # 兼容 LLM 返回 ```json ... ``` 或 ``` ... ``` markdown 包裹的情况，
+            # 否则 json.loads 会失败并被外层 except 静默吞掉，导致 LLM 增强永远不生效。
+            raw = resp.content.strip()
+            if raw.startswith("```"):
+                # 去掉首行可能的 ```json / ``` 标记
+                first_nl = raw.find("\n")
+                if first_nl != -1:
+                    raw = raw[first_nl + 1 :]
+                # 去掉末尾的 ```
+                if raw.rstrip().endswith("```"):
+                    raw = raw.rstrip()[:-3]
+                raw = raw.strip()
+            data = _json.loads(raw)
             llm_findings = [
                 str(x).strip()
                 for x in (data.get("key_findings") or [])
@@ -182,21 +194,25 @@ class AuditService:
     def _check_data_trace(self, parsed: ParsedPlan) -> List[Dict[str, str]]:
         issues: List[Dict[str, str]] = []
         if not parsed.source:
-            issues.append({
-                "location": "AI来源",
-                "description": "未明确标注AI来源（千问/元宝/百度/豆包）",
-                "recommendation": "补充原始方案来自哪个大厂AI，避免人工复核时误判来源。",
-            })
+            issues.append(
+                {
+                    "location": "AI来源",
+                    "description": "未明确标注AI来源（千问/元宝/百度/豆包）",
+                    "recommendation": "补充原始方案来自哪个大厂AI，避免人工复核时误判来源。",
+                }
+            )
         if (
             parsed.score
             and "2025" not in parsed.raw_text
             and "2024" not in parsed.raw_text
         ):
-            issues.append({
-                "location": "分数/位次依据",
-                "description": "未明确数据年份（建议标注2025年参考位次）",
-                "recommendation": "补充分数线或位次所对应的年份，避免跨年份数据混用。",
-            })
+            issues.append(
+                {
+                    "location": "分数/位次依据",
+                    "description": "未明确数据年份（建议标注2025年参考位次）",
+                    "recommendation": "补充分数线或位次所对应的年份，避免跨年份数据混用。",
+                }
+            )
         return issues
 
     def _build_candidate_info(self, result: AuditResult) -> str:
