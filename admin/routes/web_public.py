@@ -4285,11 +4285,13 @@ def _render_review_start_page(contract: ReviewResultContract, token: str | None)
             "go_full_plan": f"/portal/{token}/full-plan",
         }[contract.recommended_action]
     summary = escape(contract.review_input_summary or "未提供现有方案说明")
-    # 按钮逻辑：无token时隐藏冲稳保按钮（需要先创建订单）
-    cwb_btn = (
-        f'<a class="btn btn-secondary" href="/portal/{token}/cwb">查看冲稳保建议</a>'
-        if token else ""
-    )
+    # 按钮逻辑：有token时显示portal跳转按钮，无token时隐藏
+    if token:
+        cwb_btn = f'<a class="btn btn-secondary" href="/portal/{token}/cwb">查看冲稳保建议</a>'
+        step1_btn = f'<a class="btn btn-primary" href="/portal/{token}/info">先补齐基础信息</a>'
+    else:
+        cwb_btn = ""
+        step1_btn = ""
     # 风险等级视觉映射
     risk_level_map = {
         "low": ("偏低（风险可控）", "#1f6feb", "#eef6ff", "#d7e3f1"),
@@ -4456,7 +4458,7 @@ def _render_review_start_page(contract: ReviewResultContract, token: str | None)
   <p class="meta">{escape(primary_action[2])}</p>
   <div class="actions">
     <a class="btn btn-primary" href="{primary_href}">{escape(primary_action[0])}</a>
-    {cwb_btn}
+    {cwb_btn}{step1_btn}
     <a class="btn btn-secondary" href="/pricing">进入完整规划（付费）</a>
   </div>
   <p class="meta" style="margin-top:10px;">免费复核帮你判断风险方向；完整规划和深度辅导在支付后启动，会给你逐志愿解析、冲稳保梯度表和交付报告。</p>
