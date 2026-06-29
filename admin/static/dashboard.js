@@ -378,6 +378,23 @@ function logout() {
 }
 
 function bootstrap() {
+  // 优先从 URL 参数 t 读取 token（管理后台 Web 登录页跳转场景）
+  const urlParams = new URLSearchParams(window.location.search);
+  const urlToken = urlParams.get("t");
+  if (urlToken) {
+    setToken(urlToken);
+    window.sessionStorage.setItem(TOKEN_KEY, urlToken);
+    // 清除 URL 中的 token 参数（安全考虑）
+    urlParams.delete("t");
+    const cleanUrl =
+      window.location.pathname +
+      (urlParams.toString() ? "?" + urlParams.toString() : "");
+    window.history.replaceState({}, document.title, cleanUrl);
+    // 自动加载数据
+    setTimeout(() => loadDashboard({ loginFirst: false }), 100);
+    return;
+  }
+
   const cachedToken = window.sessionStorage.getItem(TOKEN_KEY);
   if (cachedToken && !getToken()) {
     setToken(cachedToken);
