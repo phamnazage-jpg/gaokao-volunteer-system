@@ -14,14 +14,20 @@ from admin.db import AdminUser
 from admin.config import Settings, get_settings_dep
 from admin.errors import DATA_NOT_FOUND, DATA_VALIDATION_FAILED
 from admin.errors.exceptions import BusinessError
-from data.customer_portal.token import PortalTokenError, verify_portal_token
-from admin.routes.web_public import _load_latest_review_result, _resolve_order_from_token
+from admin.routes.web_public import (
+    _load_latest_review_result,
+    _resolve_order_from_token,
+)
 from admin.share_page import (
     load_report_from_directory,
     render_share_page,
     status_code_for_result,
 )
-from data.share.short_link import ShortLinkService, build_url, route_short_link_with_report
+from data.share.short_link import (
+    ShortLinkService,
+    build_url,
+    route_short_link_with_report,
+)
 
 
 router = APIRouter(tags=["ui"])
@@ -138,7 +144,6 @@ def admin_new_order_page(_: AdminUser = Depends(require_role("admin"))) -> HTMLR
     return HTMLResponse(_render_admin_new_order_page())
 
 
-
 @router.get("/s/{code}", include_in_schema=False)
 def share_page(
     code: str,
@@ -176,42 +181,12 @@ def _resolve_report_loader(
     return _loader
 
 
-@router.post("/api/share-link", summary="创建正式分享链接", status_code=201)
-def create_share_link(
-    payload: dict[str, Any],
-    request: Request,
-    current_user: AdminUser = Depends(require_role("admin")),
-    settings: Settings = Depends(get_settings_dep),
-) -> dict[str, Any]:
-    result_type = str(payload.get("result_type") or "").strip()
-    target_token = str(payload.get("target_token") or "").strip()
-    permission = str(payload.get("permission") or "read").strip()
-    ttl_days_raw = payload.get("ttl_days")
-    if result_type not in {"review_result", "report"}:
-        raise BusinessError(
-            DATA_VALIDATION_FAILED,
-            detail={"reason": "result_type must be review_result or report"},
-        )
-    if not target_token:
-        raise BusinessError(
-            DATA_VALIDATION_FAILED,
-            detail={"reason": "target_token is required"},
-        )
-    ttl_days: int | None = None
-    if ttl_days_raw is not None:
-        try:
-            ttl_days = int(ttl_days_raw)
-        except (TypeError, ValueError) as exc:
-            raise BusinessError(
-                DATA_VALIDATION_FAILED,
-                detail={"reason": "ttl_days must be integer"},
-            ) from exc
-        if ttl_days <= 0:
-            raise BusinessError(
-                DATA_VALIDATION_FAILED,
-                detail={"reason": "ttl_days must be > 0"},
-            )
-
+def _resolve_share_target(
+    *,
+    result_type: str,
+    target_token: str,
+    settings: Settings,
+) -> tuple[Any, str, dict[str, Any]]:
     try:
         order = _resolve_order_from_token(target_token, settings)
     except Exception as exc:
@@ -224,8 +199,6 @@ def create_share_link(
             ) from exc
         raise
 
-    share_payload: dict[str, Any]
-    target_id: str
     if result_type == "review_result":
         contract = _load_latest_review_result(order.id, settings)
         if contract is None:
@@ -249,7 +222,9 @@ def create_share_link(
                 for item in contract.top_findings[:3]
             ],
         }
-    else:
+        return order, target_id, share_payload
+
+    if result_type == "report":
         if order.status not in {"delivered", "completed"} or not order.audit_report:
             raise BusinessError(
                 DATA_NOT_FOUND,
@@ -265,25 +240,46 @@ def create_share_link(
             "year": 2026,
             "result_type": "report",
         }
+        return order, target_id, share_payload
 
-    svc = ShortLinkService(db_path=settings.share_db_path)
-    link = svc.create(
-        report_id=target_id,
-        owner_id=current_user.username,
-        permission=permission,
-        ttl_days=ttl_days,
-        note=f"{result_type}:{order.id}",
+    raise BusinessError(
+        DATA_VALIDATION_FAILED,
+        detail={"reason": "result_type must be review_result or report"},
     )
-    base_url = str(request.base_url).rstrip("/") if request is not None else "http://testserver"
+
+
+def _find_latest_share_link(
+    *,
+    svc: ShortLinkService,
+    target_id: str,
+    owner_id: str,
+    result_type: str,
+) -> Any | None:
+    prefix = f"{result_type}:"
+    for link in svc.list_by_report(target_id):
+        if link.owner_id != owner_id:
+            continue
+        note = str(link.note or "")
+        if note.startswith(prefix):
+            return link
+    return None
+
+
+def _share_link_response(
+    *,
+    link: Any,
+    result_type: str,
+    target_id: str,
+    request: Request,
+    stats: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    base_url = (
+        str(request.base_url).rstrip("/")
+        if request is not None
+        else "http://testserver"
+    )
     share_url = build_url(link.code, base=base_url)
-    report_dir = Path(settings.share_report_dir)
-    report_dir.mkdir(parents=True, exist_ok=True)
-    report_file = report_dir / f"{target_id}.json"
-    report_file.write_text(
-        json.dumps({**share_payload, "share_url": share_url}, ensure_ascii=False),
-        encoding="utf-8",
-    )
-    return {
+    payload = {
         "code": link.code,
         "share_url": share_url,
         "permission": link.permission,
@@ -293,12 +289,129 @@ def create_share_link(
         "expires_at_iso": link.to_dict().get("expires_at_iso"),
         "owner_id": link.owner_id,
         "revoked": bool(link.revoked),
+        "access_count": link.access_count,
+        "last_access_at_iso": link.to_dict().get("last_access_at_iso"),
     }
+    if stats is not None:
+        payload["stats"] = stats
+    return payload
+
+
+@router.post("/api/share-link", summary="创建正式分享链接", status_code=201)
+def create_share_link(
+    payload: dict[str, Any],
+    request: Request,
+    current_user: AdminUser = Depends(require_role("admin")),
+    settings: Settings = Depends(get_settings_dep),
+) -> dict[str, Any]:
+    result_type = str(payload.get("result_type") or "").strip()
+    target_token = str(payload.get("target_token") or "").strip()
+    permission = str(payload.get("permission") or "read").strip()
+    ttl_days_raw = payload.get("ttl_days")
+    replace_existing = bool(payload.get("replace_existing"))
+    if not target_token:
+        raise BusinessError(
+            DATA_VALIDATION_FAILED,
+            detail={"reason": "target_token is required"},
+        )
+    ttl_days: int | None = None
+    if ttl_days_raw is not None:
+        try:
+            ttl_days = int(ttl_days_raw)
+        except (TypeError, ValueError) as exc:
+            raise BusinessError(
+                DATA_VALIDATION_FAILED,
+                detail={"reason": "ttl_days must be integer"},
+            ) from exc
+        if ttl_days <= 0:
+            raise BusinessError(
+                DATA_VALIDATION_FAILED,
+                detail={"reason": "ttl_days must be > 0"},
+            )
+
+    order, target_id, share_payload = _resolve_share_target(
+        result_type=result_type,
+        target_token=target_token,
+        settings=settings,
+    )
+
+    svc = ShortLinkService(db_path=settings.share_db_path)
+    existing = _find_latest_share_link(
+        svc=svc,
+        target_id=target_id,
+        owner_id=current_user.username,
+        result_type=result_type,
+    )
+    if replace_existing and existing is not None and not existing.revoked:
+        svc.revoke(existing.code, owner_id=current_user.username)
+
+    link = svc.create(
+        report_id=target_id,
+        owner_id=current_user.username,
+        permission=permission,
+        ttl_days=ttl_days,
+        note=f"{result_type}:{order.id}",
+    )
+    share_url = build_url(
+        link.code,
+        base=str(request.base_url).rstrip("/")
+        if request is not None
+        else "http://testserver",
+    )
+    report_dir = Path(settings.share_report_dir)
+    report_dir.mkdir(parents=True, exist_ok=True)
+    report_file = report_dir / f"{target_id}.json"
+    report_file.write_text(
+        json.dumps({**share_payload, "share_url": share_url}, ensure_ascii=False),
+        encoding="utf-8",
+    )
+    return _share_link_response(
+        link=link,
+        result_type=result_type,
+        target_id=target_id,
+        request=request,
+    )
+
+
+@router.get("/api/share-link/latest", summary="查询最近正式分享链接")
+def latest_share_link(
+    result_type: str,
+    target_token: str,
+    request: Request,
+    current_user: AdminUser = Depends(require_role("admin")),
+    settings: Settings = Depends(get_settings_dep),
+) -> dict[str, Any]:
+    _, target_id, _ = _resolve_share_target(
+        result_type=result_type,
+        target_token=target_token,
+        settings=settings,
+    )
+    svc = ShortLinkService(db_path=settings.share_db_path)
+    link = _find_latest_share_link(
+        svc=svc,
+        target_id=target_id,
+        owner_id=current_user.username,
+        result_type=result_type,
+    )
+    if link is None:
+        raise BusinessError(
+            DATA_NOT_FOUND,
+            detail={"reason": "share_link not found", "target_id": target_id},
+        )
+    stats = svc.get_stats(link.code)
+    return _share_link_response(
+        link=link,
+        result_type=result_type,
+        target_id=target_id,
+        request=request,
+        stats=stats,
+    )
 
 
 @router.post("/api/share-link/{code}/revoke", summary="撤销正式分享链接")
 def revoke_share_link(
     code: str,
+    request: Request,
     current_user: AdminUser = Depends(require_role("admin")),
     settings: Settings = Depends(get_settings_dep),
 ) -> dict[str, Any]:
@@ -307,12 +420,25 @@ def revoke_share_link(
     link = svc.get(code)
     if link is None:
         raise BusinessError(DATA_NOT_FOUND, detail={"code": code})
+    stats = svc.get_stats(code)
     return {
         "code": code,
         "revoked": bool(link.revoked),
         "changed": revoked,
         "owner_id": link.owner_id,
+        "access_count": link.access_count,
+        "last_access_at_iso": link.to_dict().get("last_access_at_iso"),
+        "expires_at_iso": link.to_dict().get("expires_at_iso"),
+        "stats": stats,
+        "share_url": build_url(
+            code,
+            base=str(request.base_url).rstrip("/")
+            if request is not None
+            else "http://testserver",
+        ),
     }
+
+
 
 
 def _render_admin_new_order_page() -> str:

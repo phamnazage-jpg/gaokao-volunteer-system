@@ -1,7 +1,7 @@
 # T7: 分享功能 MVP — 实施计划
 
 **版本**: v1.0
-**状态**: 设计 → 实施中 (T7.1/T7.2/T7.3/T7.4 已完成, T7.5 待办)
+**状态**: ✅ 已完成 (T7.1/T7.2/T7.3/T7.4/T7.5 已完成)
 **关联文档**:
 
 - [产品设计 v1 - 分享](../PRODUCT_DESIGN_v1.md)
@@ -20,9 +20,9 @@ T7 包含 5 个子任务 (来自 IMPLEMENTATION_PLAN_v2.md §T7):
 | T7.2 | 海报生成 (PIL) |   P1   | ✅ 已完成 | 1.5d |
 | T7.3 | 权限控制 (3级) |   P1   | ✅ 已完成 |  1d  |
 | T7.4 | 撤销与统计     |   P1   | ✅ 已完成 |  1d  |
-| T7.5 | 分享页 WebUI   |   P1   | ⏳ 待办   | 0.5d |
+| T7.5 | 分享页 WebUI   |   P1   | ✅ 已完成 | 0.5d |
 
-**本文档将按子任务分节详细化设计; T7.1-T7.4 已实现, T7.5 为待办设计草案。**
+**本文档记录 T7 全部 5 个子任务的最终落地状态与验证结论。**
 
 ---
 
@@ -170,7 +170,7 @@ def short_link(code):
 
 ---
 
-## T7.2 海报生成 (PIL) ⏳
+## T7.2 海报生成 (PIL) ✅
 
 ### 目标
 
@@ -189,6 +189,24 @@ def short_link(code):
 数据源: 报告 JSON + 短码
 输出: data/share/posters/{report_id}_{code}.png
 ```
+
+### 本次落地
+
+- **海报模块**：`data/share/poster.py`
+  - `build_poster_payload(...)`：从报告 JSON 提取标题 / 考生 / 分数省份年份 / 推荐院校 TOP3 / 分享链接
+  - `render_poster(...)`：生成 1080×1920 海报，包含标题卡、考生摘要、推荐院校卡片、二维码区、底部品牌区
+  - `save_poster(...)`：按输出扩展名保存 PNG / JPG，并返回渲染结果元数据
+- **CLI 入口**：`scripts/gaokao-poster`
+  - 输入：`--report-json --code --base-url --output`
+  - 默认姓名脱敏；`--unmask-name` 可关闭脱敏
+- **运行依赖**：`requirements-admin.txt` 新增 `qrcode>=8.2,<9.0`
+
+### 验证
+
+- `python3 -m pytest data/share/tests/test_poster.py -q` → **3 个单测通过**
+- `python3 -m pytest tests/test_poster_cli.py -q` → **2 个 CLI 测试通过**
+- 海报能力已纳入分享回归：`data/share/tests/test_poster.py + tests/test_poster_cli.py + 既有分享测试` → **93 passed**
+
 
 ---
 
@@ -293,7 +311,7 @@ out = route_short_link_with_report(
 
 ---
 
-## T7.5 分享页 WebUI ⏳
+## T7.5 分享页 WebUI ✅
 
 ### 路由
 
@@ -320,6 +338,26 @@ GET  /s/{code}?pwd=xxx    带密码参数
 └─────────────────────────────────┘
 ```
 
+### 本次落地
+
+- **公开分享页路由**：`admin/routes/ui.py::share_page`
+  - `GET /s/{code}` / `GET /s/{code}?pwd=...`
+  - 通过 `route_short_link_with_report(...)` 统一接入 T7.1/T7.3/T7.4 短链、权限、密码、撤销与统计体系
+- **分享页渲染**：`admin/share_page.py`
+  - `render_share_page(...)`：按 `ok/not_found/revoked/expired/password_required/password_wrong` 渲染不同页面
+  - `ok` 页展示标题、考生信息、分数/位次、推荐院校 TOP3、分享说明与复制链接按钮
+  - 移动端优先，带 viewport meta 与响应式布局
+- **正式分享入口联动**：
+  - 后台 `POST /api/share-link` / `GET /api/share-link/latest` / `POST /api/share-link/{code}/revoke`
+  - Portal 分享状态区与正式短链治理链路已统一接入
+
+### 验证
+
+- `python3 -m pytest admin/tests/test_share_ui.py -q` → 分享页 UI / 密码流 / 状态页覆盖通过
+- `python3 -m pytest admin/tests/test_share_link_api.py admin/tests/test_share_link_frontend.py admin/tests/test_share_status_panel.py -q` → 正式分享链接 API、前端入口、状态区回归通过
+- 分享相关总回归（含 T7.2 新增测试）→ **93 passed**
+
+
 ---
 
 ## 时间表 (来自 IMPLEMENTATION_PLAN_v2.md §6)
@@ -330,7 +368,7 @@ GET  /s/{code}?pwd=xxx    带密码参数
 | 7/11 (六) | T7.3 + T7.4    |
 | 7/12 (日) | T7.5           |
 
-T7.1 已于 2026-06-12 提前完成 (本提交), T7.2 按计划开始。
+T7.1 已于 2026-06-12 提前完成；T7.2/T7.5 现已补齐并完成回归验证。
 
 ---
 
@@ -343,6 +381,6 @@ T7.1 已于 2026-06-12 提前完成 (本提交), T7.2 按计划开始。
 - [x] 访问统计: 次数 / 时间
 - [x] CLI: create / resolve / revoke / list / stats / purge
 - [x] 路由辅助: `route_short_link(code, ...)` 可挂载到任意 Web 框架
-- [x] 测试: 25 个 pytest 全部通过
-- [ ] 海报生成 (T7.2)
-- [ ] UI / Web 路由 (T7.5)
+- [x] 测试: 短链 / 权限 / 分享页 / 正式分享入口回归通过
+- [x] 海报生成 (T7.2)
+- [x] UI / Web 路由 (T7.5)

@@ -49,11 +49,12 @@ gaokao-volunteer-system/
 │   ├── gaokao-quick-3min.py          # 3分钟问卷
 │   ├── gaokao-collect-info.py        # 完整收集
 │   ├── gaokao-checker                # 规范检查（多省份）
-│   ├── gaokao-shortlink              # T7.1 分享短链接 CLI
+│   ├── gaokao-shortlink              # T7.1/T7.4 分享短链接 CLI
+│   ├── gaokao-poster                 # T7.2 分享海报 CLI
 │   └── legacy/                       # 历史版本
 │
 ├── data/                     # 数据
-│   ├── share/                # T7 分享能力（短链接/权限策略/测试）
+│   ├── share/                # T7 分享能力（短链接/海报/权限策略/测试）
 │   ├── templates/            # 模板
 │   └── examples/             # 示例
 │
@@ -88,6 +89,8 @@ gaokao-volunteer-system/
 - **gaokao-quick-3min.py**：3分钟快速问卷
 - **gaokao-collect-info.py**：7步完整收集
 - **gaokao-checker**：多省份规范检查
+- **gaokao-shortlink**：分享短链接创建 / 解析 / 撤销 / 统计
+- **gaokao-poster**：从报告 JSON + 短码生成分享海报（PNG/JPG）
 
 ## 🚀 快速开始
 
@@ -114,11 +117,13 @@ python3 ~/.local/bin/gaokao-visual-report-v2.py
 python3 ~/.local/bin/gaokao-quick-3min.py
 ```
 
-### T7 分享链路安全说明
+### T7 分享链路说明
 
 - `data/share/short_link.py` 现已使用 **PBKDF2-HMAC-SHA256** 存储分享访问密码（16B salt + 200k iterations）
 - 历史短链接若仍是旧的无盐 sha256，系统会在**密码校验成功后自动迁移**到新格式
 - 分享权限页与短链接 payload 继续默认隐藏 `password_hash` 等内部字段
+- `data/share/poster.py` + `scripts/gaokao-poster` 已支持生成 **1080×1920** 分享海报，包含标题、考生摘要、推荐院校 TOP3、二维码与品牌区
+- `admin/routes/ui.py` 的 `/s/{code}` 已落地公开分享页，统一复用短链、权限、密码、撤销与统计体系
 
 ### T6.1 管理后台 FastAPI 骨架
 

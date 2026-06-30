@@ -115,9 +115,8 @@ def _build_parser() -> argparse.ArgumentParser:
     audit_run.add_argument("--catalog-root", default=str(DEFAULT_CATALOG_ROOT))
     audit_run.add_argument("--json", action="store_true")
 
-    subparsers.add_parser("order", help="delegate to data.orders.cli (orders commands)")
     subparsers.add_parser(
-        "share", help="delegate to shortlink CLI (share commands)"
+        "share", help="delegate to share CLIs (shortlink + poster commands)"
     )
     subparsers.add_parser(
         "payment", help="delegate to payment diagnostics (payment commands)"
@@ -195,9 +194,9 @@ def main(argv: list[str] | None = None) -> int:
             # prefix (its parser exposes `create` / `list` / `show` / ...).
             return orders_main(tokens[1:])
         if marker == "share":
-            from data.cli_compat_gaokao_shortlink import main as shortlink_main
+            from data.cli_compat_share import main as share_main
 
-            return shortlink_main(tokens[1:])
+            return share_main(tokens[1:])
         if marker == "payment":
             from data.cli_compat_payment_doctor import (
                 main as payment_doctor_main,

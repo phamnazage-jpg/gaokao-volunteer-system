@@ -449,6 +449,23 @@
   - `python3 -m pytest data/share/ data/orders/ -q` → **231 passed**
   - `python3 -m ruff check data/share/permission.py data/share/tests/test_permission.py data/share/short_link.py` → **All checks passed**
 
+
+#### 新增（T7.2 / T7.5 已完成）
+
+- ✨ **分享海报生成**（`data/share/poster.py` + `scripts/gaokao-poster`）
+  - 新增 1080×1920 海报生成链路：标题卡 / 考生摘要 / 推荐院校 TOP3 / 二维码区 / 品牌区
+  - `build_poster_payload(...)` 统一提取报告标题、分数、省份、年份、推荐院校与分享链接
+  - `save_poster(...)` 按扩展名保存 PNG / JPG；默认姓名脱敏，CLI 可 `--unmask-name` 关闭
+  - `requirements-admin.txt` 新增 `qrcode>=8.2,<9.0`
+- ✨ **公开分享页 WebUI**（`admin/routes/ui.py::share_page` + `admin/share_page.py`）
+  - `GET /s/{code}` / `GET /s/{code}?pwd=...` 正式落地
+  - 统一复用 `route_short_link_with_report(...)`，接入短链、权限、密码、撤销与统计体系
+  - `ok/not_found/revoked/expired/password_required/password_wrong` 六类状态页已具备独立渲染
+  - 分享页支持移动端 viewport、考生摘要、推荐院校列表、分享说明与复制链接按钮
+- ✅ **测试验证**
+  - 新增 `data/share/tests/test_poster.py`（payload + PNG/JPG 输出）
+  - 新增 `tests/test_poster_cli.py`（CLI help + 实际生成 PNG）
+  - 分享相关总回归：`data/share/tests/test_poster.py tests/test_poster_cli.py data/share/tests/test_short_link.py data/share/tests/test_permission.py admin/tests/test_share_ui.py admin/tests/test_share_link_api.py admin/tests/test_share_link_frontend.py admin/tests/test_share_status_panel.py` → **93 passed**
 #### 新增（T10.1 已完成）
 
 - ✨ **GitHub Actions CI 流水线**

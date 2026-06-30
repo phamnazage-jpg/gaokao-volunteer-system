@@ -11,3 +11,4 @@ weasyprint>=66,<67
 cairocffi>=1.7,<2.0
 python-multipart>=0.0.20,<1.0
 PyYAML>=6.0,<7.0
+qrcode>=8.2,<9.0

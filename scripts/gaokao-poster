@@ -1,0 +1,79 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import argparse
+import json
+import sys
+from pathlib import Path
+
+PROJ_ROOT = Path(__file__).resolve().parent.parent
+if str(PROJ_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJ_ROOT))
+
+from data.share.poster import save_poster  # noqa: E402
+from data.share.short_link import build_url  # noqa: E402
+
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        prog="gaokao-poster",
+        description="T7.2 分享海报生成器 (Pillow + qrcode)",
+    )
+    parser.add_argument("--report-json", required=True, help="报告 JSON 路径")
+    parser.add_argument("--code", required=True, help="短码，如 ABC123")
+    parser.add_argument(
+        "--base-url",
+        default="http://localhost:8000",
+        help="用于拼接分享链接的基础 URL",
+    )
+    parser.add_argument("--output", required=True, help="输出 PNG/JPG 路径")
+    parser.add_argument(
+        "--unmask-name",
+        action="store_true",
+        help="不对考生姓名脱敏（默认脱敏）",
+    )
+    return parser
+
+
+def main(argv: list[str] | None = None) -> int:
+    args = build_parser().parse_args(argv)
+    report_path = Path(args.report_json)
+    try:
+        report = json.loads(report_path.read_text(encoding="utf-8"))
+    except FileNotFoundError:
+        print(f"报告不存在: {report_path}", file=sys.stderr)
+        return 2
+    except json.JSONDecodeError as exc:
+        print(f"报告 JSON 非法: {exc}", file=sys.stderr)
+        return 2
+
+    share_url = build_url(args.code, base=args.base_url)
+    try:
+        result = save_poster(
+            report,
+            code=args.code,
+            share_url=share_url,
+            output_path=args.output,
+            mask_name=not args.unmask_name,
+        )
+    except (RuntimeError, ValueError) as exc:
+        print(f"生成失败: {exc}", file=sys.stderr)
+        return 1
+
+    print(
+        json.dumps(
+            {
+                "output": str(result.output_path),
+                "format": result.format,
+                "size": list(result.size),
+                "share_url": share_url,
+            },
+            ensure_ascii=False,
+            indent=2,
+        )
+    )
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

@@ -22,6 +22,8 @@ from fastapi.responses import (
 from pydantic import BaseModel, Field
 
 from admin.config import Settings, get_settings_dep
+from admin.errors import DATA_NOT_FOUND, DATA_VALIDATION_FAILED
+from admin.errors.exceptions import BusinessError
 from data.customer_portal.token import (
     PortalTokenError,
     issue_portal_token,
@@ -47,6 +49,7 @@ from data.orders.public_flow import (
 )
 from data.orders.crypto import MissingEncryptionKey
 from data.payments.service import PaymentError, PaymentService
+from data.share.short_link import ShortLinkService, build_url
 
 
 router = APIRouter(tags=["web-public"])
@@ -681,13 +684,219 @@ def notification_audit_page(
     return HTMLResponse(_render_notification_audit_page(token, order, events))
 
 
+def _portal_share_target(
+    *,
+    result_type: str,
+    target_token: str,
+    settings: Settings,
+) -> tuple[Order, str]:
+    order = _resolve_order_from_token(target_token, settings)
+    if result_type == "review_result":
+        contract = _load_latest_review_result(order.id, settings)
+        if contract is None:
+            raise BusinessError(
+                DATA_NOT_FOUND,
+                detail={"reason": "review_result not found"},
+            )
+        return order, contract.review_result_id
+    if result_type == "report":
+        if order.status not in {"delivered", "completed"} or not order.audit_report:
+            raise BusinessError(
+                DATA_NOT_FOUND,
+                detail={"reason": "report not ready"},
+            )
+        return order, order.id
+    raise BusinessError(
+        DATA_VALIDATION_FAILED,
+        detail={"reason": "result_type must be review_result or report"},
+    )
+
+
+def _latest_portal_share_link(
+    *,
+    svc: ShortLinkService,
+    target_id: str,
+    result_type: str,
+    order_id: str,
+) -> Any | None:
+    prefix = f"{result_type}:{order_id}"
+    links = svc.list_by_report(target_id)
+    active = [
+        link
+        for link in links
+        if str(link.note or "") == prefix and not link.revoked and not link.is_expired()
+    ]
+    if active:
+        return active[0]
+    for link in links:
+        if str(link.note or "") == prefix:
+            return link
+    return None
+
+
+def _portal_share_response(
+    *,
+    request: Request,
+    link: Any,
+    result_type: str,
+    target_id: str,
+    stats: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    payload = {
+        "code": link.code,
+        "share_url": build_url(link.code, base=str(request.base_url).rstrip("/")),
+        "permission": link.permission,
+        "result_type": result_type,
+        "target_id": target_id,
+        "expires_at_iso": link.to_dict().get("expires_at_iso"),
+        "revoked": bool(link.revoked),
+        "access_count": link.access_count,
+        "last_access_at_iso": link.to_dict().get("last_access_at_iso"),
+    }
+    if stats is not None:
+        payload["stats"] = stats
+    return payload
+
+
+@router.get("/portal/share-link/latest")
+def portal_latest_share_link(
+    result_type: str,
+    target_token: str,
+    request: Request,
+    settings: Settings = Depends(get_settings_dep),
+) -> dict[str, Any]:
+    order, target_id = _portal_share_target(
+        result_type=result_type,
+        target_token=target_token,
+        settings=settings,
+    )
+    svc = ShortLinkService(db_path=settings.share_db_path)
+    link = _latest_portal_share_link(
+        svc=svc,
+        target_id=target_id,
+        result_type=result_type,
+        order_id=order.id,
+    )
+    if link is None:
+        raise BusinessError(
+            DATA_NOT_FOUND,
+            detail={"reason": "share_link not found", "target_id": target_id},
+        )
+    return _portal_share_response(
+        request=request,
+        link=link,
+        result_type=result_type,
+        target_id=target_id,
+        stats=svc.get_stats(link.code),
+    )
+
+
+@router.post("/portal/share-link", status_code=201)
+def portal_create_share_link(
+    payload: dict[str, Any],
+    request: Request,
+    settings: Settings = Depends(get_settings_dep),
+) -> dict[str, Any]:
+    result_type = str(payload.get("result_type") or "").strip()
+    target_token = str(payload.get("target_token") or "").strip()
+    permission = str(payload.get("permission") or "read").strip()
+    ttl_days_raw = payload.get("ttl_days")
+    replace_existing = bool(payload.get("replace_existing"))
+    if not target_token:
+        raise BusinessError(
+            DATA_VALIDATION_FAILED,
+            detail={"reason": "target_token is required"},
+        )
+    ttl_days: int | None = None
+    if ttl_days_raw is not None:
+        try:
+            ttl_days = int(ttl_days_raw)
+        except (TypeError, ValueError) as exc:
+            raise BusinessError(
+                DATA_VALIDATION_FAILED,
+                detail={"reason": "ttl_days must be integer"},
+            ) from exc
+        if ttl_days <= 0:
+            raise BusinessError(
+                DATA_VALIDATION_FAILED,
+                detail={"reason": "ttl_days must be > 0"},
+            )
+
+    order, target_id = _portal_share_target(
+        result_type=result_type,
+        target_token=target_token,
+        settings=settings,
+    )
+    svc = ShortLinkService(db_path=settings.share_db_path)
+    existing = _latest_portal_share_link(
+        svc=svc,
+        target_id=target_id,
+        result_type=result_type,
+        order_id=order.id,
+    )
+    if replace_existing and existing is not None and not existing.revoked:
+        svc.revoke(existing.code)
+
+    link = svc.create(
+        report_id=target_id,
+        owner_id=f"portal:{order.id}",
+        permission=permission,
+        ttl_days=ttl_days,
+        note=f"{result_type}:{order.id}",
+    )
+    return _portal_share_response(
+        request=request,
+        link=link,
+        result_type=result_type,
+        target_id=target_id,
+    )
+
+
+@router.post("/portal/share-link/{code}/revoke")
+def portal_revoke_share_link(
+    code: str,
+    payload: dict[str, Any],
+    request: Request,
+    settings: Settings = Depends(get_settings_dep),
+) -> dict[str, Any]:
+    result_type = str(payload.get("result_type") or "").strip()
+    target_token = str(payload.get("target_token") or "").strip()
+    order, target_id = _portal_share_target(
+        result_type=result_type,
+        target_token=target_token,
+        settings=settings,
+    )
+    svc = ShortLinkService(db_path=settings.share_db_path)
+    link = _latest_portal_share_link(
+        svc=svc,
+        target_id=target_id,
+        result_type=result_type,
+        order_id=order.id,
+    )
+    if link is None or link.code != code:
+        raise BusinessError(DATA_NOT_FOUND, detail={"code": code})
+    changed = svc.revoke(code)
+    current = svc.get(code)
+    if current is None:
+        raise BusinessError(DATA_NOT_FOUND, detail={"code": code})
+    payload = _portal_share_response(
+        request=request,
+        link=current,
+        result_type=result_type,
+        target_id=target_id,
+        stats=svc.get_stats(code),
+    )
+    payload["changed"] = changed
+    return payload
+
+
 @router.get("/portal/{token}/status", include_in_schema=False)
 def order_status_page(
     token: str, settings: Settings = Depends(get_settings_dep)
 ) -> HTMLResponse:
     order = _resolve_order_from_token(token, settings)
     context = _build_portal_context(order, settings)
-    return HTMLResponse(_render_status_page(token, context))
+    return HTMLResponse(_render_status_page(token, context, settings))
 
 
 @router.get("/portal/{token}/report", include_in_schema=False)
@@ -930,7 +1139,167 @@ def _render_footer_links(token: str | None = None) -> str:
     )
 
 
-def _render_share_link_script(*, result_type: str, token: str, copy_id: str, share_id: str, status_id: str, title: str) -> str:
+def _render_share_status_panel(
+    *, result_type: str, token: str, settings: Settings | None = None
+) -> str:
+    """渲染"当前分享状态"面板。
+
+    settings 可选；不传则现场加载。即使查询失败也会渲染骨架。
+    """
+    if not token or result_type not in {"review_result", "report"}:
+        return ""
+
+    latest_info: dict[str, Any] | None = None
+    s = settings
+    if s is None:
+        try:
+            from admin.config import load_settings as _load_settings
+
+            s = _load_settings()
+        except Exception:  # noqa: BLE001
+            s = None
+    if s is not None:
+        try:
+            order, target_id = _portal_share_target(
+                result_type=result_type,
+                target_token=token,
+                settings=s,
+            )
+            svc = ShortLinkService(db_path=s.share_db_path)
+            chosen = _latest_portal_share_link(
+                svc=svc,
+                target_id=target_id,
+                result_type=result_type,
+                order_id=order.id,
+            )
+            if chosen is not None:
+                d = chosen.to_dict()
+                stats = svc.get_stats(chosen.code) or {}
+                latest_info = {
+                    "permission": chosen.permission,
+                    "expires_at_iso": d.get("expires_at_iso"),
+                    "revoked": bool(chosen.revoked),
+                    "expired": chosen.is_expired(),
+                    "access_count": int(stats.get("access_count") or 0),
+                    "last_access_at_iso": stats.get("last_access_at_iso"),
+                }
+        except Exception:  # noqa: BLE001
+            latest_info = None
+
+    if latest_info is None:
+        status_line = '<p class="share-status-line">最近一次分享：无</p>'
+    else:
+        perm = str(latest_info.get("permission") or "read")
+        suffix_parts: list[str] = []
+        if latest_info.get("revoked"):
+            suffix_parts.append("已撤销")
+        elif latest_info.get("expired"):
+            suffix_parts.append("已过期")
+        elif latest_info.get("expires_at_iso"):
+            suffix_parts.append("7天后过期")
+        status_line = f'<p class="share-status-line">最近一次分享：{escape(perm)}'
+        if suffix_parts:
+            status_line += (
+                "（" + "，".join(escape(part) for part in suffix_parts) + "）"
+            )
+        status_line += "</p>"
+        access_count = int(latest_info.get("access_count") or 0)
+        last_access = latest_info.get("last_access_at_iso")
+        status_line += (
+            f'<p class="share-status-line subtle">访问次数：{access_count}'
+            + (f" · 最后访问：{escape(str(last_access))}" if last_access else "")
+            + "</p>"
+        )
+
+    escaped_token = escape(token)
+    escaped_result_type = escape(result_type)
+    latest_query = f"/portal/share-link/latest?result_type={escaped_result_type}&target_token={escaped_token}"
+
+    return f"""
+<section class="panel share-status-panel" aria-label="当前分享状态">
+  <h2>当前分享状态</h2>
+  {status_line}
+  <div class="share-actions" data-token="{escaped_token}" data-result-type="{escaped_result_type}" data-latest-url="{latest_query}">
+    <button class="btn btn-secondary" id="share-copy-official" type="button">复制正式分享链接</button>
+    <button class="btn btn-secondary" id="share-regenerate" type="button">重新生成分享链接</button>
+    <button class="btn btn-secondary" id="share-revoke" type="button">撤销当前分享链接</button>
+  </div>
+  <p class="meta" id="share-status-panel-msg">正式链接用于向考生/家长稳定分享，不会随订单状态变更失效；你可以在这里复制、重生成或撤销当前链接。</p>
+  <script>
+  (function() {{
+    var panelRoot = document.querySelector('.share-status-panel .share-actions');
+    var msgEl = document.getElementById('share-status-panel-msg');
+    function msg(text, ok) {{
+      if (!msgEl) return;
+      msgEl.textContent = text;
+      msgEl.style.color = ok ? '#1f6feb' : '#b42318';
+    }}
+    async function adminFetch(url, opts) {{
+      opts = opts || {{}};
+      opts.credentials = 'include';
+      var resp = await fetch(url, opts);
+      var body = {{}};
+      try {{ body = await resp.json(); }} catch (e) {{}}
+      if (!resp.ok) {{
+        throw new Error(body?.message || body?.detail?.reason || '请求失败 (' + resp.status + ')');
+      }}
+      return body;
+    }}
+    function bind(id, handler) {{
+      var el = document.getElementById(id);
+      if (el) el.addEventListener('click', handler);
+    }}
+    if (!panelRoot) return;
+    var latestQuery = panelRoot.getAttribute('data-latest-url') || '{latest_query}';
+    bind('share-copy-official', async function() {{
+      try {{
+        var data = await adminFetch(latestQuery);
+        try {{
+          if (navigator.clipboard && navigator.clipboard.writeText) {{
+            await navigator.clipboard.writeText(data.share_url);
+          }}
+          msg('已复制正式分享链接', true);
+        }} catch (e) {{ msg('复制失败，请手动复制：' + data.share_url, false); }}
+      }} catch (e) {{ msg(e.message || '复制失败', false); }}
+    }});
+    bind('share-regenerate', async function() {{
+      try {{
+        var token = panelRoot.getAttribute('data-token');
+        var rt = panelRoot.getAttribute('data-result-type');
+        await adminFetch('/portal/share-link', {{
+          method: 'POST',
+          headers: {{ 'Content-Type': 'application/json' }},
+          body: JSON.stringify({{ result_type: rt, target_token: token, permission: 'read', ttl_days: 7, replace_existing: true }})
+        }});
+        msg('已重新生成正式分享链接，点击"复制"按钮获取新链接', true);
+      }} catch (e) {{ msg(e.message || '重新生成失败', false); }}
+    }});
+    bind('share-revoke', async function() {{
+      try {{
+        var data = await adminFetch(latestQuery);
+        await adminFetch('/portal/share-link/' + encodeURIComponent(data.code) + '/revoke', {{
+          method: 'POST',
+          headers: {{ 'Content-Type': 'application/json' }},
+          body: JSON.stringify({{ result_type: panelRoot.getAttribute('data-result-type'), target_token: panelRoot.getAttribute('data-token') }})
+        }});
+        msg('已撤销当前分享链接', true);
+      }} catch (e) {{ msg(e.message || '撤销失败', false); }}
+    }});
+  }})();
+  </script>
+</section>
+"""
+
+
+def _render_share_link_script(
+    *,
+    result_type: str,
+    token: str,
+    copy_id: str,
+    share_id: str,
+    status_id: str,
+    title: str,
+) -> str:
     escaped_title = escape(title)
     escaped_token = escape(token)
     escaped_result_type = escape(result_type)
@@ -3719,11 +4088,12 @@ def _render_delivery_next_steps(token: str, stage: str) -> str:
             <button class="btn btn-secondary" id="report-share-btn" style="font-size:12px;min-height:32px;padding:6px 10px;">系统分享正式链接</button>
           </div>
           <p id="report-share-status" style="margin:6px 0 0;font-size:12px;color:#5a7cb8;" role="status" aria-live="polite"></p>
+          {_render_share_status_panel(result_type="report", token=token)}
           {_render_share_link_script(result_type="report", token=token, copy_id="report-copy-link", share_id="report-share-btn", status_id="report-share-status", title="志愿报告分享")}
         </div>"""
 
 
-def _render_status_page(token: str, context: dict[str, Any]) -> str:
+def _render_status_page(token: str, context: dict[str, Any], settings: Settings) -> str:
     order = context["order"]
     stage = str(context["stage"])
     report_links = ""
@@ -3801,6 +4171,11 @@ def _render_status_page(token: str, context: dict[str, Any]) -> str:
           <div class="status-item"><strong>交付阶段</strong><span>{escape(context["stage"])}</span></div>
         </div>
       </section>"""
+    share_status_panel = _render_share_status_panel(
+        result_type="report",
+        token=token,
+        settings=settings,
+    )
     return f"""<!doctype html>
 <html lang=\"zh-CN\">
   <head>
@@ -3892,6 +4267,7 @@ def _render_status_page(token: str, context: dict[str, Any]) -> str:
       <section class="sections">
         {summary_html}
         <div id=\"delivery-status\">{delivery_html}</div>
+        {share_status_panel}
         {station_notice_html}
         <section class="panel">
           <h2>Step 1 最小建档状态</h2>
@@ -4045,7 +4421,7 @@ def _render_report_shell(
     policy_href, same_score_href = _helper_entry_hrefs(payload, order)
     auxiliary_html = _render_auxiliary_factor_section(payload)
     version_state = _profile_version_state(payload, profile_version)
-    return f"""<!doctype html><html lang=\"zh-CN\"><head><meta charset=\"utf-8\" /><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" /><title>志愿报告资产页</title><link rel=\"stylesheet\" href=\"/static/portal-ui.css\" /><style>body{{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f3f7fb;margin:0;padding:32px 20px;color:#142235}}.wrap{{max-width:1100px;margin:0 auto;display:grid;gap:16px}}.panel{{background:#fff;border:1px solid #d7e3f1;border-radius:20px;padding:24px;box-shadow:0 18px 42px rgba(20,34,53,.08)}}.meta{{color:#5b6b88;line-height:1.8}}.actions{{display:flex;gap:12px;flex-wrap:wrap;margin-top:12px}}.btn{{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border-radius:14px;text-decoration:none;font-weight:700;background:#1f6feb;color:#fff}}.btn.secondary{{background:#eef6ff;color:#1f4fb6}}ul{{padding-left:20px;line-height:1.8}}pre{{white-space:pre-wrap;background:#f8fbff;border:1px solid #d7e3f1;border-radius:16px;padding:16px;overflow:auto}}</style></head><body>{_render_global_nav()}<main class="wrap"><section class="panel"><h1>志愿报告资产页</h1><p class="meta">报告版本：{escape(report_version)} · 基于哪个档案版本：{escape(profile_version)} · 当前复核版本：{escape(review_version)}</p><p class="meta">{escape(version_state)} · {history_summary}</p><div class="actions"><a class="btn" href=\"{next_href}\">继续下一步</a><a class=\"btn secondary\" href=\"{policy_href}\">查看政策中心</a><a class=\"btn secondary\" href=\"{same_score_href}\">查看同分段参考</a></div></section><section class="panel"><h2>当前复核摘要</h2>{review_summary}</section>{auxiliary_html}<section class="panel"><h2>原始报告内容</h2>{report_body_html}</section><section class="panel"><h2>下一步建议</h2><ul><li><a href=\"/portal/{escape(token)}/info\">回到资料页继续补充</a></li><li><a href=\"{next_href}\">继续当前主路径</a></li><li><a href=\"/review/start?source=report&amp;token={escape(token)}\">重新发起方案复核</a></li></ul></section>{_render_footer_links(token)}</main>{_render_global_toast_script()}</body></html>"""
+    return f"""<!doctype html><html lang=\"zh-CN\"><head><meta charset=\"utf-8\" /><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" /><title>志愿报告资产页</title><link rel=\"stylesheet\" href=\"/static/portal-ui.css\" /><style>body{{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f3f7fb;margin:0;padding:32px 20px;color:#142235}}.wrap{{max-width:1100px;margin:0 auto;display:grid;gap:16px}}.panel{{background:#fff;border:1px solid #d7e3f1;border-radius:20px;padding:24px;box-shadow:0 18px 42px rgba(20,34,53,.08)}}.meta{{color:#5b6b88;line-height:1.8}}.actions{{display:flex;gap:12px;flex-wrap:wrap;margin-top:12px}}.btn{{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border-radius:14px;text-decoration:none;font-weight:700;background:#1f6feb;color:#fff}}.btn.secondary{{background:#eef6ff;color:#1f4fb6}}ul{{padding-left:20px;line-height:1.8}}pre{{white-space:pre-wrap;background:#f8fbff;border:1px solid #d7e3f1;border-radius:16px;padding:16px;overflow:auto}}</style></head><body>{_render_global_nav()}<main class="wrap"><section class="panel"><h1>志愿报告资产页</h1><p class="meta">报告版本：{escape(report_version)} · 基于哪个档案版本：{escape(profile_version)} · 当前复核版本：{escape(review_version)}</p><p class="meta">{escape(version_state)} · {history_summary}</p><div class="actions"><a class="btn" href="{next_href}">继续下一步</a><a class="btn secondary" href="/portal/{escape(token)}/info">回到资料页继续补充</a><a class="btn secondary" href="{policy_href}">查看政策中心</a><a class="btn secondary" href="{same_score_href}">查看同分段参考</a></div></section>{_render_share_status_panel(result_type="report", token=token, settings=settings)}<section class="panel"><h2>当前复核摘要</h2>{review_summary}</section>{auxiliary_html}<section class="panel"><h2>原始报告内容</h2>{report_body_html}</section><section class="panel"><h2>下一步建议</h2><ul><li><a href="/portal/{escape(token)}/info">回到资料页继续补充</a></li><li><a href="{next_href}">继续当前主路径</a></li><li><a href="/review/start?source=report&amp;token={escape(token)}">重新发起方案复核</a></li></ul></section>{_render_footer_links(token)}</main>{_render_global_toast_script()}</body></html>"""
 
 
 def _render_report_page(order: Order, settings: Settings) -> str:
@@ -4206,10 +4582,10 @@ def _start_review_result(
     review_input_summary: str | None = None,
     review_constraints: dict[str, Any] | None = None,
 ) -> ReviewResultContract:
-    review_result_id = f"rvw_{secrets.token_hex(4)}"
     resolved_summary = (review_input_summary or "").strip()
     resolved_constraints = dict(review_constraints or {})
     resolved_attachments: list[str] = []
+    order = None
     if token:
         order = _resolve_order_from_token(token, settings)
         context = _build_portal_context(order, settings)
@@ -4237,12 +4613,30 @@ def _start_review_result(
             if isinstance(item, dict)
             and (item.get("original_name") or item.get("stored_name"))
         ]
+        existing = _load_latest_review_result(order.id, settings)
+        if existing is not None:
+            existing_summary = (existing.review_input_summary or "").strip()
+            if existing_summary == "未提供现有方案说明":
+                existing_summary = ""
+            existing_constraints = dict(existing.review_constraints or {})
+            existing_attachments = [
+                str(item).strip()
+                for item in existing.review_input_attachments
+                if str(item).strip()
+            ]
+            if (
+                existing_summary == resolved_summary
+                and existing_constraints == resolved_constraints
+                and existing_attachments == resolved_attachments
+            ):
+                return existing
+
+    review_result_id = f"rvw_{secrets.token_hex(4)}"
     profile_ready = _is_profile_minimum_complete(resolved_constraints)
     recommended_action: Literal["go_cwb", "go_step1", "go_full_plan"] = (
         "go_cwb" if profile_ready else "go_step1"
     )
 
-    # 优先尝试 LLM 生成审核结果；未配置或失败时回退到规则默认逻辑
     contract = _llm_review_contract(
         settings=settings,
         review_result_id=review_result_id,
@@ -4265,12 +4659,11 @@ def _start_review_result(
             available_actions=["go_cwb", "go_step1", "go_full_plan"],
             review_entry_source=source,
             review_followup_action="none",
-            review_input_summary=resolved_summary or "未提供现有方案说明",
+            review_input_summary=resolved_summary,
             review_input_attachments=resolved_attachments,
             review_constraints=resolved_constraints,
         )
-    if token:
-        order = _resolve_order_from_token(token, settings)
+    if order is not None:
         intake_store = IntakeStore.for_db(settings.orders_db_path)
         try:
             current = intake_store.get(order.id)
@@ -4313,7 +4706,9 @@ def _render_review_start_page(contract: ReviewResultContract, token: str | None)
         else ""
     )
     constraints = contract.review_constraints or {}
-    profile_ready = bool(constraints.get("candidate_province") and constraints.get("candidate_score"))
+    profile_ready = bool(
+        constraints.get("candidate_province") and constraints.get("candidate_score")
+    )
     recommended_label = {
         "go_cwb": "先去看冲稳保建议",
         "go_step1": "先补齐基础信息",
@@ -4327,7 +4722,6 @@ def _render_review_start_page(contract: ReviewResultContract, token: str | None)
             "home",
             "当前是免费复核，建议先完善分数、位次、选科等信息，或选择付费服务获得完整分析。",
         )
-        primary_href = "/"
     else:
         # 有订单场景：跳转到portal相应页面
         primary_action = {
@@ -4347,19 +4741,7 @@ def _render_review_start_page(contract: ReviewResultContract, token: str | None)
                 "如果你已经明确要进入完整服务，可以直接继续到完整规划页。",
             ),
         }[contract.recommended_action]
-        primary_href = {
-            "go_cwb": f"/portal/{token}/cwb",
-            "go_step1": f"/portal/{token}/info",
-            "go_full_plan": f"/portal/{token}/full-plan",
-        }[contract.recommended_action]
     summary = escape(contract.review_input_summary or "未提供现有方案说明")
-    # 按钮逻辑：有token时显示portal跳转按钮，无token时隐藏
-    if token:
-        cwb_btn = f'<a class="btn btn-secondary" href="/portal/{token}/cwb">查看冲稳保建议</a>'
-        step1_btn = f'<a class="btn btn-primary" href="/portal/{token}/info">先补齐基础信息</a>'
-    else:
-        cwb_btn = ""
-        step1_btn = ""
     # 风险等级视觉映射
     risk_level_map = {
         "low": ("偏低（风险可控）", "#1f6feb", "#eef6ff", "#d7e3f1"),
@@ -4369,14 +4751,14 @@ def _render_review_start_page(contract: ReviewResultContract, token: str | None)
     risk_label, risk_color, risk_bg, risk_border = risk_level_map.get(
         contract.risk_level.lower(), risk_level_map["medium"]
     )
-    
+
     # 建议标签
     recommended_label = {
         "go_cwb": "先去看冲稳保建议",
-        "go_step1": "先补齐基础信息",  
+        "go_step1": "先补齐基础信息",
         "go_full_plan": "进入完整规划",
     }[contract.recommended_action]
-    
+
     province = escape(
         _review_constraints_display(constraints.get("candidate_province"))
     )
@@ -4386,13 +4768,17 @@ def _render_review_start_page(contract: ReviewResultContract, token: str | None)
     score = escape(_review_constraints_display(constraints.get("candidate_score")))
     # 信息完整性提示
     info_complete_html = (
-        '<div style="margin-top:16px;padding:14px;border-radius:12px;background:#fffbeb;border:1px solid #fcd34d;">'
-        '<p style="margin:0;font-size:14px;color:#92400e;"><strong>⚠ 信息不完整</strong>：选科组合或位次为"待补充"，无法给出具体录取差距分析。</p>'
-        '</div>'
-    ) if not profile_ready else (
-        '<div style="margin-top:16px;padding:14px;border-radius:12px;background:#ecfdf5;border:1px solid #a7f3d0;">'
-        '<p style="margin:0;font-size:14px;color:#065f46;"><strong>✓ 信息完整</strong>：已具备生成冲稳保建议的条件。</p>'
-        '</div>'
+        (
+            '<div style="margin-top:16px;padding:14px;border-radius:12px;background:#fffbeb;border:1px solid #fcd34d;">'
+            '<p style="margin:0;font-size:14px;color:#92400e;"><strong>⚠ 信息不完整</strong>：选科组合或位次为"待补充"，无法给出具体录取差距分析。</p>'
+            "</div>"
+        )
+        if not profile_ready
+        else (
+            '<div style="margin-top:16px;padding:14px;border-radius:12px;background:#ecfdf5;border:1px solid #a7f3d0;">'
+            '<p style="margin:0;font-size:14px;color:#065f46;"><strong>✓ 信息完整</strong>：已具备生成冲稳保建议的条件。</p>'
+            "</div>"
+        )
     )
     rank = escape(_review_constraints_display(constraints.get("candidate_rank")))
     share_hint = "此页可生成正式分享链接"
@@ -4415,6 +4801,7 @@ def _render_review_start_page(contract: ReviewResultContract, token: str | None)
     <p id="share-status" style="margin:8px 0 0;font-size:12px;color:#5a7cb8;" role="status" aria-live="polite"></p>
   </div>
 </section>
+{_render_share_status_panel(result_type="review_result", token=token or "", settings=None)}
 {llm_summary_html}
 <section class="panel">
   <h2>你当前提交的信息</h2>
@@ -4435,6 +4822,7 @@ def _render_review_start_page(contract: ReviewResultContract, token: str | None)
     <span style="display:inline-flex;padding:8px 14px;border-radius:999px;background:{risk_bg};border:1px solid {risk_border};color:{risk_color};font-weight:700;font-size:13px;">风险等级：{risk_label}</span>
     <span style="display:inline-flex;padding:8px 14px;border-radius:999px;background:#f1f5f9;border:1px solid #cbd5e1;color:#475569;font-weight:600;font-size:13px;">建议：{recommended_label}</span>
   </div>
+  <h3>核心问题</h3>
   <ul>{findings_html}</ul>
   <p class="meta" style="margin-top:8px;">风险等级说明：低 = 当前方案结构基本合理，微调即可；中 = 存在踩线或扎堆风险，需要进一步判断；高 = 存在明显梯度失衡或结构风险，建议尽快调整。</p>
 </section>
@@ -4476,54 +4864,6 @@ def _render_review_start_page(contract: ReviewResultContract, token: str | None)
 }})();
 </script>
 
-<section class="panel">
-  <h2>你当前提交的信息</h2>
-  <div style="display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));">
-    <div style="padding:12px 14px;border-radius:12px;background:#f8fbff;border:1px solid #d7e3f1;">
-      <p style="margin:0;font-size:12px;color:#5b6b88;">目标院校/方案</p>
-      <p style="margin:4px 0 0;font-size:16px;font-weight:600;color:#172033;">{summary}</p>
-    </div>
-    <div style="padding:12px 14px;border-radius:12px;background:#f8fbff;border:1px solid #d7e3f1;">
-      <p style="margin:0;font-size:12px;color:#5b6b88;">考试省份</p>
-      <p style="margin:4px 0 0;font-size:16px;font-weight:600;color:#172033;">{province}</p>
-    </div>
-    <div style="padding:12px 14px;border-radius:12px;background:#f8fbff;border:1px solid #d7e3f1;">
-      <p style="margin:0;font-size:12px;color:#5b6b88;">高考分数</p>
-      <p style="margin:4px 0 0;font-size:16px;font-weight:600;color:#172033;">{score}</p>
-    </div>
-    <div style="padding:12px 14px;border-radius:12px;background:#f8fbff;border:1px solid #d7e3f1;">
-      <p style="margin:0;font-size:12px;color:#5b6b88;">选科组合</p>
-      <p style="margin:4px 0 0;font-size:16px;font-weight:600;color:#172033;">{subjects}</p>
-    </div>
-    <div style="padding:12px 14px;border-radius:12px;background:#f8fbff;border:1px solid #d7e3f1;">
-      <p style="margin:0;font-size:12px;color:#5b6b88;">位次</p>
-      <p style="margin:4px 0 0;font-size:16px;font-weight:600;color:#172033;">{rank}</p>
-    </div>
-  </div>
-  {info_complete_html}
-</section>
-
-<section class="panel">
-  <h2>初步评估结果</h2>
-  <div style="margin:16px 0;padding:18px 20px;border-radius:14px;background:{risk_bg};border:1px solid {risk_border};">
-    <p style="margin:0;font-size:20px;font-weight:700;color:{risk_color};">风险等级：{risk_label}</p>
-    <p style="margin:8px 0 0;font-size:14px;color:#5b6b88;">当前建议：{escape(recommended_label)}</p>
-  </div>
-  <h3>核心问题</h3>
-  <ul>{findings_html}</ul>
-  <p class="meta" style=\"margin-top:8px;\">风险等级说明：低 = 当前方案结构基本合理，微调即可；中 = 存在踩线或扎堆风险，需要进一步判断；高 = 存在明显梯度失衡或结构风险，建议尽快调整。</p>
-</section>
-
-<section class="panel">
-  <h2>下一步建议</h2>
-  <p class="meta">{escape(primary_action[2])}</p>
-  <div class="actions">
-    <a class="btn btn-primary" href="{primary_href}">{escape(primary_action[0])}</a>
-    {cwb_btn}{step1_btn}
-    <a class="btn btn-secondary" href="/pricing">进入完整规划（付费）</a>
-  </div>
-  <p class="meta" style="margin-top:10px;">免费复核帮你判断风险方向；完整规划和深度辅导在支付后启动，会给你逐志愿解析、冲稳保梯度表和交付报告。</p>
-</section>
 """
     return _render_placeholder_shell(
         title="复核结果", max_width=960, body_html=body_html

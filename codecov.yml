@@ -34,7 +34,7 @@ codecov:
       - "admin/tests/**"
       - "data/examples/**"
       - "rules/**" # 规则数据，非代码
-      - "scripts/gaokao-shortlink" # 已废弃的链接脚本
+      - "scripts/gaokao-shortlink" # share 统一 CLI 仍委派到 legacy parser
       - "**/__pycache__/**"
       - "**/tests.py"
       - "**/test_*.py"

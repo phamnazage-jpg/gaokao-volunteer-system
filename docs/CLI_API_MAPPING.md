@@ -46,7 +46,8 @@
 | `scripts/gaokao-checker`              | `gaokao-cli audit run` / `rules list` / `rules explain` / `rules scaffold-evidence` | `gaokato.services.audit`    |
 | `scripts/gaokao-audit`                | `gaokao-cli audit run`                   | 同上                        |
 | `scripts/gaokao-order-manager`        | `gaokao-cli order {create,get,list,...}` | `gaokato.services.order`    |
-| `scripts/gaokao-shortlink`            | `gaokao-cli share` (TBD)                 | (新增)                      |
+| `scripts/gaokao-shortlink`            | `gaokao-cli share {create,list,resolve,...}` | `data/cli_compat_gaokao_shortlink.py` |
+| `scripts/gaokao-poster`               | `gaokao-cli share poster`                    | `data/cli_compat_share.py`            |
 | `scripts/gaokao-data-trace`           | `gaokao-cli majors list-changes`         | `gaokato.services.majors`   |
 | `scripts/gaokao-channel-fallback`     | `gaokao-cli channel fallback`            | (新增)                      |
 | `scripts/gaokao-delivery-dispatch.py` | `gaokao-cli delivery dispatch`           | `gaokato.services.delivery` |
@@ -66,8 +67,7 @@
 | `majors`    | `status` / `lookup <name>` / `verify` / `changes`                     | `data/majors_catalog/cli.py` `MajorsCatalogLoader`               |
 | `majors`    | `school-status --year <y>` / `school-verify --year <y>`               | `data/majors_catalog/cli.py`                                     |
 | `audit`     | `run --province <p> --plan <json>`                                    | `data/rules/audit_engine.py` `AuditEngine`                       |
-| `order`     | 委派到 `data/orders/cli.py` 子命令（`create/list/show/...`）          | 复用 `data/orders/cli.py`                                        |
-| `share`     | 委派到 `scripts/gaokao-shortlink` 子命令（`create/list/resolve/...`） | 复用 `data/cli_compat_gaokao_shortlink.py`                       |
+| `share`     | `create/list/resolve/revoke/revoke-report/stats/stats-report/purge` + `poster` | `data/cli_compat_share.py` → `data/cli_compat_gaokao_shortlink.py` / `scripts/gaokao-poster` |
 | `payment`   | `doctor`（委派到 `scripts/payment_provider_doctor.py`）               | 复用 `data/cli_compat_payment_doctor.py`                         |
 | `channel`   | `check [--flags]` / `manual-template [--flags]`                       | 复用 `data/channel_sync/monitor.py`                              |
 | `delivery`  | `dispatch [--channel --limit]` / `watchdog [--channel --limit]`       | 复用 `scripts/gaokao-delivery-{dispatch,watchdog}.py`            |
