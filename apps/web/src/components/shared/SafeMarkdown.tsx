@@ -1,13 +1,13 @@
-'use client';
-
 /**
- * 安全的 Markdown 渲染组件
- * 替换当前的 formatMarkdownContent 和 CareerCard 中的 dangerouslySetInnerHTML
+ * V10 选项 B · 安全的 Markdown 渲染组件
+ * 保留 useChat 旧版的所有功能, 仅移除 'use client' (Vite 不需要)
  *
- * 依赖: npm install react-markdown rehype-sanitize
+ * V10 不变量 B2: SafeMarkdown XSS 防护
+ *  - rehype-sanitize 过滤 <script> / onerror / javascript:
+ *
+ * 依赖: react-markdown + rehype-sanitize
  */
 
-import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import rehypeSanitize from 'rehype-sanitize';
 import type { Components } from 'react-markdown';

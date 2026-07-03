@@ -1,70 +1,63 @@
-'use client';
-
-import React, { useState } from 'react';
+/**
+ * V10 选项 B · CareerCard 组件 (重写)
+ * 使用 CareerCardMessageData 类型, 0 any
+ */
+import { useState } from 'react';
 import { SafeMarkdown } from './shared/SafeMarkdown';
-
-interface Major {
-  name: string;
-  match: number;
-}
+import type { CareerCardMessageData } from '@/types/message';
 
 interface Props {
-  content: string;
-  relatedMajors: Major[];
-  careerName: string;
-  userScore?: number;
+  data: CareerCardMessageData;
 }
 
-export function CareerCard({ content, relatedMajors, careerName, userScore }: Props) {
-  const [showMajors, setShowMajors] = useState(false);
+const PROSPECT_STYLES: Record<'好' | '中' | '差', { color: string; bg: string; label: string }> = {
+  好: { color: 'text-green-700', bg: 'bg-green-50', label: '前景好' },
+  中: { color: 'text-yellow-700', bg: 'bg-yellow-50', label: '前景一般' },
+  差: { color: 'text-red-700', bg: 'bg-red-50', label: '前景较差' },
+};
 
-  const stars = (n: number) => '⭐'.repeat(n);
+export function CareerCard({ data }: Props) {
+  const [expanded, setExpanded] = useState(false);
+  const visible = expanded ? data.careers : data.careers.slice(0, 3);
 
   return (
-    <div className="bg-white border border-gray-200 rounded-2xl rounded-tl-md shadow-sm overflow-hidden">
-      <div className="px-5 py-4">
-        {/* 使用 SafeMarkdown 替代 dangerouslySetInnerHTML，消除 XSS 风险 */}
-        <SafeMarkdown content={content} compact />
+    <div className="mt-2 bg-white border border-gray-200 rounded-2xl rounded-tl-md shadow-sm overflow-hidden">
+      <div className="px-4 py-3 border-b border-gray-100">
+        <h3 className="text-sm font-bold text-gray-800">💼 相关职业推荐</h3>
+        <p className="text-xs text-gray-500 mt-0.5">点击展开查看更多</p>
       </div>
 
-      {!showMajors ? (
-        <div className="px-5 pb-4 flex gap-2">
-          <button
-            onClick={() => setShowMajors(true)}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg text-xs font-medium hover:bg-blue-700 transition-colors"
-            aria-expanded={false}
-          >
-            📚 推荐相关专业
-          </button>
-          <button
-            className="px-4 py-2 bg-white border border-gray-200 rounded-lg text-xs font-medium text-gray-600 hover:bg-gray-50 transition-colors"
-            title="即将支持"
-          >
-            ⚖️ 对比其他职业
-          </button>
-        </div>
-      ) : (
-        <div className="border-t border-gray-100 px-5 py-4">
-          <h4 className="text-sm font-semibold text-gray-800 mb-3">
-            {careerName}对应的主要专业：
-          </h4>
-          <div className="space-y-2">
-            {relatedMajors.map((major, idx) => (
-              <div key={idx} className="flex items-center justify-between bg-gray-50 rounded-lg px-3 py-2">
-                <span className="text-sm text-gray-700">{major.name}</span>
-                <span className="text-xs text-yellow-500" aria-label={`匹配度 ${major.match} 星`}>{stars(major.match)}</span>
+      <div className="divide-y divide-gray-100">
+        {visible.map((career, idx) => {
+          const style = PROSPECT_STYLES[career.prospect];
+          return (
+            <div key={`${career.name}-${idx}`} className="px-4 py-3 hover:bg-gray-50 transition-colors">
+              <div className="flex items-start justify-between gap-2">
+                <div className="flex-1 min-w-0">
+                  <h4 className="text-sm font-medium text-gray-800">{career.name}</h4>
+                  <SafeMarkdown content={career.description} />
+                </div>
+                <div className="flex flex-col items-end gap-0.5 flex-shrink-0">
+                  <span className={`text-xs px-2 py-0.5 rounded-full ${style.bg} ${style.color}`}>{style.label}</span>
+                  <span className="text-xs text-gray-500">{career.salary}</span>
+                </div>
               </div>
-            ))}
-          </div>
-          <p className="text-xs text-gray-400 mt-3">
-            {userScore
-              ? `💡 结合你的分数（${userScore}分），广东开设这些专业的院校已经显示在你的志愿方案中。需要进一步筛选吗？`
-              : '💡 广东开设这些专业的院校信息可以在志愿方案中查看。'}
-          </p>
+            </div>
+          );
+        })}
+      </div>
+
+      {data.careers.length > 3 && (
+        <div className="px-4 py-2 text-center border-t border-gray-100">
+          <button
+            type="button"
+            onClick={() => setExpanded((v) => !v)}
+            className="text-xs text-blue-600 hover:text-blue-700"
+          >
+            {expanded ? '收起' : `展开剩余 ${data.careers.length - 3} 个职业`}
+          </button>
         </div>
       )}
     </div>
   );
 }
-
-// 移除旧的不安全的 formatCareerMd 函数

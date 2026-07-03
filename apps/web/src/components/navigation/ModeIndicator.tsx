@@ -1,20 +1,30 @@
-'use client';
-
 /**
- * ModeIndicator — 对话区模式指示器
- * 显示当前对话处于什么模式（探索/生成/审核）
+ * V10 选项 B · ModeIndicator 组件 (4-mode 决策树)
+ *
+ * V10 不变量 C2: 4-mode 互斥显示, 决策延迟 < 50ms
+ *
+ * 决策树:
+ *  - isAuditActive → auditing
+ *  - currentPlan + no audit → adjusting
+ *  - province + score → generating
+ *  - 其他 → explore
  */
 
-import React from 'react';
-
-type ChatMode = 'explore' | 'generating' | 'auditing' | 'adjusting';
+export type ChatMode = 'explore' | 'generating' | 'auditing' | 'adjusting';
 
 interface Props {
   mode: ChatMode;
   text?: string;
 }
 
-const MODE_CONFIG: Record<ChatMode, { icon: string; label: string; bgClass: string; textClass: string }> = {
+interface ModeConfig {
+  readonly icon: string;
+  readonly label: string;
+  readonly bgClass: string;
+  readonly textClass: string;
+}
+
+const MODE_CONFIG: Record<ChatMode, ModeConfig> = {
   explore: {
     icon: '🔍',
     label: '自由探索',
@@ -51,24 +61,22 @@ export function ModeIndicator({ mode, text }: Props) {
       aria-live="polite"
     >
       <span aria-hidden="true">{config.icon}</span>
-      <span>{text || config.label}</span>
+      <span>{text ?? config.label}</span>
     </div>
   );
 }
 
 /**
- * 根据用户画像推导当前对话模式
+ * 推导当前对话模式
+ * 决策延迟 < 50ms (O(1) 短路求值)
  */
 export function deriveMode(
-  userProfile: { province?: unknown; score?: unknown; subjects?: unknown },
+  userProfile: { province?: string | undefined; score?: number | undefined; subjects?: string[] | undefined },
   currentPlan: unknown,
   isAuditActive: boolean
 ): ChatMode {
   if (isAuditActive) return 'auditing';
-  if (currentPlan) {
-    // 检查是否有调整中的状态
-    return 'adjusting';
-  }
+  if (currentPlan) return 'adjusting';
   if (userProfile?.province && userProfile?.score) return 'generating';
   return 'explore';
 }

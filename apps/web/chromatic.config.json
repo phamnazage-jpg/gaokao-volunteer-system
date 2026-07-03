@@ -1,0 +1,10 @@
+{
+  "$schema": "https://www.chromatic.com/config-file.schema.json",
+  "projectToken": "__CHROMATIC_TOKEN__",
+  "buildScriptName": "build",
+  "outputDir": "dist",
+  "exitZeroOnChanges": true,
+  "externals": ["node_modules/**", "dist/**", ".vite/**"],
+  "onlyChanged": false,
+  "ignoreLastBuildOnBranch": "main"
+}

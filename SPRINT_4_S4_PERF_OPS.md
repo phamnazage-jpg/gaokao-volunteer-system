@@ -1,8 +1,24 @@
-# Sprint 4 任务拆解（W6-7 · 14 人天 · 50 子任务）
+# Sprint 4 任务拆解（W6-7 · 10 人天 · 46 子任务）— V10 选项 B
 
-> **主任务**：T-B-18 ~ T-B-21, T-B-22 ~ T-B-27（持久化/e2e/LH/bundle/prefetch/回归）+ T-B-40 ~ T-B-43 + T-C-44, T-C-45
-> **目标**：错误/兜底/离线/防重 + 性能优化 + 监控收口
-> **闸门**：G3（Lighthouse P75 ≥ 90）+ G4（Poster CLI Docker 镜像跑通）
+> **技术栈**：Vite 5 + React 19 + Zustand 4 + TanStack Query 5 + RHF 7 + Zod
+> **目标**：错误/兜底/离线/防重 + 性能优化 + 监控收口 + 真实后端回归
+> **闸门**：G3（Lighthouse P75 ≥ 90 P/A/B/S）+ G4（Poster CLI Docker 镜像跑通）
+> **V10 变化**：从 14d 缩到 10d（节省 4d = Vite SSR 简化 + e2e 用 Playwright 1.55 加速）
+> **PM 决策（2026-07-03）**：整体重写为新实现；Playwright 视觉回归 + Chromatic 验收
+
+---
+
+## ⚠️ V10 关键变化（与 V2 对比）
+
+| 维度 | V2 | V10 选项 B |
+|---|---|---|
+| Lighthouse 目标 | 90 P75 | **90 P75**（保持） |
+| e2e 真实化（8 路径） | 3.0d | **2.0d**（Playwright trace + Vite preview 加速） |
+| Bundle 优化 | 1.0d | **0.5d**（Vite 已分块） |
+| i18n 错误码映射 | 0.5d | **0.5d**（不变） |
+| 总估时 | 14d | **10d** |
+
+---
 
 ## 0. Sprint 4 概览
 
@@ -11,20 +27,20 @@
 | T-B-18 | 错误码 → 用户文案映射 | 0.5d | 3 |
 | T-B-19 | ErrorBoundary 兜底页 | 0.5d | 3 |
 | T-B-20 | 离线检测 + 提示 | 1.0d | 4 |
-| T-B-21 | 表单提交防重复 | 0.5d | 3 |
-| T-B-22 | TanStack Query 持久化 | 1.0d | 3 |
-| T-B-23 | e2e 真实化（8 路径） | 3.0d | 8 |
+| T-B-21 | 表单提交防重复（RHF 版） | 0.5d | 3 |
+| T-B-22 | TanStack Query 持久化 | 0.5d | 3 |
+| T-B-23 | e2e 真实化（8 路径，Playwright 加速） | 2.0d | 8 |
 | T-B-24 | Lighthouse CI 集成 | 1.5d | 4 |
-| T-B-25 | Bundle 优化 | 1.0d | 4 |
+| T-B-25 | Bundle 优化（Vite 版） | 0.5d | 3 |
 | T-B-26 | 路由级 prefetch | 0.5d | 2 |
 | T-B-27 | 真实后端回归 | 0.5d | 2 |
 | T-B-40 | Share Link 状态面板数据 | 0.5d | 3 |
 | T-B-41 | ShareLink 失败降级 | 0.5d | 3 |
-| T-B-42 | LLM 增强进度轮询 | 1.0d | 4 |
+| T-B-42 | LLM 增强进度轮询 | 0.5d | 3 |
 | T-B-43 | Poster 异步生成 + 轮询 | 0.5d | 3 |
-| T-C-44 | Poster CLI 部署集成 | 1.0d | 4 |
+| T-C-44 | Poster CLI 部署集成（Docker） | 1.0d | 4 |
 | T-C-45 | 集成测试套件 | 0d | 2 |
-| **合计** | **16 任务** | **12d + 缓冲 2d = 14d** | **50** |
+| **合计** | **16 任务** | **10d** | **53** |
 
 ---
 
@@ -49,227 +65,212 @@
 
 ## T-B-19 · ErrorBoundary 兜底页（0.5d · 3 子任务）
 
-### ST-S4-B-19.1 写 `apps/web/app/error.tsx`（0.25d）
-- **Next 16 error boundary** + 友好提示
-- **验收**：
-  - [ ] 5xx 错误时显示兜底页
+### ST-S4-B-19.1 写 `ErrorBoundary` 组件（0.25d）
+- **V10 变化**：用 `react-error-boundary` 库，避免手写 class 组件
 
-### ST-S4-B-19.2 Sentry 上报（0.125d）
-- **API**：`Sentry.captureException(error)`
+### ST-S4-B-19.2 写兜底页（0.125d）
+- **UI/交互 1:1**：与原型 ErrorPage 一致
 
-### ST-S4-B-19.3 写单测（0.125d）
-- **覆盖**：throw 错误时显示兜底
+### ST-S4-B-19.3 接入根路由（0.125d）
 
 ---
 
 ## T-B-20 · 离线检测 + 提示（1.0d · 4 子任务）
 
 ### ST-S4-B-20.1 写 `useOnlineStatus` hook（0.25d）
-- **API**：`navigator.onLine` + `online` / `offline` 事件
+- **封装**：`navigator.onLine` + `online`/`offline` 事件
 
-### ST-S4-B-20.2 顶部黄条提示（0.25d）
-- **验收**：
-  - [ ] offline → 顶部条
-  - [ ] 写操作禁用
+### ST-S4-B-20.2 写 OfflineBanner 组件（0.25d）
+- **V10 不变量 L2**：移动端 48px 高度
 
-### ST-S4-B-20.3 online 恢复自动重试（0.25d）
-- **API**：`useMutation` 队列 + `refetchOnReconnect`
+### ST-S4-B-20.3 写离线降级策略（0.25d）
+- **行为**：写操作排队 + 恢复后自动重试
 
-### ST-S4-B-20.4 写单测 + e2e（0.25d）
+### ST-S4-B-20.4 写 e2e：offline.spec（0.25d）
 
 ---
 
-## T-B-21 · 表单提交防重复（0.5d · 3 子任务）
+## T-B-21 · 表单提交防重复（RHF 版 · 0.5d · 3 子任务）⚠️ V10 简化
 
-### ST-S4-B-21.1 mutation 加 `isPending`（0.125d）
-- **覆盖**：所有 mutation
+> **V10 收益**：RHF `formState.isSubmitting` 内置
 
-### ST-S4-B-21.2 FormCard 提交按钮禁用（0.25d）
-- **验收**：
-  - [ ] isPending 时禁用 + 旋转图标
-
-### ST-S4-B-21.3 ChatMessage 修复按钮单次点击禁用（0.125d）
+### ST-S4-B-21.1 接入 RHF isSubmitting（0.125d）
+### ST-S4-B-21.2 写通用 SubmitButton 组件（0.25d）
+### ST-S4-B-21.3 写单测（0.125d）
 
 ---
 
-## T-B-22 · TanStack Query 持久化（1.0d · 3 子任务）
+## T-B-22 · TanStack Query 持久化（0.5d · 3 子任务）⚠️ V10 简化
 
-### ST-S4-B-22.1 接入 `@tanstack/query-persist-client-core`（0.5d）
-- **存储**：localStorage
-- **验收**：
-  - [ ] 关闭浏览器再打开 → 历史消息立即可见
+> **V10 收益**：`@tanstack/query-async-storage-persister` 内置支持
 
-### ST-S4-B-22.2 后台 revalidate（0.25d）
-- **API**：`staleTime: 5min` + `refetchOnMount: 'always'`
+### ST-S4-B-22.1 安装 persister（0.125d）
+```bash
+pnpm --filter web add @tanstack/query-async-storage-persister
+```
 
-### ST-S4-B-22.3 写单测（0.25d）
+### ST-S4-B-22.2 写 `queryClient.ts` 持久化配置（0.25d）
+- **maxAge**：24h
+- **storage**：localStorage
+
+### ST-S4-B-22.3 验证 5 模块刷新恢复（0.125d）
 
 ---
 
-## T-B-23 · e2e 真实化（8 路径，3.0d · 8 子任务）
+## T-B-23 · e2e 真实化（8 路径 · 2.0d · 8 子任务）⚠️ V10 加速
 
-### ST-S4-B-23.1 `chat-send.spec.ts`（0.25d）
-- **验收**：1s 用户气泡 + 3s AI 回复 + 失败场景
+> **V10 加速**：用 Playwright `test.step` + Vite preview server
 
-### ST-S4-B-23.2 `chat-history.spec.ts`（0.25d）
-
-### ST-S4-B-23.3 `plan-save.spec.ts`（0.5d）
-
-### ST-S4-B-23.4 `audit-upload.spec.ts`（0.5d）
-
-### ST-S4-B-23.5 `theme-persist.spec.ts`（0.25d）
-
-### ST-S4-B-23.6 🆕 `share-link.spec.ts`（0.5d）
-- **覆盖**：创建 / 撤销 / 分享 UI
-
-### ST-S4-B-23.7 🆕 `data-query.spec.ts`（0.5d）
-- **覆盖**：4 查询页
-
-### ST-S4-B-23.8 🆕 `review-flow.spec.ts`（0.5d）
-- **覆盖**：复核全流程
-
-**验收**：
-- [ ] 8 spec 全绿
-- [ ] 每个 spec 含 1 失败场景
+### ST-S4-B-23.1 e2e: theme-switch（0.25d）
+### ST-S4-B-23.2 e2e: chat-send-receive（0.25d）
+### ST-S4-B-23.3 e2e: form-submit-validation（0.25d）
+### ST-S4-B-23.4 e2e: plan-create-view（0.25d）
+### ST-S4-B-23.5 e2e: share-link-create-scan（0.25d）
+### ST-S4-B-23.6 e2e: data-query-search（0.25d）
+### ST-S4-B-23.7 e2e: review-flow-approve（0.25d）
+### ST-S4-B-23.8 e2e: poster-generate-download（0.25d）
 
 ---
 
 ## T-B-24 · Lighthouse CI 集成（1.5d · 4 子任务）
 
-### ST-S4-B-24.1 写 `lighthouserc.json`（0.5d）
-- **预算**：
-  - LCP < 2.5s / INP < 200ms / CLS < 0.1
-  - Performance ≥ 90 / Accessibility ≥ 95 / Best Practices ≥ 95 / SEO ≥ 90
+### ST-S4-B-24.1 安装 `@lhci/cli`（0.25d）
 
-### ST-S4-B-24.2 配 GitHub Action（0.5d）
-- **覆盖页面**（12 个）：/ /consultations /plans /plans/compare /assessment /score-line-query /rank-estimator /majors-query /schools-query /review/start /admin/login /admin
+### ST-S4-B-24.2 写 `lighthouserc.json`（0.5d）
+- **目标**：P ≥ 90 / A ≥ 95 / B ≥ 90 / S ≥ 90
+- **V10 收益**：Vite 产物比 Next.js 小，Lighthouse 分数天然更高
 
-### ST-S4-B-24.3 PR 评论显示分数（0.25d）
+### ST-S4-B-24.3 接入 GitHub Action（0.5d）
+- **验收**：
+  - [ ] PR 触发 LHCI
+  - [ ] 分数 < 90 阻止合并
 
-### ST-S4-B-24.4 验证 12 页 P75（0.25d）
-- **G3 闸门**
+### ST-S4-B-24.4 调优未达标项（0.25d）
 
 ---
 
-## T-B-25 · Bundle 优化（1.0d · 4 子任务）
+## T-B-25 · Bundle 优化（Vite 版 · 0.5d · 3 子任务）⚠️ V10 简化
 
-### ST-S4-B-25.1 `next/dynamic` 异步加载（0.25d）
-- **目标组件**：PlanCard / AuditReportCard / CareerCard
+> **V10 收益**：Sprint 2 已分块，S4 只做微调
 
-### ST-S4-B-25.2 `react-markdown` 异步 chunk（0.25d）
+### ST-S4-B-25.1 配置 manualChunks 精细化（0.125d）
+- **目标**：recharts 单独 chunk（懒加载）
 
-### ST-S4-B-25.3 拆 vendor chunk（0.25d）
-- **验收**：
-  - [ ] First load JS < 200KB
-  - [ ] PlanCard chunk < 50KB
+### ST-S4-B-25.2 配置资源内联阈值（0.125d）
+- **4KB 以下内联**
 
-### ST-S4-B-25.4 验证（0.25d）
+### ST-S4-B-25.3 验证 bundle < 300KB gzip（0.25d）
 
 ---
 
 ## T-B-26 · 路由级 prefetch（0.5d · 2 子任务）
 
-### ST-S4-B-26.1 `<Link prefetch>` 关键路径（0.25d）
-- **目标**：/consultations /plans /assessment
+### ST-S4-B-26.1 写 `<PrefetchLink>` 组件（0.25d）
+- **行为**：hover 200ms 后预取目标 chunk
 
-### ST-S4-B-26.2 验证 hover 100ms（0.25d）
+### ST-S4-B-26.2 接入 Header / Sidebar（0.25d）
+- **验收**：
+  - [ ] hover → 预取 → 点击 0 等待
 
 ---
 
 ## T-B-27 · 真实后端回归（0.5d · 2 子任务）
 
-### ST-S4-B-27.1 完整 e2e 套件（0.25d）
-- **验收**：
-  - [ ] 15+ e2e spec 全绿
+### ST-S4-B-27.1 启动后端服务（0.25d）
+- **命令**：`docker compose up backend postgres`
 
-### ST-S4-B-27.2 3 浏览器回归（0.25d）
-- **覆盖**：chromium / webkit / firefox
+### ST-S4-B-27.2 跑 5 模块端到端（0.25d）
+- **验收**：
+  - [ ] Share / Query / Review / LLM / Poster 全部 200
 
 ---
 
 ## T-B-40 · Share Link 状态面板数据（0.5d · 3 子任务）
 
-### ST-S4-B-40.1 写 `useShareStatusPanel(resourceId)`（0.25d）
-- **API**：latest + stats 双 query
+### ST-S4-B-40.1 写 `useShareLinkStatsQuery`（0.125d）
+- **封装**：`GET /api/share-link/{code}/stats`
 
-### ST-S4-B-40.2 30s 自动刷新（0.125d）
-- **依据**：test_share_status_panel.py 期望
+### ST-S4-B-40.2 写 Stats 组件（0.25d）
+- **V10 收益**：Sprint 3 已实现，此处优化
 
-### ST-S4-B-40.3 写单测（0.125d）
+### ST-S4-B-40.3 接入 Dashboard（0.125d）
 
 ---
 
 ## T-B-41 · ShareLink 失败降级（0.5d · 3 子任务）
 
-### ST-S4-B-41.1 `navigator.share` 不可用降级（0.25d）
-- **降级路径**：navigator.share → clipboard.writeText → `<a download>`
+### ST-S4-B-41.1 写重试机制（0.25d）
+- **V10 收益**：TanStack Query `retry: 3` 内置
 
-### ST-S4-B-41.2 3 路径测试（0.125d）
-
-### ST-S4-B-41.3 用户明确提示（0.125d）
+### ST-B-41.2 写降级 UI（0.125d）
+### ST-S4-B-41.3 写 e2e：share-link-fallback.spec（0.125d）
 
 ---
 
-## T-B-42 · LLM 增强进度轮询（1.0d · 4 子任务）
+## T-B-42 · LLM 增强进度轮询（0.5d · 3 子任务）⚠️ V10 简化
 
-### ST-S4-B-42.1 `useLLMEnhancement` + SSE 优先（0.25d）
-- **依据**：commit `11fbb59`
+> **V10 收益**：TanStack Query `refetchInterval` 内置
 
-### ST-S4-B-42.2 长任务进度条（0.25d）
-- **触发**：> 30s
-
-### ST-S4-B-42.3 失败降级到基础结果（0.25d）
-- **验收**：
-  - [ ] 显示"AI 增强暂不可用，已展示基础结果"
-
-### ST-S4-B-42.4 SSE 断开重连 3 次（0.25d）
+### ST-S4-B-42.1 写 `useAuditEnhanceStatusQuery`（0.125d）
+### ST-S4-B-42.2 写进度条组件（0.25d）
+### ST-S4-B-42.3 接入 AuditPanel（0.125d）
 
 ---
 
 ## T-B-43 · Poster 异步生成 + 轮询（0.5d · 3 子任务）
 
-### ST-S4-B-43.1 写 `usePoster` + 进度条（0.25d）
-- **验收**：
-  - [ ] 5-10s 内完成
+### ST-S4-B-43.1 写 `usePosterStatusQuery`（0.125d）
+### ST-S4-B-43.2 写状态机组件（0.25d）
+- **三态**：generating / ready / failed
 
-### ST-S4-B-43.2 自动下载（可选）（0.125d）
-
-### ST-S4-B-43.3 失败可重试（0.125d）
+### ST-S4-B-43.3 接入 PosterDialog（0.125d）
 
 ---
 
-## T-C-44 · Poster CLI 部署集成（1.0d · 4 子任务）
+## T-C-44 · Poster CLI 部署集成（Docker · 1.0d · 4 子任务）
 
-### ST-S4-C-44.1 crontab 配置（0.25d）
-- **时间**：每日 02:00
-- **验收**：
-  - [ ] crontab 配置生效
-
-### ST-S4-C-44.2 产物上传 CDN（0.25d）
-
-### ST-S4-C-44.3 失败告警 Sentry（0.25d）
-- **G4 闸门**：Docker 化验证
-
-### ST-S4-C-44.4 日志可查（0.25d）
+### ST-C-44.1 写 `Dockerfile.poster`（0.25d）
+### ST-C-44.2 写 `docker-compose.yml` 添加 poster 服务（0.25d）
+### ST-C-44.3 本地构建 + 启动验证（0.25d）
+### ST-C-44.4 CI 集成（0.25d）
 
 ---
 
 ## T-C-45 · 集成测试套件（0d · 2 子任务）
 
-### ST-S4-C-45.1 写 FastAPI + Next.js 双服务集成测试（0d - 复用 S2 测试基础设施）
-- **场景**：5 关键场景
-- **依据**：commit `a8b4927` integration_test.py
-
-### ST-S4-C-45.2 CI 卡点（0d）
-- **集成**：T-A-23 web-ci.yml
+### ST-C-45.1 写 `tests/integration/` 骨架（0d）
+### ST-C-45.2 跑通 3 个集成测试（0d）
 
 ---
 
-## Sprint 4 收口验收
+## V10 验收清单（Sprint 4 G3 + G4 闸门）
 
-- [ ] 16 主任务 / 50 子任务全部完成
-- [ ] **G3 通过**：Lighthouse 12 页 P75 ≥ 90
-- [ ] **G4 通过**：Poster CLI Docker 镜像跑通
-- [ ] Bundle < 200KB
-- [ ] 8 e2e spec 全绿
-- [ ] 进入 Sprint 5 前 commit：`<feat(s4): error+offline+perf+monitoring>`
+```
+G3 闸门（必须全部通过）：
+  [ ] Lighthouse P75 ≥ 90（P/A/B/S 四项）
+  [ ] pnpm build bundle < 300KB gzip
+  [ ] 8 e2e spec 全绿
+  [ ] 真实后端 5 模块 200
+
+G4 闸门：
+  [ ] Poster CLI Docker 镜像本地构建 < 60s
+  [ ] docker compose up 启动成功
+  [ ] Poster 异步生成端到端跑通
+```
+
+---
+
+## V10 风险（Sprint 4 特有）
+
+| ID | 风险 | 等级 | 缓解 |
+|---|---|---|---|
+| V10-S4-R1 | Lighthouse 分数不达标 | 中 | Vite 产物天然高分；重点优化 LCP 图 |
+| V10-S4-R2 | 真实后端回归失败 | 中 | 用 docker compose 隔离环境；失败可回退 mock |
+| V10-S4-R3 | Poster CLI Docker 镜像构建慢 | 低 | 多阶段构建 + 缓存 |
+
+---
+
+**Sprint 4 文档状态**：V10 选项 B 重写完成
+**总工时**：10 人天（V2 是 14 人天，节省 4d）
+**总子任务**：53 个（V2 是 50 个）
+**下一步**：Sprint 3 完成后立即启动

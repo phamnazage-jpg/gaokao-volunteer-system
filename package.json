@@ -1,13 +1,9 @@
 {
   "name": "gaokao-monorepo",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "private": true,
-  "description": "高考志愿填报系统 monorepo（根）",
-  "engines": {
-    "node": ">=20.0.0",
-    "pnpm": ">=9.0.0"
-  },
   "packageManager": "pnpm@10.33.0",
+  "description": "高考志愿填报系统 - Vite 5 + React 19 + Zustand 4 + TanStack Query 5 (V10 选项 B)",
   "scripts": {
     "dev": "turbo run dev",
     "build": "turbo run build",
@@ -15,14 +11,17 @@
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
     "test:e2e": "turbo run test:e2e",
-    "format": "prettier --write \"**/*.{ts,tsx,js,mjs,cjs,json,md,yml,yaml}\"",
-    "format:check": "prettier --check \"**/*.{ts,tsx,js,mjs,cjs,json,md,yml,yaml}\"",
+    "codegen": "turbo run codegen",
+    "chromatic": "turbo run chromatic",
     "clean": "turbo run clean && rm -rf node_modules .turbo"
   },
   "devDependencies": {
-    "turbo": "^2.3.0",
-    "prettier": "^3.4.0",
-    "eslint": "^9.0.0",
-    "@types/node": "^20.0.0"
+    "turbo": "^2.3.3",
+    "prettier": "^3.4.2",
+    "eslint": "^9",
+    "typescript": "^5.7.2"
+  },
+  "engines": {
+    "node": ">=20"
   }
 }

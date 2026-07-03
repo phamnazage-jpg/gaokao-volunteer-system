@@ -1,17 +1,22 @@
-'use client';
-
-import React from 'react';
-import type { Message } from '@/lib/useChat';
+/**
+ * V10 选项 B · ChatMessage 组件 (重写)
+ *
+ * 关键变化:
+ *  - 移除 'use client' (Vite 不需要)
+ *  - Message 类型改为 @/types/message
+ *  - 0 any (onSubmitForm 用 FormCardData 类型)
+ */
+import type { Message, FormCardMessageData, PlanCardMessageData, CareerCardMessageData, AuditReportMessageData, FileUploadPromptMessageData } from '@/types/message';
 import { PlanCard } from './PlanCard';
 import { CareerCard } from './CareerCard';
 import { AuditReportCard } from './AuditReportCard';
-import { FormCard } from './FormCard';
+import { FormCard, type FormCardData } from './FormCard';
 import { FileUploadPrompt } from './FileUploadPrompt';
 import { SafeMarkdown } from './shared/SafeMarkdown';
 
 interface Props {
   message: Message;
-  onSubmitForm?: (data: Record<string, any>) => void;
+  onSubmitForm?: (data: FormCardData) => void;
   onSavePlan?: () => void;
   onExportPlan?: () => void;
   onFixRequest?: (riskIndex: number, riskText: string) => void;
@@ -26,9 +31,7 @@ export function ChatMessage({ message, onSubmitForm, onSavePlan, onExportPlan, o
   if (isSystem) {
     return (
       <div className="flex justify-center my-4">
-        <div className="bg-gray-100 text-gray-500 text-xs px-4 py-1.5 rounded-full">
-          {message.content}
-        </div>
+        <div className="bg-gray-100 text-gray-500 text-xs px-4 py-1.5 rounded-full">{message.content}</div>
       </div>
     );
   }
@@ -43,48 +46,45 @@ export function ChatMessage({ message, onSubmitForm, onSavePlan, onExportPlan, o
     );
   }
 
-  // Assistant messages — different types
+  // assistant message
+  const data = message.data;
+  const dataType = data?.type;
+
   return (
-    <div className="mb-4 px-4">
-      <div className="flex items-start gap-3 max-w-[90%] md:max-w-[80%]">
-        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold flex-shrink-0 mt-0.5">
+    <div className="flex justify-start mb-4 px-4">
+      <div className="max-w-[90%] md:max-w-[80%] flex items-start gap-3">
+        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
           AI
         </div>
         <div className="flex-1">
-          {message.type === 'text' && (
+          {/* 默认 markdown 渲染 */}
+          {message.content && (
             <div className="bg-white border border-gray-100 rounded-2xl rounded-tl-md px-4 py-3 shadow-sm">
-              <SafeMarkdown content={message.content} compact />
+              <SafeMarkdown content={message.content} />
             </div>
           )}
-          {message.type === 'form_card' && message.data && (
-            <FormCard data={message.data} onSubmit={onSubmitForm!} />
+
+          {/* 各类型卡片 */}
+          {dataType === 'form_card' && onSubmitForm && (
+            <div className="mt-2">
+              <FormCard onSubmit={onSubmitForm} initialData={(data as FormCardMessageData).fields as Partial<FormCardData>} />
+            </div>
           )}
-          {message.type === 'plan_card' && message.data && (
-            <PlanCard
-              plan={message.data.plan}
-              profile={message.data.profile}
-              onSave={onSavePlan}
-              onExport={onExportPlan}
-              savedPlanId={savedPlanId}
-              adjusted={message.data.adjusted}
-            />
+
+          {dataType === 'plan_card' && (
+            <div className="mt-2">
+              <PlanCard data={data as PlanCardMessageData} userScore={userScore} onSave={onSavePlan} onExport={onExportPlan} savedPlanId={savedPlanId} />
+            </div>
           )}
-          {message.type === 'career_card' && message.data && (
-            <CareerCard
-              content={message.content}
-              relatedMajors={message.data.relatedMajors}
-              careerName={message.data.careerName}
-              userScore={userScore}
-            />
+
+          {dataType === 'career_card' && <CareerCard data={data as CareerCardMessageData} />}
+
+          {dataType === 'audit_report' && (
+            <AuditReportCard data={data as AuditReportMessageData} onFixRequest={onFixRequest} savedPlanId={savedPlanId} />
           )}
-          {message.type === 'audit_report' && message.data && (
-            <AuditReportCard
-              report={message.data}
-              onFixRequest={onFixRequest}
-            />
-          )}
-          {message.type === 'file_upload_prompt' && message.data && (
-            <FileUploadPrompt modes={message.data.modes} />
+
+          {dataType === 'file_upload_prompt' && (
+            <FileUploadPrompt data={data as FileUploadPromptMessageData} />
           )}
         </div>
       </div>

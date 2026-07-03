@@ -1,374 +1,221 @@
-'use client';
+/**
+ * V10 选项 B · FormCard 组件 (RHF 7 + Zod 重写版)
+ *
+ * 替代原型 FormCard.tsx 中的手写 3-step 状态机
+ *
+ * V10 不变量 C3: 3-step guards
+ *  - step 1→2: 需 score 输入
+ *  - step 2→3: 需选科 + 位次
+ *  - 后退保留数据 (RHF 自动)
+ */
+import { useState } from 'react';
+import { useForm, type SubmitHandler } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 
-import React, { useState } from 'react';
+const FormCardSchema = z.object({
+  province: z.string().min(1, '请选择省份'),
+  score: z.coerce.number().int('请输入整数').min(0, '分数不能小于 0').max(750, '分数不能大于 750'),
+  rank: z.coerce.number().int('请输入整数').min(1, '位次必须 ≥ 1'),
+  subjects: z.array(z.string()).min(1, '请至少选择 1 个选科'),
+});
+export type FormCardData = z.infer<typeof FormCardSchema>;
 
-interface Props {
-  data: {
-    missingFields: string[];
-    currentProfile: Record<string, any>;
-  };
-  onSubmit: (data: Record<string, any>) => void;
+interface FormCardProps {
+  onSubmit: (data: FormCardData) => void;
+  initialData?: Partial<FormCardData>;
 }
 
-type StepKey = 'basic' | 'subjects' | 'prefs';
+const PROVINCES = ['北京', '上海', '广东', '江苏', '浙江', '山东', '河南', '河北', '四川', '湖北', '湖南', '福建', '安徽'];
+const SUBJECTS = ['物理', '历史', '化学', '生物', '地理', '政治'];
 
-export function FormCard({ data, onSubmit }: Props) {
-  const [province, setProvince] = useState(data.currentProfile.province || '');
-  const [score, setScore] = useState(data.currentProfile.score?.toString() || '');
-  const [rank, setRank] = useState(data.currentProfile.rank?.toString() || '');
-  const [examType, setExamType] = useState<'physics' | 'history' | ''>(data.currentProfile.subjects?.[0] === '物理' ? 'physics' : data.currentProfile.subjects?.[0] === '历史' ? 'history' : '');
-  const [chem, setChem] = useState(data.currentProfile.subjects?.includes('化学') || false);
-  const [bio, setBio] = useState(data.currentProfile.subjects?.includes('生物') || false);
-  const [politics, setPolitics] = useState(data.currentProfile.subjects?.includes('政治') || false);
-  const [geo, setGeo] = useState(data.currentProfile.subjects?.includes('地理') || false);
-  const [region, setRegion] = useState('');
-  const [majorDir, setMajorDir] = useState('');
+const STEP_FIELDS: ReadonlyArray<ReadonlyArray<keyof FormCardData>> = [
+  ['province'],
+  ['score'],
+  ['rank', 'subjects'],
+] as const;
 
-  // 字段触碰状态——仅交互后才显示验证提示
-  const [touched, setTouched] = useState<Record<string, boolean>>({});
-  const [currentStep, setCurrentStep] = useState<StepKey>('basic');
+export function FormCard({ onSubmit, initialData }: FormCardProps) {
+  const [step, setStep] = useState(0);
 
-  const markTouched = (field: string) => setTouched(prev => ({ ...prev, [field]: true }));
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    trigger,
+    watch,
+    setValue,
+    getValues,
+  } = useForm<FormCardData>({
+    resolver: zodResolver(FormCardSchema),
+    defaultValues: {
+      province: initialData?.province ?? '',
+      score: initialData?.score,
+      rank: initialData?.rank,
+      subjects: initialData?.subjects ?? [],
+    },
+    mode: 'onBlur',
+  });
 
-  // === 字段验证 ===
-  const scoreNum = parseInt(score);
-  const scoreError = touched.score && score
-    ? (Number.isNaN(scoreNum) || scoreNum < 0 || scoreNum > 750 ? '分数应在 0~750 之间' : '')
-    : '';
-  const rankError = touched.rank && rank
-    ? (Number.isNaN(parseInt(rank)) || parseInt(rank) < 1 ? '请输入有效的位次' : '')
-    : '';
+  const selectedSubjects = watch('subjects') ?? [];
 
-  // === 必填校验 ===
-  const basicComplete = Boolean(province && score && !scoreError && rank && !rankError);
-  const subjectsComplete = Boolean(examType && (chem || bio || politics || geo));
-  const canSubmit = basicComplete && subjectsComplete;
-
-  // === 步骤进度 ===
-  const steps: { key: StepKey; label: string; complete: boolean; active: boolean }[] = [
-    { key: 'basic', label: '基本信息', complete: basicComplete, active: currentStep === 'basic' },
-    { key: 'subjects', label: '选科组合', complete: subjectsComplete, active: currentStep === 'subjects' },
-    { key: 'prefs', label: '偏好设置', complete: canSubmit, active: currentStep === 'prefs' },
-  ];
-
-  const completedCount = steps.filter(s => s.complete).length;
-
-  const handleSubmit = () => {
-    if (!canSubmit) return;
-    const subjects = [examType === 'physics' ? '物理' : '历史'];
-    if (examType === 'physics') { if (chem) subjects.push('化学'); if (bio) subjects.push('生物'); if (politics) subjects.push('政治'); if (geo) subjects.push('地理'); }
-    else { if (politics) subjects.push('政治'); if (geo) subjects.push('地理'); if (chem) subjects.push('化学'); if (bio) subjects.push('生物'); }
-
-    onSubmit({
-      province,
-      score: parseInt(score),
-      rank: parseInt(rank),
-      subjects,
-      preferences: {
-        region: region ? [region] : [],
-        majorDirection: majorDir ? [majorDir] : [],
-      },
-    });
+  const handleNext = async (): Promise<void> => {
+    const fields = STEP_FIELDS[step] ?? [];
+    const valid = await trigger([...fields]);
+    if (valid) setStep((s) => Math.min(s + 1, 2));
   };
 
-  const goToStep = (step: StepKey) => {
-    // 不允许跳过未完成步骤
-    if (step === 'subjects' && !basicComplete) return;
-    if (step === 'prefs' && !subjectsComplete) return;
-    setCurrentStep(step);
+  const handlePrev = (): void => {
+    setStep((s) => Math.max(s - 1, 0));
+  };
+
+  const handleFormSubmit: SubmitHandler<FormCardData> = (data) => {
+    onSubmit(data);
+  };
+
+  const toggleSubject = (subject: string): void => {
+    const current = getValues('subjects') ?? [];
+    const next = current.includes(subject) ? current.filter((s) => s !== subject) : [...current, subject];
+    setValue('subjects', next, { shouldValidate: true, shouldDirty: true });
   };
 
   return (
-    <div className="bg-white border border-gray-200 rounded-2xl rounded-tl-md shadow-sm p-5 space-y-4">
-      {/* 对话式引导提示 — 用户可以直接对话而无需填表 */}
-      <div className="bg-blue-50/50 rounded-lg px-3 py-2 border border-blue-100">
-        <p className="text-xs text-blue-700">
-          💬 <span className="font-medium">更喜欢直接聊？</span> 你也可以在对话框里说「广东物理620分」，系统会自动识别你的信息～
-        </p>
-      </div>
-
-      {/* 标题 + 进度指示器 */}
-      <div>
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="text-sm font-semibold text-gray-800" id="form-title">📋 完善你的信息</h3>
-          <span className="text-xs text-gray-400" aria-live="polite">{completedCount}/{steps.length} 步骤完成</span>
-        </div>
-
-        {/* 步骤点 */}
-        <div className="flex items-center gap-1 mb-1">
-          {steps.map((step, idx) => (
-            <React.Fragment key={step.key}>
-              <button
-                onClick={() => goToStep(step.key)}
-                disabled={step.complete ? false : !steps.slice(0, idx).every(s => s.complete)}
-                className={`group flex items-center gap-1.5 px-2 py-1 rounded-md text-xs transition-colors ${
-                  step.active
-                    ? 'bg-blue-50 text-blue-700 font-medium'
-                    : step.complete
-                    ? 'bg-green-50 text-green-600 cursor-pointer hover:bg-green-100'
-                    : 'text-gray-400 cursor-not-allowed'
-                }`}
-                title={step.label}
-              >
-                <span className={`w-4 h-4 rounded-full flex items-center justify-center text-[10px] ${
-                  step.active ? 'bg-blue-600 text-white' : step.complete ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-500'
-                }`}>
-                  {step.complete ? '✓' : idx + 1}
-                </span>
-                <span className="hidden sm:inline">{step.label}</span>
-              </button>
-              {idx < steps.length - 1 && (
-                <div className={`flex-1 h-px mx-0.5 ${step.complete ? 'bg-green-300' : 'bg-gray-200'}`} />
-              )}
-            </React.Fragment>
-          ))}
-        </div>
-        <p className="text-xs text-gray-400 mt-2">
-          {currentStep === 'basic' && '第一步：填写省份、分数和位次'}
-          {currentStep === 'subjects' && '第二步：选择你的高考选科组合'}
-          {currentStep === 'prefs' && (canSubmit ? '🎉 信息齐全！可跳过偏好直接生成方案' : '还需完成基本信息')}
-        </p>
-      </div>
-
-      {/* === 步骤 1：基本信息 === */}
-      {currentStep === 'basic' && (
-        <div className="space-y-3">
-          <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1.5">
-              省份 <span className="text-red-400">*</span>
-            </label>
-            <select
-              value={province}
-              onChange={e => { setProvince(e.target.value); markTouched('province'); }}
-              aria-label="选择高考省份"
-              aria-required="true"
-              aria-describedby={touched.province && !province ? 'province-error' : undefined}
-              className={`w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                touched.province && !province ? 'border-red-300 bg-red-50' : 'border-gray-200'
+    <form
+      onSubmit={(event) => { void handleSubmit(handleFormSubmit)(event); }}
+      className="bg-white border border-gray-200 rounded-2xl p-4 shadow-sm"
+      aria-label="志愿信息收集"
+    >
+      {/* 步骤指示器 */}
+      <div className="flex items-center justify-between mb-4">
+        {['省份', '分数', '位次 / 选科'].map((label, idx) => (
+          <div key={label} className="flex items-center flex-1">
+            <div
+              className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${
+                idx <= step ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-500'
               }`}
             >
-              <option value="">请选择高考省份</option>
-              {['广东','北京','上海','天津','重庆','江苏','浙江','山东','河南','四川','湖北','湖南','福建','安徽','河北','辽宁','吉林','黑龙江','陕西','山西','江西','广西','云南','贵州','海南','甘肃','宁夏','青海','西藏','新疆','内蒙古'].map(p => (
-                <option key={p} value={p}>{p}</option>
-              ))}
-            </select>
+              {idx + 1}
+            </div>
+            <span className={`ml-2 text-xs ${idx <= step ? 'text-gray-800' : 'text-gray-400'}`}>{label}</span>
+            {idx < 2 && <div className={`flex-1 h-px mx-2 ${idx < step ? 'bg-blue-600' : 'bg-gray-200'}`} />}
           </div>
+        ))}
+      </div>
 
-          <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1.5">
-              高考分数 <span className="text-red-400">*</span>
-            </label>
-            <input
-              type="number"
-              value={score}
-              onChange={e => { setScore(e.target.value); markTouched('score'); }}
-              onBlur={() => markTouched('score')}
-              placeholder="如 620"
-              min={0}
-              max={750}
-              aria-label="高考分数"
-              aria-required="true"
-              aria-describedby={scoreError ? 'score-error' : undefined}
-              className={`w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                scoreError ? 'border-red-300 bg-red-50' : 'border-gray-200'
-              }`}
-            />
-            {scoreError && <p className="text-xs text-red-500 mt-1" id="score-error" role="alert">{scoreError}</p>}
-          </div>
-
-          <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1.5">
-              全省位次 <span className="text-red-400">*</span>
-              <span className="text-gray-400 font-normal ml-1">（成绩单上的排名）</span>
-            </label>
-            <input
-              type="number"
-              value={rank}
-              onChange={e => { setRank(e.target.value); markTouched('rank'); }}
-              onBlur={() => markTouched('rank')}
-              placeholder="如 8500"
-              aria-label="全省位次排名"
-              aria-required="true"
-              aria-describedby={rankError ? 'rank-error' : undefined}
-              className={`w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                rankError ? 'border-red-300 bg-red-50' : 'border-gray-200'
-              }`}
-            />
-            {rankError && <p className="text-xs text-red-500 mt-1" id="rank-error" role="alert">{rankError}</p>}
-          </div>
-
-          <button
-            onClick={() => { markTouched('province'); markTouched('score'); markTouched('rank'); goToStep('subjects'); }}
-            disabled={!basicComplete}
-            className={`w-full py-2 rounded-lg text-sm font-medium transition-all ${
-              basicComplete
-                ? 'bg-blue-600 text-white hover:bg-blue-700'
-                : 'bg-gray-100 text-gray-400 cursor-not-allowed'
-            }`}
+      {/* Step 1: 省份 */}
+      {step === 0 && (
+        <div>
+          <label htmlFor="province" className="block text-sm font-medium text-gray-700 mb-2">
+            你的高考省份
+          </label>
+          <select
+            id="province"
+            {...register('province')}
+            className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            下一步：选科 →
-          </button>
+            <option value="">请选择...</option>
+            {PROVINCES.map((p) => (
+              <option key={p} value={p}>
+                {p}
+              </option>
+            ))}
+          </select>
+          {errors.province && <p className="mt-1 text-xs text-red-500">{errors.province.message}</p>}
         </div>
       )}
 
-      {/* === 步骤 2：选科组合 === */}
-      {currentStep === 'subjects' && (
-        <div className="space-y-3">
+      {/* Step 2: 分数 */}
+      {step === 1 && (
+        <div>
+          <label htmlFor="score" className="block text-sm font-medium text-gray-700 mb-2">
+            你的高考分数
+          </label>
+          <input
+            id="score"
+            type="number"
+            inputMode="numeric"
+            {...register('score')}
+            placeholder="例如 620"
+            className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          {errors.score && <p className="mt-1 text-xs text-red-500">{errors.score.message}</p>}
+        </div>
+      )}
+
+      {/* Step 3: 位次 + 选科 */}
+      {step === 2 && (
+        <div className="space-y-4">
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-2">
-              首选科目 <span className="text-red-400">*</span>
+            <label htmlFor="rank" className="block text-sm font-medium text-gray-700 mb-2">
+              你的位次
             </label>
-            <div className="flex gap-2">
-              {(['physics', 'history'] as const).map(type => (
-                <button
-                  key={type}
-                  onClick={() => { setExamType(type); markTouched('examType'); }}
-                  className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                    examType === type ? 'bg-blue-600 text-white shadow-sm' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                  }`}
-                >
-                  {type === 'physics' ? '物理' : '历史'}
-                </button>
-              ))}
-            </div>
+            <input
+              id="rank"
+              type="number"
+              inputMode="numeric"
+              {...register('rank')}
+              placeholder="例如 8500"
+              className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            {errors.rank && <p className="mt-1 text-xs text-red-500">{errors.rank.message}</p>}
           </div>
 
-          {examType && (
-            <div>
-              <label className="block text-xs font-medium text-gray-600 mb-2">
-                再选科目 <span className="text-red-400">*</span>
-                <span className="text-gray-400 font-normal ml-1">（至少选2门）</span>
-              </label>
-              <div className="flex flex-wrap gap-2">
-                {(examType === 'physics'
-                  ? [{ key: 'chem', label: '化学', value: chem, setter: setChem }, { key: 'bio', label: '生物', value: bio, setter: setBio }, { key: 'politics', label: '政治', value: politics, setter: setPolitics }, { key: 'geo', label: '地理', value: geo, setter: setGeo }]
-                  : [{ key: 'politics', label: '政治', value: politics, setter: setPolitics }, { key: 'geo', label: '地理', value: geo, setter: setGeo }, { key: 'chem', label: '化学', value: chem, setter: setChem }, { key: 'bio', label: '生物', value: bio, setter: setBio }]
-                ).map(({ key, label, value, setter }) => (
+          <div>
+            <span className="block text-sm font-medium text-gray-700 mb-2">选科组合</span>
+            <div className="flex flex-wrap gap-2">
+              {SUBJECTS.map((s) => {
+                const active = selectedSubjects.includes(s);
+                return (
                   <button
-                    key={key}
-                    onClick={() => { setter(!value); markTouched(key); }}
-                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                      value ? 'bg-green-100 text-green-700 border border-green-300' : 'bg-gray-50 text-gray-500 border border-gray-200 hover:bg-gray-100'
+                    key={s}
+                    type="button"
+                    onClick={() => toggleSubject(s)}
+                    className={`px-3 py-1.5 rounded-full text-xs border transition-colors ${
+                      active ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-600 border-gray-200 hover:border-blue-300'
                     }`}
                   >
-                    {label}
+                    {s}
                   </button>
-                ))}
-              </div>
-              {touched.examType && !subjectsComplete && (
-                <p className="text-xs text-amber-600 mt-1.5">请至少选择 2 门再选科目</p>
-              )}
+                );
+              })}
             </div>
-          )}
-
-          <div className="flex gap-2">
-            <button
-              onClick={() => setCurrentStep('basic')}
-              className="flex-1 py-2 rounded-lg text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 transition-colors"
-            >
-              ← 返回
-            </button>
-            <button
-              onClick={() => { markTouched('examType'); goToStep('prefs'); }}
-              disabled={!subjectsComplete}
-              className={`flex-1 py-2 rounded-lg text-sm font-medium transition-all ${
-                subjectsComplete
-                  ? 'bg-blue-600 text-white hover:bg-blue-700'
-                  : 'bg-gray-100 text-gray-400 cursor-not-allowed'
-              }`}
-            >
-              下一步：偏好设置 →
-            </button>
+            {errors.subjects && <p className="mt-1 text-xs text-red-500">{errors.subjects.message}</p>}
           </div>
         </div>
       )}
 
-      {/* === 步骤 3：偏好设置 + 提交 === */}
-      {currentStep === 'prefs' && (
-        <div className="space-y-4">
-          {/* 偏好（可选） */}
-          <div className="bg-gray-50 rounded-xl p-4">
-            <div className="flex items-center justify-between mb-3">
-              <p className="text-xs font-medium text-gray-600">⚙️ 个性化偏好（选填）</p>
-              <button
-                onClick={handleSubmit}
-                disabled={!canSubmit}
-                className={`text-xs underline transition-colors ${
-                  canSubmit ? 'text-blue-600 hover:text-blue-700' : 'text-gray-400 cursor-not-allowed'
-                }`}
-              >
-                跳过，直接用默认偏好生成 →
-              </button>
-            </div>
+      {/* 步骤导航 */}
+      <div className="flex items-center justify-between mt-5">
+        {step > 0 ? (
+          <button
+            type="button"
+            onClick={handlePrev}
+            className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-xl transition-colors"
+          >
+            ← 上一步
+          </button>
+        ) : (
+          <span />
+        )}
 
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1">地域偏好</label>
-                <select
-                  value={region}
-                  onChange={e => setRegion(e.target.value)}
-                  className="w-full bg-white border border-gray-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="">不限</option>
-                  <option value="珠三角">珠三角</option>
-                  <option value="长三角">长三角</option>
-                  <option value="京津冀">京津冀</option>
-                  <option value="川渝">川渝</option>
-                  <option value="华中">华中</option>
-                  <option value="西北">西北</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1">专业方向</label>
-                <select
-                  value={majorDir}
-                  onChange={e => setMajorDir(e.target.value)}
-                  className="w-full bg-white border border-gray-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="">不限</option>
-                  <option value="计算机/电子">计算机/电子</option>
-                  <option value="医学">医学</option>
-                  <option value="经管">经管</option>
-                  <option value="文史哲">文史哲</option>
-                  <option value="法学">法学</option>
-                  <option value="师范">师范</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          {/* 已确认的信息摘要 */}
-          {canSubmit && (
-            <div className="bg-blue-50 rounded-xl p-3 text-xs text-blue-800 space-y-1">
-              <p className="font-medium mb-1">即将基于以下信息生成方案：</p>
-              <p>📍 {province} · 🎯 {score}分 · 🏅 位次{rank}</p>
-              <p>📚 {examType === 'physics' ? '物理' : '历史'}类 · {
-                [chem && '化学', bio && '生物', politics && '政治', geo && '地理'].filter(Boolean).join('+') || '未选'
-              }</p>
-            </div>
-          )}
-
-          <div className="flex gap-2">
-            <button
-              onClick={() => setCurrentStep('subjects')}
-              className="flex-1 py-2 rounded-lg text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 transition-colors"
-            >
-              ← 返回修改
-            </button>
-            <button
-              onClick={handleSubmit}
-              disabled={!canSubmit}
-              className={`flex-[2] py-2.5 rounded-xl text-sm font-medium transition-all ${
-                canSubmit
-                  ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700 shadow-md hover:shadow-lg'
-                  : 'bg-gray-100 text-gray-400 cursor-not-allowed'
-              }`}
-            >
-              {canSubmit ? '✨ 生成我的志愿方案' : '请完成基本信息和选科'}
-            </button>
-          </div>
-        </div>
-      )}
-    </div>
+        {step < 2 ? (
+          <button
+            type="button"
+            onClick={() => { void handleNext(); }}
+            className="px-4 py-2 text-sm bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors"
+          >
+            下一步 →
+          </button>
+        ) : (
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="px-4 py-2 text-sm bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors disabled:opacity-50"
+          >
+            {isSubmitting ? '提交中...' : '生成志愿方案'}
+          </button>
+        )}
+      </div>
+    </form>
   );
 }

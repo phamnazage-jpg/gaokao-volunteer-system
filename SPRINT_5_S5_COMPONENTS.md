@@ -1,171 +1,265 @@
-# Sprint 5 任务拆解（W8-9 · 12 人天 · 52 子任务）
+# Sprint 5 任务拆解（W8-9 · 9 人天 · 48 子任务）— V10 选项 B
 
-> **主任务**：T-C-01 ~ T-C-13, T-D-01 ~ T-D-10
-> **目标**：部署架构 + 监控 + 文档 + 10 基础组件
-> **闸门**：G5（18 组件 dark story 全覆盖）
+> **技术栈**：Vite 5 + React 19 + Zustand 4 + TanStack Query 5 + RHF 7 + Zod
+> **目标**：高级组件（DataTable/Tree/Chart/Modal/Toast/Tooltip 等）+ Storybook 收口
+> **闸门**：G5（18 组件 dark story 全覆盖 + axe-core 0 critical）
+> **V10 变化**：从 12d 缩到 9d（节省 3d = TanStack Table/Virtual 内置能力 + RHF 简化）
+> **PM 决策（2026-07-03）**：整体重写为新实现；Playwright 视觉回归 + Chromatic 验收
+
+---
+
+## ⚠️ V10 关键变化（与 V2 对比）
+
+| 维度 | V2 | V10 选项 B |
+|---|---|---|
+| DataTable | 手写 virtualization | **TanStack Table 8 + TanStack Virtual 3** |
+| Tree 组件 | 手写递归 | **react-arborist** |
+| Chart 组件 | recharts 基础 | **recharts 2 + V10 主题适配** |
+| 表单组件 | 手写 | **RHF + Zod** |
+| 总估时 | 12d | **9d** |
+
+---
 
 ## 0. Sprint 5 概览
 
 | 任务 | 主任务 | 估时 | 子任务数 |
 |---|---|---|---|
-| T-C-01 | 选部署平台 | 0.25d | 2 |
-| T-C-02 | DNS + 域名 | 0.5d | 3 |
-| T-C-03 | 反代配置 | 1.0d | 4 |
-| T-C-04 | CORS 配置 | 0.25d | 2 |
-| T-C-05 | CSP / HSTS | 1.0d | 4 |
-| T-C-06 | Sentry 前端 | 1.0d | 4 |
-| T-C-07 | Web Vitals 上报 | 0.5d | 3 |
-| T-C-08 | trace 透传 | 0.5d | 3 |
-| T-C-09 | 告警规则 | 0d | 2 |
-| T-C-10 | 部署文档 | 1.0d | 2 |
-| T-C-11 | 运维 Runbook | 1.0d | 2 |
-| T-C-12 | 安全审计 | 1.0d | 2 |
-| T-C-13 | 灰度发布流程 | 1.0d | 2 |
-| T-D-01 ~ T-D-10 | 10 基础组件 | 4.0d | 35 |
-| **合计** | **23 任务** | **12d + 缓冲 0d = 12d** | **52** |
-
-> 注：12d 紧凑，缓冲在 Sprint 6-8
-
----
-
-## C.1 部署架构（5 任务 · 11 子任务 · 3d）
-
-### T-C-01 · 选部署平台（0.25d · 2 子任务）
-- ST-S5-C-01.1 决策（CloudStudio / Vercel / 自托管）（0.125d）
-- ST-S5-C-01.2 写 `docs/DEPLOY_DECISION.md`（0.125d）
-
-### T-C-02 · DNS + 域名（0.5d · 3 子任务）
-- ST-S5-C-02.1 注册 `web.gaokao.example.com`（0.125d）
-- ST-S5-C-02.2 注册 `api.gaokao.example.com`（0.125d）
-- ST-S5-C-02.3 HTTPS 证书自动续签（Let's Encrypt）（0.25d）
-
-### T-C-03 · 反代配置（1.0d · 4 子任务）
-- ST-S5-C-03.1 nginx / caddy 配置（0.5d）
-- ST-S5-C-03.2 web → Next.js 静态产物（0.125d）
-- ST-S5-C-03.3 api → FastAPI（0.125d）
-- ST-S5-C-03.4 /api/* 转发（0.25d）
-- **验收**：
-  - [ ] 单一域名访问前端，浏览器无 CORS 报错
-
-### T-C-04 · CORS 配置（0.25d · 2 子任务）
-- ST-S5-C-04.1 `CORSMiddleware` 白名单（0.125d）
-- ST-S5-C-04.2 OPTIONS 预检验证（0.125d）
-
-### T-C-05 · CSP / HSTS（1.0d · 4 子任务）
-- ST-S5-C-05.1 HSTS 配置（0.25d）
-- ST-S5-C-05.2 X-Content-Type-Options（0.125d）
-- ST-S5-C-05.3 X-Frame-Options DENY（0.125d）
-- ST-S5-C-05.4 CSP 策略（0.5d）
-  - `default-src 'self'`
-  - `img-src 'self' data:`
-  - `style-src 'self' 'unsafe-inline'`
-  - `script-src 'self'`
-  - `Referrer-Policy: strict-origin-when-cross-origin`
+| T-D-01 | DataTable（TanStack Table + Virtual） | 1.0d | 4 |
+| T-D-02 | Tree（react-arborist） | 0.5d | 3 |
+| T-D-03 | Chart（recharts + 主题） | 1.0d | 4 |
+| T-D-04 | Modal / Dialog | 0.5d | 3 |
+| T-D-05 | Toast / Notification | 0.5d | 3 |
+| T-D-06 | Tooltip | 0.25d | 2 |
+| T-D-07 | Dropdown / Select 增强 | 0.5d | 3 |
+| T-D-08 | DatePicker | 0.5d | 3 |
+| T-D-09 | Pagination | 0.25d | 2 |
+| T-D-10 | EmptyState | 0.25d | 2 |
+| T-D-11 | Skeleton | 0.25d | 2 |
+| T-D-12 | Avatar | 0.25d | 2 |
+| T-D-13 | Stepper | 0.5d | 3 |
+| T-D-14 | Accordion | 0.5d | 3 |
+| T-D-15 | Storybook 配置 + dark story 全覆盖 | 1.5d | 5 |
+| T-D-16 | axe-core CI 集成 | 0.5d | 3 |
+| **合计** | **16 任务** | **8.5d + 缓冲 0.5d = 9d** | **47** |
 
 ---
 
-## C.2 监控（4 任务 · 12 子任务 · 2d）
+## T-D-01 · DataTable（TanStack Table + Virtual · 1.0d · 4 子任务）⚠️ V10 升级
 
-### T-C-06 · Sentry 前端（1.0d · 4 子任务）
-- ST-S5-C-06.1 `@sentry/nextjs` 集成（0.25d）
-- ST-S5-C-06.2 错误 100% 上报（0.25d）
-- ST-S5-C-06.3 Performance trace（路由切换）（0.25d）
-- ST-S5-C-06.4 PII 脱敏（用户消息过滤）（0.25d）
+### ST-S5-D-01.1 安装依赖（0.125d）
+```bash
+pnpm --filter web add @tanstack/react-table @tanstack/react-virtual
+```
 
-### T-C-07 · Web Vitals 上报（0.5d · 3 子任务）
-- ST-S5-C-07.1 `next/web-vitals` 接入（0.125d）
-- ST-S5-C-07.2 自托管 endpoint（0.125d）
-- ST-S5-C-07.3 Prometheus 75 分位存储（0.25d）
+### ST-S5-D-01.2 写 `<DataTable>` 组件（0.5d）
+- **V10 收益**：TanStack Table headless + Virtualization
+- **特性**：列排序/筛选/分页/虚拟滚动
+- **类型**：泛型 `<TData, TValue>` 强类型
 
-### T-C-08 · trace 透传（0.5d · 3 子任务）
-- ST-S5-C-08.1 `x-trace-id` header 前端发送（0.125d）
-- ST-S5-C-08.2 FastAPI 中间件接收（0.125d）
-- ST-S5-C-08.3 Sentry 关联（0.25d）
+### ST-S5-D-01.3 写 4 列示例（0.125d）
 
-### T-C-09 · 告警规则（0d · 2 子任务）
-- ST-S5-C-09.1 错误率 > 1% 告警（0d）
-- ST-S5-C-09.2 API P95 > 1s 告警（0d）
-- ST-S5-C-09.3 Web Vitals P75 跌破告警（0d）
-- **验收**：
-  - [ ] Slack / 钉钉 webhook 接收
+### ST-S5-D-01.4 写 story + 测试（0.25d）
 
 ---
 
-## C.3 文档 + 收口（4 任务 · 8 子任务 · 4d）
+## T-D-02 · Tree（react-arborist · 0.5d · 3 子任务）⚠️ V10 升级
 
-### T-C-10 · 部署文档（1.0d · 2 子任务）
-- ST-S5-C-10.1 写 `docs/DEPLOY.md`（0.75d）
-- ST-S5-C-10.2 3 路径说明（CloudStudio / 自托管 / Vercel）（0.25d）
+### ST-S5-D-02.1 安装依赖（0.125d）
 
-### T-C-11 · 运维 Runbook（1.0d · 2 子任务）
-- ST-S5-C-11.1 写 `docs/RUNBOOK.md`（0.75d）
-- ST-S5-C-11.2 10 常见故障处理（0.25d）
+### ST-S5-D-02.2 写 `<Tree>` 组件（0.25d）
+- **特性**：拖拽 / 搜索 / 多选
 
-### T-C-12 · 安全审计（1.0d · 2 子任务）
-- ST-S5-C-12.1 OWASP top 10 自查（0.75d）
-- ST-S5-C-12.2 写 `docs/SECURITY_AUDIT_2026-XX.md`（0.25d）
-
-### T-C-13 · 灰度发布流程（1.0d · 2 子任务）
-- ST-S5-C-13.1 5% → 20% → 100% 三步（0.75d）
-- ST-S5-C-13.2 自动化脚本（0.25d）
+### ST-S5-D-02.3 写 story + 测试（0.125d）
 
 ---
 
-## D.1 基础组件补齐（10 任务 · 35 子任务 · 4d）
+## T-D-03 · Chart（recharts + 主题 · 1.0d · 4 子任务）
 
-> 通用模式：每组件 3-4 子任务（props/渲染/单测/Storybook）
+### ST-S5-D-03.1 安装依赖（0.125d）
 
-### T-D-01 · Dialog（0.5d · 3 子任务）
-- ST-S5-D-01.1 portal 渲染 + 焦点陷阱 + ESC + 点击外部（0.25d）
-- ST-S5-D-01.2 单测（0.125d）
-- ST-S5-D-01.3 Storybook 2 故事（0.125d）
+### ST-S5-D-03.2 写 4 类 chart（0.5d）
+- LineChart / BarChart / PieChart / AreaChart
+- **V10 关键**：与 design-system token 集成（247 行 CSS）
 
-### T-D-02 · Toast（0.5d · 4 子任务）
-- ST-S5-D-02.1 4 种类型 + 自动消失（0.125d）
-- ST-S5-D-02.2 队列管理（0.125d）
-- ST-S5-D-02.3 单测（0.125d）
-- ST-S5-D-02.4 Storybook 4 故事（0.125d）
+### ST-S5-D-03.3 写主题切换适配（0.25d）
+- **行为**：dark 模式自动切换配色
 
-### T-D-03 · Tooltip（0.25d · 2 子任务）
-- ST-S5-D-03.1 hover 200ms 显示 + 3s 自动消失（0.125d）
-- ST-S5-D-03.2 单测 + Storybook（0.125d）
-
-### T-D-04 · Dropdown（0.5d · 3 子任务）
-- ST-S5-D-04.1 Sidebar 头像菜单用（0.25d）
-- ST-S5-D-04.2 键盘导航（0.125d）
-- ST-S5-D-04.3 单测 + Storybook（0.125d）
-
-### T-D-05 · Avatar（0.25d · 2 子任务）
-- ST-S5-D-05.1 3 套（AI / User / 群组）（0.125d）
-- ST-S5-D-05.2 单测 + Storybook（0.125d）
-
-### T-D-06 · Skeleton（0.25d · 2 子任务）
-- ST-S5-D-06.1 4 种形状（text/card/circle/avatar）（0.125d）
-- ST-S5-D-06.2 单测 + Storybook（0.125d）
-
-### T-D-07 · ProgressBar（0.25d · 2 子任务）
-- ST-S5-D-07.1 通用（区别于 InfoCollectionProgress）（0.125d）
-- ST-S5-D-07.2 单测 + Storybook（0.125d）
-
-### T-D-08 · Switch（0.25d · 2 子任务）
-- ST-S5-D-08.1 偏好设置用（0.125d）
-- ST-S5-D-08.2 单测 + Storybook（0.125d）
-
-### T-D-09 · Checkbox（0.5d · 3 子任务）
-- ST-S5-D-09.1 FormCard 选科用（0.25d）
-- ST-S5-D-09.2 受控/非受控（0.125d）
-- ST-S5-D-09.3 单测 + Storybook（0.125d）
-
-### T-D-10 · Radio（0.5d · 3 子任务）
-- ST-S5-D-10.1 FormCard 单选用（0.25d）
-- ST-S5-D-10.2 与 Checkbox 区分（0.125d）
-- ST-S5-D-10.3 单测 + Storybook（0.125d）
+### ST-S5-D-03.4 写 story + 测试（0.125d）
 
 ---
 
-## Sprint 5 收口验收
+## T-D-04 · Modal / Dialog（0.5d · 3 子任务）
 
-- [ ] 23 主任务 / 52 子任务全部完成
-- [ ] **G5 通过**：18 组件 dark story 全覆盖
-- [ ] 反代 / CSP / Sentry 跑通
-- [ ] 进入 Sprint 6 前 commit：`<feat(s5): deploy+monitoring+10 components>`
+### ST-S5-D-04.1 写 `<Modal>` 组件（0.25d）
+- **V10 收益**：用 `@radix-ui/react-dialog` 头less
+
+### ST-S5-D-04.2 写动画 + 焦点陷阱（0.125d）
+
+### ST-S5-D-04.3 写 story + 测试（0.125d）
+
+---
+
+## T-D-05 · Toast / Notification（0.5d · 3 子任务）
+
+### ST-S5-D-05.1 安装 sonner（0.125d）
+- **V10 收益**：用 `sonner` 库，避免手写 toast 系统
+
+### ST-S5-D-05.2 写 `<Toaster>` 集成（0.25d）
+
+### ST-S5-D-05.3 写 story + 测试（0.125d）
+
+---
+
+## T-D-06 · Tooltip（0.25d · 2 子任务）
+
+### ST-S5-D-06.1 写 `<Tooltip>` 组件（0.125d）
+- **V10 收益**：`@radix-ui/react-tooltip`
+
+### ST-S5-D-06.2 写 story + 测试（0.125d）
+
+---
+
+## T-D-07 · Dropdown / Select 增强（0.5d · 3 子任务）
+
+### ST-S5-D-07.1 写 `<Dropdown>` 组件（0.25d）
+- **V10 收益**：`@radix-ui/react-dropdown-menu`
+
+### ST-S5-D-07.2 写 `<Select>` 组件（0.125d）
+- **V10 收益**：`@radix-ui/react-select` + RHF `Controller`
+
+### ST-S5-D-07.3 写 story + 测试（0.125d）
+
+---
+
+## T-D-08 · DatePicker（0.5d · 3 子任务）
+
+### ST-S5-D-08.1 安装 react-day-picker（0.125d）
+
+### ST-S5-D-08.2 写 `<DatePicker>` 组件（0.25d）
+- **V10 集成**：RHF `Controller` + Zod `coerce.date()`
+
+### ST-S5-D-08.3 写 story + 测试（0.125d）
+
+---
+
+## T-D-09 · Pagination（0.25d · 2 子任务）
+
+### ST-S5-D-09.1 写 `<Pagination>` 组件（0.125d）
+- **V10 集成**：TanStack Table `getPaginationRowModel`
+
+### ST-S5-D-09.2 写 story + 测试（0.125d）
+
+---
+
+## T-D-10 · EmptyState（0.25d · 2 子任务）
+
+### ST-S5-D-10.1 写 `<EmptyState>` 组件（0.125d）
+### ST-S5-D-10.2 写 story + 测试（0.125d）
+
+---
+
+## T-D-11 · Skeleton（0.25d · 2 子任务）
+
+### ST-S5-D-11.1 写 `<Skeleton>` 组件（0.125d）
+- **V10 集成**：与 design token 集成
+
+### ST-S5-D-11.2 写 story + 测试（0.125d）
+
+---
+
+## T-D-12 · Avatar（0.25d · 2 子任务）
+
+### ST-S5-D-12.1 写 `<Avatar>` 组件（0.125d）
+- **V10 收益**：`@radix-ui/react-avatar`
+
+### ST-S5-D-12.2 写 story + 测试（0.125d）
+
+---
+
+## T-D-13 · Stepper（0.5d · 3 子任务）
+
+### ST-S5-D-13.1 写 `<Stepper>` 组件（0.25d）
+- **V10 集成**：与 FormCard RHF 集成
+- **V10 不变量 C3**：3-step guards 保持
+
+### ST-S5-D-13.2 写动画（0.125d）
+
+### ST-S5-D-13.3 写 story + 测试（0.125d）
+
+---
+
+## T-D-14 · Accordion（0.5d · 3 子任务）
+
+### ST-S5-D-14.1 写 `<Accordion>` 组件（0.25d）
+- **V10 收益**：`@radix-ui/react-accordion`
+
+### ST-S5-D-14.2 写动画（0.125d）
+
+### ST-S5-D-14.3 写 story + 测试（0.125d）
+
+---
+
+## T-D-15 · Storybook 配置 + dark story 全覆盖（1.5d · 5 子任务）⚠️ V10 关键
+
+### ST-S5-D-15.1 安装 Storybook 8（0.25d）
+
+### ST-S5-D-15.2 配置 Vite builder（0.25d）
+- **V10 关键**：Storybook 用 Vite 构建，与生产一致
+
+### ST-S5-D-15.3 写 18 组件 story（1.0d）
+- **覆盖**：D-01 ~ D-14 共 14 个 + Sprint 1 5 个 = 19 个组件
+- **每个 story**：default / dark / disabled / loading / error 5 态
+
+### ST-S5-D-15.4 配置 Chromatic 集成（0d）
+- **V10 关键**：每个 PR 自动截图
+
+### ST-S5-D-15.5 部署到 Chromatic（0d）
+- **命令**：`pnpm chromatic --project-token=xxx`
+
+---
+
+## T-D-16 · axe-core CI 集成（0.5d · 3 子任务）⚠️ V10 新增
+
+> **PM 决策（2026-07-03）**：Chromatic 验收；axe-core 是其中关键
+
+### ST-S5-D-16.1 安装 @axe-core/playwright（0.125d）
+
+### ST-S5-D-16.2 写 a11y.spec（0.25d）
+- **覆盖**：18 组件 + 8 页面
+- **断言**：0 critical / 0 serious
+
+### ST-S5-D-16.3 接入 CI（0.125d）
+- **失败**：a11y 测试不通过 → 阻止合并
+
+---
+
+## V10 验收清单（Sprint 5 G5 闸门）
+
+```
+G5 闸门（必须全部通过）：
+  [ ] 18 组件（含 Sprint 1 5 组件）Storybook dark story 全覆盖
+  [ ] axe-core 0 critical 0 serious
+  [ ] pnpm typecheck 0 error
+  [ ] pnpm lint 0 error 0 warning
+  [ ] pnpm test:storybook 全绿
+  [ ] pnpm chromatic 视觉基线 19 组件 × 5 态全提交
+  [ ] DataTable 万行数据 < 100ms 渲染
+  [ ] Tree 千节点拖拽流畅
+```
+
+---
+
+## V10 风险（Sprint 5 特有）
+
+| ID | 风险 | 等级 | 缓解 |
+|---|---|---|---|
+| V10-S5-R1 | 第三方组件库（RHF/Radix）与原型 UI 风格冲突 | 中 | 用 design token 强制覆盖 |
+| V10-S5-R2 | Storybook 与 Vite 集成问题 | 低 | Storybook 8 原生支持 Vite |
+| V10-S5-R3 | axe-core 误报 | 低 | 优先级 critical/serious 强制；moderate 仅警告 |
+
+---
+
+**Sprint 5 文档状态**：V10 选项 B 重写完成
+**总工时**：9 人天（V2 是 12 人天，节省 3d）
+**总子任务**：47 个（V2 是 52 个）
+**下一步**：Sprint 4 完成后立即启动
