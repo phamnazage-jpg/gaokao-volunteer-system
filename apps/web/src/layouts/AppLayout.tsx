@@ -1,15 +1,18 @@
 /**
  * V10 选项 B · AppLayout (Sidebar + Outlet + MobileNav)
  */
-import { Outlet } from 'react-router-dom';
+import { ErrorBoundary } from 'react-error-boundary';
+import { Outlet, useLocation } from 'react-router-dom';
 import { Sidebar } from '@/components/navigation/Sidebar';
 import { MobileNav } from '@/components/navigation/MobileNav';
+import { ErrorFallback } from '@/components/shared/ErrorFallback';
 import { useChatStore } from '@/stores/chat';
 import { useFormStore } from '@/stores/form';
 import { useUserStore } from '@/stores/user';
 import { useConsultationsQuery } from '@/hooks/useConsultationQueries';
 
 export function AppLayout() {
+  const location = useLocation();
   const activeRecordId = useChatStore((s) => s.activeRecordId);
   const clearMessages = useChatStore((s) => s.clearMessages);
   const setActiveRecordId = useChatStore((s) => s.setActiveRecordId);
@@ -35,7 +38,9 @@ export function AppLayout() {
     <div className="app-layout flex h-screen overflow-hidden bg-[var(--color-bg)] text-[var(--color-fg)]">
       <Sidebar recentChats={recentChatsList} activeChatId={activeRecordId ?? undefined} onNewChat={handleNewChat} onSelectChat={handleSelectChat} />
       <div className="flex flex-col flex-1 min-w-0 max-w-5xl mx-auto lg:border-r border-gray-100">
-        <Outlet />
+        <ErrorBoundary FallbackComponent={ErrorFallback} resetKeys={[location.pathname]}>
+          <Outlet />
+        </ErrorBoundary>
       </div>
       {userName && (
         <aside className="hidden xl:flex w-56 shrink-0 border-l border-gray-100 bg-white/80 px-4 py-4" aria-label="用户信息">
