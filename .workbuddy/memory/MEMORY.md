@@ -15,10 +15,12 @@
 - `FRONTEND_REFACTOR_PLAN_2026-07-02.md` V2 重构方案
 - `SPRINT_1_S1_FOUNDATION.md` ~ `SPRINT_8_S8_ADMIN_POLICY.md` 8 个 Sprint 子文档
 - `SPRINT_1_CLOSEOUT_2026-07-03.md` Sprint 1 收口
+- `SPRINT_2_CLOSEOUT_2026-07-03.md` Sprint 2 收口
 
 ## Sprint 状态
 - **S1 ✅ 完成**（2026-07-03 G0 通过）
-- **S2-S8 ⏳ 待启动**
+- **S2 ✅ 完成**（2026-07-03 G1 通过，33 any 清零，49 warning 清零）
+- **S3-S8 ⏳ 待启动**
 
 ## V10 关键决策（2026-07-03 PM 拍板）
 - 原型只锁 UI/交互，不锁技术栈
@@ -26,11 +28,22 @@
 - Playwright + Chromatic 双验收
 - 82 人天（节省 10d vs V2）
 
+## Sprint 2 关键成果（2026-07-03 下午）
+- 切 Vite 5 + React 19 框架（删除 Next.js 16）
+- 4 Zustand slice 替代 7 手写 hook（800+ 行 → 320 行）
+- 15 TanStack Query hooks（chat/consultation/plan/audit/upload）
+- 25 单测 + 20 e2e（4 浏览器）
+- Vite build 192 KB gzip（目标 < 300 KB）
+- Git: commit `e8b8ad0` + merge `5ea8221`
+
 ## 经验教训
 1. **原型未在 git 中**：Sprint 1 勘误。原"git mv"假设是错的，用 `cp -r` 替代
 2. **G0 闸门先于 Sprint 2**：确保 monorepo + CI 灯绿后再启动业务开发
 3. **整体重写 vs 渐进重构**：当原型有 33 any + 49 warning 时，整体重写更划算
 4. **设计 token 提前抽取**：避免后续 Sprint 反复修改
+5. **主题持久化双源方案**：ThemeToggle 同步写 localStorage['theme-pref']，index.html 内联脚本读，刷新不丢
+6. **MobileNav fixed 定位**：Playwright 768px 视口能正确识别，避免 flex 父级挤压
+7. **Vite 切框架保留 monorepo**：turbo.json/pnpm-workspace.yaml/CI 已 Sprint 1 验证，S2 只在 apps/web 内部切
 
 ## UI/交互 12 项不变量（V10 锁定）
 - 布局 4 项：1024px 断点 / 移动 48px Tab / 中间折叠 / 容器宽度
