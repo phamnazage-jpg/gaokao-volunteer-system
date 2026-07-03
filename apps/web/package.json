@@ -1,0 +1,34 @@
+{
+  "name": "@gaokao/web",
+  "version": "0.1.0",
+  "private": true,
+  "description": "高考志愿填报系统 - Next.js 16 + React 19 客户端（迁移自 zhiyuan-prototype）",
+  "scripts": {
+    "dev": "next dev -H 0.0.0.0 -p 3000",
+    "build": "next build",
+    "start": "next start -H 0.0.0.0 -p 3000",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "echo 'no tests yet (Sprint 2)' && exit 0",
+    "test:e2e": "echo 'no e2e yet (Sprint 2)' && exit 0",
+    "clean": "rm -rf .next out .turbo"
+  },
+  "dependencies": {
+    "next": "16.2.9",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "react-markdown": "^10.1.0",
+    "rehype-sanitize": "^6.0.0",
+    "remark-gfm": "^4.0.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.9",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}
