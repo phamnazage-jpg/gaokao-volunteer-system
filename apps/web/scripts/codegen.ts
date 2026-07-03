@@ -32,6 +32,8 @@ async function fetchOpenApiSpec(): Promise<unknown> {
         '3.11',
         '--with-requirements',
         'requirements-admin.txt',
+        '--with-requirements',
+        'requirements-dev.txt',
         'python',
         '-c',
         "import json; from admin.app import create_app; app=create_app(); print(json.dumps(app.openapi(), ensure_ascii=False))",

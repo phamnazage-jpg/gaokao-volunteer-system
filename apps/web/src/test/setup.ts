@@ -47,8 +47,32 @@ Object.defineProperty(window, 'matchMedia', {
 
 // ====== 模拟 ResizeObserver (jsdom 默认没有) ======
 class MockResizeObserver {
-  observe(): void {
-    /* noop */
+  private readonly callback: ResizeObserverCallback;
+
+  constructor(callback: ResizeObserverCallback) {
+    this.callback = callback;
+  }
+
+  observe(target: Element): void {
+    this.callback(
+      [
+        {
+          target,
+          contentRect: {
+            x: 0,
+            y: 0,
+            width: 320,
+            height: 128,
+            top: 0,
+            right: 320,
+            bottom: 128,
+            left: 0,
+            toJSON: () => ({}),
+          },
+        } as ResizeObserverEntry,
+      ],
+      this,
+    );
   }
   unobserve(): void {
     /* noop */

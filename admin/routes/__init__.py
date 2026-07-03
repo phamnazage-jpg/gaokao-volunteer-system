@@ -11,6 +11,7 @@ from admin.routes.orders import admin_router as admin_orders_router
 from admin.routes.orders import router as orders_router
 from admin.routes.stats import admin_router as admin_stats_router
 from admin.routes.stats import router as stats_router
+from admin.routes.sprint3_api import router as sprint3_api_router
 from admin.routes.ui import router as ui_router
 from admin.routes.users import router as users_router
 from admin.routes.web_public import router as web_public_router
@@ -27,6 +28,7 @@ __all__ = [
     "admin_orders_router",
     "stats_router",
     "admin_stats_router",
+    "sprint3_api_router",
     "ui_router",
     "users_router",
     "web_public_router",

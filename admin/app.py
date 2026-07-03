@@ -49,6 +49,7 @@ from admin.routes import (
     notifications_page_router,
     notifications_router,
     orders_router,
+    sprint3_api_router,
     stats_router,
     ui_router,
     users_router,
@@ -173,6 +174,7 @@ def create_app(settings: Optional[Settings] = None) -> FastAPI:
     app.include_router(admin_cases_router)
     app.include_router(orders_router)
     app.include_router(admin_orders_router)
+    app.include_router(sprint3_api_router)
     app.include_router(stats_router)
     app.include_router(admin_stats_router)
     app.include_router(ui_router)

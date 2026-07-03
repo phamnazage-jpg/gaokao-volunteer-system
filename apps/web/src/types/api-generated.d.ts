@@ -12,17 +12,17 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * 健康检查
-         * @description 公开端点。只返回 readiness, 不暴露环境/路径/版本细节。
+         * �������
+         * @description �����˵㡣ֻ���� readiness, ����¶����/·��/�汾ϸ�ڡ�
          *
-         *     返回结构:
-         *     - status: "ok" 或 "degraded"（任一 readiness 检查失败时降级）
-         *     - checks: {db_writable, disk_writable, settings_valid} 子对象
+         *     ���ؽṹ:
+         *     - status: "ok" �� "degraded"����һ readiness ���ʧ��ʱ������
+         *     - checks: {db_writable, disk_writable, settings_valid} �Ӷ���
          *
-         *     readiness 语义（2026-06-27 P1-4 修复）:
-         *     - 所有 checks 通过 → status="ok", HTTP 200
-         *     - 任一 check 失败 → status="degraded", HTTP 503
-         *     - K8s/systemd readiness probe 应判 HTTP status，不只判 status 字段
+         *     readiness ���壨2026-06-27 P1-4 �޸���:
+         *     - ���� checks ͨ�� �� status="ok", HTTP 200
+         *     - ��һ check ʧ�� �� status="degraded", HTTP 503
+         *     - K8s/systemd readiness probe Ӧ�� HTTP status����ֻ�� status �ֶ�
          */
         get: operations["health_health_get"];
         put?: never;
@@ -42,7 +42,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** 登录 */
+        /** ��¼ */
         post: operations["login_api_auth_login_post"];
         delete?: never;
         options?: never;
@@ -57,7 +57,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** 当前用户 */
+        /** ��ǰ�û� */
         get: operations["me_api_auth_me_get"];
         put?: never;
         post?: never;
@@ -74,10 +74,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** 案例列表（T6.5） */
+        /** �����б���T6.5�� */
         get: operations["list_cases_api_cases_get"];
         put?: never;
-        /** 创建案例（T6.5） */
+        /** ����������T6.5�� */
         post: operations["create_case_api_cases_post"];
         delete?: never;
         options?: never;
@@ -92,15 +92,15 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** 案例详情（T6.5） */
+        /** �������飨T6.5�� */
         get: operations["get_case_api_cases__case_id__get"];
         put?: never;
         post?: never;
-        /** 删除案例（T6.5） */
+        /** ɾ��������T6.5�� */
         delete: operations["delete_case_api_cases__case_id__delete"];
         options?: never;
         head?: never;
-        /** 更新案例（T6.5） */
+        /** ���°�����T6.5�� */
         patch: operations["update_case_api_cases__case_id__patch"];
         trace?: never;
     };
@@ -113,7 +113,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** 审核案例（T6.5） */
+        /** ��˰�����T6.5�� */
         post: operations["review_case_api_cases__case_id__review_post"];
         delete?: never;
         options?: never;
@@ -128,10 +128,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** 案例列表（T6.5） */
+        /** �����б���T6.5�� */
         get: operations["list_cases_api_admin_cases_get"];
         put?: never;
-        /** 创建案例（T6.5） */
+        /** ����������T6.5�� */
         post: operations["create_case_api_admin_cases_post"];
         delete?: never;
         options?: never;
@@ -146,15 +146,15 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** 案例详情（T6.5） */
+        /** �������飨T6.5�� */
         get: operations["get_case_api_admin_cases__case_id__get"];
         put?: never;
         post?: never;
-        /** 删除案例（T6.5） */
+        /** ɾ��������T6.5�� */
         delete: operations["delete_case_api_admin_cases__case_id__delete"];
         options?: never;
         head?: never;
-        /** 更新案例（T6.5） */
+        /** ���°�����T6.5�� */
         patch: operations["update_case_api_admin_cases__case_id__patch"];
         trace?: never;
     };
@@ -167,7 +167,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** 审核案例（T6.5） */
+        /** ��˰�����T6.5�� */
         post: operations["review_case_api_admin_cases__case_id__review_post"];
         delete?: never;
         options?: never;
@@ -182,10 +182,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** 订单列表（T6.4） */
+        /** �����б���T6.4�� */
         get: operations["list_orders_api_orders_get"];
         put?: never;
-        /** 手工录入订单（T6.4） */
+        /** �ֹ�¼�붩����T6.4�� */
         post: operations["create_order_api_orders_post"];
         delete?: never;
         options?: never;
@@ -200,7 +200,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** 订单导出（CSV，默认脱敏） */
+        /** ����������CSV��Ĭ�������� */
         get: operations["export_orders_csv_api_orders_export_get"];
         put?: never;
         post?: never;
@@ -217,15 +217,15 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** 订单详情（T6.4） */
+        /** �������飨T6.4�� */
         get: operations["get_order_api_orders__order_id__get"];
         put?: never;
         post?: never;
-        /** 订单删除 / 匿名化（T12/A-4） */
+        /** ����ɾ�� / ��������T12/A-4�� */
         delete: operations["delete_or_anonymize_order_api_orders__order_id__delete"];
         options?: never;
         head?: never;
-        /** 订单更新 / 状态流转 / 退款（T6.4） */
+        /** �������� / ״̬��ת / �˿T6.4�� */
         patch: operations["patch_order_api_orders__order_id__patch"];
         trace?: never;
     };
@@ -236,10 +236,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** 订单列表（T6.4） */
+        /** �����б���T6.4�� */
         get: operations["list_orders_api_admin_orders_get"];
         put?: never;
-        /** 手工录入订单（T6.4） */
+        /** �ֹ�¼�붩����T6.4�� */
         post: operations["create_order_api_admin_orders_post"];
         delete?: never;
         options?: never;
@@ -254,7 +254,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** 订单导出（CSV，默认脱敏） */
+        /** ����������CSV��Ĭ�������� */
         get: operations["export_orders_csv_api_admin_orders_export_get"];
         put?: never;
         post?: never;
@@ -271,16 +271,203 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** 订单详情（T6.4） */
+        /** �������飨T6.4�� */
         get: operations["get_order_api_admin_orders__order_id__get"];
         put?: never;
         post?: never;
-        /** 订单删除 / 匿名化（T12/A-4） */
+        /** ����ɾ�� / ��������T12/A-4�� */
         delete: operations["delete_or_anonymize_order_api_admin_orders__order_id__delete"];
         options?: never;
         head?: never;
-        /** 订单更新 / 状态流转 / 退款（T6.4） */
+        /** �������� / ״̬��ת / �˿T6.4�� */
         patch: operations["patch_order_api_admin_orders__order_id__patch"];
+        trace?: never;
+    };
+    "/api/data-query/score-line": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Score Line */
+        get: operations["get_score_line_api_data_query_score_line_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/data-query/rank-estimator": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Rank Estimator */
+        get: operations["get_rank_estimator_api_data_query_rank_estimator_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/data-query/majors": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Majors */
+        get: operations["list_majors_api_data_query_majors_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/data-query/schools": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Schools */
+        get: operations["list_schools_api_data_query_schools_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/review/start": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Start Review */
+        post: operations["start_review_api_review_start_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/review/{review_id}/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Review Status */
+        get: operations["get_review_status_api_review__review_id__status_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/review/action": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Apply Review Action */
+        post: operations["apply_review_action_api_review_action_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/poster/generate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Generate Poster */
+        post: operations["generate_poster_api_poster_generate_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/llm/config": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Llm Config */
+        get: operations["get_llm_config_api_llm_config_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/llm/{provider}/enhance": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Enhance Audit */
+        post: operations["enhance_audit_api_llm__provider__enhance_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/share-link/{code}/stats": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Share Link Stats */
+        get: operations["get_share_link_stats_api_share_link__code__stats_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/api/stats/dashboard": {
@@ -291,8 +478,8 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * 仪表盘统计（T6.2）
-         * @description 返回管理后台仪表盘完整 payload: summary(订单/用户/收入 + 今日/7d/30d 切片) + 6 态分布 + 来源分布 + 服务版本分布 + 今日/7d/30d 趋势序列 (日粒度, 0 填充)。
+         * �Ǳ���ͳ�ƣ�T6.2��
+         * @description ���ع�����̨�Ǳ������� payload: summary(����/�û�/���� + ����/7d/30d ��Ƭ) + 6 ̬�ֲ� + ��Դ�ֲ� + ����汾�ֲ� + ����/7d/30d �������� (������, 0 ���)��
          */
         get: operations["get_dashboard_api_stats_dashboard_get"];
         put?: never;
@@ -311,8 +498,8 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * 订单维度统计（T6.2 真实聚合）
-         * @description 订单维度统计:T6.1 阶段为占位,T6.2 接入真实 SQL 聚合。字段名保持 T6.1 stub 阶段不变,前端旧契约不破。
+         * ����ά��ͳ�ƣ�T6.2 ��ʵ�ۺϣ�
+         * @description ����ά��ͳ��:T6.1 �׶�Ϊռλ,T6.2 ������ʵ SQL �ۺϡ��ֶ������� T6.1 stub �׶β���,ǰ�˾���Լ���ơ�
          */
         get: operations["get_order_stats_api_stats_orders_get"];
         put?: never;
@@ -331,8 +518,8 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * 仪表盘统计（T6.2）
-         * @description 返回管理后台仪表盘完整 payload: summary(订单/用户/收入 + 今日/7d/30d 切片) + 6 态分布 + 来源分布 + 服务版本分布 + 今日/7d/30d 趋势序列 (日粒度, 0 填充)。
+         * �Ǳ���ͳ�ƣ�T6.2��
+         * @description ���ع�����̨�Ǳ������� payload: summary(����/�û�/���� + ����/7d/30d ��Ƭ) + 6 ̬�ֲ� + ��Դ�ֲ� + ����汾�ֲ� + ����/7d/30d �������� (������, 0 ���)��
          */
         get: operations["get_dashboard_api_admin_stats_dashboard_get"];
         put?: never;
@@ -351,8 +538,8 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * 订单维度统计（T6.2 真实聚合）
-         * @description 订单维度统计:T6.1 阶段为占位,T6.2 接入真实 SQL 聚合。字段名保持 T6.1 stub 阶段不变,前端旧契约不破。
+         * ����ά��ͳ�ƣ�T6.2 ��ʵ�ۺϣ�
+         * @description ����ά��ͳ��:T6.1 �׶�Ϊռλ,T6.2 ������ʵ SQL �ۺϡ��ֶ������� T6.1 stub �׶β���,ǰ�˾���Լ���ơ�
          */
         get: operations["get_order_stats_api_admin_stats_orders_get"];
         put?: never;
@@ -372,7 +559,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** 创建正式分享链接 */
+        /** ������ʽ�������� */
         post: operations["create_share_link_api_share_link_post"];
         delete?: never;
         options?: never;
@@ -387,7 +574,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** 查询最近正式分享链接 */
+        /** ��ѯ�����ʽ�������� */
         get: operations["latest_share_link_api_share_link_latest_get"];
         put?: never;
         post?: never;
@@ -406,7 +593,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** 撤销正式分享链接 */
+        /** ������ʽ�������� */
         post: operations["revoke_share_link_api_share_link__code__revoke_post"];
         delete?: never;
         options?: never;
@@ -421,7 +608,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** 元数据枚举 */
+        /** Ԫ����ö�� */
         get: operations["meta_api_meta_get"];
         put?: never;
         post?: never;
@@ -438,7 +625,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** 用户列表（T6.3） */
+        /** �û��б���T6.3�� */
         get: operations["list_users_api_admin_users_get"];
         put?: never;
         post?: never;
@@ -455,7 +642,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** 用户详情（T6.3） */
+        /** �û����飨T6.3�� */
         get: operations["get_user_detail_api_admin_users__user_key__get"];
         put?: never;
         post?: never;
@@ -472,7 +659,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** 删除申请列表 */
+        /** ɾ�������б� */
         get: operations["list_deletion_requests_api_admin_notifications_deletion_requests_get"];
         put?: never;
         post?: never;
@@ -489,7 +676,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** 运维告警列表 */
+        /** ��ά�澯�б� */
         get: operations["list_ops_alerts_api_admin_notifications_ops_alerts_get"];
         put?: never;
         post?: never;
@@ -506,7 +693,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** 通知审计列表 */
+        /** ֪ͨ����б� */
         get: operations["list_notifications_api_admin_notifications_get"];
         put?: never;
         post?: never;
@@ -656,6 +843,33 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** AuditEnhanceInput */
+        AuditEnhanceInput: {
+            /** Planid */
+            planId: string;
+            /**
+             * Enhancementtype
+             * @default detail
+             * @enum {string}
+             */
+            enhancementType: "detail" | "risk" | "suggestion";
+            /** Baseaudit */
+            baseAudit?: {
+                [key: string]: unknown;
+            } | null;
+        };
+        /** AuditEnhancementResponse */
+        AuditEnhancementResponse: {
+            /** Summary */
+            summary: string;
+            /** Recommendations */
+            recommendations: components["schemas"]["Recommendation"][];
+            /**
+             * Provider
+             * @enum {string}
+             */
+            provider: "claude" | "gpt" | "gemini" | "deepseek";
+        };
         /** Body_upload_order_attachment_portal__token__attachments_post */
         Body_upload_order_attachment_portal__token__attachments_post: {
             /** Files */
@@ -783,7 +997,7 @@ export interface components {
         };
         /**
          * DashboardResponse
-         * @description ``/api/stats/dashboard`` 响应契约。
+         * @description ``/api/stats/dashboard`` ��Ӧ��Լ��
          */
         DashboardResponse: {
             /** Summary */
@@ -915,6 +1129,18 @@ export interface components {
              */
             guardian_confirmed: boolean;
         };
+        /** LLMConfigResponse */
+        LLMConfigResponse: {
+            /**
+             * Currentprovider
+             * @enum {string}
+             */
+            currentProvider: "claude" | "gpt" | "gemini" | "deepseek";
+            /** Fallbackorder */
+            fallbackOrder: ("claude" | "gpt" | "gemini" | "deepseek")[];
+            /** Availableproviders */
+            availableProviders: ("claude" | "gpt" | "gemini" | "deepseek")[];
+        };
         /** LoginRequest */
         LoginRequest: {
             /** Username */
@@ -933,6 +1159,22 @@ export interface components {
             token_type: string;
             /** Expires In */
             expires_in: number;
+        };
+        /** MajorItem */
+        MajorItem: {
+            /** Id */
+            id: string;
+            /** Name */
+            name: string;
+            /** Category */
+            category: string;
+        };
+        /** MajorsResponse */
+        MajorsResponse: {
+            /** Majors */
+            majors: components["schemas"]["MajorItem"][];
+            /** Total */
+            total: number;
         };
         /** NotificationEventResponse */
         NotificationEventResponse: {
@@ -1049,7 +1291,7 @@ export interface components {
         };
         /**
          * OrderStatsResponse
-         * @description ``/api/stats/orders`` 响应契约 (沿用 T6.1 字段名,仅替换数据源)。
+         * @description ``/api/stats/orders`` ��Ӧ��Լ (���� T6.1 �ֶ���,���滻����Դ)��
          */
         OrderStatsResponse: {
             /** Total Orders */
@@ -1132,6 +1374,26 @@ export interface components {
             /** Profile Missing Fields */
             profile_missing_fields: string[];
         };
+        /** PosterGenerateInput */
+        PosterGenerateInput: {
+            /** Planid */
+            planId: string;
+            /**
+             * Template
+             * @default classic
+             * @enum {string}
+             */
+            template: "classic" | "modern" | "minimal";
+        };
+        /** PosterGenerateResponse */
+        PosterGenerateResponse: {
+            /** Posterurl */
+            posterUrl: string;
+            /** Qrcode */
+            qrCode: string;
+            /** Expiresat */
+            expiresAt: string;
+        };
         /** PublicOrderCreate */
         PublicOrderCreate: {
             /**
@@ -1177,6 +1439,46 @@ export interface components {
             /** Portal Info Url */
             portal_info_url: string;
         };
+        /** RankEstimatorResponse */
+        RankEstimatorResponse: {
+            /** Province */
+            province: string;
+            /** Year */
+            year: number;
+            /**
+             * Scoretype
+             * @enum {string}
+             */
+            scoreType: "physics" | "history";
+            /** Rank */
+            rank: number;
+            /** Equivalentscore */
+            equivalentScore: number;
+        };
+        /** Recommendation */
+        Recommendation: {
+            /** Title */
+            title: string;
+            /** Detail */
+            detail: string;
+            /**
+             * Priority
+             * @enum {string}
+             */
+            priority: "low" | "medium" | "high";
+        };
+        /** ReviewActionInput */
+        ReviewActionInput: {
+            /**
+             * Action
+             * @enum {string}
+             */
+            action: "approve" | "reject" | "request_changes";
+            /** Reviewid */
+            reviewId: string;
+            /** Comment */
+            comment?: string | null;
+        };
         /** ReviewCaseRequest */
         ReviewCaseRequest: {
             /**
@@ -1186,6 +1488,83 @@ export interface components {
             review_status: "approved" | "rejected";
             /** Review Note */
             review_note?: string | null;
+        };
+        /** ReviewStartInput */
+        ReviewStartInput: {
+            /** Planid */
+            planId: string;
+            /** Reviewerid */
+            reviewerId?: string | null;
+        };
+        /** ReviewStatusResponse */
+        ReviewStatusResponse: {
+            /** Id */
+            id: string;
+            /** Planid */
+            planId: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "pending" | "in_progress" | "approved" | "rejected" | "changes_requested";
+            /** Reviewerid */
+            reviewerId?: string | null;
+            /** Comment */
+            comment?: string | null;
+            /** Updatedat */
+            updatedAt: string;
+        };
+        /** SchoolItem */
+        SchoolItem: {
+            /** Id */
+            id: string;
+            /** Name */
+            name: string;
+            /** Province */
+            province: string;
+            /** Is985 */
+            is985: boolean;
+            /** Is211 */
+            is211: boolean;
+        };
+        /** SchoolsResponse */
+        SchoolsResponse: {
+            /** Schools */
+            schools: components["schemas"]["SchoolItem"][];
+            /** Total */
+            total: number;
+        };
+        /** ScoreLineItem */
+        ScoreLineItem: {
+            /** Batch */
+            batch: string;
+            /** Score */
+            score: number;
+            /** Rank */
+            rank: number;
+        };
+        /** ScoreLineResponse */
+        ScoreLineResponse: {
+            /** Province */
+            province: string;
+            /** Year */
+            year: number;
+            /**
+             * Scoretype
+             * @enum {string}
+             */
+            scoreType: "physics" | "history";
+            /** Lines */
+            lines: components["schemas"]["ScoreLineItem"][];
+        };
+        /** ShareLinkStatsResponse */
+        ShareLinkStatsResponse: {
+            /** Views */
+            views: number;
+            /** Uniquevisitors */
+            uniqueVisitors: number;
+            /** Lastaccessedat */
+            lastAccessedAt?: string | null;
         };
         /** UpdateOrderRequest */
         UpdateOrderRequest: {
@@ -2176,6 +2555,351 @@ export interface operations {
             };
         };
     };
+    get_score_line_api_data_query_score_line_get: {
+        parameters: {
+            query: {
+                province: string;
+                year: number;
+                scoreType: "physics" | "history";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ScoreLineResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_rank_estimator_api_data_query_rank_estimator_get: {
+        parameters: {
+            query: {
+                province: string;
+                year: number;
+                scoreType: "physics" | "history";
+                rank: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RankEstimatorResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_majors_api_data_query_majors_get: {
+        parameters: {
+            query?: {
+                keyword?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MajorsResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_schools_api_data_query_schools_get: {
+        parameters: {
+            query?: {
+                keyword?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SchoolsResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    start_review_api_review_start_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReviewStartInput"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReviewStatusResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_review_status_api_review__review_id__status_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                review_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReviewStatusResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    apply_review_action_api_review_action_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReviewActionInput"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReviewStatusResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    generate_poster_api_poster_generate_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PosterGenerateInput"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PosterGenerateResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_llm_config_api_llm_config_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LLMConfigResponse"];
+                };
+            };
+        };
+    };
+    enhance_audit_api_llm__provider__enhance_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                provider: "claude" | "gpt" | "gemini" | "deepseek";
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AuditEnhanceInput"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AuditEnhancementResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_share_link_stats_api_share_link__code__stats_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                code: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ShareLinkStatsResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     get_dashboard_api_stats_dashboard_get: {
         parameters: {
             query?: never;
@@ -2387,7 +3111,7 @@ export interface operations {
             query?: {
                 limit?: number;
                 offset?: number;
-                /** @description 姓名/手机号/微信/订单号搜索 */
+                /** @description ����/�ֻ���/΢��/���������� */
                 q?: string | null;
             };
             header?: never;

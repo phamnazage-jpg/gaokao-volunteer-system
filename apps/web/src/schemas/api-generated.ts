@@ -207,6 +207,128 @@ const OrderDeletionResponse = z
     files_deleted: z.number().int().optional().default(0),
   })
   .passthrough();
+const ScoreLineItem = z
+  .object({ batch: z.string(), score: z.number(), rank: z.number().int() })
+  .passthrough();
+const ScoreLineResponse = z
+  .object({
+    province: z.string(),
+    year: z.number().int(),
+    scoreType: z.enum(["physics", "history"]),
+    lines: z.array(ScoreLineItem),
+  })
+  .passthrough();
+const RankEstimatorResponse = z
+  .object({
+    province: z.string(),
+    year: z.number().int(),
+    scoreType: z.enum(["physics", "history"]),
+    rank: z.number().int(),
+    equivalentScore: z.number(),
+  })
+  .passthrough();
+const keyword = z.union([z.string(), z.null()]).optional();
+const MajorItem = z
+  .object({ id: z.string(), name: z.string(), category: z.string() })
+  .passthrough();
+const MajorsResponse = z
+  .object({ majors: z.array(MajorItem), total: z.number().int() })
+  .passthrough();
+const SchoolItem = z
+  .object({
+    id: z.string(),
+    name: z.string(),
+    province: z.string(),
+    is985: z.boolean(),
+    is211: z.boolean(),
+  })
+  .passthrough();
+const SchoolsResponse = z
+  .object({ schools: z.array(SchoolItem), total: z.number().int() })
+  .passthrough();
+const ReviewStartInput = z
+  .object({
+    planId: z.string().min(1),
+    reviewerId: z.union([z.string(), z.null()]).optional(),
+  })
+  .passthrough();
+const ReviewStatusResponse = z
+  .object({
+    id: z.string(),
+    planId: z.string(),
+    status: z.enum([
+      "pending",
+      "in_progress",
+      "approved",
+      "rejected",
+      "changes_requested",
+    ]),
+    reviewerId: z.union([z.string(), z.null()]).optional(),
+    comment: z.union([z.string(), z.null()]).optional(),
+    updatedAt: z.string(),
+  })
+  .passthrough();
+const ReviewActionInput = z
+  .object({
+    action: z.enum(["approve", "reject", "request_changes"]),
+    reviewId: z.string().min(1),
+    comment: z.union([z.string(), z.null()]).optional(),
+  })
+  .passthrough();
+const PosterGenerateInput = z
+  .object({
+    planId: z.string().min(1),
+    template: z
+      .enum(["classic", "modern", "minimal"])
+      .optional()
+      .default("classic"),
+  })
+  .passthrough();
+const PosterGenerateResponse = z
+  .object({ posterUrl: z.string(), qrCode: z.string(), expiresAt: z.string() })
+  .passthrough();
+const LLMConfigResponse = z
+  .object({
+    currentProvider: z.enum(["claude", "gpt", "gemini", "deepseek"]),
+    fallbackOrder: z.array(z.enum(["claude", "gpt", "gemini", "deepseek"])),
+    availableProviders: z.array(
+      z.enum(["claude", "gpt", "gemini", "deepseek"])
+    ),
+  })
+  .passthrough();
+const AuditEnhanceInput = z
+  .object({
+    planId: z.string(),
+    enhancementType: z
+      .enum(["detail", "risk", "suggestion"])
+      .optional()
+      .default("detail"),
+    baseAudit: z
+      .union([z.object({}).partial().passthrough(), z.null()])
+      .optional(),
+  })
+  .passthrough();
+const Recommendation = z
+  .object({
+    title: z.string(),
+    detail: z.string(),
+    priority: z.enum(["low", "medium", "high"]),
+  })
+  .passthrough();
+const AuditEnhancementResponse = z
+  .object({
+    summary: z.string(),
+    recommendations: z.array(Recommendation),
+    provider: z.enum(["claude", "gpt", "gemini", "deepseek"]),
+  })
+  .passthrough();
+const ShareLinkStatsResponse = z
+  .object({
+    views: z.number().int(),
+    uniqueVisitors: z.number().int(),
+    lastAccessedAt: z.union([z.string(), z.null()]).optional(),
+  })
+  .passthrough();
 const DashboardResponse = z
   .object({
     summary: z.object({}).partial().passthrough(),
@@ -226,7 +348,6 @@ const OrderStatsResponse = z
     by_service_version: z.object({}).partial().passthrough(),
   })
   .passthrough();
-const q = z.union([z.string(), z.null()]).optional();
 const UserSummaryResponse = z
   .object({
     user_key: z.string(),
@@ -429,9 +550,26 @@ export const schemas = {
   OrderDetailPayload,
   UpdateOrderRequest,
   OrderDeletionResponse,
+  ScoreLineItem,
+  ScoreLineResponse,
+  RankEstimatorResponse,
+  keyword,
+  MajorItem,
+  MajorsResponse,
+  SchoolItem,
+  SchoolsResponse,
+  ReviewStartInput,
+  ReviewStatusResponse,
+  ReviewActionInput,
+  PosterGenerateInput,
+  PosterGenerateResponse,
+  LLMConfigResponse,
+  AuditEnhanceInput,
+  Recommendation,
+  AuditEnhancementResponse,
+  ShareLinkStatsResponse,
   DashboardResponse,
   OrderStatsResponse,
-  q,
   UserSummaryResponse,
   UserListResponse,
   UserDetailResponse,
@@ -621,17 +759,17 @@ const endpoints = makeApi([
       {
         name: "order_id",
         type: "Query",
-        schema: q,
+        schema: keyword,
       },
       {
         name: "status",
         type: "Query",
-        schema: q,
+        schema: keyword,
       },
       {
         name: "channel",
         type: "Query",
-        schema: q,
+        schema: keyword,
       },
     ],
     response: NotificationListResponse,
@@ -658,7 +796,7 @@ const endpoints = makeApi([
       {
         name: "order_id",
         type: "Query",
-        schema: q,
+        schema: keyword,
       },
     ],
     response: z.object({}).partial().passthrough(),
@@ -861,7 +999,7 @@ const endpoints = makeApi([
     method: "get",
     path: "/api/admin/stats/dashboard",
     alias: "get_dashboard_api_admin_stats_dashboard_get",
-    description: `返回管理后台仪表盘完整 payload: summary(订单/用户/收入 + 今日/7d/30d 切片) + 6 态分布 + 来源分布 + 服务版本分布 + 今日/7d/30d 趋势序列 (日粒度, 0 填充)。`,
+    description: `���ع�����̨�Ǳ������� payload: summary(����/�û�/���� + ����/7d/30d ��Ƭ) + 6 ̬�ֲ� + ��Դ�ֲ� + ����汾�ֲ� + ����/7d/30d �������� (������, 0 ���)��`,
     requestFormat: "json",
     response: DashboardResponse,
   },
@@ -869,7 +1007,7 @@ const endpoints = makeApi([
     method: "get",
     path: "/api/admin/stats/orders",
     alias: "get_order_stats_api_admin_stats_orders_get",
-    description: `订单维度统计:T6.1 阶段为占位,T6.2 接入真实 SQL 聚合。字段名保持 T6.1 stub 阶段不变,前端旧契约不破。`,
+    description: `����ά��ͳ��:T6.1 �׶�Ϊռλ,T6.2 ������ʵ SQL �ۺϡ��ֶ������� T6.1 stub �׶β���,ǰ�˾���Լ���ơ�`,
     requestFormat: "json",
     response: OrderStatsResponse,
   },
@@ -892,7 +1030,7 @@ const endpoints = makeApi([
       {
         name: "q",
         type: "Query",
-        schema: q,
+        schema: keyword,
       },
     ],
     response: UserListResponse,
@@ -1106,6 +1244,148 @@ const endpoints = makeApi([
   },
   {
     method: "get",
+    path: "/api/data-query/majors",
+    alias: "list_majors_api_data_query_majors_get",
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "keyword",
+        type: "Query",
+        schema: keyword,
+      },
+    ],
+    response: MajorsResponse,
+    errors: [
+      {
+        status: 422,
+        description: `Validation Error`,
+        schema: HTTPValidationError,
+      },
+    ],
+  },
+  {
+    method: "get",
+    path: "/api/data-query/rank-estimator",
+    alias: "get_rank_estimator_api_data_query_rank_estimator_get",
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "province",
+        type: "Query",
+        schema: z.string(),
+      },
+      {
+        name: "year",
+        type: "Query",
+        schema: z.number().int(),
+      },
+      {
+        name: "scoreType",
+        type: "Query",
+        schema: z.enum(["physics", "history"]),
+      },
+      {
+        name: "rank",
+        type: "Query",
+        schema: z.number().int(),
+      },
+    ],
+    response: RankEstimatorResponse,
+    errors: [
+      {
+        status: 422,
+        description: `Validation Error`,
+        schema: HTTPValidationError,
+      },
+    ],
+  },
+  {
+    method: "get",
+    path: "/api/data-query/schools",
+    alias: "list_schools_api_data_query_schools_get",
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "keyword",
+        type: "Query",
+        schema: keyword,
+      },
+    ],
+    response: SchoolsResponse,
+    errors: [
+      {
+        status: 422,
+        description: `Validation Error`,
+        schema: HTTPValidationError,
+      },
+    ],
+  },
+  {
+    method: "get",
+    path: "/api/data-query/score-line",
+    alias: "get_score_line_api_data_query_score_line_get",
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "province",
+        type: "Query",
+        schema: z.string(),
+      },
+      {
+        name: "year",
+        type: "Query",
+        schema: z.number().int(),
+      },
+      {
+        name: "scoreType",
+        type: "Query",
+        schema: z.enum(["physics", "history"]),
+      },
+    ],
+    response: ScoreLineResponse,
+    errors: [
+      {
+        status: 422,
+        description: `Validation Error`,
+        schema: HTTPValidationError,
+      },
+    ],
+  },
+  {
+    method: "post",
+    path: "/api/llm/:provider/enhance",
+    alias: "enhance_audit_api_llm__provider__enhance_post",
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: AuditEnhanceInput,
+      },
+      {
+        name: "provider",
+        type: "Path",
+        schema: z.enum(["claude", "gpt", "gemini", "deepseek"]),
+      },
+    ],
+    response: AuditEnhancementResponse,
+    errors: [
+      {
+        status: 422,
+        description: `Validation Error`,
+        schema: HTTPValidationError,
+      },
+    ],
+  },
+  {
+    method: "get",
+    path: "/api/llm/config",
+    alias: "get_llm_config_api_llm_config_get",
+    requestFormat: "json",
+    response: LLMConfigResponse,
+  },
+  {
+    method: "get",
     path: "/api/meta",
     alias: "meta_api_meta_get",
     requestFormat: "json",
@@ -1279,6 +1559,27 @@ const endpoints = makeApi([
   },
   {
     method: "post",
+    path: "/api/poster/generate",
+    alias: "generate_poster_api_poster_generate_post",
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: PosterGenerateInput,
+      },
+    ],
+    response: PosterGenerateResponse,
+    errors: [
+      {
+        status: 422,
+        description: `Validation Error`,
+        schema: HTTPValidationError,
+      },
+    ],
+  },
+  {
+    method: "post",
     path: "/api/public/orders",
     alias: "create_public_order_endpoint_api_public_orders_post",
     requestFormat: "json",
@@ -1311,6 +1612,69 @@ const endpoints = makeApi([
       },
     ],
     response: WebhookAck,
+    errors: [
+      {
+        status: 422,
+        description: `Validation Error`,
+        schema: HTTPValidationError,
+      },
+    ],
+  },
+  {
+    method: "get",
+    path: "/api/review/:review_id/status",
+    alias: "get_review_status_api_review__review_id__status_get",
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "review_id",
+        type: "Path",
+        schema: z.string(),
+      },
+    ],
+    response: ReviewStatusResponse,
+    errors: [
+      {
+        status: 422,
+        description: `Validation Error`,
+        schema: HTTPValidationError,
+      },
+    ],
+  },
+  {
+    method: "post",
+    path: "/api/review/action",
+    alias: "apply_review_action_api_review_action_post",
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: ReviewActionInput,
+      },
+    ],
+    response: ReviewStatusResponse,
+    errors: [
+      {
+        status: 422,
+        description: `Validation Error`,
+        schema: HTTPValidationError,
+      },
+    ],
+  },
+  {
+    method: "post",
+    path: "/api/review/start",
+    alias: "start_review_api_review_start_post",
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: ReviewStartInput,
+      },
+    ],
+    response: ReviewStatusResponse,
     errors: [
       {
         status: 422,
@@ -1363,6 +1727,27 @@ const endpoints = makeApi([
   },
   {
     method: "get",
+    path: "/api/share-link/:code/stats",
+    alias: "get_share_link_stats_api_share_link__code__stats_get",
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "code",
+        type: "Path",
+        schema: z.string(),
+      },
+    ],
+    response: ShareLinkStatsResponse,
+    errors: [
+      {
+        status: 422,
+        description: `Validation Error`,
+        schema: HTTPValidationError,
+      },
+    ],
+  },
+  {
+    method: "get",
     path: "/api/share-link/latest",
     alias: "latest_share_link_api_share_link_latest_get",
     requestFormat: "json",
@@ -1391,7 +1776,7 @@ const endpoints = makeApi([
     method: "get",
     path: "/api/stats/dashboard",
     alias: "get_dashboard_api_stats_dashboard_get",
-    description: `返回管理后台仪表盘完整 payload: summary(订单/用户/收入 + 今日/7d/30d 切片) + 6 态分布 + 来源分布 + 服务版本分布 + 今日/7d/30d 趋势序列 (日粒度, 0 填充)。`,
+    description: `���ع�����̨�Ǳ������� payload: summary(����/�û�/���� + ����/7d/30d ��Ƭ) + 6 ̬�ֲ� + ��Դ�ֲ� + ����汾�ֲ� + ����/7d/30d �������� (������, 0 ���)��`,
     requestFormat: "json",
     response: DashboardResponse,
   },
@@ -1399,7 +1784,7 @@ const endpoints = makeApi([
     method: "get",
     path: "/api/stats/orders",
     alias: "get_order_stats_api_stats_orders_get",
-    description: `订单维度统计:T6.1 阶段为占位,T6.2 接入真实 SQL 聚合。字段名保持 T6.1 stub 阶段不变,前端旧契约不破。`,
+    description: `����ά��ͳ��:T6.1 �׶�Ϊռλ,T6.2 ������ʵ SQL �ۺϡ��ֶ������� T6.1 stub �׶β���,ǰ�˾���Լ���ơ�`,
     requestFormat: "json",
     response: OrderStatsResponse,
   },
@@ -1407,16 +1792,16 @@ const endpoints = makeApi([
     method: "get",
     path: "/health",
     alias: "health_health_get",
-    description: `公开端点。只返回 readiness, 不暴露环境/路径/版本细节。
+    description: `�����˵㡣ֻ���� readiness, ����¶����/·��/�汾ϸ�ڡ�
 
-返回结构:
-- status: &quot;ok&quot; 或 &quot;degraded&quot;（任一 readiness 检查失败时降级）
-- checks: {db_writable, disk_writable, settings_valid} 子对象
+���ؽṹ:
+- status: &quot;ok&quot; �� &quot;degraded&quot;����һ readiness ���ʧ��ʱ������
+- checks: {db_writable, disk_writable, settings_valid} �Ӷ���
 
-readiness 语义（2026-06-27 P1-4 修复）:
-- 所有 checks 通过 → status&#x3D;&quot;ok&quot;, HTTP 200
-- 任一 check 失败 → status&#x3D;&quot;degraded&quot;, HTTP 503
-- K8s/systemd readiness probe 应判 HTTP status，不只判 status 字段`,
+readiness ���壨2026-06-27 P1-4 �޸���:
+- ���� checks ͨ�� �� status&#x3D;&quot;ok&quot;, HTTP 200
+- ��һ check ʧ�� �� status&#x3D;&quot;degraded&quot;, HTTP 503
+- K8s/systemd readiness probe Ӧ�� HTTP status����ֻ�� status �ֶ�`,
     requestFormat: "json",
     response: z.unknown(),
   },

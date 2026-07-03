@@ -6,7 +6,7 @@
  *  - 0 any (所有 response 强类型, 通过 zod 校验)
  *  - 错误码 → i18n 文案 (Sprint 4 完善映射, 现在先返回原始错误)
  */
-import { ZodError, type ZodSchema } from 'zod';
+import { ZodError, type ZodType, type ZodTypeDef } from 'zod';
 
 export interface ApiError extends Error {
   status: number;
@@ -39,7 +39,7 @@ interface RequestOptions<TBody> {
 
 async function request<TResponse, TBody = unknown>(
   path: string,
-  schema: ZodSchema<TResponse>,
+  schema: ZodType<TResponse, ZodTypeDef, unknown>,
   options: RequestOptions<TBody> = {},
 ): Promise<TResponse> {
   const { method = 'GET', body, signal, headers = {} } = options;
@@ -93,14 +93,14 @@ async function request<TResponse, TBody = unknown>(
 }
 
 export const apiClient = {
-  get: <T>(path: string, schema: ZodSchema<T>, signal?: AbortSignal): Promise<T> =>
+  get: <T>(path: string, schema: ZodType<T, ZodTypeDef, unknown>, signal?: AbortSignal): Promise<T> =>
     request(path, schema, { method: 'GET', signal }),
-  post: <T, B = unknown>(path: string, body: B, schema: ZodSchema<T>, signal?: AbortSignal): Promise<T> =>
+  post: <T, B = unknown>(path: string, body: B, schema: ZodType<T, ZodTypeDef, unknown>, signal?: AbortSignal): Promise<T> =>
     request(path, schema, { method: 'POST', body, signal }),
-  put: <T, B = unknown>(path: string, body: B, schema: ZodSchema<T>, signal?: AbortSignal): Promise<T> =>
+  put: <T, B = unknown>(path: string, body: B, schema: ZodType<T, ZodTypeDef, unknown>, signal?: AbortSignal): Promise<T> =>
     request(path, schema, { method: 'PUT', body, signal }),
-  patch: <T, B = unknown>(path: string, body: B, schema: ZodSchema<T>, signal?: AbortSignal): Promise<T> =>
+  patch: <T, B = unknown>(path: string, body: B, schema: ZodType<T, ZodTypeDef, unknown>, signal?: AbortSignal): Promise<T> =>
     request(path, schema, { method: 'PATCH', body, signal }),
-  delete: <T>(path: string, schema: ZodSchema<T>, signal?: AbortSignal): Promise<T> =>
+  delete: <T>(path: string, schema: ZodType<T, ZodTypeDef, unknown>, signal?: AbortSignal): Promise<T> =>
     request(path, schema, { method: 'DELETE', signal }),
 };

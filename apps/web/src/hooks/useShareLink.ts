@@ -13,19 +13,38 @@ export const ShareLinkCreateInputSchema = z.object({
 });
 
 export const ShareLinkResponseSchema = z.object({
-  id: z.string(),
+  id: z.string().optional(),
   code: z.string(),
-  url: z.string().url(),
-  planId: z.string(),
-  createdAt: z.string(),
-  expiresAt: z.string().nullable(),
-});
+  url: z.string().url().optional(),
+  share_url: z.string().url().optional(),
+  planId: z.string().optional(),
+  target_id: z.string().optional(),
+  createdAt: z.string().optional(),
+  expiresAt: z.string().nullable().optional(),
+  expires_at_iso: z.string().nullable().optional(),
+  revoked: z.boolean().optional(),
+}).transform((value) => ({
+  id: value.id ?? value.code,
+  code: value.code,
+  url: value.url ?? value.share_url ?? '',
+  planId: value.planId ?? value.target_id ?? '',
+  createdAt: value.createdAt ?? new Date().toISOString(),
+  expiresAt: value.expiresAt ?? value.expires_at_iso ?? null,
+  revoked: value.revoked ?? false,
+}));
 
 export const ShareLinkStatsResponseSchema = z.object({
-  views: z.number().int().nonnegative(),
-  uniqueVisitors: z.number().int().nonnegative(),
-  lastAccessedAt: z.string().nullable(),
-});
+  views: z.number().int().nonnegative().optional(),
+  uniqueVisitors: z.number().int().nonnegative().optional(),
+  lastAccessedAt: z.string().nullable().optional(),
+  access_count: z.number().int().nonnegative().optional(),
+  unique_visitors: z.number().int().nonnegative().optional(),
+  last_access_at_iso: z.string().nullable().optional(),
+}).transform((value) => ({
+  views: value.views ?? value.access_count ?? 0,
+  uniqueVisitors: value.uniqueVisitors ?? value.unique_visitors ?? 0,
+  lastAccessedAt: value.lastAccessedAt ?? value.last_access_at_iso ?? null,
+}));
 
 export const ShareLinkLatestResponseSchema = ShareLinkResponseSchema.nullable();
 
@@ -41,20 +60,38 @@ export const shareLinkKeys = {
 
 export function useShareLinkCreate() {
   return useMutation<ShareLinkResponse, Error, ShareLinkCreateInput>({
-    mutationFn: (input) => apiClient.post<ShareLinkResponse, ShareLinkCreateInput>('/share-link', input, ShareLinkResponseSchema),
+    mutationFn: (input) =>
+      apiClient.post<ShareLinkResponse, Record<string, unknown>>(
+        '/share-link',
+        {
+          result_type: 'review_result',
+          target_token: input.planId,
+          permission: 'read',
+          ttl_days: input.expiresIn === 'forever' ? undefined : input.expiresIn,
+          replace_existing: true,
+        },
+        ShareLinkResponseSchema,
+      ),
   });
 }
 
 export function useShareLinkDelete() {
   return useMutation<{ success: boolean }, Error, string>({
-    mutationFn: (id) => apiClient.delete<{ success: boolean }>(`/share-link/${id}`, z.object({ success: z.boolean() })),
+    mutationFn: async (code) => {
+      const res = await apiClient.post<{ revoked: boolean; changed: boolean }, Record<string, never>>(
+        `/share-link/${code}/revoke`,
+        {},
+        z.object({ revoked: z.boolean(), changed: z.boolean() }),
+      );
+      return { success: res.revoked };
+    },
   });
 }
 
 export function useShareLinkLatestQuery() {
   return useQuery<ShareLinkResponse | null>({
     queryKey: shareLinkKeys.latest(),
-    queryFn: () => apiClient.get<ShareLinkResponse | null>('/portal/share-link/latest', ShareLinkLatestResponseSchema),
+    queryFn: () => apiClient.get<ShareLinkResponse | null>('/share-link/latest', ShareLinkLatestResponseSchema),
     staleTime: 60 * 1000,
   });
 }

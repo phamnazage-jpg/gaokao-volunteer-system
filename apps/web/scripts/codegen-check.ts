@@ -39,6 +39,23 @@ function looksLikeStub(content: string): boolean {
 const typesContent = readRequired(TYPES_FILE);
 const schemasContent = readRequired(SCHEMAS_FILE);
 
+const REQUIRED_SPRINT3_PATHS = [
+  '/api/share-link',
+  '/api/share-link/latest',
+  '/api/share-link/{code}/revoke',
+  '/api/share-link/{code}/stats',
+  '/api/data-query/score-line',
+  '/api/data-query/rank-estimator',
+  '/api/data-query/majors',
+  '/api/data-query/schools',
+  '/api/review/start',
+  '/api/review/{review_id}/status',
+  '/api/review/action',
+  '/api/poster/generate',
+  '/api/llm/config',
+  '/api/llm/{provider}/enhance',
+] as const;
+
 if (looksLikeStub(typesContent)) {
   fail(`${TYPES_FILE} 仍是占位/stub 输出`);
 }
@@ -57,6 +74,11 @@ if (!/\/api\//.test(typesContent)) {
 
 if (!/export const|export default|makeApi|z\.object/.test(schemasContent)) {
   fail(`${SCHEMAS_FILE} 未包含可用的 schema/client 导出`);
+}
+
+const missingSprint3Paths = REQUIRED_SPRINT3_PATHS.filter((path) => !typesContent.includes(`"${path}"`));
+if (missingSprint3Paths.length > 0) {
+  fail(`${TYPES_FILE} missing Sprint 3 React JSON API paths: ${missingSprint3Paths.join(', ')}`);
 }
 
 if (/: any\b/.test(typesContent)) {

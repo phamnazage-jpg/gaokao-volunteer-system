@@ -70,4 +70,47 @@ export const handlers = [
       total: 1,
     });
   }),
+
+  // ====== Share Link ======
+  http.post(`${API}/share-link`, async ({ request }) => {
+    const payload = (await request.json()) as { target_token?: string; ttl_days?: number };
+    return HttpResponse.json(
+      {
+        code: 'ABC123',
+        share_url: 'https://example.test/s/ABC123',
+        target_id: payload.target_token ?? 'plan-001',
+        result_type: 'review_result',
+        expires_at_iso: payload.ttl_days ? new Date(Date.now() + payload.ttl_days * 86_400_000).toISOString() : null,
+        revoked: false,
+      },
+      { status: 201 },
+    );
+  }),
+
+  http.get(`${API}/share-link/latest`, () => {
+    return HttpResponse.json({
+      code: 'ABC123',
+      share_url: 'https://example.test/s/ABC123',
+      target_id: 'plan-001',
+      result_type: 'review_result',
+      expires_at_iso: null,
+      revoked: false,
+    });
+  }),
+
+  http.post(`${API}/share-link/:code/revoke`, ({ params }) => {
+    return HttpResponse.json({
+      code: params['code'],
+      revoked: true,
+      changed: true,
+    });
+  }),
+
+  http.get(`${API}/share-link/:code/stats`, () => {
+    return HttpResponse.json({
+      views: 12,
+      uniqueVisitors: 5,
+      lastAccessedAt: '2026-07-03T00:00:00.000Z',
+    });
+  }),
 ];
