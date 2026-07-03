@@ -81,3 +81,34 @@ admin/_tmp_test.txt
 # P1-7: 100-case 回归产物写入 /tmp，reports/ 下不应再有动态覆写产物
 reports/score_range_fullchain_100_*
 
+# Monorepo (Sprint 1+) — 隔离 Node 依赖、构建产物、测试缓存
+node_modules/
+.pnp/
+.pnp.js
+.yarn/
+
+# Next.js 构建产物
+.next/
+out/
+next-env.d.ts
+.turbo/
+dist/
+build/
+
+# TypeScript
+*.tsbuildinfo
+.tscache/
+
+# Vitest / Jest / Playwright
+coverage/
+playwright-report/
+test-results/
+.nyc_output/
+.vitest/
+
+# Storybook
+storybook-static/
+
+# Turbo
+.turbo/
+

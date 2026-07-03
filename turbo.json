@@ -1,0 +1,42 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "globalDependencies": ["**/.env.*local"],
+  "globalEnv": ["NODE_ENV", "CI", "VITE_API_BASE_URL", "CHROMATIC_TOKEN"],
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build", "codegen:check"],
+      "outputs": ["dist/**", "!.vite/**"]
+    },
+    "lint": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
+    "typecheck": {
+      "dependsOn": ["^build", "codegen:check"],
+      "outputs": []
+    },
+    "test": {
+      "dependsOn": ["^build"],
+      "outputs": ["coverage/**"]
+    },
+    "test:e2e": {
+      "dependsOn": ["build"],
+      "outputs": ["playwright-report/**", "test-results/**"]
+    },
+    "codegen": {
+      "cache": false,
+      "outputs": ["src/types/api-generated.d.ts", "src/schemas/api-generated.ts"]
+    },
+    "codegen:check": {
+      "outputs": []
+    },
+    "chromatic": {
+      "cache": false,
+      "dependsOn": ["build"]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    }
+  }
+}

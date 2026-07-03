@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="zh-CN" suppressHydrationWarning>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="高考志愿填报助手 - AI 驱动的志愿规划系统" />
+    <title>升学助手</title>
+    <!-- V10 不变量 D2: theme-script 防闪 (Vite 注入, 客户端 hydration 前执行) -->
+    <script>
+      (function () {
+        try {
+          var stored = localStorage.getItem('theme-pref');
+          var prefers = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+          var resolved = stored === 'system' || !stored ? prefers : stored;
+          document.documentElement.classList.add(resolved);
+          document.documentElement.style.colorScheme = resolved;
+        } catch (e) {
+          document.documentElement.classList.add('light');
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

@@ -1,0 +1,50 @@
+# Dependencies
+node_modules/
+
+# Next.js build output
+.next/
+out/
+dist/
+
+# Production build
+build/
+
+# Debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Local env files
+.env*.local
+.env
+
+# Vercel
+.vercel
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Misc
+*.log
+.vercelignore
+.npm-cache
+.next-dev.pid
+.workbuddy/
+next-dev.log
+
+# 测试 / 调试产物（避免误提交本地运行结果）
+playwright-report/
+test-results/
+coverage/
+.turbo/
