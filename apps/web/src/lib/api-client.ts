@@ -4,27 +4,43 @@
  *
  * G1 闸门:
  *  - 0 any (所有 response 强类型, 通过 zod 校验)
- *  - 错误码 → i18n 文案 (Sprint 4 完善映射, 现在先返回原始错误)
+ *  - 错误码 → i18n 文案
  */
 import { ZodError, type ZodType, type ZodTypeDef } from 'zod';
+import { getLocalizedApiErrorMessage, type ApiErrorSeverity } from './error-messages';
 
 export interface ApiError extends Error {
   status: number;
   code?: string;
   details?: unknown;
+  suggestion?: string;
+  severity?: ApiErrorSeverity;
+  retryable?: boolean;
 }
 
 export class HttpError extends Error implements ApiError {
   readonly status: number;
   readonly code: string | undefined;
   readonly details: unknown;
+  readonly suggestion: string | undefined;
+  readonly severity: ApiErrorSeverity | undefined;
+  readonly retryable: boolean | undefined;
 
-  constructor(message: string, status: number, code?: string, details?: unknown) {
+  constructor(
+    message: string,
+    status: number,
+    code?: string,
+    details?: unknown,
+    options: Pick<ApiError, 'suggestion' | 'severity' | 'retryable'> = {},
+  ) {
     super(message);
     this.name = 'HttpError';
     this.status = status;
     this.code = code;
     this.details = details;
+    this.suggestion = options.suggestion;
+    this.severity = options.severity;
+    this.retryable = options.retryable;
   }
 }
 
@@ -67,11 +83,13 @@ async function request<TResponse, TBody = unknown>(
     } catch {
       // response body 不是 JSON
     }
+    const localizedError = getLocalizedApiErrorMessage(errorBody.code);
     throw new HttpError(
-      errorBody.message ?? `HTTP ${res.status}`,
+      localizedError?.message ?? errorBody.message ?? `HTTP ${res.status}`,
       res.status,
       errorBody.code,
       errorBody.details,
+      localizedError,
     );
   }
 

@@ -1,0 +1,121 @@
+{
+  "E01101": {
+    "code": "E01101",
+    "message": "用户名或密码不正确",
+    "suggestion": "请检查大小写和输入法,确认无误后重新登录。忘记密码请联系管理员重置。",
+    "severity": "warn",
+    "retryable": false
+  },
+  "E01102": {
+    "code": "E01102",
+    "message": "账号已被停用",
+    "suggestion": "请联系管理员确认账号状态,启用后再登录。",
+    "severity": "warn",
+    "retryable": false
+  },
+  "E01201": {
+    "code": "E01201",
+    "message": "登录状态已过期",
+    "suggestion": "请重新登录后再继续操作。系统默认会话有效期 5 分钟。",
+    "severity": "warn",
+    "retryable": false
+  },
+  "E01202": {
+    "code": "E01202",
+    "message": "登录凭证无效",
+    "suggestion": "请重新登录。如反复出现,请清除浏览器 Cookie 后重试。",
+    "severity": "warn",
+    "retryable": false
+  },
+  "E01301": {
+    "code": "E01301",
+    "message": "当前账号无访问权限",
+    "suggestion": "请使用具备相应权限的账号登录,或联系管理员开通权限。",
+    "severity": "warn",
+    "retryable": false
+  },
+  "E02001": {
+    "code": "E02001",
+    "message": "未找到该订单",
+    "suggestion": "请检查订单号是否正确,或在订单列表中通过筛选条件重新查询。",
+    "severity": "warn",
+    "retryable": false
+  },
+  "E02002": {
+    "code": "E02002",
+    "message": "订单仍在数据保留期内",
+    "suggestion": "请等待保留期(服务完成后 180 天)结束,或走支付争议/法务豁免审批流程后再处理。",
+    "severity": "warn",
+    "retryable": false
+  },
+  "E02301": {
+    "code": "E02301",
+    "message": "订单当前状态不支持该操作",
+    "suggestion": "请刷新订单详情查看最新状态,或前往订单列表查看状态流转。",
+    "severity": "warn",
+    "retryable": false
+  },
+  "E02501": {
+    "code": "E02501",
+    "message": "请求过于频繁",
+    "suggestion": "请稍候 30 秒后再试。如持续触发,可联系管理员调整配额。",
+    "severity": "warn",
+    "retryable": true
+  },
+  "E03001": {
+    "code": "E03001",
+    "message": "请求数据未通过校验",
+    "suggestion": "请检查必填字段和格式。鼠标悬停字段标签可查看填写要求。",
+    "severity": "warn",
+    "retryable": false
+  },
+  "E03002": {
+    "code": "E03002",
+    "message": "未找到对应的数据",
+    "suggestion": "该记录可能已被删除或尚未创建,请刷新页面或返回列表确认。",
+    "severity": "warn",
+    "retryable": false
+  },
+  "E03003": {
+    "code": "E03003",
+    "message": "数据保存失败",
+    "suggestion": "请稍后重试。如反复失败,请联系技术支持并保留错误码。",
+    "severity": "error",
+    "retryable": true
+  },
+  "E04001": {
+    "code": "E04001",
+    "message": "外部服务暂时不可用",
+    "suggestion": "我们正在同步上游状态,请稍后重试;如紧急可联系客服。",
+    "severity": "error",
+    "retryable": true
+  },
+  "E04002": {
+    "code": "E04002",
+    "message": "外部服务响应超时",
+    "suggestion": "请稍后重试,或在网络稳定的环境下再次尝试。",
+    "severity": "error",
+    "retryable": true
+  },
+  "E05001": {
+    "code": "E05001",
+    "message": "系统内部异常",
+    "suggestion": "请稍后重试。如反复出现,请联系技术支持并提供错误码。",
+    "severity": "error",
+    "retryable": true
+  },
+  "E05002": {
+    "code": "E05002",
+    "message": "系统配置缺失",
+    "suggestion": "请联系运维人员检查服务配置,确认环境变量已正确注入。",
+    "severity": "error",
+    "retryable": false
+  },
+  "E05003": {
+    "code": "E05003",
+    "message": "系统资源不足",
+    "suggestion": "当前访问量过高,请稍后再试;如紧急可联系运维扩容。",
+    "severity": "error",
+    "retryable": true
+  }
+}

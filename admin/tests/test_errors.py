@@ -9,6 +9,9 @@
 
 from __future__ import annotations
 
+import json
+from pathlib import Path
+
 import pytest
 from fastapi.testclient import TestClient
 
@@ -157,6 +160,12 @@ class TestRegistry:
         FALLBACK_CODE 也在注册表 (但函数中它仅作兜底不入注册)
         """
         assert len(MESSAGES_ZH_CN) == 17
+
+    def test_frontend_i18n_catalog_matches_registry(self):
+        catalog_path = Path(__file__).resolve().parents[2] / "packages" / "i18n" / "zh-CN" / "errors.json"
+        catalog = json.loads(catalog_path.read_text(encoding="utf-8"))
+        expected = {code: message.to_dict() for code, message in MESSAGES_ZH_CN.items()}
+        assert catalog == expected
 
 
 # ---------------- exceptions.py ----------------
