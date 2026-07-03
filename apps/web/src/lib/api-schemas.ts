@@ -9,6 +9,7 @@ import { z } from 'zod';
 export const ChatSendInputSchema = z.object({
   message: z.string().min(1).max(2000),
   sessionId: z.string().uuid().optional(),
+  userName: z.string().optional(),
   profile: z
     .object({
       province: z.string().optional(),
@@ -146,3 +147,24 @@ export const UploadResponseSchema = z.object({
   mimeType: z.string(),
 });
 export type UploadResponse = z.infer<typeof UploadResponseSchema>;
+
+// ====== LLM Audit Enhance (Sprint 3 · T-B-17 / T-B-26) ======
+export const AuditEnhanceInputSchema = z.object({
+  planId: z.string(),
+  baseAudit: AuditResponseSchema.optional(),
+  enhancementType: z.enum(['detail', 'risk', 'suggestion']).default('detail'),
+});
+export type AuditEnhanceInput = z.infer<typeof AuditEnhanceInputSchema>;
+
+export const AuditEnhancementSchema = z.object({
+  summary: z.string(),
+  recommendations: z.array(
+    z.object({
+      title: z.string(),
+      detail: z.string(),
+      priority: z.enum(['low', 'medium', 'high']),
+    }),
+  ),
+  provider: z.enum(['claude', 'gpt', 'gemini', 'deepseek']).optional(),
+});
+export type AuditEnhancement = z.infer<typeof AuditEnhancementSchema>;

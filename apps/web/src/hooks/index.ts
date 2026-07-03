@@ -5,9 +5,12 @@
  * V10 hooks 集合: TanStack Query + 真实 API client + 流式聊天 mutation。
  */
 export { useChatSendMutation, useChatStreamMutation } from './useChatMutations';
-export { useChatHistoryQuery, useChatSessionsQuery } from './useChatQueries';
+export { useChatHistoryQuery, useConsultationsQuery } from './useChatQueries';
 
-export { useConsultationsQuery, useConsultationQuery } from './useConsultationQueries';
+export { useChatOrchestrator } from './useChatOrchestrator';
+export { useScrollRecovery } from './useScrollRecovery';
+
+export { useConsultationsQuery as _useConsultationsQuery, useConsultationQuery } from './useConsultationQueries';
 export { useConsultationCreateMutation, useConsultationUpdateMutation, useConsultationDeleteMutation } from './useConsultationMutations';
 
 export { usePlansQuery, usePlanQuery } from './usePlanQueries';
@@ -18,3 +21,11 @@ export { useAssessmentMutation } from './useAssessmentMutations';
 export { useAuditSubmitMutation, useAuditStatusQuery } from './useAuditMutations';
 
 export { useUploadMutation } from './useUploadMutations';
+
+// V10 Sprint 3 模块
+export { useShareLinkCreate, useShareLinkDelete, useShareLinkLatestQuery, useShareLinkStatsQuery } from './useShareLink';
+export { useScoreLineQuery, useRankEstimatorQuery, useMajorsQuery, useSchoolsQuery } from './useDataQuery';
+export { useReviewStartMutation, useReviewStatusQuery, useReviewActionMutation } from './useReviewFlow';
+export { usePortalCWBQuery, usePortalFullPlanQuery } from './usePortal';
+export { usePosterGenerateMutation } from './usePosterGenerate';
+export { useLLMConfig, useAuditEnhanceMutation } from './useLLMEnhanceMutation';

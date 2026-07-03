@@ -1,38 +1,58 @@
 /**
  * V10 选项 B · useChatQueries
- * 替代原型 useChat.getHistory
+ * 替代原型 useChat.getHistory / getConsultations
  */
 import { useQuery } from '@tanstack/react-query';
 import { z } from 'zod';
 import { apiClient } from '@/lib/api-client';
-import { ChatHistoryResponseSchema, type ChatHistoryResponse } from '@/lib/api-schemas';
+import { chatKeys } from '@/hooks/useChatMutations';
 
-const ChatSessionsResponseSchema = z.object({
-  sessions: z.array(z.object({ id: z.string(), title: z.string(), updatedAt: z.string() })),
+export const ChatHistoryResponseSchema = z.object({
+  sessionId: z.string(),
+  messages: z.array(
+    z.object({
+      id: z.string(),
+      role: z.enum(['user', 'assistant', 'system']),
+      content: z.string(),
+      timestamp: z.string(),
+    }),
+  ),
 });
-type ChatSessionsResponse = z.infer<typeof ChatSessionsResponseSchema>;
-import { chatKeys } from './useChatMutations';
+
+export const ConsultationSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  messageCount: z.number().int().nonnegative(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+});
+
+export const ConsultationListResponseSchema = z.object({
+  consultations: z.array(ConsultationSchema),
+  total: z.number().int(),
+});
+
+export type ChatHistoryResponse = z.infer<typeof ChatHistoryResponseSchema>;
+export type ConsultationListResponse = z.infer<typeof ConsultationListResponseSchema>;
 
 export function useChatHistoryQuery(sessionId: string | null) {
-  return useQuery<ChatHistoryResponse, Error>({
+  return useQuery<ChatHistoryResponse>({
     queryKey: sessionId ? chatKeys.history(sessionId) : ['chat', 'history', 'noop'],
-    queryFn: ({ signal }) =>
-      apiClient.get<ChatHistoryResponse>(`/chat/history?sessionId=${sessionId}`, ChatHistoryResponseSchema, signal),
+    queryFn: () =>
+      apiClient.get<ChatHistoryResponse>(
+        `/chat/history?sessionId=${encodeURIComponent(sessionId ?? '')}`,
+        ChatHistoryResponseSchema,
+      ),
     enabled: Boolean(sessionId),
-    staleTime: 5 * 60 * 1000, // 5 分钟
-    gcTime: 30 * 60 * 1000, // 30 分钟
+    staleTime: 5 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
   });
 }
 
-export function useChatSessionsQuery() {
-  return useQuery<ChatSessionsResponse, Error>({
+export function useConsultationsQuery() {
+  return useQuery<ConsultationListResponse>({
     queryKey: chatKeys.sessions(),
-    queryFn: ({ signal }) =>
-      apiClient.get<ChatSessionsResponse>(
-        '/chat/sessions',
-        ChatSessionsResponseSchema,
-        signal,
-      ),
+    queryFn: () => apiClient.get<ConsultationListResponse>('/consultations', ConsultationListResponseSchema),
     staleTime: 60 * 1000,
   });
 }

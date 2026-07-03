@@ -25,15 +25,19 @@ export interface ChatState {
   currentPlan: Message | null;
   currentAuditReport: AuditReport | null;
   activeRecordId: string | null;
+  lastError: string | null;
 
   // actions
   appendMessage: (msg: Message) => void;
   appendUserMessage: (content: string) => string; // 返回 id
   appendAssistantMessage: (content: string) => string;
   updateLastMessage: (content: string) => void;
+  /** 向指定 id 消息追加 delta (SSE 流式) */
+  appendDelta: (messageId: string, delta: string) => void;
   clearMessages: () => void;
   setStreaming: (streaming: boolean) => void;
   setStreamStatus: (status: StreamStatus) => void;
+  setError: (error: string | null) => void;
   setCurrentPlan: (plan: Message | null) => void;
   setCurrentAuditReport: (report: AuditReport | null) => void;
   setActiveRecordId: (id: string | null) => void;
@@ -41,7 +45,7 @@ export interface ChatState {
 }
 
 const initialState: Pick<ChatState,
-  'messages' | 'isStreaming' | 'streamStatus' | 'currentPlan' | 'currentAuditReport' | 'activeRecordId'
+  'messages' | 'isStreaming' | 'streamStatus' | 'currentPlan' | 'currentAuditReport' | 'activeRecordId' | 'lastError'
 > = {
   messages: [],
   isStreaming: false,
@@ -49,6 +53,7 @@ const initialState: Pick<ChatState,
   currentPlan: null,
   currentAuditReport: null,
   activeRecordId: null,
+  lastError: null,
 };
 
 export const useChatStore = create<ChatState>()(
@@ -92,6 +97,18 @@ export const useChatStore = create<ChatState>()(
               last.content = content;
               last.isStreaming = true;
             }
+          }),
+        appendDelta: (messageId, delta) =>
+          set((s) => {
+            const target = s.messages.find((m) => m.id === messageId);
+            if (target) {
+              target.content += delta;
+              target.isStreaming = true;
+            }
+          }),
+        setError: (error) =>
+          set((s) => {
+            s.lastError = error;
           }),
         clearMessages: () =>
           set((s) => {

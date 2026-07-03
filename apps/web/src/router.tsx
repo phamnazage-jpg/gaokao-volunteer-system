@@ -10,6 +10,11 @@ import { PlanDetailPage } from './pages/PlanDetailPage';
 import { ConsultationsPage } from './pages/ConsultationsPage';
 import { AboutPage } from './pages/AboutPage';
 import { NotFoundPage } from './pages/NotFoundPage';
+import { ShareDialogPage } from './pages/ShareDialogPage';
+import { DataQueryPage } from './pages/DataQueryPage';
+import { ReviewPage } from './pages/ReviewPage';
+import { PosterPreviewPage } from './pages/PosterPreviewPage';
+import { PortalPage } from './pages/PortalPage';
 import { AppLayout } from './layouts/AppLayout';
 
 const routes: RouteObject[] = [
@@ -22,6 +27,11 @@ const routes: RouteObject[] = [
       { path: 'plans/compare', element: <PlanComparePage /> },
       { path: 'plans/:planId', element: <PlanDetailPage /> },
       { path: 'consultations', element: <ConsultationsPage /> },
+      { path: 'share', element: <ShareDialogPage /> },
+      { path: 'data-query', element: <DataQueryPage /> },
+      { path: 'review', element: <ReviewPage /> },
+      { path: 'poster', element: <PosterPreviewPage /> },
+      { path: 'portal/:token', element: <PortalPage /> },
       { path: 'about', element: <AboutPage /> },
       { path: '*', element: <NotFoundPage /> },
     ],

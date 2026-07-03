@@ -31,6 +31,10 @@ const NAV_ITEMS: ReadonlyArray<NavItem> = [
   { to: '/plans', label: '我的方案', icon: '📋' },
   { to: '/consultations', label: '咨询记录', icon: '📖' },
   { to: '/plans/compare', label: '方案对比', icon: '⚖️' },
+  { to: '/data-query', label: '数据查询', icon: '📊' },
+  { to: '/share', label: '分享', icon: '🔗' },
+  { to: '/review', label: '审核', icon: '🛡️' },
+  { to: '/poster', label: '海报', icon: '🖼️' },
   { to: '/about', label: '帮助', icon: '❓' },
 ];
 
