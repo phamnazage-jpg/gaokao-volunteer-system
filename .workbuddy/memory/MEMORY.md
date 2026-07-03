@@ -20,7 +20,8 @@
 ## Sprint 状态
 - **S1 ✅ 完成**（2026-07-03 G0 通过）
 - **S2 ✅ 完成**（2026-07-03 G1 通过，33 any 清零，49 warning 清零）
-- **S3-S8 ⏳ 待启动**
+- **S3 ✅ 完成**（2026-07-03 G2 通过，5 模块端到端 + LLM 4 模 fallback）
+- **S4-S8 ⏳ 待启动**
 
 ## V10 关键决策（2026-07-03 PM 拍板）
 - 原型只锁 UI/交互，不锁技术栈
@@ -36,6 +37,14 @@
 - Vite build 192 KB gzip（目标 < 300 KB）
 - Git: commit `e8b8ad0` + merge `5ea8221`
 
+## Sprint 3 关键成果（2026-07-03 傍晚）
+- 5 个新模块（Share / Query / Review / LLM / Poster）端到端跑通
+- 30+ TanStack Query hooks + 5 页面 + 1 LLM 适配器
+- 4 模 fallback 链：claude → gpt → gemini → deepseek
+- 37 单测 + 24 e2e（4 浏览器 × 6 spec）
+- Vite build 312 KB gzip（recharts 拆分后主 chunk 83KB）
+- Git: commit `e24cbb7`
+
 ## 经验教训
 1. **原型未在 git 中**：Sprint 1 勘误。原"git mv"假设是错的，用 `cp -r` 替代
 2. **G0 闸门先于 Sprint 2**：确保 monorepo + CI 灯绿后再启动业务开发
@@ -44,6 +53,10 @@
 5. **主题持久化双源方案**：ThemeToggle 同步写 localStorage['theme-pref']，index.html 内联脚本读，刷新不丢
 6. **MobileNav fixed 定位**：Playwright 768px 视口能正确识别，避免 flex 父级挤压
 7. **Vite 切框架保留 monorepo**：turbo.json/pnpm-workspace.yaml/CI 已 Sprint 1 验证，S2 只在 apps/web 内部切
+8. **4 模 LLM fallback 链**：enhanceWithFallback(order) 接受 provider 数组，依次尝试，最后一个失败时抛错
+9. **apiClient 强制 Zod schema**：所有 API 调用第二个参数必须是 ZodSchema，无 schema 编译失败（保持 0 any）
+10. **大体积包拆 manualChunk**：recharts 375KB 拆 chart-vendor，触发懒加载时下载
+11. **Portal token 路由**：/portal/:token 共享 token 字段，自动级联 CWB + 完整方案
 
 ## UI/交互 12 项不变量（V10 锁定）
 - 布局 4 项：1024px 断点 / 移动 48px Tab / 中间折叠 / 容器宽度
