@@ -6,6 +6,7 @@ import { Outlet, useLocation } from 'react-router-dom';
 import { Sidebar } from '@/components/navigation/Sidebar';
 import { MobileNav } from '@/components/navigation/MobileNav';
 import { ErrorFallback } from '@/components/shared/ErrorFallback';
+import { OfflineBanner } from '@/components/shared/OfflineBanner';
 import { useChatStore } from '@/stores/chat';
 import { useFormStore } from '@/stores/form';
 import { useUserStore } from '@/stores/user';
@@ -38,6 +39,7 @@ export function AppLayout() {
     <div className="app-layout flex h-screen overflow-hidden bg-[var(--color-bg)] text-[var(--color-fg)]">
       <Sidebar recentChats={recentChatsList} activeChatId={activeRecordId ?? undefined} onNewChat={handleNewChat} onSelectChat={handleSelectChat} />
       <div className="flex flex-col flex-1 min-w-0 max-w-5xl mx-auto lg:border-r border-gray-100">
+        <OfflineBanner />
         <ErrorBoundary FallbackComponent={ErrorFallback} resetKeys={[location.pathname]}>
           <Outlet />
         </ErrorBoundary>

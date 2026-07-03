@@ -53,6 +53,44 @@ interface RequestOptions<TBody> {
   headers?: Record<string, string>;
 }
 
+function isBrowserOffline(): boolean {
+  return typeof navigator !== 'undefined' && navigator.onLine === false;
+}
+
+function isWriteMethod(method: RequestOptions<unknown>['method']): boolean {
+  return method !== undefined && method !== 'GET';
+}
+
+function waitUntilOnline(signal: AbortSignal | undefined): Promise<void> {
+  if (!isBrowserOffline() || typeof window === 'undefined') {
+    return Promise.resolve();
+  }
+
+  return new Promise<void>((resolve, reject) => {
+    const cleanup = (): void => {
+      window.removeEventListener('online', handleOnline);
+      signal?.removeEventListener('abort', handleAbort);
+    };
+    const handleOnline = (): void => {
+      cleanup();
+      resolve();
+    };
+    const handleAbort = (): void => {
+      cleanup();
+      reject(new DOMException('The request was aborted while waiting for the network to recover.', 'AbortError'));
+    };
+
+    window.addEventListener('online', handleOnline, { once: true });
+    signal?.addEventListener('abort', handleAbort, { once: true });
+
+    if (!isBrowserOffline()) {
+      handleOnline();
+    } else if (signal?.aborted) {
+      handleAbort();
+    }
+  });
+}
+
 async function request<TResponse, TBody = unknown>(
   path: string,
   schema: ZodType<TResponse, ZodTypeDef, unknown>,
@@ -72,6 +110,10 @@ async function request<TResponse, TBody = unknown>(
 
   if (body !== undefined) {
     init.body = JSON.stringify(body);
+  }
+
+  if (isWriteMethod(method)) {
+    await waitUntilOnline(signal);
   }
 
   const res = await fetch(`${BASE_URL}${path}`, init);

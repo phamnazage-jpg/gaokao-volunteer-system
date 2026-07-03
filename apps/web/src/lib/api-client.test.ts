@@ -2,6 +2,13 @@ import { z } from 'zod';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { apiClient, HttpError } from './api-client';
 
+function setNavigatorOnline(value: boolean): void {
+  Object.defineProperty(window.navigator, 'onLine', {
+    configurable: true,
+    value,
+  });
+}
+
 const errorCases = [
   ['E01101', '用户名或密码不正确'],
   ['E01102', '账号已被停用'],
@@ -25,6 +32,7 @@ const errorCases = [
 describe('apiClient error handling', () => {
   afterEach(() => {
     vi.unstubAllGlobals();
+    setNavigatorOnline(true);
   });
 
   it.each(errorCases)('maps backend error code %s to localized user copy', async (code, message) => {
@@ -72,5 +80,27 @@ describe('apiClient error handling', () => {
       message: 'backend fallback',
       details: null,
     } satisfies Partial<HttpError>);
+  });
+
+  it('queues non-GET requests while offline and resumes them when online', async () => {
+    setNavigatorOnline(false);
+    const fetchMock = vi.fn().mockResolvedValue(
+      new Response(JSON.stringify({ ok: true }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      }),
+    );
+    vi.stubGlobal('fetch', fetchMock);
+
+    const request = apiClient.post('/queued-write', { value: 1 }, z.object({ ok: z.boolean() }));
+    await Promise.resolve();
+
+    expect(fetchMock).not.toHaveBeenCalled();
+
+    setNavigatorOnline(true);
+    window.dispatchEvent(new Event('online'));
+
+    await expect(request).resolves.toEqual({ ok: true });
+    expect(fetchMock).toHaveBeenCalledWith('/api/queued-write', expect.objectContaining({ method: 'POST' }));
   });
 });
