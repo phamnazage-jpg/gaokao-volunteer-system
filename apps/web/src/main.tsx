@@ -7,25 +7,20 @@
  */
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 import { RouterProvider } from 'react-router-dom';
+import {
+  QUERY_CACHE_MAX_AGE_MS,
+  createAppQueryClient,
+  createLocalStoragePersister,
+  queryPersistenceBuster,
+} from '@/lib/query-client';
 import { router } from './router';
 import './styles/globals.css';
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: 1,
-      staleTime: 60 * 1000,
-      gcTime: 5 * 60 * 1000,
-      refetchOnWindowFocus: false,
-    },
-    mutations: {
-      retry: 0,
-    },
-  },
-});
+const queryClient = createAppQueryClient();
+const persister = createLocalStoragePersister(window.localStorage);
 
 const rootEl = document.getElementById('root');
 if (!rootEl) {
@@ -34,9 +29,21 @@ if (!rootEl) {
 
 createRoot(rootEl).render(
   <StrictMode>
-    <QueryClientProvider client={queryClient}>
+    <PersistQueryClientProvider
+      client={queryClient}
+      persistOptions={{
+        persister,
+        maxAge: QUERY_CACHE_MAX_AGE_MS,
+        buster: queryPersistenceBuster,
+      }}
+      onSuccess={() => {
+        void queryClient.resumePausedMutations().then(() => {
+          void queryClient.invalidateQueries();
+        });
+      }}
+    >
       <RouterProvider router={router} />
       {import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />}
-    </QueryClientProvider>
+    </PersistQueryClientProvider>
   </StrictMode>,
 );
