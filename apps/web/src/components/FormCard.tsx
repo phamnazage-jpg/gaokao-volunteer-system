@@ -12,6 +12,7 @@ import { useState } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { SubmitButton } from '@/components/shared/SubmitButton';
 
 const FormCardSchema = z.object({
   province: z.string().min(1, '请选择省份'),
@@ -22,7 +23,7 @@ const FormCardSchema = z.object({
 export type FormCardData = z.infer<typeof FormCardSchema>;
 
 interface FormCardProps {
-  onSubmit: (data: FormCardData) => void;
+  onSubmit: (data: FormCardData) => void | Promise<void>;
   initialData?: Partial<FormCardData>;
 }
 
@@ -69,8 +70,8 @@ export function FormCard({ onSubmit, initialData }: FormCardProps) {
     setStep((s) => Math.max(s - 1, 0));
   };
 
-  const handleFormSubmit: SubmitHandler<FormCardData> = (data) => {
-    onSubmit(data);
+  const handleFormSubmit: SubmitHandler<FormCardData> = async (data) => {
+    await onSubmit(data);
   };
 
   const toggleSubject = (subject: string): void => {
@@ -207,13 +208,12 @@ export function FormCard({ onSubmit, initialData }: FormCardProps) {
             下一步 →
           </button>
         ) : (
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="px-4 py-2 text-sm bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors disabled:opacity-50"
-          >
-            {isSubmitting ? '提交中...' : '生成志愿方案'}
-          </button>
+          <SubmitButton
+            isSubmitting={isSubmitting}
+            idleLabel="生成志愿方案"
+            submittingLabel="提交中..."
+            className="bg-blue-600 text-white hover:bg-blue-700"
+          />
         )}
       </div>
     </form>
