@@ -92,13 +92,18 @@ export function ShareDialog({ planId, planTitle, open, onClose }: Props) {
 
         {!create.data ? (
           <div className="flex flex-col gap-3">
+            {create.isError && (
+              <div className="rounded-lg border border-red-100 bg-red-50 px-3 py-2 text-sm text-red-700" role="alert">
+                分享链接创建失败，请稍后重试。
+              </div>
+            )}
             <button
               type="button"
               onClick={handleCreate}
               disabled={create.isPending}
               className="w-full min-h-[48px] py-3 rounded-xl bg-blue-600 text-white font-medium hover:bg-blue-700 disabled:opacity-50 transition-colors"
             >
-              {create.isPending ? '创建中…' : '创建分享链接（30天有效）'}
+              {create.isPending ? '创建中…' : create.isError ? '重试创建分享链接' : '创建分享链接（30天有效）'}
             </button>
             <button
               type="button"
@@ -132,6 +137,12 @@ export function ShareDialog({ planId, planTitle, open, onClose }: Props) {
               </button>
             </div>
 
+            {stats.isError && (
+              <div className="w-full rounded-lg border border-amber-100 bg-amber-50 px-3 py-2 text-sm text-amber-700" role="status">
+                统计暂不可用，链接仍可正常访问。
+              </div>
+            )}
+
             {stats.data && (
               <div className="w-full grid grid-cols-3 gap-2 text-center text-xs">
                 <div className="rounded-lg bg-gray-50 px-2 py-2">
@@ -158,6 +169,11 @@ export function ShareDialog({ planId, planTitle, open, onClose }: Props) {
             >
               撤销分享链接
             </button>
+            {del.isError && (
+              <p className="text-xs text-red-500" role="alert">
+                撤销失败，请稍后重试。
+              </p>
+            )}
           </div>
         )}
       </div>

@@ -17,7 +17,7 @@ interface Card {
 }
 
 export function StatsCard({ code }: Props) {
-  const { data, isLoading } = useShareLinkStatsQuery(code);
+  const { data, isError, isLoading } = useShareLinkStatsQuery(code);
 
   const cards: ReadonlyArray<Card> = [
     {
@@ -36,6 +36,14 @@ export function StatsCard({ code }: Props) {
       icon: <Clock className="w-4 h-4" />,
     },
   ];
+
+  if (isError) {
+    return (
+      <div className="rounded-lg border border-amber-100 bg-amber-50 px-3 py-2 text-sm text-amber-700" role="status">
+        统计暂不可用，链接状态将在后台继续同步。
+      </div>
+    );
+  }
 
   return (
     <div className="grid grid-cols-3 gap-3" role="list" aria-label="分享统计">

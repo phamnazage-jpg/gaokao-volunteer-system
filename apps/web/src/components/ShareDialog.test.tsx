@@ -4,8 +4,10 @@
 import { describe, it, expect, vi } from 'vitest';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { http, HttpResponse } from 'msw';
 import { ShareDialog } from './ShareDialog';
 import { renderWithProviders } from '@/test/renderWithProviders';
+import { server } from '@/test/mocks/server';
 
 describe('ShareDialog', () => {
   it('renders nothing when closed', () => {
@@ -24,5 +26,20 @@ describe('ShareDialog', () => {
     renderWithProviders(<ShareDialog planId="p1" planTitle="测试" open onClose={onClose} />);
     await userEvent.click(screen.getByRole('button', { name: '关闭' }));
     expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it('shows a retryable fallback when share-link creation fails', async () => {
+    server.use(
+      http.post('/api/share-link', () => {
+        return HttpResponse.json({ message: 'share service unavailable' }, { status: 503 });
+      }),
+    );
+
+    renderWithProviders(<ShareDialog planId="p1" planTitle="测试" open onClose={() => {}} />);
+
+    await userEvent.click(screen.getByRole('button', { name: '创建分享链接（30天有效）' }));
+
+    expect(await screen.findByRole('alert')).toHaveTextContent('分享链接创建失败');
+    expect(screen.getByRole('button', { name: '重试创建分享链接' })).toBeInTheDocument();
   });
 });

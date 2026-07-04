@@ -7,6 +7,8 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { z } from 'zod';
 import { apiClient } from '@/lib/api-client';
 
+export const SHARE_LINK_RETRY_DELAY_MS = 100;
+
 export const ShareLinkCreateInputSchema = z.object({
   planId: z.string().min(1),
   expiresIn: z.union([z.literal(7), z.literal(30), z.literal('forever')]),
@@ -58,6 +60,16 @@ export const shareLinkKeys = {
   stats: (code: string) => [...shareLinkKeys.all, 'stats', code] as const,
 };
 
+function isRetryableShareLinkError(error: Error): boolean {
+  const status = (error as { status?: unknown }).status;
+  if (typeof status !== 'number') return true;
+  return status === 408 || status === 429 || status >= 500;
+}
+
+function retryShareLinkOnce(failureCount: number, error: Error): boolean {
+  return failureCount < 1 && isRetryableShareLinkError(error);
+}
+
 export function useShareLinkCreate() {
   return useMutation<ShareLinkResponse, Error, ShareLinkCreateInput>({
     mutationFn: (input) =>
@@ -72,6 +84,8 @@ export function useShareLinkCreate() {
         },
         ShareLinkResponseSchema,
       ),
+    retry: retryShareLinkOnce,
+    retryDelay: SHARE_LINK_RETRY_DELAY_MS,
   });
 }
 
@@ -85,6 +99,8 @@ export function useShareLinkDelete() {
       );
       return { success: res.revoked };
     },
+    retry: retryShareLinkOnce,
+    retryDelay: SHARE_LINK_RETRY_DELAY_MS,
   });
 }
 
@@ -93,6 +109,8 @@ export function useShareLinkLatestQuery() {
     queryKey: shareLinkKeys.latest(),
     queryFn: () => apiClient.get<ShareLinkResponse | null>('/share-link/latest', ShareLinkLatestResponseSchema),
     staleTime: 60 * 1000,
+    retry: retryShareLinkOnce,
+    retryDelay: SHARE_LINK_RETRY_DELAY_MS,
   });
 }
 
@@ -102,5 +120,7 @@ export function useShareLinkStatsQuery(code: string | null) {
     queryFn: () => apiClient.get<ShareLinkStatsResponse>(`/share-link/${code}/stats`, ShareLinkStatsResponseSchema),
     enabled: Boolean(code),
     refetchInterval: 30_000,
+    retry: retryShareLinkOnce,
+    retryDelay: SHARE_LINK_RETRY_DELAY_MS,
   });
 }

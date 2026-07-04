@@ -55,7 +55,13 @@ export function ShareDialogPage() {
         ) : (
           <div className="rounded-xl border border-dashed border-gray-200 bg-gray-50 p-8 text-center">
             <BarChart3 className="w-12 h-12 mx-auto text-gray-300" aria-hidden="true" />
-            <p className="mt-2 text-sm text-gray-500">暂无分享链接</p>
+            {latest.isError ? (
+              <p className="mt-2 text-sm text-amber-700" role="alert">
+                分享状态暂不可用，请稍后刷新重试。
+              </p>
+            ) : (
+              <p className="mt-2 text-sm text-gray-500">暂无分享链接</p>
+            )}
             <button
               type="button"
               onClick={() => setOpen(true)}
