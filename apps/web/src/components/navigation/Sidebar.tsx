@@ -4,9 +4,12 @@
  * V10 不变量 L1: 桌面端 ≥ 1024px 显示侧栏三栏布局
  *
  * 从 Next.js Link/usePathname 改为 React Router 7 (Vite 友好)
+ *
+ * T-B-26: hover NavLink 触发 lazy chunk prefetch
  */
 import { NavLink } from 'react-router-dom';
 import { ThemeToggle } from '@/components/shared/ThemeToggle';
+import { usePrefetchLazyRoute } from '@/hooks/usePrefetchLazyRoute';
 
 interface RecentChat {
   id: string;
@@ -39,6 +42,7 @@ const NAV_ITEMS: ReadonlyArray<NavItem> = [
 ];
 
 export function Sidebar({ recentChats, activeChatId, onNewChat, onSelectChat }: Props) {
+  const prefetch = usePrefetchLazyRoute();
   return (
     <aside className="sidebar hidden lg:flex w-64 shrink-0 flex-col gap-2 border-r border-gray-100 bg-white p-4">
       {/* Logo + ThemeToggle */}
@@ -68,6 +72,8 @@ export function Sidebar({ recentChats, activeChatId, onNewChat, onSelectChat }: 
             key={item.to}
             to={item.to}
             end={item.to === '/'}
+            onMouseEnter={() => prefetch(item.to)}
+            onFocus={() => prefetch(item.to)}
             className={({ isActive }) =>
               `flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors ${
                 isActive ? 'bg-blue-50 text-blue-700 font-medium' : 'text-gray-600 hover:bg-gray-100'

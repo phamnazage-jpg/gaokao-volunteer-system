@@ -1,12 +1,16 @@
 /**
  * V10 选项 B · AppLayout (Sidebar + Outlet + MobileNav)
+ *
+ * T-B-26: 用 React.Suspense 包裹 Outlet，承接 lazy 路由的 fallback UI
  */
+import { Suspense } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { Outlet, useLocation } from 'react-router-dom';
 import { Sidebar } from '@/components/navigation/Sidebar';
 import { MobileNav } from '@/components/navigation/MobileNav';
 import { ErrorFallback } from '@/components/shared/ErrorFallback';
 import { OfflineBanner } from '@/components/shared/OfflineBanner';
+import { RouteFallback } from '@/components/shared/RouteFallback';
 import { useChatStore } from '@/stores/chat';
 import { useFormStore } from '@/stores/form';
 import { useUserStore } from '@/stores/user';
@@ -41,7 +45,9 @@ export function AppLayout() {
       <div className="flex flex-col flex-1 min-w-0 max-w-5xl mx-auto lg:border-r border-gray-100">
         <OfflineBanner />
         <ErrorBoundary FallbackComponent={ErrorFallback} resetKeys={[location.pathname]}>
-          <Outlet />
+          <Suspense fallback={<RouteFallback />}>
+            <Outlet />
+          </Suspense>
         </ErrorBoundary>
       </div>
       {userName && (
