@@ -16,6 +16,7 @@
     "test:e2e": "playwright test",
     "test:storybook": "echo 'storybook is a Sprint 5 task'",
     "chromatic": "chromatic --project-token=__CHROMATIC_TOKEN__ --exit-zero-on-changes",
+    "lhci": "lhci autorun --config=./lighthouserc.cjs",
     "codegen": "tsx scripts/codegen.ts",
     "codegen:check": "tsx scripts/codegen-check.ts",
     "clean": "rm -rf dist .vite .turbo coverage playwright-report test-results"
@@ -45,6 +46,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.4",
+    "@lhci/cli": "^0.14.0",
     "@playwright/test": "^1.49.0",
     "@tailwindcss/vite": "^4",
     "@testing-library/jest-dom": "^6.6.3",
