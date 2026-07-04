@@ -34,17 +34,24 @@ export function ShareDialogPage() {
 
       <div className="mt-6 grid gap-4">
         {latest.data ? (
-          <>
+          <section
+            className="grid gap-4"
+            role="region"
+            aria-label="分享状态面板"
+          >
             <StatsCard code={latest.data.code} />
             <AccessTrendChart data={SAMPLE_TREND} />
             <div className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
               <p className="text-xs font-semibold text-gray-400 mb-2">最近链接</p>
+              <div className="mb-3 inline-flex items-center rounded-lg bg-blue-50 px-2.5 py-1 text-xs font-semibold text-blue-700">
+                {latest.data.code}
+              </div>
               <p className="text-sm text-gray-800 break-all">{latest.data.url}</p>
               <p className="mt-2 text-xs text-gray-400">
                 创建于 {new Date(latest.data.createdAt).toLocaleString('zh-CN', { hour12: false })}
               </p>
             </div>
-          </>
+          </section>
         ) : (
           <div className="rounded-xl border border-dashed border-gray-200 bg-gray-50 p-8 text-center">
             <BarChart3 className="w-12 h-12 mx-auto text-gray-300" aria-hidden="true" />
