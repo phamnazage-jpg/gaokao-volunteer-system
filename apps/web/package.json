@@ -6,7 +6,7 @@
   "description": "高考志愿填报系统 - Vite 5 + React 19 + Zustand 4 + TanStack Query 5 (V10 选项 B)",
   "scripts": {
     "dev": "vite --host 0.0.0.0 --port 3000",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && vite build && node scripts/bundle-report.cjs",
     "preview": "vite preview --host 0.0.0.0 --port 4173",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",

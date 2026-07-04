@@ -34,7 +34,11 @@ export default defineConfig({
   },
   build: {
     target: 'es2022',
-    sourcemap: true,
+    // 生产 sourcemap 关闭（开发调试足够，bundle size 减少 ~30%）
+    sourcemap: false,
+    cssCodeSplit: true,
+    // 4KB 以下内联
+    assetsInlineLimit: 4096,
     rollupOptions: {
       output: {
         // V10 优化: 手动 chunk split
@@ -53,8 +57,6 @@ export default defineConfig({
         assetFileNames: 'assets/[name]-[hash][extname]',
       },
     },
-    // 4KB 以下内联
-    assetsInlineLimit: 4096,
   },
   test: {
     globals: true,
