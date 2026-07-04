@@ -12,7 +12,16 @@ export const LLMConfigSchema = z.object({
   availableProviders: z.array(z.enum(['claude', 'gpt', 'gemini', 'deepseek'])),
 });
 
+export const AuditEnhanceStatusSchema = z.object({
+  planId: z.string(),
+  status: z.enum(['queued', 'processing', 'completed', 'failed']),
+  progress: z.number().int().min(0).max(100),
+  currentStep: z.string(),
+  updatedAt: z.string(),
+});
+
 export type LLMConfigResponse = z.infer<typeof LLMConfigSchema>;
+export type AuditEnhanceStatusResponse = z.infer<typeof AuditEnhanceStatusSchema>;
 
 export interface EnhanceResult {
   readonly result: AuditEnhancement;
@@ -23,6 +32,7 @@ export interface EnhanceResult {
 export const llmKeys = {
   all: ['llm'] as const,
   config: () => [...llmKeys.all, 'config'] as const,
+  enhanceStatus: (planId: string) => [...llmKeys.all, 'enhance-status', planId] as const,
 };
 
 export function useLLMConfig() {
@@ -30,6 +40,19 @@ export function useLLMConfig() {
     queryKey: llmKeys.config(),
     queryFn: () => apiClient.get<LLMConfigResponse>('/llm/config', LLMConfigSchema),
     staleTime: 5 * 60 * 1000,
+  });
+}
+
+export function useAuditEnhanceStatusQuery(planId: string | null) {
+  return useQuery<AuditEnhanceStatusResponse>({
+    queryKey: planId ? llmKeys.enhanceStatus(planId) : [...llmKeys.all, 'enhance-status', 'noop'],
+    queryFn: () => apiClient.get<AuditEnhanceStatusResponse>(`/llm/enhance/${planId}/status`, AuditEnhanceStatusSchema),
+    enabled: Boolean(planId),
+    refetchInterval: (query) => {
+      const data = query.state.data;
+      if (data && (data.status === 'completed' || data.status === 'failed')) return false;
+      return 2000;
+    },
   });
 }
 

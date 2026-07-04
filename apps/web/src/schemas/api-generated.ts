@@ -322,6 +322,15 @@ const AuditEnhancementResponse = z
     provider: z.enum(["claude", "gpt", "gemini", "deepseek"]),
   })
   .passthrough();
+const LLMEnhanceStatusResponse = z
+  .object({
+    planId: z.string(),
+    status: z.enum(["queued", "processing", "completed", "failed"]),
+    progress: z.number().int().gte(0).lte(100),
+    currentStep: z.string(),
+    updatedAt: z.string(),
+  })
+  .passthrough();
 const ShareLinkStatsResponse = z
   .object({
     views: z.number().int(),
@@ -567,6 +576,7 @@ export const schemas = {
   AuditEnhanceInput,
   Recommendation,
   AuditEnhancementResponse,
+  LLMEnhanceStatusResponse,
   ShareLinkStatsResponse,
   DashboardResponse,
   OrderStatsResponse,
@@ -1383,6 +1393,27 @@ const endpoints = makeApi([
     alias: "get_llm_config_api_llm_config_get",
     requestFormat: "json",
     response: LLMConfigResponse,
+  },
+  {
+    method: "get",
+    path: "/api/llm/enhance/:plan_id/status",
+    alias: "get_llm_enhance_status_api_llm_enhance__plan_id__status_get",
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "plan_id",
+        type: "Path",
+        schema: z.string(),
+      },
+    ],
+    response: LLMEnhanceStatusResponse,
+    errors: [
+      {
+        status: 422,
+        description: `Validation Error`,
+        schema: HTTPValidationError,
+      },
+    ],
   },
   {
     method: "get",

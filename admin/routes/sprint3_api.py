@@ -135,6 +135,14 @@ class AuditEnhancementResponse(BaseModel):
     provider: ProviderId
 
 
+class LLMEnhanceStatusResponse(BaseModel):
+    planId: str
+    status: Literal["queued", "processing", "completed", "failed"]
+    progress: int = Field(ge=0, le=100)
+    currentStep: str
+    updatedAt: str
+
+
 class ShareLinkStatsResponse(BaseModel):
     views: int
     uniqueVisitors: int
@@ -314,6 +322,17 @@ def enhance_audit(provider: ProviderId, payload: AuditEnhanceInput) -> AuditEnha
                 priority="medium",
             )
         ],
+    )
+
+
+@router.get("/llm/enhance/{plan_id}/status", response_model=LLMEnhanceStatusResponse)
+def get_llm_enhance_status(plan_id: str) -> LLMEnhanceStatusResponse:
+    return LLMEnhanceStatusResponse(
+        planId=plan_id,
+        status="completed",
+        progress=100,
+        currentStep="增强建议已生成",
+        updatedAt=_now_iso(),
     )
 
 

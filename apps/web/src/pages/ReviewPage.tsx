@@ -9,6 +9,7 @@ import {
   useReviewStatusQuery,
   useReviewActionMutation,
 } from '@/hooks/useReviewFlow';
+import { useAuditEnhanceStatusQuery } from '@/hooks/useLLMEnhanceMutation';
 
 const STATUS_META = {
   pending: { label: '等待中', icon: AlertCircle, color: 'text-yellow-500' },
@@ -25,6 +26,8 @@ export function ReviewPage() {
 
   const start = useReviewStartMutation();
   const status = useReviewStatusQuery(reviewId);
+  const enhancePlanId = status.data?.planId ?? start.data?.planId ?? null;
+  const enhanceStatus = useAuditEnhanceStatusQuery(enhancePlanId);
   const action = useReviewActionMutation();
 
   const handleStart = (): void => {
@@ -88,6 +91,31 @@ export function ReviewPage() {
                   {status.data.comment}
                 </p>
               )}
+            </div>
+          )}
+
+          {enhanceStatus.data && (
+            <div className="rounded-xl border border-gray-100 bg-white p-6 shadow-sm">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <p className="text-xs text-gray-400">LLM 增强</p>
+                  <p className="text-sm font-medium text-gray-800">{enhanceStatus.data.currentStep}</p>
+                </div>
+                <p className="text-sm font-semibold text-blue-700">{enhanceStatus.data.progress}%</p>
+              </div>
+              <div
+                className="mt-3 h-2 rounded-full bg-gray-100"
+                role="progressbar"
+                aria-label="LLM 增强进度"
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-valuenow={enhanceStatus.data.progress}
+              >
+                <div
+                  className="h-full rounded-full bg-blue-600 transition-[width]"
+                  style={{ width: `${enhanceStatus.data.progress}%` }}
+                />
+              </div>
             </div>
           )}
 

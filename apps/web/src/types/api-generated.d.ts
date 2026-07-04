@@ -453,6 +453,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/llm/enhance/{plan_id}/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Llm Enhance Status */
+        get: operations["get_llm_enhance_status_api_llm_enhance__plan_id__status_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/share-link/{code}/stats": {
         parameters: {
             query?: never;
@@ -1140,6 +1157,22 @@ export interface components {
             fallbackOrder: ("claude" | "gpt" | "gemini" | "deepseek")[];
             /** Availableproviders */
             availableProviders: ("claude" | "gpt" | "gemini" | "deepseek")[];
+        };
+        /** LLMEnhanceStatusResponse */
+        LLMEnhanceStatusResponse: {
+            /** Planid */
+            planId: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "queued" | "processing" | "completed" | "failed";
+            /** Progress */
+            progress: number;
+            /** Currentstep */
+            currentStep: string;
+            /** Updatedat */
+            updatedAt: string;
         };
         /** LoginRequest */
         LoginRequest: {
@@ -2856,6 +2889,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["AuditEnhancementResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_llm_enhance_status_api_llm_enhance__plan_id__status_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                plan_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LLMEnhanceStatusResponse"];
                 };
             };
             /** @description Validation Error */

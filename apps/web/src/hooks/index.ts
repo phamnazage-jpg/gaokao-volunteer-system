@@ -28,4 +28,4 @@ export { useScoreLineQuery, useRankEstimatorQuery, useMajorsQuery, useSchoolsQue
 export { useReviewStartMutation, useReviewStatusQuery, useReviewActionMutation } from './useReviewFlow';
 export { usePortalCWBQuery, usePortalFullPlanQuery } from './usePortal';
 export { usePosterGenerateMutation } from './usePosterGenerate';
-export { useLLMConfig, useAuditEnhanceMutation } from './useLLMEnhanceMutation';
+export { useLLMConfig, useAuditEnhanceMutation, useAuditEnhanceStatusQuery } from './useLLMEnhanceMutation';

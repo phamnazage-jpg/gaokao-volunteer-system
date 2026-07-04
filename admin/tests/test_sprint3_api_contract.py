@@ -19,6 +19,7 @@ def test_openapi_exposes_react_sprint3_json_contracts(app):
         "/api/poster/generate",
         "/api/llm/config",
         "/api/llm/{provider}/enhance",
+        "/api/llm/enhance/{plan_id}/status",
     }
 
     missing = sorted(required - set(paths))
@@ -59,3 +60,8 @@ def test_react_sprint3_json_contracts_return_frontend_shapes(client, auth_header
     llm_config = client.get("/api/llm/config")
     assert llm_config.status_code == 200, llm_config.text
     assert "claude" in llm_config.json()["availableProviders"]
+
+    llm_status = client.get("/api/llm/enhance/plan-001/status")
+    assert llm_status.status_code == 200, llm_status.text
+    assert llm_status.json().keys() >= {"planId", "status", "progress", "currentStep", "updatedAt"}
+    assert llm_status.json()["progress"] == 100
