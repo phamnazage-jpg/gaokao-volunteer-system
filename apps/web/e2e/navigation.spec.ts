@@ -18,7 +18,7 @@ test.describe('Navigation (V10 不变量 L1 + L2)', () => {
     await page.setViewportSize({ width: 375, height: 667 });
     await page.goto('/');
 
-    const mobileNav = page.getByRole('navigation', { name: '移动端导航' });
+    const mobileNav = page.getByRole('navigation', { name: /移动端导航|Mobile navigation/ });
     await expect(mobileNav).toBeVisible();
 
     // 检查 min-height 48px

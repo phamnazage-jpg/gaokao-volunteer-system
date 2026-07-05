@@ -15,6 +15,9 @@ test.describe('Poster Generate + Download (V10 Sprint 4 · T-B-23.8)', () => {
         status: 200,
         contentType: 'application/json',
         body: JSON.stringify({
+          jobId: 'poster-e2e-sync',
+          status: 'completed',
+          progress: 100,
           posterUrl: 'https://example.com/poster.png',
           qrCode: 'https://example.com/qr.png',
           expiresAt: '2026-08-01T00:00:00Z',
@@ -22,8 +25,24 @@ test.describe('Poster Generate + Download (V10 Sprint 4 · T-B-23.8)', () => {
       });
     });
 
+    await page.route('**/api/poster/poster-e2e-sync/status', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          jobId: 'poster-e2e-sync',
+          status: 'completed',
+          progress: 100,
+          posterUrl: 'https://example.com/poster.png',
+          qrCode: 'https://example.com/qr.png',
+          expiresAt: '2026-08-01T00:00:00Z',
+          updatedAt: '2026-07-04T00:00:00Z',
+        }),
+      });
+    });
+
     // fallback 只 catch 其他 API（不包括 poster/generate）
-    await page.route((url) => url.pathname.startsWith('/api/') && !url.pathname.includes('/poster/generate'), async (route) => {
+    await page.route((url) => url.pathname.startsWith('/api/') && !url.pathname.includes('/poster/'), async (route) => {
       await route.fulfill({ status: 200, contentType: 'application/json', body: '{}' });
     });
 
@@ -44,8 +63,9 @@ test.describe('Poster Generate + Download (V10 Sprint 4 · T-B-23.8)', () => {
     await page.getByRole('button', { name: /生成海报/ }).click();
 
     // 海报预览（src 是 url() 校验过的合法 URL）
-    await expect(page.locator('img[alt="海报预览"]')).toBeVisible({ timeout: 8000 });
-    await expect(page.locator('img[alt="海报预览"]')).toHaveAttribute('src', 'https://example.com/poster.png');
+    const posterPreviewImage = page.getByRole('img', { name: /海报预览|Poster preview/ });
+    await expect(posterPreviewImage).toBeVisible({ timeout: 8000 });
+    await expect(posterPreviewImage).toHaveAttribute('src', 'https://example.com/poster.png');
 
     // 下载链接 + 复制二维码
     await expect(page.locator('a[download]')).toBeVisible();
@@ -105,8 +125,8 @@ test.describe('Poster Generate + Download (V10 Sprint 4 · T-B-23.8)', () => {
     await page.goto('/poster');
     await page.getByRole('button', { name: /生成海报/ }).click();
 
-    await expect(page.getByRole('progressbar', { name: '海报生成进度' })).toHaveAttribute('aria-valuenow', '40');
-    await expect(page.locator('img[alt="海报预览"]')).toHaveAttribute('src', 'https://example.com/poster-async.png', {
+    await expect(page.getByRole('progressbar', { name: /海报生成进度|Poster generation progress/ })).toHaveAttribute('aria-valuenow', '40');
+    await expect(page.getByRole('img', { name: /海报预览|Poster preview/ })).toHaveAttribute('src', 'https://example.com/poster-async.png', {
       timeout: 8000,
     });
   });
@@ -133,6 +153,6 @@ test.describe('Poster Generate + Download (V10 Sprint 4 · T-B-23.8)', () => {
 
     // 校验失败，posterUrl 不会写入 store，没有 img 渲染
     await page.waitForTimeout(3000);
-    await expect(page.locator('img[alt="海报预览"]')).toHaveCount(0);
+    await expect(page.getByRole('img', { name: /海报预览|Poster preview/ })).toHaveCount(0);
   });
 });

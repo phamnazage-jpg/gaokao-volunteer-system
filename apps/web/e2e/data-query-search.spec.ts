@@ -49,8 +49,8 @@ test.describe('Data Query (V10 Sprint 4 · T-B-23.6)', () => {
     await expect(page.getByText('华南理工大学')).toBeVisible();
 
     // 985 / 211 标记（用更宽松的 locator）
-    await expect(page.getByText('985', { exact: true }).first()).toBeVisible();
-    await expect(page.getByText('211', { exact: true }).first()).toBeVisible();
+    await expect(page.getByRole('cell', { name: /985\s*\/\s*211/ })).toBeVisible();
+    await expect(page.getByRole('cell', { name: /^211$/ }).first()).toBeVisible();
 
     // 专业区显示
     await expect(page.getByText('计算机科学与技术')).toBeVisible();

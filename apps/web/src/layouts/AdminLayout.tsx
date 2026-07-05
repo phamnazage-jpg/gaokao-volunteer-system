@@ -104,6 +104,32 @@ export function AdminLayout() {
           </div>
         </header>
 
+        <nav
+          className="flex gap-2 overflow-x-auto border-b border-slate-200 bg-white px-4 py-3 dark:border-slate-800 dark:bg-slate-900 lg:hidden"
+          aria-label={intl.formatMessage({ id: 'admin.nav.ariaLabel' })}
+        >
+          {adminNavItems.map((item) => {
+            const Icon = item.icon;
+            return (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                end={item.to === '/admin'}
+                className={({ isActive }) =>
+                  `inline-flex min-h-11 shrink-0 items-center gap-2 rounded-xl px-3 text-sm font-medium transition ${
+                    isActive
+                      ? 'bg-blue-50 text-blue-700 dark:bg-blue-500/15 dark:text-blue-200'
+                      : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white'
+                  }`
+                }
+              >
+                <Icon className="h-4 w-4" aria-hidden="true" />
+                {intl.formatMessage({ id: item.labelKey })}
+              </NavLink>
+            );
+          })}
+        </nav>
+
         <main className="mx-auto max-w-6xl px-4 py-6 sm:px-6">
           <ErrorBoundary fallbackRender={({ resetErrorBoundary }) => <AdminErrorPage onRetry={resetErrorBoundary} />} resetKeys={[location.pathname]}>
             <Suspense fallback={<RouteFallback />}>
