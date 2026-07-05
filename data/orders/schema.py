@@ -94,6 +94,13 @@ CREATE TABLE IF NOT EXISTS portal_token_revocations (
 
 CREATE INDEX IF NOT EXISTS idx_portal_token_revocations_order
     ON portal_token_revocations(order_id);
+
+-- Schema migration registry (T3-04)
+CREATE TABLE IF NOT EXISTS schema_migrations (
+    version     INTEGER PRIMARY KEY,
+    name        TEXT NOT NULL,
+    applied_at  TEXT NOT NULL
+);
 """
 
 
@@ -112,19 +119,12 @@ def apply_schema(db_path: str | Path) -> sqlite3.Connection:
     try:
         conn.execute("PRAGMA foreign_keys = ON")
         conn.executescript(SCHEMA_SQL)
-        columns = {
-            row[1] for row in conn.execute("PRAGMA table_info(orders)").fetchall()
-        }
-        if "customer_email" not in columns:
-            conn.execute("ALTER TABLE orders ADD COLUMN customer_email TEXT")
-        # A-2 (2026-06-20) — 后台/外部渠道补录同意审计统一化
-        # consent_method 记录采集方式(verbal_chat/phone_recording/screenshot/
-        # written_form/self_declared), consent_given_at 记录采集时间。
-        # 两个字段都冗余落库, 避免每次列表 join order_intakes。
-        if "consent_method" not in columns:
-            conn.execute("ALTER TABLE orders ADD COLUMN consent_method TEXT")
-        if "consent_given_at" not in columns:
-            conn.execute("ALTER TABLE orders ADD COLUMN consent_given_at TEXT")
+        # T3-04: Run versioned migrations
+        current_version = get_schema_version(conn)
+        for version, name in _MIGRATIONS:
+            if version <= current_version:
+                continue
+            _apply_migration(conn, version, name)
         conn.commit()
     except Exception:
         conn.close()
@@ -132,12 +132,55 @@ def apply_schema(db_path: str | Path) -> sqlite3.Connection:
     return conn
 
 
+_MIGRATIONS: list[tuple[int, str]] = [
+    (1, "initial_schema"),
+    (2, "add_customer_email"),
+    (3, "add_consent_audit_columns"),
+    (4, "add_portal_token_revocations"),
+]
+
+
+def _apply_migration(conn: sqlite3.Connection, version: int, name: str) -> None:
+    """Apply a single migration and record it in schema_migrations."""
+    if version == 1:
+        pass  # SCHEMA_SQL already creates all tables
+    elif version == 2:
+        columns = {row[1] for row in conn.execute("PRAGMA table_info(orders)").fetchall()}
+        if "customer_email" not in columns:
+            conn.execute("ALTER TABLE orders ADD COLUMN customer_email TEXT")
+    elif version == 3:
+        columns = {row[1] for row in conn.execute("PRAGMA table_info(orders)").fetchall()}
+        if "consent_method" not in columns:
+            conn.execute("ALTER TABLE orders ADD COLUMN consent_method TEXT")
+        if "consent_given_at" not in columns:
+            conn.execute("ALTER TABLE orders ADD COLUMN consent_given_at TEXT")
+    elif version == 4:
+        pass  # portal_token_revocations already in SCHEMA_SQL
+    conn.execute(
+        "INSERT OR IGNORE INTO schema_migrations(version, name, applied_at) VALUES (?, ?, ?)",
+        (version, name, sqlite3.Connection is not None and __import__("datetime").datetime.now(__import__("datetime").timezone.utc).replace(microsecond=0).isoformat()),
+    )
+
+
 def get_schema_version(conn: sqlite3.Connection) -> int:
-    """读取当前 schema 版本号（首次运行返回 0）。后续迁移将引入 schema_version 表。"""
+    """Return the highest applied migration version.
+
+    For databases created before the schema_migrations table existed,
+    detects the orders table and auto-registers as version 1.
+    """
     try:
-        row = conn.execute(
-            "SELECT 1 FROM sqlite_master WHERE type='table' AND name='orders'"
+        table_exists = conn.execute(
+            "SELECT 1 FROM sqlite_master WHERE type='table' AND name='schema_migrations'"
         ).fetchone()
-        return 1 if row else 0
+        if table_exists is None:
+            # Old database without migration tracking — detect orders table
+            orders_exists = conn.execute(
+                "SELECT 1 FROM sqlite_master WHERE type='table' AND name='orders'"
+            ).fetchone()
+            return 1 if orders_exists else 0
+        row = conn.execute(
+            "SELECT COALESCE(MAX(version), 0) FROM schema_migrations"
+        ).fetchone()
+        return int(row[0]) if row else 0
     except sqlite3.DatabaseError:
         return 0

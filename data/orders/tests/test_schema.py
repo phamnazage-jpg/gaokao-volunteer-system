@@ -232,10 +232,57 @@ def test_status_history_cascade_delete(tmp_db):
         conn.close()
 
 
-def test_get_schema_version_returns_1_after_apply(tmp_db):
+def test_get_schema_version_returns_max_migration_after_apply(tmp_db):
     conn = apply_schema(tmp_db)
     try:
-        assert get_schema_version(conn) == 1
+        assert get_schema_version(conn) == 4
+    finally:
+        conn.close()
+
+
+def test_schema_migrations_table_records_all_migrations(tmp_db):
+    conn = apply_schema(tmp_db)
+    try:
+        rows = conn.execute(
+            "SELECT version, name FROM schema_migrations ORDER BY version"
+        ).fetchall()
+        assert len(rows) == 4
+        assert rows[0] == (1, "initial_schema")
+        assert rows[-1] == (4, "add_portal_token_revocations")
+    finally:
+        conn.close()
+
+
+def test_old_database_without_migrations_table_is_auto_upgraded(tmp_db):
+    """Simulate a pre-T3-04 database that has a full orders table
+    (created by an older version of apply_schema) but no schema_migrations table.
+    apply_schema should detect it, create schema_migrations, and register all migrations."""
+    import sqlite3
+    from data.orders.schema import SCHEMA_SQL
+
+    # Apply the base schema (creates orders + all indexes) but NOT schema_migrations
+    # by executing only the pre-T3-04 portion of SCHEMA_SQL.
+    conn = sqlite3.connect(str(tmp_db))
+    conn.execute("PRAGMA foreign_keys = ON")
+    old_schema = SCHEMA_SQL.split("CREATE TABLE IF NOT EXISTS schema_migrations")[0]
+    conn.executescript(old_schema)
+    conn.commit()
+    conn.close()
+
+    # Verify no schema_migrations table exists yet
+    conn = sqlite3.connect(str(tmp_db))
+    row = conn.execute(
+        "SELECT 1 FROM sqlite_master WHERE type='table' AND name='schema_migrations'"
+    ).fetchone()
+    assert row is None
+    conn.close()
+
+    # Now apply_schema should auto-upgrade: create schema_migrations and register all migrations
+    conn = apply_schema(tmp_db)
+    try:
+        assert get_schema_version(conn) == 4
+        rows = conn.execute("SELECT COUNT(*) FROM schema_migrations").fetchone()
+        assert rows[0] == 4
     finally:
         conn.close()
 
