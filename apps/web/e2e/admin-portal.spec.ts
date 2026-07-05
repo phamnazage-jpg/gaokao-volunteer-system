@@ -6,11 +6,14 @@ async function seedAdminSession(page: Page): Promise<void> {
       'gaokao-user-store',
       JSON.stringify({
         state: {
-          id: 'admin-e2e',
-          name: 'E2E Admin',
-          phone: '13800138000',
+          id: 'admin:e2e-admin',
+          name: 'e2e-admin',
+          phone: null,
           role: 'admin',
           isLoggedIn: true,
+          token: 'e2e-jwt-token',
+          tokenType: 'bearer',
+          tokenExpiresAt: Date.now() + 60 * 60 * 1000,
         },
         version: 0,
       }),
@@ -19,6 +22,20 @@ async function seedAdminSession(page: Page): Promise<void> {
 }
 
 async function mockAdminApi(page: Page): Promise<void> {
+  await page.route('**/api/auth/me', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        id: 1,
+        username: 'e2e-admin',
+        role: 'admin',
+        is_active: true,
+        created_at: '2026-07-05T00:00:00.000Z',
+      }),
+    });
+  });
+
   await page.route('**/api/admin/orders**', async (route) => {
     if (route.request().url().includes('/api/admin/orders/GKO-2401')) {
       await route.fulfill({
@@ -145,11 +162,19 @@ async function mockAdminApi(page: Page): Promise<void> {
 
 test.describe('Admin portal (Sprint 7)', () => {
   test('anonymous users are redirected to login and can enter the admin dashboard', async ({ page }) => {
+    await mockAdminApi(page);
+    await page.route('**/api/auth/login', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ access_token: 'e2e-jwt-token', token_type: 'bearer', expires_in: 3600 }),
+      });
+    });
     await page.goto('/admin');
 
     await expect(page).toHaveURL(/\/admin\/login/);
-    await page.getByLabel('手机号').fill('13800138000');
-    await page.getByLabel('验证码').fill('123456');
+    await page.getByLabel('用户名').fill('admin');
+    await page.getByLabel('密码').fill('StrongPass1!');
     await page.getByRole('button', { name: '登录后台' }).click();
 
     await expect(page).toHaveURL(/\/admin$/);
@@ -182,8 +207,52 @@ test.describe('Admin portal (Sprint 7)', () => {
     await expect(page.getByRole('heading', { name: '案例亮点' })).toBeVisible();
   });
 
+  test('all admin navigation links resolve to concrete routes', async ({ page }) => {
+    await seedAdminSession(page);
+    await mockAdminApi(page);
+    await page.route('**/api/**', async (route) => {
+      const url = route.request().url();
+      if (url.includes('/api/auth/me')) {
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            id: 1,
+            username: 'e2e-admin',
+            role: 'admin',
+            is_active: true,
+            created_at: '2026-07-05T00:00:00.000Z',
+          }),
+        });
+        return;
+      }
+      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ items: [], total: 0, limit: 12, offset: 0 }) });
+    });
+
+    const navTargets = [
+      { label: '概览', pattern: /\/admin$/ },
+      { label: '订单', pattern: /\/admin\/orders$/ },
+      { label: '案例', pattern: /\/admin\/cases$/ },
+      { label: '分享链接', pattern: /\/admin\/share-links$/ },
+      { label: '分数线', pattern: /\/admin\/score-lines$/ },
+      { label: '位次估算', pattern: /\/admin\/rank-estimator$/ },
+      { label: '专业库', pattern: /\/admin\/majors$/ },
+      { label: '院校库', pattern: /\/admin\/schools$/ },
+      { label: '复核', pattern: /\/admin\/review$/ },
+      { label: '海报', pattern: /\/admin\/posters$/ },
+    ];
+
+    await page.goto('/admin');
+    for (const target of navTargets) {
+      await page.getByRole('link', { name: target.label }).first().click();
+      await expect(page).toHaveURL(target.pattern);
+      await expect(page.getByRole('heading', { name: '页面不存在' })).toHaveCount(0);
+    }
+  });
+
   test('admin error fallback provides recovery actions', async ({ page }) => {
     await seedAdminSession(page);
+    await mockAdminApi(page);
 
     await page.goto('/admin/error');
 

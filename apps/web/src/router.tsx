@@ -83,6 +83,7 @@ const routes: RouteObject[] = [
       { path: 'rank-estimator', element: <AdminRankEstimatorPage /> },
       { path: 'majors', element: <AdminMajorsPage /> },
       { path: 'schools', element: <AdminSchoolsPage /> },
+      { path: 'review', element: <ReviewPage /> },
       { path: 'error', element: <AdminErrorPage /> },
       { path: '*', element: <NotFoundPage /> },
     ],
