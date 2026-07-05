@@ -13,12 +13,12 @@
 
 **结论：REQUEST_CHANGES / 不能宣称生产级完成。**
 
-本轮 review 发现的当前有效问题：
+本轮 review 发现的当前有效问题（含异步三线补充后）：
 
 | 严重级别 | 数量 | 摘要 |
 |---|---:|---|
-| HIGH | 4 | Admin 导航断链、React Admin mock 登录未接真实 JWT、前端 API client 未注入 Authorization、本地 Python 总门禁 mypy 失败 |
-| MEDIUM | 4 | Chromatic token 未配置会阻断 CI、LHCI 启动/端口口径仍有漂移风险、dev-verify 100-case smoke 非阻塞导致主链路回归可能被降级为 warning、前端依赖缺失曾阻断本地 fresh gate（已补装并复验通过） |
+| HIGH | 11 | Admin 导航断链、React Admin mock 登录未接真实 JWT、前端 API client 未注入 Authorization、Python mypy 失败、JWT query token、payment_id 换 Portal token、公共错误泄漏、公共下单缺限流、SQLite migration 无版本、Poster Docker 构建失败、compose healthcheck 端口漂移 |
+| MEDIUM | 8 | Chromatic token/LHCI/100-case smoke gate 语义、前端依赖准备、Portal token 吊销、附件 magic bytes、Alipay notify body limit、订单删除审计、Node/pnpm/turbo 环境口径 |
 | LOW | 2 | 文档中仍大量保留 mock/sandbox 历史语境，旧截图报告目录仍在仓库中易误导；部分静态扫描命中需后续清理白名单 |
 
 已确认的正向事实：
@@ -647,6 +647,175 @@ da99dec docs: add systemic frontend review findings
   - `scripts/dev-verify.sh`
   - `admin/routes/health.py`
   - `admin/auth.py`
+
+
+---
+
+## 9. 异步三线 Review 补充发现（已纳入当前真相）
+
+> 补充时间：2026-07-05T21:05:03+08:00  
+> 来源：后端安全边界、前端 React/TS、CI/CD/文档真相三条只读子审查线。以下条目均需在后续整改板中与前文 H/M 项合并去重。
+
+### 9.1 CRITICAL 补充
+
+#### C1 · 文档真相源硬漂移，足以误导当前项目状态
+
+**证据：**
+- `README.md` 当前仍把真相源指向 `docs/CURRENT_STATE.md → docs/ACTIVE_EXECUTION_BOARD_2026-06-19.md`。
+- 子审查指出 `docs/CURRENT_STATE.md` 仍引用旧 HEAD `dbb8fb7` 与旧工作区状态，而当前仓库 HEAD 已是本报告提交前的 `4059f14` / 后续报告提交后的 `738ab68`。
+- `CURRENT_STATE` 又把 6/19 执行板降级为历史快照、6/20 执行板取代 6/19，入口互相矛盾。
+
+**影响：** 后续操作者可能按旧 execution board 或旧 CURRENT_STATE 继续推进，导致已修复问题重复追踪、当前 blocker 被掩盖、完成状态误报。
+
+**整改要求：** 建立单一当前真相入口：`CURRENT_STATE.md`、今日 review 报告、ACTIVE_EXECUTION_BOARD 三者必须互相指向；旧报告顶部加“历史快照”提示。
+
+#### C2 · 生产/部署就绪不能成立，部署清单仍明确未闭环
+
+**证据：**
+- `docker-compose.yml` 声明只是开发/本地 smoke 模板，并默认 `GAOKAO_ENV=dev`、mock 支付、dev-only secrets。
+- `docs/PRODUCTION_DEPLOYMENT_CHECKLIST_2026-06-15.md` 仍列出真实支付回调、Portal 状态推进、watchdog 真实告警、备份恢复演练等未勾选验收项。
+
+**影响：** 任何“已生产就绪/可上线”表述都不成立，只能说代码侧部分链路已具备，本地/CI/线上验收仍分层待闭环。
+
+**整改要求：** 把生产部署清单更新为当前状态，明确 dev compose、CI、本地、线上真实 acceptance 的边界。
+
+---
+
+### 9.2 HIGH 补充
+
+#### H5 · 管理 JWT 支持 URL query 参数 `t`，扩大 token 泄漏面
+
+**证据：** `admin/auth.py:get_current_user()` 除 `Authorization: Bearer` 外，还读取 `request.query_params.get("t")` 作为 JWT fallback。
+
+**影响：** 管理员 JWT 可能进入浏览器历史、反向代理日志、Referer、截图或分享链接；URL 泄漏即可调用受保护 API。
+
+**整改建议：** 移除管理 JWT query fallback；若必须支持 Web 跳转，改为短期一次性 code 或 HttpOnly/SameSite Cookie；日志屏蔽 `t` 参数。
+
+#### H6 · `/portal/payment-return` 可凭 `payment_id` 换取 Portal token
+
+**证据：** `admin/routes/web_public.py:payment_return_page()` 使用 `payment_id` 查支付记录，若 `payment.status == "paid"` 就签发 Portal token 并 303 到 `/portal/{token}/payment-success`。
+
+**影响：** 任意获得已支付 `payment_id` 的人都可能换取 30 天 Portal token，访问订单状态、资料页、报告、分享链接等客户侧能力。
+
+**整改建议：** 支付回跳必须校验支付平台同步签名，或使用服务端生成的一次性 `return_nonce` 绑定 order/payment/过期时间；裸 `payment_id` 不得作为 Portal token 兑换凭证。
+
+#### H7 · 公共支付/checkout 错误处理可能透传内部错误字符串
+
+**证据：** 公共 checkout/payment/webhook 路由将 `PaymentError` 原文放入 `HTTPException.detail`；错误 handler 会把字符串 detail 放入响应 `detail.reason`。
+
+**影响：** 可能暴露 provider 配置状态、环境变量名、密钥文件路径、支付校验内部原因，辅助攻击者枚举部署配置或构造更精准攻击。
+
+**整改建议：** 公共路由统一返回业务错误码和泛化中文文案；内部原因只写安全日志，并按 `settings.env` 控制 detail 暴露。
+
+#### H8 · 公共下单接口缺少速率限制/反自动化边界
+
+**证据：** `/api/public/orders` 公开创建订单；登录接口已有失败限流，但公开下单未见等价 IP/手机号/UA 限流、验证码、幂等键或垃圾单清理边界。
+
+**影响：** 可批量创建待支付订单和 payment rows，导致 SQLite 写放大、订单/支付表膨胀、客服/通知/运营流程被垃圾数据污染。
+
+**整改建议：** 为公开下单增加 IP + 联系方式 hash + User-Agent 维度限流；引入幂等键；对失败/未支付订单设置清理策略。
+
+#### H9 · SQLite schema 缺少真实版本迁移管理
+
+**证据：** `data/orders/schema.py` 使用 `CREATE TABLE IF NOT EXISTS` + 手工 `ALTER TABLE ADD COLUMN`；`get_schema_version()` 基本只根据 orders 表存在返回版本；payments 也使用 ad-hoc `_ensure_column()`。
+
+**影响：** 生产库无法记录已应用迁移、迁移顺序、失败恢复和兼容性；多版本部署/回滚时可能出现列缺失、约束不一致、部分迁移提交后继续运行。
+
+**整改建议：** 引入 `schema_migrations` 表，迁移脚本逐版本事务化执行；启动时校验当前版本；新增旧库升级到最新库的集成测试。
+
+#### H10 · Poster Docker 构建路径在真实本地验证中失败
+
+**证据：** 子审查执行 `docker build -f Dockerfile.poster -t gaokao-poster-cli:review .`，apt 源访问代理 `127.0.0.1:7897` 失败，随后无法定位 `fonts-noto-cjk/libjpeg62-turbo`；主 `Dockerfile` 清理代理环境，但 `Dockerfile.poster` 没有同等处理。
+
+**影响：** CI 虽声明构建 poster image，但当前本地/部署路径不能证明 Poster Docker 可复现构建；报告导出链路存在发布风险。
+
+**整改建议：** 在 `Dockerfile.poster` 中清理代理环境或显式配置 apt 源；补本地/CI 构建复验；把 T-C-44 Poster Docker 从“待环境”变成可复现 gate。
+
+#### H11 · docker-compose healthcheck 与可配置端口不一致
+
+**证据：** compose 允许 `GAOKAO_ADMIN_PORT` 覆盖端口映射，但 healthcheck 固定访问 `http://127.0.0.1:8000/health`。
+
+**影响：** 当端口非 8000 时容器会被错误判定不健康，导致部署假失败或自恢复误触发。
+
+**整改建议：** healthcheck 使用容器内固定监听端口或与环境变量一致；补 compose 配置测试。
+
+---
+
+### 9.3 MEDIUM 补充
+
+#### M4 · Portal token 30 天有效且不可单独吊销
+
+**证据：** `data/customer_portal/token.py` token payload 仅含 `order_id` / `exp`，默认 TTL 30 天；校验仅依赖 HMAC 与过期时间。
+
+**影响：** Portal 链接一旦泄漏，除轮换全局 secret 或等待过期外，无法吊销单个订单 token。
+
+**建议：** 加 `jti` / token version 并落库；订单维度可撤销；敏感操作增加手机号尾号或短信/邮箱二次校验；缩短默认 TTL。
+
+#### M5 · 上传附件仅按扩展名和大小校验
+
+**证据：** Portal 附件上传允许 `.pdf/.txt/.md/.json/.png/.jpg/.jpeg/.webp`，但未见 magic bytes / MIME 校验，直接写入文件。
+
+**影响：** 可上传伪装扩展名内容，后续若被报告生成、LLM、预览或人工下载处理，可能触发 XSS/恶意文件/解析器风险。
+
+**建议：** 按 magic bytes 校验 PDF/图片；文本类做 UTF-8 和大小限制；附件下载强制 attachment；存储目录禁止静态直出。
+
+#### M6 · Alipay notify 直接读取完整 body，缺少请求体大小限制
+
+**证据：** `alipay_notify_webhook()` 直接 `await request.body()` 后 parse，未见 Content-Length/body size guard。
+
+**影响：** 公开 webhook 可被超大 body 消耗内存/CPU，即使签名失败也先完成完整读取和解析。
+
+**建议：** ASGI/proxy 层设置 body limit；路由内检查 Content-Length；超限直接 413。
+
+#### M7 · 物理删除订单不写独立审计，审计连续性不足
+
+**证据：** `data/orders/dao.py:delete()` 注释说明物理删除订单且不会写 `status_history`。
+
+**影响：** 若业务调用该路径处理恶意/错误订单，订单和状态历史同时消失，难以审计谁在何时删除、为何删除。
+
+**建议：** 删除前写独立 deletion audit 表/JSONL，记录 actor、reason、scope、原状态摘要；限制调用点必须传 actor/reason。
+
+#### M8 · Node / pnpm / turbo 运行口径需要沉淀为前置条件
+
+**证据：** CI 固定 Node 20，根 `engines` 只要求 `>=20`，本机为 Node 22；首次本地 gate 因 node_modules/turbo 缺失失败，补装后前端 gate 才通过。
+
+**影响：** 不同操作者可能把“环境未准备”误判为前端失败，或用不同 Node 版本得到不同构建行为。
+
+**建议：** 在 README/runbook 明确 Node 20/22 支持矩阵、`pnpm install --frozen-lockfile` 前置、turbo 检查命令。
+
+---
+
+### 9.4 测试覆盖缺口补充
+
+- 缺少“管理 JWT query 参数 `t` 不被接受/不进日志”的负向测试。
+- 缺少“已支付后 `/portal/payment-return?payment_id=` 无签名不得发 Portal token”的安全回归测试。
+- 缺少“公共下单接口限流/幂等/垃圾订单防护”测试。
+- 缺少“上传文件 magic bytes 与超大 Alipay notify body”的边界测试。
+- 缺少“旧 SQLite 库逐版本迁移到最新 schema”的 migration contract 测试。
+- Admin e2e 仍需覆盖真实登录、token 过期、401/403、全导航遍历、移动端后台导航。
+
+### 9.5 更新后的整改优先级口径
+
+**P0 / 必须先修：**
+1. 文档真相源硬漂移：修 `README.md` / `docs/CURRENT_STATE.md` / active board 指针。
+2. Admin 真实 JWT 鉴权闭环：真实登录、Authorization 注入、移除/收紧 query token fallback。
+3. `/admin/review` 断链与全导航 e2e。
+4. Python mypy 9 errors。
+5. `/portal/payment-return` 裸 `payment_id` 换 token 风险。
+
+**P1 / 高优先级：**
+1. 公共错误 detail 脱敏。
+2. 公开下单限流/幂等/垃圾单清理。
+3. SQLite schema migration 版本化。
+4. Poster Docker 构建可复现。
+5. docker-compose healthcheck 端口一致。
+6. Portal token 可撤销/缩短 TTL。
+
+**P2 / 治理与长期防复发：**
+1. Chromatic/LHCI/Storybook 真实视觉基线。
+2. 100-case smoke release gate 语义升级。
+3. 旧 review / closeout 文件顶部历史快照提示。
+4. Node/pnpm/turbo 本地环境 runbook。
 
 ---
 
