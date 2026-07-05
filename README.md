@@ -175,6 +175,21 @@ bash scripts/dev-verify.sh
 GAOKAO_SKIP_INSTALL=1 bash scripts/dev-verify.sh
 ```
 
+### 前端本地门禁（T0-03）
+
+前端 Review / 修复前必须先准备依赖，再执行基础门禁；详细口径见 `docs/FRONTEND_GATE_RUNBOOK_2026-07-05.md`。
+
+```bash
+pnpm install --frozen-lockfile
+pnpm exec turbo --version
+pnpm typecheck
+pnpm lint
+pnpm test
+pnpm build
+```
+
+注意：以上只代表前端本地基础门禁；Playwright e2e / LHCI / Chromatic / 真实浏览器视觉验收仍需按 Phase 1~5 单独闭环。
+
 ### PDF 运行时证明
 
 当前仓库的 PDF 生成证明口径：
