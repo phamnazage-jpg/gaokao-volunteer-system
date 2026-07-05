@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { useUserStore } from '@/stores/user';
 import { apiClient, HttpError } from './api-client';
 
 function setNavigatorOnline(value: boolean): void {
@@ -102,5 +103,53 @@ describe('apiClient error handling', () => {
 
     await expect(request).resolves.toEqual({ ok: true });
     expect(fetchMock).toHaveBeenCalledWith('/api/queued-write', expect.objectContaining({ method: 'POST' }));
+  });
+
+  it('injects Authorization Bearer from the admin session token', async () => {
+    useUserStore.getState().setAdminSession({
+      username: 'admin',
+      accessToken: 'jwt-token',
+      tokenType: 'bearer',
+      expiresIn: 3600,
+    });
+    const fetchMock = vi.fn().mockResolvedValue(
+      new Response(JSON.stringify({ ok: true }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      }),
+    );
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(apiClient.get('/admin/orders', z.object({ ok: z.boolean() }))).resolves.toEqual({ ok: true });
+
+    expect(fetchMock).toHaveBeenCalledOnce();
+    const calls = fetchMock.mock.calls as Array<[string, RequestInit]>;
+    expect(calls[0][0]).toBe('/api/admin/orders');
+    const headers = calls[0][1].headers as Record<string, string>;
+    expect(headers.Authorization).toBe('Bearer jwt-token');
+  });
+
+  it('does not inject Authorization after the admin token has expired', async () => {
+    useUserStore.getState().setAdminSession({
+      username: 'admin',
+      accessToken: 'expired-token',
+      tokenType: 'bearer',
+      expiresIn: -1,
+    });
+    const fetchMock = vi.fn().mockResolvedValue(
+      new Response(JSON.stringify({ ok: true }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      }),
+    );
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(apiClient.get('/admin/orders', z.object({ ok: z.boolean() }))).resolves.toEqual({ ok: true });
+
+    expect(fetchMock).toHaveBeenCalledOnce();
+    const calls = fetchMock.mock.calls as Array<[string, RequestInit]>;
+    expect(calls[0][0]).toBe('/api/admin/orders');
+    const headers = calls[0][1].headers as Record<string, string>;
+    expect(headers.Authorization).toBeUndefined();
   });
 });

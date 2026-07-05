@@ -7,6 +7,7 @@
  *  - Error codes map to i18n copy.
  */
 import { ZodError, type ZodType, type ZodTypeDef } from 'zod';
+import { useUserStore } from '@/stores/user';
 import { getLocalizedApiErrorMessage, type ApiErrorSeverity } from './error-messages';
 
 export interface ApiError extends Error {
@@ -61,6 +62,15 @@ function isWriteMethod(method: RequestOptions<unknown>['method']): boolean {
   return method !== undefined && method !== 'GET';
 }
 
+function getActiveAuthorizationHeader(): string | undefined {
+  const { token, tokenType, tokenExpiresAt } = useUserStore.getState();
+  if (!token || !tokenExpiresAt || tokenExpiresAt <= Date.now()) {
+    return undefined;
+  }
+  const scheme = (tokenType ?? 'bearer').toLowerCase() === 'bearer' ? 'Bearer' : tokenType;
+  return `${scheme} ${token}`;
+}
+
 function waitUntilOnline(signal: AbortSignal | undefined): Promise<void> {
   if (!isBrowserOffline() || typeof window === 'undefined') {
     return Promise.resolve();
@@ -98,11 +108,13 @@ async function request<TResponse, TBody = unknown>(
 ): Promise<TResponse> {
   const { method = 'GET', body, signal, headers = {} } = options;
 
+  const authHeader = getActiveAuthorizationHeader();
   const init: RequestInit = {
     method,
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',
+      ...(authHeader ? { Authorization: authHeader } : {}),
       ...headers,
     },
     signal,
