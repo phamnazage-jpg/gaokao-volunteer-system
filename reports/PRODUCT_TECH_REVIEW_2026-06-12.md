@@ -1,3 +1,8 @@
+<!-- 历史快照提示：本文件保留为历史审计材料，不再代表当前项目状态。 -->
+> ⚠️ **历史快照（非当前真相源）**：本文件仅保留当时审查/收口结论。当前状态与执行顺序以 `docs/CURRENT_STATE.md`、`docs/ACTIVE_REMEDIATION_2026-07-05_REVIEW.md`、`docs/ACTIVE_EXECUTION_BOARD_2026-07-05_REVIEW_REMEDIATION.md`、`docs/plans/2026-07-05-review-remediation-systemic-fix-plan.md` 和 `reports/REVIEW_REPORT_2026-07-05_COMPREHENSIVE_PROJECT_REVIEW.md` 为准。
+
+---
+
 # 高考志愿填报系统 产品规划与技术实施评审报告（历史快照）
 
 > 该文档是 2026-06-12 的评审快照；其中部分判断已被后续代码与验证结果更新。当前真相源请以 `reports/PROJECT_SYSTEM_REVIEW_2026-06-13.md` 为准。

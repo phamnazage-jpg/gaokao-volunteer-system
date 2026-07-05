@@ -1,3 +1,8 @@
+<!-- 历史快照提示：本文件保留为历史审计材料，不再代表当前项目状态。 -->
+> ⚠️ **历史快照（非当前真相源）**：本文件仅保留当时审查/收口结论。当前状态与执行顺序以 `docs/CURRENT_STATE.md`、`docs/ACTIVE_REMEDIATION_2026-07-05_REVIEW.md`、`docs/ACTIVE_EXECUTION_BOARD_2026-07-05_REVIEW_REMEDIATION.md`、`docs/plans/2026-07-05-review-remediation-systemic-fix-plan.md` 和 `reports/REVIEW_REPORT_2026-07-05_COMPREHENSIVE_PROJECT_REVIEW.md` 为准。
+
+---
+
 # 资深开发者视角 · 项目全面审查报告（V2 全面版）
 
 > 评审人：Senior Developer（高级开发工程师）

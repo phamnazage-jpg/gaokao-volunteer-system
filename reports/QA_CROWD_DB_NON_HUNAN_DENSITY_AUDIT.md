@@ -1,3 +1,8 @@
+<!-- 历史快照提示：本文件保留为历史审计材料，不再代表当前项目状态。 -->
+> ⚠️ **历史快照（非当前真相源）**：本文件仅保留当时审查/收口结论。当前状态与执行顺序以 `docs/CURRENT_STATE.md`、`docs/ACTIVE_REMEDIATION_2026-07-05_REVIEW.md`、`docs/ACTIVE_EXECUTION_BOARD_2026-07-05_REVIEW_REMEDIATION.md`、`docs/plans/2026-07-05-review-remediation-systemic-fix-plan.md` 和 `reports/REVIEW_REPORT_2026-07-05_COMPREHENSIVE_PROJECT_REVIEW.md` 为准。
+
+---
+
 # Q-A 数据质量审计报告 — 非湖南数据密度
 
 审计时间: 2026-06-20 | HEAD: 604c8b3 | 范围: `data/crowd_db/*`
