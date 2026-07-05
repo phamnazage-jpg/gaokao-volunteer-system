@@ -1,8 +1,8 @@
 /**
- * V10 选项 B · TanStack Query 5 hooks barrel
- * 5 模块 × 3 hook = 15 个 hooks, 全部 0 any
+ * V10 option B · TanStack Query 5 hooks barrel.
+ * 5 modules × 3 hooks = 15 hooks, all 0 any.
  *
- * V10 hooks 集合: TanStack Query + 真实 API client + 流式聊天 mutation。
+ * V10 hooks collection: TanStack Query + real API client + streaming chat mutation.
  */
 export { useChatSendMutation, useChatStreamMutation } from './useChatMutations';
 export { useChatHistoryQuery, useConsultationsQuery } from './useChatQueries';
@@ -22,10 +22,14 @@ export { useAuditSubmitMutation, useAuditStatusQuery } from './useAuditMutations
 
 export { useUploadMutation } from './useUploadMutations';
 
-// V10 Sprint 3 模块
+// V10 Sprint 3 modules.
 export { useShareLinkCreate, useShareLinkDelete, useShareLinkLatestQuery, useShareLinkStatsQuery } from './useShareLink';
 export { useScoreLineQuery, useRankEstimatorQuery, useMajorsQuery, useSchoolsQuery } from './useDataQuery';
 export { useReviewStartMutation, useReviewStatusQuery, useReviewActionMutation } from './useReviewFlow';
 export { usePortalCWBQuery, usePortalFullPlanQuery } from './usePortal';
-export { usePosterGenerateMutation } from './usePosterGenerate';
+export { usePosterGenerateMutation, usePosterStatusQuery } from './usePosterGenerate';
 export { useLLMConfig, useAuditEnhanceMutation, useAuditEnhanceStatusQuery } from './useLLMEnhanceMutation';
+export { useAdminOrdersQuery } from './useAdminOrders';
+export { useAdminCasesQuery, useAdminCaseQuery } from './useAdminCases';
+export { useAdminShareLinkDetailQuery, useAdminShareLinksQuery } from './useAdminShareLinks';
+export { useAdminPostersQuery } from './useAdminPosters';

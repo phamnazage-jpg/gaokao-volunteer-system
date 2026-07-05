@@ -21,6 +21,22 @@ describe('ShareDialog', () => {
     expect(screen.getByText('广东物理 620 方案')).toBeInTheDocument();
   });
 
+  it('opens with English dialog labels when locale switches', () => {
+    renderWithProviders(<ShareDialog planId="p1" planTitle="Guangdong physics plan" open onClose={() => {}} />, { locale: 'en-US' });
+
+    expect(screen.getByRole('dialog', { name: 'Share plan' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Close' })).toBeInTheDocument();
+    expect(screen.getByText('Guangdong physics plan')).toBeInTheDocument();
+  });
+
+  it('includes dark mode variants for the dialog shell', () => {
+    renderWithProviders(<ShareDialog planId="p1" planTitle="Guangdong physics plan" open onClose={() => {}} />, { locale: 'en-US' });
+
+    expect(screen.getByRole('document')).toHaveClass('dark:bg-slate-900', 'dark:border-slate-800');
+    expect(screen.getByRole('heading', { name: 'Share plan' })).toHaveClass('dark:text-gray-100');
+    expect(screen.getByRole('button', { name: 'Close' })).toHaveClass('dark:hover:bg-slate-800', 'dark:text-gray-400');
+  });
+
   it('closes when X button clicked', async () => {
     const onClose = vi.fn();
     renderWithProviders(<ShareDialog planId="p1" planTitle="测试" open onClose={onClose} />);

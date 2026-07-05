@@ -1,6 +1,6 @@
 /**
- * V10 选项 B · usePlanQueries
- * 替代原型 usePlan
+ * V10 option B · usePlanQueries.
+ * Replaces the legacy usePlan prototype.
  */
 import { useQuery } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api-client';

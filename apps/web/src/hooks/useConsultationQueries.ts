@@ -1,6 +1,6 @@
 /**
- * V10 选项 B · useConsultationQueries
- * 替代原型 useConsultation
+ * V10 option B · useConsultationQueries.
+ * Replaces the legacy useConsultation prototype.
  */
 import { useQuery } from '@tanstack/react-query';
 import { z } from 'zod';

@@ -18,7 +18,16 @@ describe('ShareDialogPage', () => {
     expect(within(panel).getByText('https://example.test/s/ABC123')).toBeInTheDocument();
     expect(await within(panel).findByText('12')).toBeInTheDocument();
     expect(within(panel).getByText('5')).toBeInTheDocument();
-    expect(within(panel).getByText(/2026\/7\/3/)).toBeInTheDocument();
+    expect(within(panel).getByText(/创建于/)).toBeInTheDocument();
+  });
+
+  it('renders English page and status panel labels', async () => {
+    renderWithProviders(<ShareDialogPage />, { locale: 'en-US' });
+
+    expect(screen.getByRole('heading', { name: 'Share management' })).toBeInTheDocument();
+    const panel = await screen.findByRole('region', { name: 'Share status panel' });
+    expect(within(panel).getByText('Latest link')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'New share link' })).toBeInTheDocument();
   });
 
   it('shows a fallback when the latest share-link status fails', async () => {
@@ -31,6 +40,13 @@ describe('ShareDialogPage', () => {
     renderWithProviders(<ShareDialogPage />);
 
     expect(await screen.findByRole('alert')).toHaveTextContent('分享状态暂不可用');
+    expect(screen.getByRole('button', { name: '重试加载分享状态' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: '创建分享链接' })).toBeInTheDocument();
+  });
+  it('includes dark mode page header styles', () => {
+    renderWithProviders(<ShareDialogPage />, { locale: 'en-US' });
+
+    expect(screen.getByRole('heading', { name: 'Share management' })).toHaveClass('dark:text-gray-100');
+    expect(screen.getByText('Manage shared plan links and view access stats.')).toHaveClass('dark:text-gray-400');
   });
 });

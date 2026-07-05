@@ -5,20 +5,42 @@
  */
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import { IntlProvider } from 'react-intl';
 import { ModeIndicator, deriveMode } from '@/components/navigation/ModeIndicator';
+import { messages } from '@/i18n/messages';
+
+function renderModeIndicator(mode: Parameters<typeof ModeIndicator>[0]['mode']) {
+  return render(
+    <IntlProvider locale="zh-CN" messages={messages['zh-CN']} onError={() => undefined}>
+      <ModeIndicator mode={mode} />
+    </IntlProvider>,
+  );
+}
 
 describe('ModeIndicator (V10 不变量 C2)', () => {
   it('渲染 4 种 mode 的 label', () => {
-    const { rerender } = render(<ModeIndicator mode="explore" />);
+    const { rerender } = renderModeIndicator('explore');
     expect(screen.getByText('自由探索')).toBeInTheDocument();
 
-    rerender(<ModeIndicator mode="generating" />);
+    rerender(
+      <IntlProvider locale="zh-CN" messages={messages['zh-CN']} onError={() => undefined}>
+        <ModeIndicator mode="generating" />
+      </IntlProvider>,
+    );
     expect(screen.getByText('方案生成中')).toBeInTheDocument();
 
-    rerender(<ModeIndicator mode="auditing" />);
+    rerender(
+      <IntlProvider locale="zh-CN" messages={messages['zh-CN']} onError={() => undefined}>
+        <ModeIndicator mode="auditing" />
+      </IntlProvider>,
+    );
     expect(screen.getByText('方案审核中')).toBeInTheDocument();
 
-    rerender(<ModeIndicator mode="adjusting" />);
+    rerender(
+      <IntlProvider locale="zh-CN" messages={messages['zh-CN']} onError={() => undefined}>
+        <ModeIndicator mode="adjusting" />
+      </IntlProvider>,
+    );
     expect(screen.getByText('方案调整中')).toBeInTheDocument();
   });
 

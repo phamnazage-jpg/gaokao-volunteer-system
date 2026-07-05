@@ -1,8 +1,8 @@
 /**
  * V10 · Sprint 3 · useScrollRecovery
  *
- * 滚动恢复 hook：sessionId/消息数变化时滚到底部；用户上滑时不打断
- * V10 不变量：UI 1:1 复现（V2 Plan §3.1 L1）
+ * Scroll recovery hook: scrolls to bottom when sessionId/message count changes, without interrupting manual upward scrolls.
+ * V10 invariant: 1:1 UI recreation (V2 Plan §3.1 L1).
  */
 import { useEffect, useRef } from 'react';
 
@@ -37,7 +37,7 @@ export function useScrollRecovery<T extends HTMLElement>(
         el.scrollTop = el.scrollHeight;
       });
     }
-    // deps 变化时重置 userScrolledUp, 让新会话能滚到底
+    // Reset userScrolledUp when dependencies change, so new sessions can scroll to the bottom.
     userScrolledUp.current = false;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);

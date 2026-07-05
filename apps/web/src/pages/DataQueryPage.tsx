@@ -1,141 +1,123 @@
-/**
- * V10 · Sprint 3 · DataQueryPage
- * 数据查询页：分数线 / 位次 / 专业 / 院校
- */
 import { useState } from 'react';
-import { Database, TrendingUp, GraduationCap } from 'lucide-react';
+import { Database } from 'lucide-react';
+import { FormattedMessage, useIntl } from 'react-intl';
 import { useScoreLineQuery, useRankEstimatorQuery, useMajorsQuery, useSchoolsQuery } from '@/hooks/useDataQuery';
+import { Modal } from '@/components/shared/Modal';
+import { toast } from '@/components/shared/Toast';
+import { DataQueryForm, type DataQueryFormValues, type ScoreType } from '@/components/DataQueryForm';
+import { DataQueryResult } from '@/components/DataQueryResult';
 
 export function DataQueryPage() {
-  const [province, setProvince] = useState('广东');
-  const [year, setYear] = useState(2025);
-  const [scoreType, setScoreType] = useState<'physics' | 'history'>('physics');
-  const [rank, setRank] = useState(12500);
-  const [keyword, setKeyword] = useState('');
+  const intl = useIntl();
+  const [formValues, setFormValues] = useState<DataQueryFormValues>({
+    province: intl.formatMessage({ id: 'dataQuery.defaultProvince' }),
+    year: 2025,
+    scoreType: 'physics',
+    rank: 12500,
+    keyword: '',
+  });
+  const [showMethodology, setShowMethodology] = useState(false);
 
-  const scoreLine = useScoreLineQuery({ province, year, scoreType });
-  const rankEst = useRankEstimatorQuery({ province, year, scoreType, rank });
-  const majors = useMajorsQuery(keyword);
-  const schools = useSchoolsQuery(keyword);
+  const scoreLine = useScoreLineQuery({
+    province: formValues.province,
+    year: formValues.year,
+    scoreType: formValues.scoreType,
+  });
+  const rankEst = useRankEstimatorQuery({
+    province: formValues.province,
+    year: formValues.year,
+    scoreType: formValues.scoreType,
+    rank: formValues.rank,
+  });
+  const majors = useMajorsQuery(formValues.keyword);
+  const schools = useSchoolsQuery(formValues.keyword);
+
+  const handleFormChange = (patch: Partial<DataQueryFormValues>): void => {
+    setFormValues((current) => ({ ...current, ...patch }));
+  };
+
+  const handleScoreTypeChange = (nextScoreType: ScoreType): void => {
+    toast.info(intl.formatMessage({ id: 'dataQuery.toast.scoreTypeChanged.title' }), {
+      description: intl.formatMessage(
+        { id: 'dataQuery.toast.scoreTypeChanged.description' },
+        { scoreType: intl.formatMessage({ id: nextScoreType === 'physics' ? 'dataQuery.scoreType.physics' : 'dataQuery.scoreType.history' }) },
+      ),
+    });
+  };
 
   return (
     <div className="p-6 max-w-4xl mx-auto">
-      <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-        <Database className="w-6 h-6" aria-hidden="true" />
-        数据查询
-      </h1>
-
-      <div className="mt-6 grid gap-4 md:grid-cols-4">
-        <label className="flex flex-col gap-1">
-          <span className="text-xs text-gray-500">省份</span>
-          <input
-            type="text"
-            value={province}
-            onChange={(e) => setProvince(e.target.value)}
-            className="px-3 py-2 rounded-lg border border-gray-200 text-sm min-h-[48px]"
-          />
-        </label>
-        <label className="flex flex-col gap-1">
-          <span className="text-xs text-gray-500">年份</span>
-          <input
-            type="number"
-            value={year}
-            onChange={(e) => setYear(Number(e.target.value))}
-            className="px-3 py-2 rounded-lg border border-gray-200 text-sm min-h-[48px]"
-          />
-        </label>
-        <label className="flex flex-col gap-1">
-          <span className="text-xs text-gray-500">科类</span>
-          <select
-            value={scoreType}
-            onChange={(e) => setScoreType(e.target.value as 'physics' | 'history')}
-            className="px-3 py-2 rounded-lg border border-gray-200 text-sm min-h-[48px]"
-          >
-            <option value="physics">物理</option>
-            <option value="history">历史</option>
-          </select>
-        </label>
-        <label className="flex flex-col gap-1">
-          <span className="text-xs text-gray-500">位次</span>
-          <input
-            type="number"
-            value={rank}
-            onChange={(e) => setRank(Number(e.target.value))}
-            className="px-3 py-2 rounded-lg border border-gray-200 text-sm min-h-[48px]"
-          />
-        </label>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-2 dark:text-gray-100">
+          <Database className="w-6 h-6" aria-hidden="true" />
+          <FormattedMessage id="dataQuery.page.title" />
+        </h1>
+        <button
+          type="button"
+          className="inline-flex min-h-[40px] items-center justify-center rounded-full border border-blue-200 bg-blue-50 px-4 text-sm font-semibold text-blue-700 transition hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:border-blue-500/30 dark:bg-blue-500/10 dark:text-blue-200 dark:hover:bg-blue-500/20 dark:focus:ring-offset-gray-950"
+          onClick={() => setShowMethodology(true)}
+        >
+          <FormattedMessage id="dataQuery.page.methodologyAction" />
+        </button>
       </div>
 
-      {rankEst.data && (
-        <div className="mt-6 rounded-xl border border-gray-100 bg-white p-4 shadow-sm flex items-center gap-3">
-          <TrendingUp className="w-8 h-8 text-blue-500" aria-hidden="true" />
-          <div>
-            <p className="text-xs text-gray-400">等效分数</p>
-            <p className="text-2xl font-bold text-gray-800">{rankEst.data.equivalentScore}</p>
-          </div>
-        </div>
-      )}
+      <Modal
+        open={showMethodology}
+        title={intl.formatMessage({ id: 'dataQuery.methodology.title' })}
+        description={intl.formatMessage({ id: 'dataQuery.methodology.description' })}
+        closeLabel={intl.formatMessage({ id: 'dataQuery.methodology.close' })}
+        onClose={() => setShowMethodology(false)}
+      >
+        <ul className="space-y-3">
+          <li>
+            <strong className="text-gray-900 dark:text-gray-100">
+              <FormattedMessage id="dataQuery.methodology.scoreLine.label" />
+            </strong>
+            <FormattedMessage id="dataQuery.methodology.scoreLine.description" />
+          </li>
+          <li>
+            <strong className="text-gray-900 dark:text-gray-100">
+              <FormattedMessage id="dataQuery.methodology.rank.label" />
+            </strong>
+            <FormattedMessage id="dataQuery.methodology.rank.description" />
+          </li>
+          <li>
+            <strong className="text-gray-900 dark:text-gray-100">
+              <FormattedMessage id="dataQuery.methodology.search.label" />
+            </strong>
+            <FormattedMessage id="dataQuery.methodology.search.description" />
+          </li>
+        </ul>
+      </Modal>
 
-      {scoreLine.data && (
-        <div className="mt-6 rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
-          <p className="text-xs font-semibold text-gray-400 mb-2">分数线（{scoreLine.data.year}）</p>
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="text-xs text-gray-400 border-b">
-                <th className="text-left py-2">批次</th>
-                <th className="text-right py-2">分数</th>
-                <th className="text-right py-2">位次</th>
-              </tr>
-            </thead>
-            <tbody>
-              {scoreLine.data.lines.map((line) => (
-                <tr key={line.batch} className="border-b last:border-0">
-                  <td className="py-2 text-gray-800">{line.batch}</td>
-                  <td className="py-2 text-right text-gray-800">{line.score}</td>
-                  <td className="py-2 text-right text-gray-500">{line.rank.toLocaleString()}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-
-      <div className="mt-6">
-        <input
-          type="text"
-          value={keyword}
-          onChange={(e) => setKeyword(e.target.value)}
-          placeholder="搜索专业或院校…"
-          className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm min-h-[48px]"
-        />
+      <div className="mt-6 grid gap-4">
+        <DataQueryForm variant="scoreLine" values={formValues} onChange={handleFormChange} onScoreTypeChange={handleScoreTypeChange} />
+        <DataQueryForm variant="rankEstimator" values={formValues} onChange={handleFormChange} onScoreTypeChange={handleScoreTypeChange} />
       </div>
 
-      <div className="mt-4 grid gap-4 md:grid-cols-2">
-        <div className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
-          <p className="text-xs font-semibold text-gray-400 mb-2 flex items-center gap-1">
-            <GraduationCap className="w-4 h-4" /> 专业
-          </p>
-          <ul className="text-sm space-y-1">
-            {(majors.data?.majors ?? []).slice(0, 8).map((m) => (
-              <li key={m.id} className="text-gray-700">
-                {m.name} <span className="text-xs text-gray-400">· {m.category}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
-          <p className="text-xs font-semibold text-gray-400 mb-2">院校</p>
-          <ul className="text-sm space-y-1">
-            {(schools.data?.schools ?? []).slice(0, 8).map((s) => (
-              <li key={s.id} className="text-gray-700">
-                {s.name} <span className="text-xs text-gray-400">· {s.province}</span>
-                {s.is985 && <span className="ml-1 text-xs text-red-500">985</span>}
-                {s.is211 && <span className="ml-1 text-xs text-orange-500">211</span>}
-              </li>
-            ))}
-          </ul>
-        </div>
+      <div className="mt-6 grid gap-4 md:grid-cols-2">
+        <DataQueryForm variant="majors" values={formValues} onChange={handleFormChange} />
+        <DataQueryForm variant="schools" values={formValues} onChange={handleFormChange} />
       </div>
+
+      <DataQueryResult
+        scoreLine={scoreLine.data}
+        rankEstimator={rankEst.data}
+        majors={majors.data}
+        schools={schools.data}
+        loading={{
+          scoreLine: scoreLine.isLoading,
+          rankEstimator: rankEst.isLoading,
+          majors: majors.isLoading,
+          schools: schools.isLoading,
+        }}
+        error={{
+          scoreLine: scoreLine.isError,
+          rankEstimator: rankEst.isError,
+          majors: majors.isError,
+          schools: schools.isError,
+        }}
+      />
     </div>
   );
 }

@@ -285,7 +285,28 @@ const PosterGenerateInput = z
   })
   .passthrough();
 const PosterGenerateResponse = z
-  .object({ posterUrl: z.string(), qrCode: z.string(), expiresAt: z.string() })
+  .object({
+    jobId: z.string(),
+    status: z
+      .enum(["queued", "processing", "completed", "failed"])
+      .optional()
+      .default("completed"),
+    progress: z.number().int().gte(0).lte(100).optional().default(100),
+    posterUrl: z.union([z.string(), z.null()]).optional(),
+    qrCode: z.union([z.string(), z.null()]).optional(),
+    expiresAt: z.union([z.string(), z.null()]).optional(),
+  })
+  .passthrough();
+const PosterStatusResponse = z
+  .object({
+    jobId: z.string(),
+    status: z.enum(["queued", "processing", "completed", "failed"]),
+    progress: z.number().int().gte(0).lte(100),
+    posterUrl: z.union([z.string(), z.null()]).optional(),
+    qrCode: z.union([z.string(), z.null()]).optional(),
+    expiresAt: z.union([z.string(), z.null()]).optional(),
+    updatedAt: z.string(),
+  })
   .passthrough();
 const LLMConfigResponse = z
   .object({
@@ -572,6 +593,7 @@ export const schemas = {
   ReviewActionInput,
   PosterGenerateInput,
   PosterGenerateResponse,
+  PosterStatusResponse,
   LLMConfigResponse,
   AuditEnhanceInput,
   Recommendation,
@@ -1580,6 +1602,27 @@ const endpoints = makeApi([
       },
     ],
     response: z.unknown(),
+    errors: [
+      {
+        status: 422,
+        description: `Validation Error`,
+        schema: HTTPValidationError,
+      },
+    ],
+  },
+  {
+    method: "get",
+    path: "/api/poster/:job_id/status",
+    alias: "get_poster_status_api_poster__job_id__status_get",
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "job_id",
+        type: "Path",
+        schema: z.string(),
+      },
+    ],
+    response: PosterStatusResponse,
     errors: [
       {
         status: 422,

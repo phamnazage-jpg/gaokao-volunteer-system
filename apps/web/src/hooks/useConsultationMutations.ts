@@ -1,6 +1,6 @@
 /**
- * V10 选项 B · useConsultationMutations
- * 替代原型 useConsultation 中的 newConsultation/loadConsultation/savePlan
+ * V10 option B · useConsultationMutations.
+ * Replaces newConsultation/loadConsultation/savePlan from the legacy useConsultation prototype.
  */
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';

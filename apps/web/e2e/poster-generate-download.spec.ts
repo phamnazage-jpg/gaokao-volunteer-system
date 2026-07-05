@@ -52,6 +52,65 @@ test.describe('Poster Generate + Download (V10 Sprint 4 · T-B-23.8)', () => {
     await expect(page.getByRole('button', { name: '复制二维码' })).toBeVisible();
   });
 
+  test('poster async job shows progress before preview', async ({ page }) => {
+    let statusCalls = 0;
+    await page.route('**/api/poster/generate', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          jobId: 'poster-e2e-async',
+          status: 'queued',
+          progress: 5,
+          posterUrl: 'https://example.com/poster-placeholder.png',
+          qrCode: 'https://example.com/qr.png',
+          expiresAt: '2026-08-01T00:00:00Z',
+        }),
+      });
+    });
+
+    await page.route('**/api/poster/poster-e2e-async/status', async (route) => {
+      statusCalls += 1;
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(
+          statusCalls === 1
+            ? {
+                jobId: 'poster-e2e-async',
+                status: 'processing',
+                progress: 40,
+                posterUrl: null,
+                qrCode: null,
+                expiresAt: null,
+                updatedAt: '2026-07-04T00:00:00Z',
+              }
+            : {
+                jobId: 'poster-e2e-async',
+                status: 'completed',
+                progress: 100,
+                posterUrl: 'https://example.com/poster-async.png',
+                qrCode: 'https://example.com/qr.png',
+                expiresAt: '2026-08-01T00:00:00Z',
+                updatedAt: '2026-07-04T00:00:02Z',
+              },
+        ),
+      });
+    });
+
+    await page.route((url) => url.pathname.startsWith('/api/') && !url.pathname.includes('/poster/'), async (route) => {
+      await route.fulfill({ status: 200, contentType: 'application/json', body: '{}' });
+    });
+
+    await page.goto('/poster');
+    await page.getByRole('button', { name: /生成海报/ }).click();
+
+    await expect(page.getByRole('progressbar', { name: '海报生成进度' })).toHaveAttribute('aria-valuenow', '40');
+    await expect(page.locator('img[alt="海报预览"]')).toHaveAttribute('src', 'https://example.com/poster-async.png', {
+      timeout: 8000,
+    });
+  });
+
   test('poster shows no preview when generation fails (Zod 校验失败)', async ({ page }) => {
     // 返回非法 URL（不是 https）让 Zod url() 校验失败
     await page.route('**/api/poster/generate', async (route) => {

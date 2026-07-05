@@ -1,11 +1,11 @@
 /**
- * V10 选项 B · 安全的 Markdown 渲染组件
- * 保留 useChat 旧版的所有功能, 仅移除 'use client' (Vite 不需要)
+ * V10 option B · safe Markdown renderer.
+ * Keeps the legacy useChat capabilities and only removes 'use client', which Vite does not need.
  *
- * V10 不变量 B2: SafeMarkdown XSS 防护
- *  - rehype-sanitize 过滤 <script> / onerror / javascript:
+ * V10 invariant B2: SafeMarkdown XSS protection.
+ *  - rehype-sanitize filters <script> / onerror / javascript:
  *
- * 依赖: react-markdown + rehype-sanitize
+ * Dependencies: react-markdown + rehype-sanitize.
  */
 
 import ReactMarkdown from 'react-markdown';
@@ -14,13 +14,13 @@ import type { Components } from 'react-markdown';
 
 interface Props {
   content: string;
-  /** 是否为对话气泡中的内容（使用更紧凑的样式） */
+  /** Whether the content is inside a chat bubble and should use compact styles. */
   compact?: boolean;
 }
 
-/** 自定义组件渲染（语义化 + 无障碍） */
+/** Custom semantic and accessible renderers. */
 const components: Components = {
-  // 标题层级
+  // Heading levels.
   h1: ({ children, ...props }) => (
     <h1 className="text-lg font-bold mb-2 mt-3" {...props}>{children}</h1>
   ),
@@ -31,7 +31,7 @@ const components: Components = {
     <h3 className="text-sm font-semibold mb-1 mt-1.5" {...props}>{children}</h3>
   ),
 
-  // 列表
+  // Lists.
   ul: ({ children, ...props }) => (
     <ul className="list-disc pl-4 my-1.5 space-y-0.5" {...props}>{children}</ul>
   ),
@@ -42,17 +42,17 @@ const components: Components = {
     <li className="text-sm leading-relaxed" {...props}>{children}</li>
   ),
 
-  // 段落
+  // Paragraphs.
   p: ({ children, ...props }) => (
     <p className="text-sm leading-relaxed mb-1 last:mb-0" {...props}>{children}</p>
   ),
 
-  // 强调
+  // Emphasis.
   strong: ({ children, ...props }) => (
     <strong className="font-semibold text-gray-900 dark:text-gray-100" {...props}>{children}</strong>
   ),
 
-  // 行内代码
+  // Inline code.
   code: ({ children, className, ...props }) => {
     const isInline = !className;
     if (isInline) {
@@ -65,7 +65,7 @@ const components: Components = {
     return <code className={className} {...props}>{children}</code>;
   },
 
-  // 链接
+  // Links.
   a: ({ children, href, ...props }) => (
     <a
       href={href}
@@ -78,10 +78,10 @@ const components: Components = {
     </a>
   ),
 
-  // 分割线
+  // Separators.
   hr: (props) => <hr className="my-3 border-gray-200 dark:border-gray-700" {...props} />,
 
-  // 引用块
+  // Blockquotes.
   blockquote: ({ children, ...props }) => (
     <blockquote className="border-l-3 border-blue-400 pl-3 my-2 text-gray-600 dark:text-gray-400 italic" {...props}>
       {children}

@@ -1,0 +1,37 @@
+{
+  "gate": "Sprint 4 T-B-27 real backend 5 modules 200",
+  "base_url": "http://127.0.0.1:19127",
+  "overall_ok": true,
+  "steps": [
+    {
+      "module": "share",
+      "ok": true,
+      "status": 200,
+      "detail": "code=JL9V0d body_keys=['lastAccessedAt', 'uniqueVisitors', 'views']"
+    },
+    {
+      "module": "data-query",
+      "ok": true,
+      "status": 200,
+      "detail": "lines=2"
+    },
+    {
+      "module": "review",
+      "ok": true,
+      "status": 200,
+      "detail": "review_id=rvw_883a123c status=approved"
+    },
+    {
+      "module": "llm",
+      "ok": true,
+      "status": 200,
+      "detail": "providers=['claude', 'gpt', 'gemini', 'deepseek']"
+    },
+    {
+      "module": "poster",
+      "ok": true,
+      "status": 200,
+      "detail": "posterUrl=http://127.0.0.1:19127/static/posters/sprint4-plan-classic-37ffc1.png"
+    }
+  ]
+}

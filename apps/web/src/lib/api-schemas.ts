@@ -1,7 +1,7 @@
 /**
- * V10 选项 B · API Schemas (Zod)
- * 对应后端 OpenAPI 自动生成的 schemas/api.ts
- * 现阶段手写, Sprint 2 中接 openapi-zod-client 替换为 codegen
+ * V10 option B · API Schemas (Zod).
+ * Matches backend OpenAPI-generated schemas/api.ts.
+ * Currently handwritten; Sprint 2 can replace this with openapi-zod-client codegen.
  */
 import { z } from 'zod';
 
@@ -130,7 +130,7 @@ export const AuditResponseSchema = z.object({
   risks: z.array(
     z.object({
       index: z.number(),
-      level: z.enum(['低', '中', '高']),
+      level: z.enum(['\u4f4e', '\u4e2d', '\u9ad8']),
       title: z.string(),
       description: z.string(),
     }),

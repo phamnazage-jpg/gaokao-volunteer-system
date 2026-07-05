@@ -5,6 +5,7 @@ import { describe, it, expect } from 'vitest';
 import { useChatStore, selectMessages } from '@/stores/chat';
 import { useFormStore } from '@/stores/form';
 import { useUIStore } from '@/stores/ui';
+import { useUserStore } from '@/stores/user';
 
 describe('useChatStore', () => {
   it('初始状态', () => {
@@ -69,5 +70,35 @@ describe('useUIStore', () => {
     useUIStore.getState().setSidebar(false);
     useUIStore.getState().toggleSidebar();
     expect(useUIStore.getState().sidebarOpen).toBe(true);
+  });
+
+  it('setLocale changes the active locale', () => {
+    useUIStore.getState().setLocale('en-US');
+    expect(useUIStore.getState().locale).toBe('en-US');
+  });
+});
+
+describe('useUserStore', () => {
+  it('sets admin role for backend sessions and resets it on logout', () => {
+    useUserStore.getState().setUser({
+      id: 'admin-1',
+      name: '管理员',
+      phone: '13800138000',
+      role: 'admin',
+    });
+
+    expect(useUserStore.getState()).toMatchObject({
+      isLoggedIn: true,
+      role: 'admin',
+      phone: '13800138000',
+    });
+
+    useUserStore.getState().logout();
+
+    expect(useUserStore.getState()).toMatchObject({
+      isLoggedIn: false,
+      role: 'user',
+      phone: null,
+    });
   });
 });

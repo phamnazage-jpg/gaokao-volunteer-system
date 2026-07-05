@@ -21,6 +21,23 @@ describe('StatsCard', () => {
     expect(screen.getByRole('list', { name: '分享统计' })).toBeInTheDocument();
   });
 
+  it('renders English labels when locale switches', () => {
+    renderWithProviders(<StatsCard code="XYZ" />, { locale: 'en-US' });
+
+    expect(screen.getByRole('list', { name: 'Share stats' })).toBeInTheDocument();
+    expect(screen.getByText('Views')).toBeInTheDocument();
+    expect(screen.getByText('Unique visitors')).toBeInTheDocument();
+    expect(screen.getByText('Last accessed')).toBeInTheDocument();
+  });
+
+  it('keeps stat cards dark-mode ready', () => {
+    renderWithProviders(<StatsCard code="ABC123" />);
+
+    const list = screen.getByRole('list', { name: '分享统计' });
+    expect(list.querySelector('.dark\\:bg-gray-900')).toBeInTheDocument();
+    expect(list.querySelector('.dark\\:text-gray-100')).toBeInTheDocument();
+  });
+
   it('shows a fallback when stats are unavailable', async () => {
     server.use(
       http.get('/api/share-link/:code/stats', () => {

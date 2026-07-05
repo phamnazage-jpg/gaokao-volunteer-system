@@ -1,26 +1,29 @@
 /**
- * V10 选项 B · useUIStore (Zustand 4 slice)
- * 主题/侧栏/模态/上传条折叠 等 UI 状态
+ * V10 option B · useUIStore (Zustand 4 slice).
+ * UI state for theme, sidebar, modal, and upload bar collapse.
  *
- * V10 不变量:
- *  - D2 三主题切换 (light/dark/system) + 1.2s 缓动 (在 globals.css 通过 --duration-theme 实现)
- *  - L2 移动端 48px 底部 Tab
+ * V10 invariants:
+ *  - D2 three-theme switching (light/dark/system) + 1.2s easing via --duration-theme in globals.css.
+ *  - L2 mobile 48px bottom tab.
  */
 import { create } from 'zustand';
 import { devtools, persist, createJSONStorage } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
+import type { AppLocale } from '@/i18n/messages';
 
 export type ThemePreference = 'light' | 'dark' | 'system';
 
 export interface UIState {
   theme: ThemePreference;
   resolvedTheme: 'light' | 'dark';
+  locale: AppLocale;
   sidebarOpen: boolean;
   uploadBarCollapsed: boolean;
   activeModal: string | null;
   // actions
   setTheme: (pref: ThemePreference) => void;
   setResolvedTheme: (resolved: 'light' | 'dark') => void;
+  setLocale: (locale: AppLocale) => void;
   toggleSidebar: () => void;
   setSidebar: (open: boolean) => void;
   toggleUploadBar: () => void;
@@ -28,9 +31,10 @@ export interface UIState {
   reset: () => void;
 }
 
-const initialState: Pick<UIState, 'theme' | 'resolvedTheme' | 'sidebarOpen' | 'uploadBarCollapsed' | 'activeModal'> = {
+const initialState: Pick<UIState, 'theme' | 'resolvedTheme' | 'locale' | 'sidebarOpen' | 'uploadBarCollapsed' | 'activeModal'> = {
   theme: 'system',
   resolvedTheme: 'light',
+  locale: 'zh-CN',
   sidebarOpen: false,
   uploadBarCollapsed: true,
   activeModal: null,
@@ -48,6 +52,10 @@ export const useUIStore = create<UIState>()(
         setResolvedTheme: (resolved) =>
           set((s) => {
             s.resolvedTheme = resolved;
+          }),
+        setLocale: (locale) =>
+          set((s) => {
+            s.locale = locale;
           }),
         toggleSidebar: () =>
           set((s) => {
@@ -70,7 +78,7 @@ export const useUIStore = create<UIState>()(
       {
         name: 'gaokao-ui-store',
         storage: createJSONStorage(() => localStorage),
-        partialize: (s) => ({ theme: s.theme, uploadBarCollapsed: s.uploadBarCollapsed }),
+        partialize: (s) => ({ theme: s.theme, locale: s.locale, uploadBarCollapsed: s.uploadBarCollapsed }),
       },
     ),
     { name: 'ui-store' },

@@ -52,4 +52,12 @@ describe('FormCard (V10 选项 B · RHF + Zod)', () => {
     // 验证 select 显示初始值
     expect(screen.getByLabelText('你的高考省份')).toHaveValue('广东');
   });
+  it('includes dark mode variants for form shell and fields', () => {
+    renderWithProviders(<FormCard onSubmit={vi.fn()} />, { locale: 'en-US' });
+
+    const form = screen.getByRole('form', { name: 'Application information collection' });
+    expect(form).toHaveClass('dark:bg-gray-900', 'dark:border-gray-800');
+    expect(screen.getByLabelText('Your Gaokao province')).toHaveClass('dark:bg-gray-800', 'dark:text-gray-100');
+    expect(screen.getByText('Your Gaokao province')).toHaveClass('dark:text-gray-300');
+  });
 });

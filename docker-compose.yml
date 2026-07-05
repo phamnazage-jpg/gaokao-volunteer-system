@@ -47,5 +47,16 @@ services:
       retries: 5
       start_period: 20s
 
+  gaokao-poster:
+    build:
+      context: .
+      dockerfile: Dockerfile.poster
+    image: localhost/gaokao-volunteer-system-poster:latest
+    profiles: ["poster"]
+    volumes:
+      - ./reports:/work/reports
+    working_dir: /work
+    command: ["--help"]
+
 volumes:
   gaokao_admin_data:

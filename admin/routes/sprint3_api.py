@@ -106,9 +106,22 @@ class PosterGenerateInput(BaseModel):
 
 
 class PosterGenerateResponse(BaseModel):
-    posterUrl: str
-    qrCode: str
-    expiresAt: str
+    jobId: str
+    status: Literal["queued", "processing", "completed", "failed"] = "completed"
+    progress: int = Field(default=100, ge=0, le=100)
+    posterUrl: str | None = None
+    qrCode: str | None = None
+    expiresAt: str | None = None
+
+
+class PosterStatusResponse(BaseModel):
+    jobId: str
+    status: Literal["queued", "processing", "completed", "failed"]
+    progress: int = Field(ge=0, le=100)
+    posterUrl: str | None = None
+    qrCode: str | None = None
+    expiresAt: str | None = None
+    updatedAt: str
 
 
 class LLMConfigResponse(BaseModel):
@@ -171,6 +184,14 @@ def _review_store(request: Request) -> dict[str, ReviewStatusResponse]:
     if not isinstance(store, dict):
         store = {}
         request.app.state.react_sprint3_reviews = store
+    return store
+
+
+def _poster_store(request: Request) -> dict[str, PosterStatusResponse]:
+    store = getattr(request.app.state, "react_sprint4_posters", None)
+    if not isinstance(store, dict):
+        store = {}
+        request.app.state.react_sprint4_posters = store
     return store
 
 
@@ -293,11 +314,33 @@ def generate_poster(payload: PosterGenerateInput, request: Request) -> PosterGen
     expires_at = datetime.now(timezone.utc) + timedelta(days=7)
     base = str(request.base_url).rstrip("/")
     url = f"{base}/static/posters/{filename}"
+    job_id = f"poster_{secrets.token_hex(4)}"
+    status_payload = PosterStatusResponse(
+        jobId=job_id,
+        status="completed",
+        progress=100,
+        posterUrl=url,
+        qrCode=url,
+        expiresAt=expires_at.isoformat(),
+        updatedAt=_now_iso(),
+    )
+    _poster_store(request)[job_id] = status_payload
     return PosterGenerateResponse(
+        jobId=job_id,
+        status=status_payload.status,
+        progress=status_payload.progress,
         posterUrl=url,
         qrCode=url,
         expiresAt=expires_at.isoformat(),
     )
+
+
+@router.get("/poster/{job_id}/status", response_model=PosterStatusResponse)
+def get_poster_status(job_id: str, request: Request) -> PosterStatusResponse:
+    poster = _poster_store(request).get(job_id)
+    if poster is None:
+        raise HTTPException(status_code=404, detail="poster job not found")
+    return poster
 
 
 @router.get("/llm/config", response_model=LLMConfigResponse)

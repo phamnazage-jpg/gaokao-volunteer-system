@@ -1,9 +1,9 @@
 /**
- * V10 选项 B · 应用入口 (Vite 5 + React 19)
+ * V10 option B · application entry (Vite 5 + React 19).
  *
  * - QueryClient: TanStack Query 5
- * - RouterProvider: React Router 7 (替代 Next.js App Router)
- * - 全局样式: globals.css
+ * - RouterProvider: React Router 7, replacing Next.js App Router.
+ * - Global styles: globals.css.
  */
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
@@ -16,6 +16,8 @@ import {
   createLocalStoragePersister,
   queryPersistenceBuster,
 } from '@/lib/query-client';
+import { AppIntlProvider } from '@/i18n/AppIntlProvider';
+import { Toaster } from '@/components/shared/Toast';
 import { router } from './router';
 import './styles/globals.css';
 
@@ -42,8 +44,11 @@ createRoot(rootEl).render(
         });
       }}
     >
-      <RouterProvider router={router} />
-      {import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />}
+      <AppIntlProvider>
+        <RouterProvider router={router} />
+        <Toaster />
+        {import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />}
+      </AppIntlProvider>
     </PersistQueryClientProvider>
   </StrictMode>,
 );

@@ -1,10 +1,10 @@
 /**
- * V10 选项 B · ChatMessage 组件 (重写)
+ * V10 option B · ChatMessage component rewrite.
  *
- * 关键变化:
- *  - 移除 'use client' (Vite 不需要)
- *  - Message 类型改为 @/types/message
- *  - 0 any (onSubmitForm 用 FormCardData 类型)
+ * Key changes:
+ *  - Removes 'use client', which Vite does not need.
+ *  - Uses Message from @/types/message.
+ *  - Keeps 0 any by typing onSubmitForm with FormCardData.
  */
 import type { Message, FormCardMessageData, PlanCardMessageData, CareerCardMessageData, AuditReportMessageData, FileUploadPromptMessageData } from '@/types/message';
 import { PlanCard } from './PlanCard';
@@ -31,7 +31,7 @@ export function ChatMessage({ message, onSubmitForm, onSavePlan, onExportPlan, o
   if (isSystem) {
     return (
       <div className="flex justify-center my-4">
-        <div className="bg-gray-100 text-gray-500 text-xs px-4 py-1.5 rounded-full">{message.content}</div>
+        <div className="bg-gray-100 text-gray-500 text-xs px-4 py-1.5 rounded-full dark:bg-gray-800 dark:text-gray-300">{message.content}</div>
       </div>
     );
   }
@@ -57,14 +57,14 @@ export function ChatMessage({ message, onSubmitForm, onSavePlan, onExportPlan, o
           AI
         </div>
         <div className="flex-1">
-          {/* 默认 markdown 渲染 */}
+          {/* Default markdown rendering */}
           {message.content && (
-            <div className="bg-white border border-gray-100 rounded-2xl rounded-tl-md px-4 py-3 shadow-sm">
+            <div className="bg-white border border-gray-100 rounded-2xl rounded-tl-md px-4 py-3 shadow-sm dark:border-gray-800 dark:bg-gray-900 dark:text-gray-200">
               <SafeMarkdown content={message.content} />
             </div>
           )}
 
-          {/* 各类型卡片 */}
+          {/* Typed cards */}
           {dataType === 'form_card' && onSubmitForm && (
             <div className="mt-2">
               <FormCard onSubmit={onSubmitForm} initialData={(data as FormCardMessageData).fields as Partial<FormCardData>} />

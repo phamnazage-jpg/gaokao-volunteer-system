@@ -1,34 +1,51 @@
-/**
- * V10 选项 B · FormCard 组件 (RHF 7 + Zod 重写版)
- *
- * 替代原型 FormCard.tsx 中的手写 3-step 状态机
- *
- * V10 不变量 C3: 3-step guards
- *  - step 1→2: 需 score 输入
- *  - step 2→3: 需选科 + 位次
- *  - 后退保留数据 (RHF 自动)
- */
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { FormattedMessage, useIntl, type IntlShape } from 'react-intl';
 import { SubmitButton } from '@/components/shared/SubmitButton';
+import { Stepper, type StepperStep } from '@/components/shared/Stepper';
 
-const FormCardSchema = z.object({
-  province: z.string().min(1, '请选择省份'),
-  score: z.coerce.number().int('请输入整数').min(0, '分数不能小于 0').max(750, '分数不能大于 750'),
-  rank: z.coerce.number().int('请输入整数').min(1, '位次必须 ≥ 1'),
-  subjects: z.array(z.string()).min(1, '请至少选择 1 个选科'),
-});
-export type FormCardData = z.infer<typeof FormCardSchema>;
+function createFormCardSchema(intl: IntlShape) {
+  return z.object({
+    province: z.string().min(1, intl.formatMessage({ id: 'formCard.validation.province' })),
+    score: z.coerce
+      .number()
+      .int(intl.formatMessage({ id: 'formCard.validation.integer' }))
+      .min(0, intl.formatMessage({ id: 'formCard.validation.scoreMin' }))
+      .max(750, intl.formatMessage({ id: 'formCard.validation.scoreMax' })),
+    rank: z.coerce
+      .number()
+      .int(intl.formatMessage({ id: 'formCard.validation.integer' }))
+      .min(1, intl.formatMessage({ id: 'formCard.validation.rankMin' })),
+    subjects: z.array(z.string()).min(1, intl.formatMessage({ id: 'formCard.validation.subjects' })),
+  });
+}
+
+type FormCardSchema = ReturnType<typeof createFormCardSchema>;
+export type FormCardData = z.infer<FormCardSchema>;
 
 interface FormCardProps {
   onSubmit: (data: FormCardData) => void | Promise<void>;
   initialData?: Partial<FormCardData>;
 }
 
-const PROVINCES = ['北京', '上海', '广东', '江苏', '浙江', '山东', '河南', '河北', '四川', '湖北', '湖南', '福建', '安徽'];
-const SUBJECTS = ['物理', '历史', '化学', '生物', '地理', '政治'];
+const PROVINCE_KEYS = [
+  'beijing',
+  'shanghai',
+  'guangdong',
+  'jiangsu',
+  'zhejiang',
+  'shandong',
+  'henan',
+  'hebei',
+  'sichuan',
+  'hubei',
+  'hunan',
+  'fujian',
+  'anhui',
+] as const;
+const SUBJECT_KEYS = ['physics', 'history', 'chemistry', 'biology', 'geography', 'politics'] as const;
 
 const STEP_FIELDS: ReadonlyArray<ReadonlyArray<keyof FormCardData>> = [
   ['province'],
@@ -37,7 +54,33 @@ const STEP_FIELDS: ReadonlyArray<ReadonlyArray<keyof FormCardData>> = [
 ] as const;
 
 export function FormCard({ onSubmit, initialData }: FormCardProps) {
+  const intl = useIntl();
   const [step, setStep] = useState(0);
+  const schema = useMemo(() => createFormCardSchema(intl), [intl]);
+  const formSteps: StepperStep[] = useMemo(
+    () => [
+      { key: 'province', label: intl.formatMessage({ id: 'formCard.steps.province' }) },
+      { key: 'score', label: intl.formatMessage({ id: 'formCard.steps.score' }) },
+      { key: 'rank-subjects', label: intl.formatMessage({ id: 'formCard.steps.rankSubjects' }) },
+    ],
+    [intl],
+  );
+  const provinceOptions = useMemo(
+    () =>
+      PROVINCE_KEYS.map((key) => ({
+        value: intl.formatMessage({ id: `formCard.provinces.${key}` }),
+        label: intl.formatMessage({ id: `formCard.provinces.${key}` }),
+      })),
+    [intl],
+  );
+  const subjectOptions = useMemo(
+    () =>
+      SUBJECT_KEYS.map((key) => ({
+        value: intl.formatMessage({ id: `formCard.subjects.${key}` }),
+        label: intl.formatMessage({ id: `formCard.subjects.${key}` }),
+      })),
+    [intl],
+  );
 
   const {
     register,
@@ -48,7 +91,7 @@ export function FormCard({ onSubmit, initialData }: FormCardProps) {
     setValue,
     getValues,
   } = useForm<FormCardData>({
-    resolver: zodResolver(FormCardSchema),
+    resolver: zodResolver(schema),
     defaultValues: {
       province: initialData?.province ?? '',
       score: initialData?.score,
@@ -83,117 +126,100 @@ export function FormCard({ onSubmit, initialData }: FormCardProps) {
   return (
     <form
       onSubmit={(event) => { void handleSubmit(handleFormSubmit)(event); }}
-      className="bg-white border border-gray-200 rounded-2xl p-4 shadow-sm"
-      aria-label="志愿信息收集"
+      className="bg-white border border-gray-200 rounded-2xl p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900"
+      aria-label={intl.formatMessage({ id: 'formCard.ariaLabel' })}
     >
-      {/* 步骤指示器 */}
-      <div className="flex items-center justify-between mb-4">
-        {['省份', '分数', '位次 / 选科'].map((label, idx) => (
-          <div key={label} className="flex items-center flex-1">
-            <div
-              className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${
-                idx <= step ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-500'
-              }`}
-            >
-              {idx + 1}
-            </div>
-            <span className={`ml-2 text-xs ${idx <= step ? 'text-gray-800' : 'text-gray-400'}`}>{label}</span>
-            {idx < 2 && <div className={`flex-1 h-px mx-2 ${idx < step ? 'bg-blue-600' : 'bg-gray-200'}`} />}
-          </div>
-        ))}
-      </div>
+      <Stepper steps={formSteps} currentIndex={step} label={intl.formatMessage({ id: 'formCard.stepperLabel' })} className="mb-4" />
 
-      {/* Step 1: 省份 */}
       {step === 0 && (
         <div>
-          <label htmlFor="province" className="block text-sm font-medium text-gray-700 mb-2">
-            你的高考省份
+          <label htmlFor="province" className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
+            <FormattedMessage id="formCard.fields.province" />
           </label>
           <select
             id="province"
             {...register('province')}
-            className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
           >
-            <option value="">请选择...</option>
-            {PROVINCES.map((p) => (
-              <option key={p} value={p}>
-                {p}
+            <option value="">{intl.formatMessage({ id: 'formCard.fields.provincePlaceholder' })}</option>
+            {provinceOptions.map((province) => (
+              <option key={province.value} value={province.value}>
+                {province.label}
               </option>
             ))}
           </select>
-          {errors.province && <p className="mt-1 text-xs text-red-500">{errors.province.message}</p>}
+          {errors.province && <p className="mt-1 text-xs text-red-500 dark:text-red-300">{errors.province.message}</p>}
         </div>
       )}
 
-      {/* Step 2: 分数 */}
       {step === 1 && (
         <div>
-          <label htmlFor="score" className="block text-sm font-medium text-gray-700 mb-2">
-            你的高考分数
+          <label htmlFor="score" className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
+            <FormattedMessage id="formCard.fields.score" />
           </label>
           <input
             id="score"
             type="number"
             inputMode="numeric"
             {...register('score')}
-            placeholder="例如 620"
-            className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder={intl.formatMessage({ id: 'formCard.fields.scorePlaceholder' })}
+            className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:placeholder:text-gray-500"
           />
-          {errors.score && <p className="mt-1 text-xs text-red-500">{errors.score.message}</p>}
+          {errors.score && <p className="mt-1 text-xs text-red-500 dark:text-red-300">{errors.score.message}</p>}
         </div>
       )}
 
-      {/* Step 3: 位次 + 选科 */}
       {step === 2 && (
         <div className="space-y-4">
           <div>
-            <label htmlFor="rank" className="block text-sm font-medium text-gray-700 mb-2">
-              你的位次
+            <label htmlFor="rank" className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
+              <FormattedMessage id="formCard.fields.rank" />
             </label>
             <input
               id="rank"
               type="number"
               inputMode="numeric"
               {...register('rank')}
-              placeholder="例如 8500"
-              className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder={intl.formatMessage({ id: 'formCard.fields.rankPlaceholder' })}
+              className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:placeholder:text-gray-500"
             />
-            {errors.rank && <p className="mt-1 text-xs text-red-500">{errors.rank.message}</p>}
+            {errors.rank && <p className="mt-1 text-xs text-red-500 dark:text-red-300">{errors.rank.message}</p>}
           </div>
 
           <div>
-            <span className="block text-sm font-medium text-gray-700 mb-2">选科组合</span>
+            <span className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
+              <FormattedMessage id="formCard.fields.subjects" />
+            </span>
             <div className="flex flex-wrap gap-2">
-              {SUBJECTS.map((s) => {
-                const active = selectedSubjects.includes(s);
+              {subjectOptions.map((subject) => {
+                const active = selectedSubjects.includes(subject.value);
                 return (
                   <button
-                    key={s}
+                    key={subject.value}
                     type="button"
-                    onClick={() => toggleSubject(s)}
+                    onClick={() => toggleSubject(subject.value)}
                     className={`px-3 py-1.5 rounded-full text-xs border transition-colors ${
-                      active ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-600 border-gray-200 hover:border-blue-300'
+                      active ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-600 border-gray-200 hover:border-blue-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:border-blue-400'
                     }`}
                   >
-                    {s}
+                    {subject.label}
                   </button>
                 );
               })}
             </div>
-            {errors.subjects && <p className="mt-1 text-xs text-red-500">{errors.subjects.message}</p>}
+            {errors.subjects && <p className="mt-1 text-xs text-red-500 dark:text-red-300">{errors.subjects.message}</p>}
           </div>
         </div>
       )}
 
-      {/* 步骤导航 */}
       <div className="flex items-center justify-between mt-5">
         {step > 0 ? (
           <button
             type="button"
             onClick={handlePrev}
-            className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-xl transition-colors"
+            className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-xl transition-colors dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-gray-100"
           >
-            ← 上一步
+            <FormattedMessage id="formCard.actions.previous" />
           </button>
         ) : (
           <span />
@@ -205,13 +231,13 @@ export function FormCard({ onSubmit, initialData }: FormCardProps) {
             onClick={() => { void handleNext(); }}
             className="px-4 py-2 text-sm bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors"
           >
-            下一步 →
+            <FormattedMessage id="formCard.actions.next" />
           </button>
         ) : (
           <SubmitButton
             isSubmitting={isSubmitting}
-            idleLabel="生成志愿方案"
-            submittingLabel="提交中..."
+            idleLabel={intl.formatMessage({ id: 'formCard.actions.submit' })}
+            submittingLabel={intl.formatMessage({ id: 'formCard.actions.submitting' })}
             className="bg-blue-600 text-white hover:bg-blue-700"
           />
         )}

@@ -74,7 +74,7 @@ export function useAuditEnhanceMutation(preferredOrder?: ReadonlyArray<ProviderI
           lastErr = err instanceof Error ? err : new Error(String(err));
         }
       }
-      throw lastErr ?? new Error('LLM 调用失败');
+      throw lastErr ?? new Error('LLM call failed');
     },
   });
 }

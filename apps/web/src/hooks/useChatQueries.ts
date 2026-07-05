@@ -1,6 +1,6 @@
 /**
- * V10 选项 B · useChatQueries
- * 替代原型 useChat.getHistory / getConsultations
+ * V10 option B · useChatQueries.
+ * Replaces getHistory / getConsultations from the legacy useChat prototype.
  */
 import { useQuery } from '@tanstack/react-query';
 import { z } from 'zod';

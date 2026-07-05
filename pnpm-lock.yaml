@@ -62,6 +62,9 @@ importers:
       react-hook-form:
         specifier: ^7.54.0
         version: 7.80.0(react@19.2.4)
+      react-intl:
+        specifier: ^7.1.14
+        version: 7.1.14(react@19.2.4)(typescript@5.9.3)
       react-markdown:
         specifier: ^10.1.0
         version: 10.1.0(@types/react@19.2.17)(react@19.2.4)
@@ -674,6 +677,14 @@ packages:
   '@formatjs/intl-localematcher@0.6.2':
     resolution: {integrity: sha512-XOMO2Hupl0wdd172Y06h6kLpBz6Dv+J4okPLl4LPtzbr8f66WbIoy4ev98EBuZ6ZK4h5ydTN6XneT4QVpD7cdA==}
 
+  '@formatjs/intl@3.1.8':
+    resolution: {integrity: sha512-LWXgwI5zTMatvR8w8kCNh/priDTOF/ZssokMBHJ7ZWXFoYLVOYo0EJERD9Eajv+xsfQO1QkuAt77KWQ1OI4mOQ==}
+    peerDependencies:
+      typescript: ^5.6.0
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+
   '@hookform/resolvers@3.10.0':
     resolution: {integrity: sha512-79Dv+3mDF7i+2ajj7SkypSKHhl1cbln1OGavqrsF7p6mbUv11xpqpacPsGDCTRvCSjEEIez2ef1NveSVL3b0Ag==}
     peerDependencies:
@@ -1220,6 +1231,11 @@ packages:
 
   '@types/hast@3.0.4':
     resolution: {integrity: sha512-WPs+bbQw5aCj+x6laNGWLH3wviHtoCv/P3+otBhbOhJgG8qtpdAMlTCxLtsTWA7LH1Oh/bFCHsBn0TPS5m30EQ==}
+
+  '@types/hoist-non-react-statics@3.3.7':
+    resolution: {integrity: sha512-PQTyIulDkIDro8P+IHbKCsw7U2xxBYflVzW/FgWdCAePD9xGSidgA76/GeJ6lBKoblyhf9pBY763gbrN+1dI8g==}
+    peerDependencies:
+      '@types/react': '*'
 
   '@types/json-schema@7.0.15':
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
@@ -2434,6 +2450,9 @@ packages:
   hermes-parser@0.25.1:
     resolution: {integrity: sha512-6pEjquH3rqaI6cYAXYPcz9MS4rY6R4ngRgrgfDshRptUZIc3lw0MCIJIGDj9++mfySOuPTHB4nrSW99BCvOPIA==}
 
+  hoist-non-react-statics@3.3.2:
+    resolution: {integrity: sha512-/gGivxi8JPKWNm/W0jSmzcMPpfpPLc3dY/6GxhX2hQ9iGj3aDfklV4ET7NjKpSinLpJ5vafa9iiGIEZg10SfBw==}
+
   html-encoding-sniffer@4.0.0:
     resolution: {integrity: sha512-Y22oTqIU4uuPgEemfz7NDJz6OeKf12Lsu+QC+s3BVpda64lTiMYCyGwg5ki4vFxkMwQdeZDl2adZoqUgdFuTgQ==}
     engines: {node: '>=18'}
@@ -3498,6 +3517,15 @@ packages:
     engines: {node: '>=18.0.0'}
     peerDependencies:
       react: ^16.8.0 || ^17 || ^18 || ^19
+
+  react-intl@7.1.14:
+    resolution: {integrity: sha512-VE/0Wi/lHJlBC7APQpCzLUdIt3GB5B0GZrRW8Q+ACbkHI4j+Wwgg9J1TniN6zmLHmPH5gxXcMy+fkSPfw5p1WQ==}
+    peerDependencies:
+      react: 16 || 17 || 18 || 19
+      typescript: ^5.6.0
+    peerDependenciesMeta:
+      typescript:
+        optional: true
 
   react-is@16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
@@ -4811,6 +4839,16 @@ snapshots:
     dependencies:
       tslib: 2.8.1
 
+  '@formatjs/intl@3.1.8(typescript@5.9.3)':
+    dependencies:
+      '@formatjs/ecma402-abstract': 2.3.6
+      '@formatjs/fast-memoize': 2.2.7
+      '@formatjs/icu-messageformat-parser': 2.11.4
+      intl-messageformat: 10.7.18
+      tslib: 2.8.1
+    optionalDependencies:
+      typescript: 5.9.3
+
   '@hookform/resolvers@3.10.0(react-hook-form@7.80.0(react@19.2.4))':
     dependencies:
       react-hook-form: 7.80.0(react@19.2.4)
@@ -5338,6 +5376,11 @@ snapshots:
   '@types/hast@3.0.4':
     dependencies:
       '@types/unist': 3.0.3
+
+  '@types/hoist-non-react-statics@3.3.7(@types/react@19.2.17)':
+    dependencies:
+      '@types/react': 19.2.17
+      hoist-non-react-statics: 3.3.2
 
   '@types/json-schema@7.0.15': {}
 
@@ -6776,6 +6819,10 @@ snapshots:
     dependencies:
       hermes-estree: 0.25.1
 
+  hoist-non-react-statics@3.3.2:
+    dependencies:
+      react-is: 16.13.1
+
   html-encoding-sniffer@4.0.0:
     dependencies:
       whatwg-encoding: 3.1.1
@@ -8091,6 +8138,20 @@ snapshots:
   react-hook-form@7.80.0(react@19.2.4):
     dependencies:
       react: 19.2.4
+
+  react-intl@7.1.14(react@19.2.4)(typescript@5.9.3):
+    dependencies:
+      '@formatjs/ecma402-abstract': 2.3.6
+      '@formatjs/icu-messageformat-parser': 2.11.4
+      '@formatjs/intl': 3.1.8(typescript@5.9.3)
+      '@types/hoist-non-react-statics': 3.3.7(@types/react@19.2.17)
+      '@types/react': 19.2.17
+      hoist-non-react-statics: 3.3.2
+      intl-messageformat: 10.7.18
+      react: 19.2.4
+      tslib: 2.8.1
+    optionalDependencies:
+      typescript: 5.9.3
 
   react-is@16.13.1: {}
 

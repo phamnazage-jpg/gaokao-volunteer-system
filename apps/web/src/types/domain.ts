@@ -1,6 +1,6 @@
 /**
- * V10 选项 B · 共享类型定义
- * 替代原型 useChat.ts 中的 UserProfile (用 any 字段)
+ * V10 option B · shared type definitions.
+ * Replaces UserProfile from the legacy useChat.ts prototype, which used any fields.
  */
 import { z } from 'zod';
 
@@ -64,7 +64,7 @@ export type SavedPlan = z.infer<typeof SavedPlanSchema>;
 export const ConsultationRecordSchema = z.object({
   id: z.string(),
   title: z.string(),
-  messages: z.array(z.lazy(() => z.any())), // 循环引用，运行时再校验
+  messages: z.array(z.lazy(() => z.any())), // Circular reference validated again at runtime.
   createdAt: z.date(),
   updatedAt: z.date(),
 });
@@ -76,7 +76,7 @@ export const AuditReportSchema = z.object({
   risks: z.array(
     z.object({
       index: z.number(),
-      level: z.enum(['低', '中', '高']),
+      level: z.enum(['\u4f4e', '\u4e2d', '\u9ad8']),
       title: z.string(),
       description: z.string(),
     }),

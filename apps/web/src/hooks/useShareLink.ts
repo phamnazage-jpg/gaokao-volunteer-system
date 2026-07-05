@@ -1,7 +1,7 @@
 /**
  * V10 · Sprint 3 · Share Link API hooks
  *
- * 4 端点：create / delete / latest / stats
+ * Four endpoints: create / delete / latest / stats.
  */
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { z } from 'zod';

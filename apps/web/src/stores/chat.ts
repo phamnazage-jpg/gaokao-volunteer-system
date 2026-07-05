@@ -1,10 +1,10 @@
 /**
- * V10 选项 B · useChatStore (Zustand 4 slice)
- * 替代原型 useMessages + useChat (543 行) + 6 子 hook
+ * V10 option B · useChatStore (Zustand 4 slice).
+ * Replaces the legacy useMessages + useChat prototype and six child hooks.
  *
- * 设计:
+ * Design:
  *  - messages: Message[] (Zod discriminated union, 0 any)
- *  - isStreaming: boolean (typing 动画三态)
+ *  - isStreaming: boolean (three-state typing animation)
  *  - streamStatus: 'idle' | 'thinking' | 'paused' | 'stopped'
  *  - currentPlan: PlanCardMessageData | null
  *  - currentAuditReport: AuditReport | null
@@ -29,10 +29,10 @@ export interface ChatState {
 
   // actions
   appendMessage: (msg: Message) => void;
-  appendUserMessage: (content: string) => string; // 返回 id
+  appendUserMessage: (content: string) => string; // Return id.
   appendAssistantMessage: (content: string) => string;
   updateLastMessage: (content: string) => void;
-  /** 向指定 id 消息追加 delta (SSE 流式) */
+  /** Append an SSE delta to the message with the specified id. */
   appendDelta: (messageId: string, delta: string) => void;
   clearMessages: () => void;
   setStreaming: (streaming: boolean) => void;
@@ -115,6 +115,7 @@ export const useChatStore = create<ChatState>()(
             s.messages = [];
             s.currentPlan = null;
             s.currentAuditReport = null;
+            s.lastError = null;
           }),
         setStreaming: (streaming) =>
           set((s) => {
@@ -143,7 +144,7 @@ export const useChatStore = create<ChatState>()(
       {
         name: 'gaokao-chat-store',
         storage: createJSONStorage(() => localStorage),
-        // 只持久化必要字段, 不持久化流式状态
+        // Persist only durable fields, not transient streaming state.
         partialize: (s) => ({
           messages: s.messages,
           activeRecordId: s.activeRecordId,
@@ -155,7 +156,7 @@ export const useChatStore = create<ChatState>()(
   ),
 );
 
-// ====== Selectors (G1 闸门: 强类型, 0 any) ======
+// ====== Selectors (G1 gate: strongly typed, 0 any) ======
 
 export const selectMessages = (s: ChatState) => s.messages;
 export const selectIsStreaming = (s: ChatState) => s.isStreaming;

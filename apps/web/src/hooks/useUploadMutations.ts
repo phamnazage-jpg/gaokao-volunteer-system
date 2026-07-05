@@ -1,6 +1,6 @@
 /**
- * V10 选项 B · useUploadMutations
- * 替代原型 UploadBar 中的 handleFileUpload
+ * V10 option B · useUploadMutations.
+ * Replaces handleFileUpload from the legacy UploadBar prototype.
  */
 import { useMutation } from '@tanstack/react-query';
 import { UploadResponseSchema, type UploadResponse } from '@/lib/api-schemas';
@@ -16,7 +16,7 @@ export function useUploadMutation() {
       const formData = new FormData();
       formData.append('file', file);
 
-      // 用 XHR 而非 fetch 来支持进度回调
+      // Use XHR instead of fetch to support progress callbacks.
       return new Promise<UploadResponse>((resolve, reject) => {
         const xhr = new XMLHttpRequest();
         xhr.open('POST', '/api/upload');

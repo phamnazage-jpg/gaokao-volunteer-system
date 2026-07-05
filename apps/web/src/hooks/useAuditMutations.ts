@@ -1,6 +1,6 @@
 /**
- * V10 选项 B · useAuditMutations
- * 替代原型 useAudit
+ * V10 option B · useAuditMutations.
+ * Replaces the legacy useAudit prototype.
  */
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { z } from 'zod';

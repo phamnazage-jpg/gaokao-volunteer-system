@@ -1,8 +1,8 @@
 /**
- * V10 选项 B · useFormStore (Zustand 4 slice)
- * 替代原型 useProfile (87 行) 中的受控表单状态
+ * V10 option B · useFormStore (Zustand 4 slice).
+ * Replaces the controlled form state from the legacy useProfile prototype.
  *
- * RHF 7 + Zod 是表单首选, 此 store 仅保存"对话提取的中间态"
+ * RHF 7 + Zod remain the preferred form stack; this store only keeps chat-extracted draft state.
  */
 import { create } from 'zustand';
 import { devtools, persist, createJSONStorage } from 'zustand/middleware';
@@ -10,11 +10,11 @@ import { immer } from 'zustand/middleware/immer';
 import type { UserProfile } from '@/types/domain';
 
 export interface FormState {
-  // 当前对话提取出的 profile (与 user store 的 profile 互为冗余, 但 store 隔离更清晰)
+  // Profile extracted from the current chat. It overlaps with user store profile but keeps store boundaries clear.
   draft: UserProfile;
-  // 缺失字段
+  // Missing fields.
   missingFields: ReadonlyArray<keyof UserProfile>;
-  // 是否有核心信息
+  // Whether core information exists.
   hasCoreInfo: boolean;
   hasAnyInfo: boolean;
 

@@ -1,7 +1,5 @@
-/**
- * V10 选项 B · UploadBar 组件 (重写, 移除 'use client')
- */
 import { useRef, useState } from 'react';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 export type UploadType = 'text' | 'excel' | 'image' | 'pdf';
 
@@ -13,21 +11,22 @@ interface Props {
 
 interface UploadOption {
   readonly type: UploadType;
-  readonly label: string;
+  readonly labelKey: string;
   readonly icon: string;
-  readonly desc: string;
+  readonly descriptionKey: string;
   readonly accept: string | undefined;
   readonly color: string;
 }
 
 const UPLOAD_OPTIONS: ReadonlyArray<UploadOption> = [
-  { type: 'excel', label: 'Excel', icon: '📊', desc: '上传 .xlsx/.xls', accept: '.xlsx,.xls', color: 'border-green-300 bg-green-50 text-green-700 hover:bg-green-100' },
-  { type: 'image', label: '图片', icon: '📷', desc: '拍照/截图上传', accept: 'image/*', color: 'border-purple-300 bg-purple-50 text-purple-700 hover:bg-purple-100' },
-  { type: 'pdf', label: 'PDF', icon: '📄', desc: '上传 PDF 文件', accept: '.pdf', color: 'border-orange-300 bg-orange-50 text-orange-700 hover:bg-orange-100' },
-  { type: 'text', label: '粘贴', icon: '📝', desc: '直接粘贴方案文本', accept: undefined, color: 'border-blue-300 bg-blue-50 text-blue-700 hover:bg-blue-100' },
+  { type: 'excel', labelKey: 'uploadBar.options.excel.label', icon: '📊', descriptionKey: 'uploadBar.options.excel.description', accept: '.xlsx,.xls', color: 'border-green-300 bg-green-50 text-green-700 hover:bg-green-100' },
+  { type: 'image', labelKey: 'uploadBar.options.image.label', icon: '📷', descriptionKey: 'uploadBar.options.image.description', accept: 'image/*', color: 'border-purple-300 bg-purple-50 text-purple-700 hover:bg-purple-100' },
+  { type: 'pdf', labelKey: 'uploadBar.options.pdf.label', icon: '📄', descriptionKey: 'uploadBar.options.pdf.description', accept: '.pdf', color: 'border-orange-300 bg-orange-50 text-orange-700 hover:bg-orange-100' },
+  { type: 'text', labelKey: 'uploadBar.options.text.label', icon: '📝', descriptionKey: 'uploadBar.options.text.description', accept: undefined, color: 'border-blue-300 bg-blue-50 text-blue-700 hover:bg-blue-100' },
 ];
 
 export function UploadBar({ onUpload, collapsed = false, onToggleCollapse }: Props) {
+  const intl = useIntl();
   const [pasteMode, setPasteMode] = useState(false);
   const [pasteText, setPasteText] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -57,15 +56,17 @@ export function UploadBar({ onUpload, collapsed = false, onToggleCollapse }: Pro
   if (collapsed) return null;
 
   return (
-    <div className="px-4 py-2 bg-gray-50 border-t border-gray-100" data-testid="upload-bar">
+    <div className="px-4 py-2 bg-gray-50 border-t border-gray-100 dark:border-gray-800 dark:bg-gray-900" data-testid="upload-bar">
       <div className="flex items-center justify-between mb-2">
-        <span className="text-xs text-gray-500">📎 上传方案文件</span>
+        <span className="text-xs text-gray-500 dark:text-gray-400">
+          <FormattedMessage id="uploadBar.title" />
+        </span>
         {onToggleCollapse && (
           <button
             type="button"
             onClick={onToggleCollapse}
-            className="text-xs text-gray-400 hover:text-gray-600"
-            aria-label="收起上传条"
+            className="text-xs text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
+            aria-label={intl.formatMessage({ id: 'uploadBar.collapse' })}
           >
             ✕
           </button>
@@ -78,9 +79,9 @@ export function UploadBar({ onUpload, collapsed = false, onToggleCollapse }: Pro
             ref={textareaRef}
             value={pasteText}
             onChange={(e) => setPasteText(e.target.value)}
-            placeholder="粘贴你的志愿方案文本..."
+            placeholder={intl.formatMessage({ id: 'uploadBar.pastePlaceholder' })}
             rows={3}
-            className="w-full border border-gray-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border border-gray-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-950 dark:text-gray-100"
           />
           <div className="flex justify-end gap-2">
             <button
@@ -89,16 +90,16 @@ export function UploadBar({ onUpload, collapsed = false, onToggleCollapse }: Pro
                 setPasteMode(false);
                 setPasteText('');
               }}
-              className="px-3 py-1.5 text-xs text-gray-500 hover:text-gray-700"
+              className="px-3 py-1.5 text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
             >
-              取消
+              <FormattedMessage id="uploadBar.cancel" />
             </button>
             <button
               type="button"
               onClick={handleTextSubmit}
               className="px-3 py-1.5 text-xs bg-blue-600 text-white rounded-lg hover:bg-blue-700"
             >
-              提交
+              <FormattedMessage id="uploadBar.submit" />
             </button>
           </div>
         </div>
@@ -112,12 +113,14 @@ export function UploadBar({ onUpload, collapsed = false, onToggleCollapse }: Pro
                 if (option.type === 'text') setPasteMode(true);
                 else handleFileSelect(option.type);
               }}
-              className={`p-2 border rounded-lg text-xs transition-colors ${option.color}`}
-              title={option.desc}
-              aria-label={`上传 ${option.label}`}
+              className={`p-2 border rounded-lg text-xs transition-colors ${option.color} dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 dark:hover:bg-gray-800`}
+              title={intl.formatMessage({ id: option.descriptionKey })}
+              aria-label={intl.formatMessage({ id: 'uploadBar.optionAriaLabel' }, { label: intl.formatMessage({ id: option.labelKey }) })}
             >
               <div className="text-base mb-0.5">{option.icon}</div>
-              <div>{option.label}</div>
+              <div>
+                <FormattedMessage id={option.labelKey} />
+              </div>
             </button>
           ))}
         </div>

@@ -1,6 +1,6 @@
 /**
- * V10 选项 B · useAssessmentMutations
- * 替代原型 useChat.submitForm 中的 mock 评估逻辑
+ * V10 option B · useAssessmentMutations.
+ * Replaces mock assessment logic from the legacy useChat.submitForm prototype.
  */
 import { useMutation } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api-client';

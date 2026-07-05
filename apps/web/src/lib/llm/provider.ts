@@ -1,10 +1,10 @@
 /**
- * V10 · Sprint 3 · LLM Provider 适配器
+ * V10 · Sprint 3 · LLM Provider adapter.
  *
- * 4 模 provider 抽象：claude / gpt / gemini / deepseek
- * 接口：enhance(input: AuditInput) → Promise<AuditEnhancement>
+ * Four-provider abstraction: claude / gpt / gemini / deepseek.
+ * Interface: enhance(input: AuditInput) → Promise<AuditEnhancement>.
  *
- * V10 G2 闸门核心：4 provider 实测可切换 + 自动降级
+ * V10 G2 gate core: four providers can switch in tests and fall back automatically.
  */
 import type { z } from 'zod';
 import { AuditEnhanceInputSchema, AuditEnhancementSchema } from '@/lib/api-schemas';
@@ -41,7 +41,7 @@ class ClaudeProvider implements LLMProvider {
       body: JSON.stringify(input),
       signal,
     });
-    if (!res.ok) throw new ProviderError('claude', res.status, `Claude 调用失败: ${res.status}`);
+    if (!res.ok) throw new ProviderError('claude', res.status, `Claude call failed: ${res.status}`);
     return AuditEnhancementSchema.parse(await res.json());
   }
 }
@@ -56,7 +56,7 @@ class GPTProvider implements LLMProvider {
       body: JSON.stringify(input),
       signal,
     });
-    if (!res.ok) throw new ProviderError('gpt', res.status, `GPT 调用失败: ${res.status}`);
+    if (!res.ok) throw new ProviderError('gpt', res.status, `GPT call failed: ${res.status}`);
     return AuditEnhancementSchema.parse(await res.json());
   }
 }
@@ -71,7 +71,7 @@ class GeminiProvider implements LLMProvider {
       body: JSON.stringify(input),
       signal,
     });
-    if (!res.ok) throw new ProviderError('gemini', res.status, `Gemini 调用失败: ${res.status}`);
+    if (!res.ok) throw new ProviderError('gemini', res.status, `Gemini call failed: ${res.status}`);
     return AuditEnhancementSchema.parse(await res.json());
   }
 }
@@ -86,7 +86,7 @@ class DeepseekProvider implements LLMProvider {
       body: JSON.stringify(input),
       signal,
     });
-    if (!res.ok) throw new ProviderError('deepseek', res.status, `DeepSeek 调用失败: ${res.status}`);
+    if (!res.ok) throw new ProviderError('deepseek', res.status, `DeepSeek call failed: ${res.status}`);
     return AuditEnhancementSchema.parse(await res.json());
   }
 }
@@ -99,7 +99,7 @@ export const PROVIDERS: Readonly<Record<ProviderId, LLMProvider>> = {
 };
 
 /**
- * 4 模 fallback 链: claude → gpt → gemini → deepseek
+ * Four-provider fallback chain: claude → gpt → gemini → deepseek.
  */
 export const DEFAULT_FALLBACK_ORDER: ReadonlyArray<ProviderId> = ['claude', 'gpt', 'gemini', 'deepseek'];
 
@@ -118,5 +118,5 @@ export async function enhanceWithFallback(
       lastError = err instanceof Error ? err : new Error(String(err));
     }
   }
-  throw lastError ?? new Error('所有 LLM provider 均失败');
+  throw lastError ?? new Error('All LLM providers failed');
 }

@@ -1,14 +1,8 @@
 /**
- * V10 选项 B · ModeIndicator 组件 (4-mode 决策树)
- *
- * V10 不变量 C2: 4-mode 互斥显示, 决策延迟 < 50ms
- *
- * 决策树:
- *  - isAuditActive → auditing
- *  - currentPlan + no audit → adjusting
- *  - province + score → generating
- *  - 其他 → explore
+ * V10 option B: four-mode chat status indicator.
  */
+
+import { FormattedMessage } from 'react-intl';
 
 export type ChatMode = 'explore' | 'generating' | 'auditing' | 'adjusting';
 
@@ -19,7 +13,7 @@ interface Props {
 
 interface ModeConfig {
   readonly icon: string;
-  readonly label: string;
+  readonly labelId: string;
   readonly bgClass: string;
   readonly textClass: string;
 }
@@ -27,25 +21,25 @@ interface ModeConfig {
 const MODE_CONFIG: Record<ChatMode, ModeConfig> = {
   explore: {
     icon: '🔍',
-    label: '自由探索',
+    labelId: 'shell.mode.explore',
     bgClass: 'bg-blue-50',
     textClass: 'text-blue-700',
   },
   generating: {
     icon: '📊',
-    label: '方案生成中',
+    labelId: 'shell.mode.generating',
     bgClass: 'bg-purple-50',
     textClass: 'text-purple-700',
   },
   auditing: {
     icon: '✅',
-    label: '方案审核中',
+    labelId: 'shell.mode.auditing',
     bgClass: 'bg-orange-50',
     textClass: 'text-orange-700',
   },
   adjusting: {
     icon: '🔄',
-    label: '方案调整中',
+    labelId: 'shell.mode.adjusting',
     bgClass: 'bg-green-50',
     textClass: 'text-green-700',
   },
@@ -61,14 +55,13 @@ export function ModeIndicator({ mode, text }: Props) {
       aria-live="polite"
     >
       <span aria-hidden="true">{config.icon}</span>
-      <span>{text ?? config.label}</span>
+      <span>{text ?? <FormattedMessage id={config.labelId} />}</span>
     </div>
   );
 }
 
 /**
- * 推导当前对话模式
- * 决策延迟 < 50ms (O(1) 短路求值)
+ * Derives the active chat mode with O(1) short-circuit checks.
  */
 export function deriveMode(
   userProfile: { province?: string | undefined; score?: number | undefined; subjects?: string[] | undefined },

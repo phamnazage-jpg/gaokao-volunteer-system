@@ -419,6 +419,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/poster/{job_id}/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Poster Status */
+        get: operations["get_poster_status_api_poster__job_id__status_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/llm/config": {
         parameters: {
             query?: never;
@@ -1420,12 +1437,45 @@ export interface components {
         };
         /** PosterGenerateResponse */
         PosterGenerateResponse: {
+            /** Jobid */
+            jobId: string;
+            /**
+             * Status
+             * @default completed
+             * @enum {string}
+             */
+            status: "queued" | "processing" | "completed" | "failed";
+            /**
+             * Progress
+             * @default 100
+             */
+            progress: number;
             /** Posterurl */
-            posterUrl: string;
+            posterUrl?: string | null;
             /** Qrcode */
-            qrCode: string;
+            qrCode?: string | null;
             /** Expiresat */
-            expiresAt: string;
+            expiresAt?: string | null;
+        };
+        /** PosterStatusResponse */
+        PosterStatusResponse: {
+            /** Jobid */
+            jobId: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "queued" | "processing" | "completed" | "failed";
+            /** Progress */
+            progress: number;
+            /** Posterurl */
+            posterUrl?: string | null;
+            /** Qrcode */
+            qrCode?: string | null;
+            /** Expiresat */
+            expiresAt?: string | null;
+            /** Updatedat */
+            updatedAt: string;
         };
         /** PublicOrderCreate */
         PublicOrderCreate: {
@@ -2834,6 +2884,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PosterGenerateResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_poster_status_api_poster__job_id__status_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                job_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PosterStatusResponse"];
                 };
             };
             /** @description Validation Error */

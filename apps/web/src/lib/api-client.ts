@@ -1,10 +1,10 @@
 /**
- * V10 选项 B · apiClient
- * 统一 fetch 封装 (替代原型 useChat 中的 4 处散落 fetch)
+ * V10 option B · apiClient.
+ * Unified fetch wrapper replacing scattered fetch calls from the legacy useChat prototype.
  *
- * G1 闸门:
- *  - 0 any (所有 response 强类型, 通过 zod 校验)
- *  - 错误码 → i18n 文案
+ * G1 gate:
+ *  - 0 any; every response is strongly typed and validated through Zod.
+ *  - Error codes map to i18n copy.
  */
 import { ZodError, type ZodType, type ZodTypeDef } from 'zod';
 import { getLocalizedApiErrorMessage, type ApiErrorSeverity } from './error-messages';
@@ -123,7 +123,7 @@ async function request<TResponse, TBody = unknown>(
     try {
       errorBody = (await res.json()) as { code?: string; message?: string; details?: unknown };
     } catch {
-      // response body 不是 JSON
+      // Response body is not JSON.
     }
     const localizedError = getLocalizedApiErrorMessage(errorBody.code);
     throw new HttpError(

@@ -1,12 +1,12 @@
 /**
- * V10 选项 B · Message 类型
- * 替代原型 useChat.ts 中的 Message (其中 data?: any)
+ * V10 option B · Message types.
+ * Replaces Message from the legacy useChat.ts prototype, which used data?: any.
  *
- * 用 Zod discriminated union 替代 any, G1 闸门要求 0 any
+ * Uses a Zod discriminated union instead of any. G1 gate requires 0 any.
  */
 import { z } from 'zod';
 
-// ====== 消息子类型 schemas ======
+// ====== Message subtype schemas ======
 
 export const TextMessageDataSchema = z.object({
   type: z.literal('text'),
@@ -72,7 +72,7 @@ export const CareerCardMessageDataSchema = z.object({
       name: z.string(),
       description: z.string(),
       salary: z.string(),
-      prospect: z.enum(['好', '中', '差']),
+      prospect: z.enum(['\u597d', '\u4e2d', '\u5dee']),
     }),
   ),
 });
@@ -83,7 +83,7 @@ export const AuditReportMessageDataSchema = z.object({
   risks: z.array(
     z.object({
       index: z.number(),
-      level: z.enum(['低', '中', '高']),
+      level: z.enum(['\u4f4e', '\u4e2d', '\u9ad8']),
       title: z.string(),
       description: z.string(),
     }),
@@ -121,7 +121,7 @@ export type MessageTypeData = z.infer<typeof MessageTypeSchema>;
 export const MessageRoleSchema = z.enum(['user', 'assistant', 'system']);
 export type MessageRole = z.infer<typeof MessageRoleSchema>;
 
-// ====== Message 顶层 schema (G1 闸门: 0 any) ======
+// ====== Top-level Message schema (G1 gate: 0 any) ======
 
 export const MessageSchema = z.object({
   id: z.string(),
@@ -129,12 +129,12 @@ export const MessageSchema = z.object({
   content: z.string(),
   data: MessageTypeSchema.optional(),
   timestamp: z.date(),
-  /** 流式中间态标识 */
+  /** Streaming intermediate-state marker. */
   isStreaming: z.boolean().optional(),
 });
 export type Message = z.infer<typeof MessageSchema>;
 
-// ====== 类型守卫 helpers ======
+// ====== Type guard helpers ======
 
 export const isTextMessage = (m: Message): m is Message & { data: TextMessageData } => m.data?.type === 'text';
 export const isFormCard = (m: Message): m is Message & { data: FormCardMessageData } => m.data?.type === 'form_card';

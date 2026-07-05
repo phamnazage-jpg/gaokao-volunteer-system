@@ -1,10 +1,9 @@
 /**
- * V10 选项 B · AppLayout (Sidebar + Outlet + MobileNav)
- *
- * T-B-26: 用 React.Suspense 包裹 Outlet，承接 lazy 路由的 fallback UI
+ * V10 option B: app shell with sidebar, outlet, and mobile navigation.
  */
 import { Suspense } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
+import { FormattedMessage } from 'react-intl';
 import { Outlet, useLocation } from 'react-router-dom';
 import { Sidebar } from '@/components/navigation/Sidebar';
 import { MobileNav } from '@/components/navigation/MobileNav';
@@ -42,7 +41,7 @@ export function AppLayout() {
   return (
     <div className="app-layout flex h-screen overflow-hidden bg-[var(--color-bg)] text-[var(--color-fg)]">
       <Sidebar recentChats={recentChatsList} activeChatId={activeRecordId ?? undefined} onNewChat={handleNewChat} onSelectChat={handleSelectChat} />
-      <div className="flex flex-col flex-1 min-w-0 max-w-5xl mx-auto lg:border-r border-gray-100">
+      <div className="flex flex-col flex-1 min-w-0 max-w-5xl mx-auto lg:border-r border-gray-100 dark:border-gray-800">
         <OfflineBanner />
         <ErrorBoundary FallbackComponent={ErrorFallback} resetKeys={[location.pathname]}>
           <Suspense fallback={<RouteFallback />}>
@@ -51,11 +50,15 @@ export function AppLayout() {
         </ErrorBoundary>
       </div>
       {userName && (
-        <aside className="hidden xl:flex w-56 shrink-0 border-l border-gray-100 bg-white/80 px-4 py-4" aria-label="用户信息">
-          <div className="h-fit w-full rounded-2xl border border-gray-100 bg-white p-3 shadow-sm">
-            <p className="text-xs text-gray-400">当前用户</p>
-            <p className="mt-1 truncate text-sm font-medium text-gray-800">{userName}</p>
-            <p className="mt-2 text-xs leading-relaxed text-gray-500">AI 辅助决策，请以官方信息为准。</p>
+        <aside className="hidden xl:flex w-56 shrink-0 border-l border-gray-100 bg-white/80 px-4 py-4 dark:border-gray-800 dark:bg-gray-950/80" aria-label="User information">
+          <div className="h-fit w-full rounded-2xl border border-gray-100 bg-white p-3 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+            <p className="text-xs text-gray-400 dark:text-gray-500">
+              <FormattedMessage id="shell.currentUser" />
+            </p>
+            <p className="mt-1 truncate text-sm font-medium text-gray-800 dark:text-gray-100">{userName}</p>
+            <p className="mt-2 text-xs leading-relaxed text-gray-500 dark:text-gray-400">
+              <FormattedMessage id="shell.officialInfoDisclaimer" />
+            </p>
           </div>
         </aside>
       )}

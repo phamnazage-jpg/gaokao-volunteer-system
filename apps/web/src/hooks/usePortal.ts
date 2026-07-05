@@ -25,7 +25,7 @@ export const PortalFullPlanResponseSchema = z.object({
         id: z.string(),
         name: z.string(),
         majors: z.array(z.string()),
-        admissionProbability: z.enum(['冲', '稳', '保']),
+        admissionProbability: z.enum(['\u51b2', '\u7a33', '\u4fdd']),
       }),
     ),
   }),

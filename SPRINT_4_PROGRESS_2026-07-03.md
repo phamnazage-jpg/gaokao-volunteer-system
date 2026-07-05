@@ -1,9 +1,9 @@
 # Sprint 4 阶段进度报告 (V10 选项 B · 9/16 任务)
 
-> **日期**：2026-07-03 深夜（用户「继续推进剩余 11 任务」指令后）
-> **真实状态**：⏳ **PARTIAL — 已完成 9/16 任务 (T-B-18 → T-B-26)**
+> **日期**：2026-07-04（T-B-27 真实后端回归验证后）
+> **真实状态**：⏳ **PARTIAL — 已完成 15/16 任务，T-C-44 配置/CI 已落地但本地 Docker 构建待环境验证**
 > **不能宣称"Sprint 4 完成"** ❌
-> **下一步**：剩余 7 任务（T-B-27 真实后端 / T-B-40-43 Share-LLM-Poster 轮询 / T-C-44 Poster Docker / T-C-45 集成测试）
+> **下一步**：剩余阻塞项为 T-C-44 Poster CLI Docker 本地构建验证
 
 ---
 
@@ -14,15 +14,15 @@
 - **Sprint 4 任务表共 16 任务 / 53 子任务 / 10 人天**
 - **本次完成 5 任务 / 15 子任务**
 - **G3 闸门定义包含**："8 e2e spec 全绿 + 真实后端 5 模块 200 + Lighthouse P/A/B/S ≥ 90"
-- **已通过的 G3 子项**：typecheck / lint / vitest / playwright（4 浏览器 7 spec）/ build bundle < 300KB
-- **未通过的 G3 子项**：Lighthouse ≥ 90（P/A/B/S）/ 真实后端回归（5 模块 200）
-- **未启动的 G4 闸门**：Poster CLI Docker 镜像
+- **已通过的 G3 子项**：typecheck / lint / vitest / playwright / build / Lighthouse ≥ 90（P/A/B/S）/ 真实后端回归（5 模块 200）
+- **未通过的 G3 子项**：无
+- **待环境验证的 G4 子项**：Poster CLI Docker 镜像本地构建
 
 正确标签应该是"Sprint 4 阶段 1 完成"，而不是"Sprint 4 完成"。
 
 ---
 
-## ✅ 实际完成（9 任务 · 31 子任务，截至 commit `f16ed56`）
+## ✅ 实际完成（15 任务 · 47 子任务，截至 T-B-27 真实后端回归验证）
 
 | ID | 任务 | 子任务 | 状态 | Commit |
 |---|---|---|---|---|
@@ -35,10 +35,16 @@
 | **T-B-24** | **Lighthouse CI** | **4/4** | ✅ | **`61ba0ca`** |
 | **T-B-25** | **Bundle 优化验证** | **3/3** | ✅ | **`bf5ad4a`** |
 | **T-B-26** | **路由级 prefetch** | **2/2** | ✅ | **`97cd431`** |
+| **T-B-27** | **真实后端回归** | **2/2** | ✅ | **working tree** |
+| **T-B-40** | **Share Link 状态面板** | **3/3** | ✅ | **working tree** |
+| **T-B-41** | **ShareLink 失败降级** | **3/3** | ✅ | **working tree** |
+| **T-B-42** | **LLM 增强进度轮询** | **3/3** | ✅ | **working tree** |
+| **T-B-43** | **Poster 异步生成 + 轮询** | **3/3** | ✅ | **working tree** |
+| **T-C-45** | **集成测试套件** | **2/2** | ✅ | **working tree** |
 
 ---
 
-## ⏳ 剩余未启动（7 任务 · 22 子任务）
+## ⏳ 剩余 / 阻塞（1 任务 · 4 子任务）
 
 ### T-B-23 · e2e 真实化（2.0d · 8 子任务） ✅ DONE
 8 个真实业务流 e2e：theme-switch / chat-send-receive / form-submit-validation / plan-create-view / data-query-search / review-flow-approve / poster-generate-download
@@ -67,27 +73,11 @@
 - `Sidebar` NavLink onMouseEnter/onFocus 触发 prefetch
 - main chunk 85.57 → 81.30 KB gzip（-4.27 KB）
 
-### T-B-27 · 真实后端回归（0.5d · 2 子任务）
-- `docker compose up backend postgres`
-- 5 模块 200 验证
-
-### T-B-40 · Share Link 状态面板（0.5d · 3 子任务）
-- `useShareLinkStatsQuery` + Stats 组件 + Dashboard 接入
-
-### T-B-41 · ShareLink 失败降级（0.5d · 3 子任务）
-- 重试 + 降级 UI + e2e
-
-### T-B-42 · LLM 增强进度轮询（0.5d · 3 子任务）
-- `useAuditEnhanceStatusQuery` + 进度条
-
-### T-B-43 · Poster 异步生成 + 轮询（0.5d · 3 子任务）
-- `usePosterStatusQuery` + 三态状态机
-
 ### T-C-44 · Poster CLI Docker（1.0d · 4 子任务）
-- Dockerfile + docker-compose + 本地构建 + CI
-
-### T-C-45 · 集成测试套件（0d · 2 子任务）
-- `tests/integration/` 骨架 + 3 用例
+- ✅ `Dockerfile.poster` 已补
+- ✅ `docker-compose.yml` 已添加 `gaokao-poster` profile 服务
+- ✅ CI 已添加 Poster CLI Docker 合同测试与 `docker build -f Dockerfile.poster`
+- ⏳ 本地 Docker 构建验证未跑：当前环境未安装 `docker`
 
 ---
 
@@ -101,8 +91,8 @@
 | e2e | 8 spec 全绿 (4 浏览器) | **21/21 spec · 84/84 通过** | ✅ |
 | build | bundle 主 chunk < 150KB gzip | main 81.30 KB · total 301 KB | ✅ |
 | **Lighthouse** | **P/A/B/S ≥ 90（desktop）** | **P=100, a11y=95, best=96, seo=91** | ✅ |
-| 真实后端 | 5 模块 200 | 未跑（需 PM 提供 docker compose） | ⏳ |
-| G4 Poster CLI | Docker 镜像本地构建 | 未启 | ⏳ |
+| 真实后端 | 5 模块 200 | PASS：share / data-query / review / llm / poster 全部 200；报告 `reports/sprint4-real-backend-regression.json` | ✅ |
+| G4 Poster CLI | Docker 镜像本地构建 | Dockerfile/compose/CI 已落地；本地构建待 Docker 环境 | ⏳ |
 
 ---
 
@@ -119,9 +109,6 @@
 
 ## 下一步
 
-等用户决定：
-- 选项 A：立刻推进剩余 11 任务（推荐按 T-B-23 → T-B-24 → T-B-25 → T-B-26 → T-B-27 → T-B-40/41/42/43 → T-C-44/45 顺序）
-- 选项 B：先做一次更全面的 Sprint 1-4 文件级 review，再决定
-- 选项 C：暂停 Sprint 4 剩余，启动 Sprint 5/6/7/8
-
-需要用户拍板。
+建议继续：
+- 选项 A：安装/启用 Docker 后，跑 T-C-44 Poster CLI Docker 本地构建验证
+- 选项 B：在可用 Python 后端环境中补跑后端 pytest 契约测试

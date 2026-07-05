@@ -70,6 +70,16 @@ jobs:
         run: |
           python -m pytest -q tests/test_pdf_runtime_smoke.py
 
+      - name: Validate Poster CLI Docker contract
+        if: matrix.python-version == '3.12'
+        run: |
+          python -m pytest -q tests/test_poster_cli_docker_contract.py
+
+      - name: Build Poster CLI Docker image
+        if: matrix.python-version == '3.12'
+        run: |
+          docker build -f Dockerfile.poster -t gaokao-poster-cli:test .
+
       - name: Upload coverage artifact
         if: always() && matrix.python-version == '3.11' && hashFiles('coverage.xml') != ''
         uses: actions/upload-artifact@v4

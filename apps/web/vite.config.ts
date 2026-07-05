@@ -3,8 +3,8 @@ import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import path from 'node:path';
 
-// V10 选项 B · Vite 5 + React 19 + Tailwind 4
-// 替代 Next.js 16 App Router，使用 React Router 7 (client-side routing)
+// V10 option B · Vite 5 + React 19 + Tailwind 4.
+// Replaces Next.js 16 App Router with React Router 7 client-side routing.
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   resolve: {
@@ -16,7 +16,7 @@ export default defineConfig({
     host: '0.0.0.0',
     port: 3000,
     strictPort: true,
-    // CloudStudio / WorkBuddy 预览代理白名单
+    // CloudStudio / WorkBuddy preview proxy allowlist.
     allowedHosts: [
       'webview.e2b.bj5.sandbox.cloudstudio.club',
       '.sandbox.cloudstudio.club',
@@ -34,16 +34,17 @@ export default defineConfig({
   },
   build: {
     target: 'es2022',
-    // 生产 sourcemap 关闭（开发调试足够，bundle size 减少 ~30%）
+    // Production sourcemap is disabled because dev debugging is enough and bundle size drops.
     sourcemap: false,
     cssCodeSplit: true,
-    // 4KB 以下内联
+    // Inline assets below 4KB.
     assetsInlineLimit: 4096,
     rollupOptions: {
       output: {
-        // V10 优化: 手动 chunk split
+        // V10 optimization: manual chunk split.
         manualChunks: {
           'react-vendor': ['react', 'react-dom', 'react-router-dom', 'react-router'],
+          'intl-vendor': ['react-intl'],
           'query-vendor': ['@tanstack/react-query', '@tanstack/react-query-devtools'],
           'state-vendor': ['zustand'],
           'form-vendor': ['react-hook-form', '@hookform/resolvers', 'zod'],

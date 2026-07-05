@@ -17,6 +17,7 @@ def test_openapi_exposes_react_sprint3_json_contracts(app):
         "/api/review/{review_id}/status",
         "/api/review/action",
         "/api/poster/generate",
+        "/api/poster/{job_id}/status",
         "/api/llm/config",
         "/api/llm/{provider}/enhance",
         "/api/llm/enhance/{plan_id}/status",
@@ -55,7 +56,14 @@ def test_react_sprint3_json_contracts_return_frontend_shapes(client, auth_header
         json={"planId": "plan-001", "template": "classic"},
     )
     assert poster.status_code == 200, poster.text
-    assert poster.json()["posterUrl"].startswith("http://testserver/static/posters/")
+    poster_body = poster.json()
+    assert poster_body["posterUrl"].startswith("http://testserver/static/posters/")
+    assert poster_body["jobId"].startswith("poster_")
+
+    poster_status = client.get(f"/api/poster/{poster_body['jobId']}/status")
+    assert poster_status.status_code == 200, poster_status.text
+    assert poster_status.json().keys() >= {"jobId", "status", "progress", "posterUrl", "updatedAt"}
+    assert poster_status.json()["status"] == "completed"
 
     llm_config = client.get("/api/llm/config")
     assert llm_config.status_code == 200, llm_config.text

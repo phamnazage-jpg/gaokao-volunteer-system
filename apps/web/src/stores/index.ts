@@ -1,9 +1,9 @@
 /**
- * V10 选项 B · Zustand store barrel + 统一 reset 工具
+ * V10 option B · Zustand store barrel + unified reset utility.
  *
- * G1 闸门:
- *  - 0 any
- *  - 测试 setup.ts 用 resetAllStores() 在每个 test 前清空
+ * G1 gate:
+ *  - 0 any.
+ *  - test/setup.ts calls resetAllStores() before each test.
  */
 export { useChatStore, selectMessages, selectIsStreaming, selectStreamStatus, selectCurrentPlan, selectActiveRecordId } from './chat';
 export type { ChatState, StreamStatus } from './chat';
@@ -22,7 +22,7 @@ import { useFormStore } from './form';
 import { useUIStore } from './ui';
 import { useUserStore } from './user';
 
-/** 测试工具: 重置所有 store 到初始状态 */
+/** Test helper: reset all stores to their initial state. */
 export const resetAllStores = (): void => {
   useChatStore.getState().reset();
   useFormStore.getState().resetDraft();

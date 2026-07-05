@@ -1,13 +1,10 @@
 /**
- * V10 选项 B · Sidebar 组件 (桌面端 ≥ 1024px 显示)
+ * V10 option B: desktop sidebar navigation.
  *
- * V10 不变量 L1: 桌面端 ≥ 1024px 显示侧栏三栏布局
- *
- * 从 Next.js Link/usePathname 改为 React Router 7 (Vite 友好)
- *
- * T-B-26: hover NavLink 触发 lazy chunk prefetch
+ * T-B-26: hover NavLink triggers lazy chunk prefetch.
  */
 import { NavLink } from 'react-router-dom';
+import { FormattedMessage } from 'react-intl';
 import { ThemeToggle } from '@/components/shared/ThemeToggle';
 import { usePrefetchLazyRoute } from '@/hooks/usePrefetchLazyRoute';
 
@@ -25,48 +22,49 @@ interface Props {
 
 interface NavItem {
   to: string;
-  label: string;
+  labelId: string;
   icon: string;
 }
 
 const NAV_ITEMS: ReadonlyArray<NavItem> = [
-  { to: '/', label: '对话', icon: '💬' },
-  { to: '/plans', label: '我的方案', icon: '📋' },
-  { to: '/consultations', label: '咨询记录', icon: '📖' },
-  { to: '/plans/compare', label: '方案对比', icon: '⚖️' },
-  { to: '/data-query', label: '数据查询', icon: '📊' },
-  { to: '/share', label: '分享', icon: '🔗' },
-  { to: '/review', label: '审核', icon: '🛡️' },
-  { to: '/poster', label: '海报', icon: '🖼️' },
-  { to: '/about', label: '帮助', icon: '❓' },
+  { to: '/', labelId: 'shell.nav.chat', icon: '💬' },
+  { to: '/plans', labelId: 'shell.nav.plans', icon: '📋' },
+  { to: '/consultations', labelId: 'shell.nav.consultations', icon: '📖' },
+  { to: '/plans/compare', labelId: 'shell.nav.compare', icon: '⚖️' },
+  { to: '/data-query', labelId: 'shell.nav.dataQuery', icon: '📊' },
+  { to: '/share', labelId: 'shell.nav.share', icon: '🔗' },
+  { to: '/review', labelId: 'shell.nav.review', icon: '🛡️' },
+  { to: '/poster', labelId: 'shell.nav.poster', icon: '🖼️' },
+  { to: '/about', labelId: 'shell.nav.help', icon: '❓' },
 ];
 
 export function Sidebar({ recentChats, activeChatId, onNewChat, onSelectChat }: Props) {
   const prefetch = usePrefetchLazyRoute();
   return (
-    <aside className="sidebar hidden lg:flex w-64 shrink-0 flex-col gap-2 border-r border-gray-100 bg-white p-4">
+    <aside className="sidebar hidden lg:flex w-64 shrink-0 flex-col gap-2 border-r border-gray-100 bg-white p-4 dark:border-gray-800 dark:bg-gray-950">
       {/* Logo + ThemeToggle */}
       <div className="flex items-center justify-between mb-2">
         <NavLink to="/" className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center text-white text-sm">
             🎓
           </div>
-          <span className="text-sm font-bold text-gray-800">升学助手</span>
+          <span className="text-sm font-bold text-gray-800 dark:text-gray-100">
+            <FormattedMessage id="shell.appName" />
+          </span>
         </NavLink>
         <ThemeToggle />
       </div>
 
-      {/* 新建对话 */}
       <button
         type="button"
         onClick={onNewChat}
         className="w-full py-2.5 rounded-xl bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-1"
       >
-        ✨ 新建对话
+        <span aria-hidden="true">✨</span>
+        <FormattedMessage id="shell.newChat" />
       </button>
 
-      {/* 导航 */}
-      <nav className="flex flex-col gap-0.5" aria-label="主导航">
+      <nav className="flex flex-col gap-0.5" aria-label="Main navigation">
         {NAV_ITEMS.map((item) => (
           <NavLink
             key={item.to}
@@ -76,20 +74,23 @@ export function Sidebar({ recentChats, activeChatId, onNewChat, onSelectChat }: 
             onFocus={() => prefetch(item.to)}
             className={({ isActive }) =>
               `flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors ${
-                isActive ? 'bg-blue-50 text-blue-700 font-medium' : 'text-gray-600 hover:bg-gray-100'
+                isActive
+                  ? 'bg-blue-50 text-blue-700 font-medium dark:bg-blue-950/50 dark:text-blue-200'
+                  : 'text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-900 dark:hover:text-gray-100'
               }`
             }
           >
             <span aria-hidden="true">{item.icon}</span>
-            {item.label}
+            <FormattedMessage id={item.labelId} />
           </NavLink>
         ))}
       </nav>
 
-      {/* 最近对话 */}
       {recentChats.length > 0 && (
         <div className="mt-6">
-          <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2 px-1">最近对话</h3>
+          <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2 px-1 dark:text-gray-500">
+            <FormattedMessage id="shell.recentChats" />
+          </h3>
           <div className="flex flex-col gap-0.5">
             {recentChats.slice(0, 10).map((chat) => (
               <button
@@ -97,19 +98,22 @@ export function Sidebar({ recentChats, activeChatId, onNewChat, onSelectChat }: 
                 type="button"
                 onClick={() => onSelectChat(chat.id)}
                 className={`text-left px-3 py-2 rounded-lg text-sm truncate transition-colors ${
-                  chat.id === activeChatId ? 'bg-blue-50 text-blue-700 font-medium' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'
-                }`}
-              >
-                {chat.title || '未命名对话'}
+                  chat.id === activeChatId
+                    ? 'bg-blue-50 text-blue-700 font-medium dark:bg-blue-950/50 dark:text-blue-200'
+                    : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-900 dark:hover:text-gray-100'
+              }`}
+            >
+                {chat.title || <FormattedMessage id="shell.untitledChat" />}
               </button>
             ))}
           </div>
         </div>
       )}
 
-      {/* 底部信息 */}
       <div className="mt-auto pt-4">
-        <p className="text-xs text-gray-400 text-center">AI 辅助决策，请以官方信息为准</p>
+        <p className="text-xs text-gray-400 text-center dark:text-gray-500">
+          <FormattedMessage id="shell.officialInfoDisclaimer" />
+        </p>
       </div>
     </aside>
   );

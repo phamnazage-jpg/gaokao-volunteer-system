@@ -1,9 +1,4 @@
-/**
- * V10 · Sprint 3 · AccessTrendChart
- *
- * 访问趋势 mini chart (recharts)
- * V10 收益：Sprint 5 chart 任务的预演
- */
+import { useIntl } from 'react-intl';
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip } from 'recharts';
 
 export interface AccessDataPoint {
@@ -16,9 +11,12 @@ interface Props {
 }
 
 export function AccessTrendChart({ data }: Props) {
+  const intl = useIntl();
+  const title = intl.formatMessage({ id: 'share.trend.title' });
+
   return (
-    <div className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm" role="img" aria-label="访问趋势">
-      <p className="text-xs font-semibold text-gray-400 mb-2">访问趋势</p>
+    <div className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900" role="img" aria-label={title}>
+      <p className="text-xs font-semibold text-gray-400 mb-2 dark:text-gray-500">{title}</p>
       <div className="h-32">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={[...data]}>

@@ -1,8 +1,9 @@
 /**
- * V10 选项 B · useChatMutations
- * 替代原型 useChat.sendMessage 中的 mock + fetch 逻辑
+ * V10 option B · useChatMutations.
+ * Replaces mock + fetch logic from the legacy useChat.sendMessage prototype.
  */
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useIntl } from 'react-intl';
 import { apiClient } from '@/lib/api-client';
 import { readChatStream } from '@/lib/chat-stream';
 import { ChatSendResponseSchema, type ChatSendInput, type ChatSendResponse } from '@/lib/api-schemas';
@@ -17,21 +18,25 @@ export const chatKeys = {
 };
 
 /**
- * 发送消息 (普通 mutation, 等待完整响应)
+ * Send a message with the normal mutation flow and wait for the complete response.
  */
 export function useChatSendMutation() {
+  const intl = useIntl();
   const queryClient = useQueryClient();
   const appendUserMessage = useChatStore((s) => s.appendUserMessage);
   const appendAssistantMessage = useChatStore((s) => s.appendAssistantMessage);
   const updateLastMessage = useChatStore((s) => s.updateLastMessage);
   const setStreaming = useChatStore((s) => s.setStreaming);
   const setStreamStatus = useChatStore((s) => s.setStreamStatus);
+  const setError = useChatStore((s) => s.setError);
+  const sendFailedMessage = intl.formatMessage({ id: 'chat.sendFailed' });
 
   return useMutation<ChatSendResponse, Error, ChatSendInput>({
     mutationFn: (input) => apiClient.post<ChatSendResponse, ChatSendInput>('/chat/send', input, ChatSendResponseSchema),
     onMutate: (input) => {
+      setError(null);
       appendUserMessage(input.message);
-      appendAssistantMessage('正在思考...');
+      appendAssistantMessage(intl.formatMessage({ id: 'chat.thinking' }));
       setStreaming(true);
       setStreamStatus('thinking');
     },
@@ -42,6 +47,8 @@ export function useChatSendMutation() {
       void queryClient.invalidateQueries({ queryKey: chatKeys.history(data.sessionId) });
     },
     onError: () => {
+      updateLastMessage(sendFailedMessage);
+      setError(sendFailedMessage);
       setStreaming(false);
       setStreamStatus('idle');
     },
@@ -49,15 +56,18 @@ export function useChatSendMutation() {
 }
 
 /**
- * 发送消息 (SSE / NDJSON / JSON 流式版本)
+ * Send a message with the SSE / NDJSON / JSON streaming flow.
  */
 export function useChatStreamMutation() {
+  const intl = useIntl();
   const queryClient = useQueryClient();
   const appendUserMessage = useChatStore((s) => s.appendUserMessage);
   const appendAssistantMessage = useChatStore((s) => s.appendAssistantMessage);
   const updateLastMessage = useChatStore((s) => s.updateLastMessage);
   const setStreaming = useChatStore((s) => s.setStreaming);
   const setStreamStatus = useChatStore((s) => s.setStreamStatus);
+  const setError = useChatStore((s) => s.setError);
+  const sendFailedMessage = intl.formatMessage({ id: 'chat.sendFailed' });
 
   return useMutation<Message, Error, ChatSendInput>({
     mutationFn: async (input) => {
@@ -83,8 +93,9 @@ export function useChatStreamMutation() {
       };
     },
     onMutate: (input) => {
+      setError(null);
       appendUserMessage(input.message);
-      appendAssistantMessage('');
+      appendAssistantMessage(intl.formatMessage({ id: 'chat.thinking' }));
       setStreaming(true);
       setStreamStatus('thinking');
     },
@@ -94,6 +105,8 @@ export function useChatStreamMutation() {
       setStreamStatus('idle');
     },
     onError: () => {
+      updateLastMessage(sendFailedMessage);
+      setError(sendFailedMessage);
       setStreaming(false);
       setStreamStatus('idle');
     },

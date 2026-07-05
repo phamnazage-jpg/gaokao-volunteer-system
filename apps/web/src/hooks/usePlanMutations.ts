@@ -1,6 +1,6 @@
 /**
- * V10 选项 B · usePlanMutations
- * 替代原型 usePlan 中的 savePlan
+ * V10 option B · usePlanMutations.
+ * Replaces savePlan from the legacy usePlan prototype.
  */
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';

@@ -1,9 +1,10 @@
 /**
  * V10 · Sprint 3 · useChatOrchestrator
  *
- * 编排 Zustand chat store + TanStack Query mutations
+ * Orchestrates the Zustand chat store and TanStack Query mutations.
  */
 import { useCallback, useMemo } from 'react';
+import { useIntl } from 'react-intl';
 import { useChatStore } from '@/stores/chat';
 import { useUserStore } from '@/stores/user';
 import { useChatSendMutation } from '@/hooks/useChatMutations';
@@ -19,6 +20,7 @@ export interface ChatOrchestratorResult {
 }
 
 export function useChatOrchestrator(): ChatOrchestratorResult {
+  const intl = useIntl();
   const user = useUserStore((s) => s.name);
   const messages = useChatStore((s) => s.messages);
   const isStreaming = useChatStore((s) => s.isStreaming);
@@ -45,15 +47,15 @@ export function useChatOrchestrator(): ChatOrchestratorResult {
       setStreaming(true);
       setError(null);
       sendMutation.mutate(
-        { message: trimmed, sessionId: activeRecordId ?? '', userName: user ?? '匿名' },
+        { message: trimmed, sessionId: activeRecordId ?? '', userName: user ?? 'anonymous' },
         {
           onSuccess: (data) => {
             updateLastMessage(data.assistantMessage.content);
             setStreaming(false);
           },
-          onError: (err: Error) => {
+          onError: () => {
             setStreaming(false);
-            setError(err.message || '发送失败');
+            setError(intl.formatMessage({ id: 'chat.sendFailed' }));
           },
         },
       );
@@ -67,6 +69,7 @@ export function useChatOrchestrator(): ChatOrchestratorResult {
       activeRecordId,
       user,
       updateLastMessage,
+      intl,
     ],
   );
 

@@ -1,6 +1,7 @@
 import type { ButtonHTMLAttributes, ReactNode } from 'react';
 import { LoaderCircle } from 'lucide-react';
 import { clsx } from 'clsx';
+import { useIntl } from 'react-intl';
 
 interface SubmitButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'type' | 'children'> {
   isSubmitting: boolean;
@@ -8,14 +9,10 @@ interface SubmitButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>
   submittingLabel?: ReactNode;
 }
 
-export function SubmitButton({
-  isSubmitting,
-  idleLabel,
-  submittingLabel = '提交中...',
-  disabled,
-  className,
-  ...props
-}: SubmitButtonProps) {
+export function SubmitButton({ isSubmitting, idleLabel, submittingLabel, disabled, className, ...props }: SubmitButtonProps) {
+  const intl = useIntl();
+  const resolvedSubmittingLabel = submittingLabel ?? intl.formatMessage({ id: 'submitButton.submitting' });
+
   return (
     <button
       {...props}
@@ -28,7 +25,7 @@ export function SubmitButton({
       )}
     >
       {isSubmitting && <LoaderCircle className="h-4 w-4 animate-spin" aria-hidden="true" />}
-      {isSubmitting ? submittingLabel : idleLabel}
+      {isSubmitting ? resolvedSubmittingLabel : idleLabel}
     </button>
   );
 }

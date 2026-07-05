@@ -1,8 +1,8 @@
 /**
- * V10 选项 B · useUserStore (Zustand 4 slice)
- * 替代原型 useProfile 中的 "持久用户信息" 概念
+ * V10 option B · useUserStore (Zustand 4 slice).
+ * Replaces the persistent user information concept from the legacy useProfile prototype.
  *
- * 实际登录用户与会话中提取的 draft profile 在 useFormStore 中分离
+ * Separates the logged-in user from the draft profile extracted during a chat session in useFormStore.
  */
 import { create } from 'zustand';
 import { devtools, persist, createJSONStorage } from 'zustand/middleware';
@@ -12,9 +12,10 @@ export interface UserState {
   id: string | null;
   name: string | null;
   phone: string | null;
+  role: 'user' | 'admin';
   isLoggedIn: boolean;
   // actions
-  setUser: (user: { id: string; name: string; phone: string }) => void;
+  setUser: (user: { id: string; name: string; phone: string; role?: 'user' | 'admin' }) => void;
   logout: () => void;
 }
 
@@ -25,12 +26,14 @@ export const useUserStore = create<UserState>()(
         id: null,
         name: null,
         phone: null,
+        role: 'user',
         isLoggedIn: false,
         setUser: (user) =>
           set((s) => {
             s.id = user.id;
             s.name = user.name;
             s.phone = user.phone;
+            s.role = user.role ?? 'user';
             s.isLoggedIn = true;
           }),
         logout: () =>
@@ -38,6 +41,7 @@ export const useUserStore = create<UserState>()(
             s.id = null;
             s.name = null;
             s.phone = null;
+            s.role = 'user';
             s.isLoggedIn = false;
           }),
       })),
