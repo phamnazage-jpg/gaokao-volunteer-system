@@ -70,13 +70,15 @@ class RouteClient:
             (key.lower().encode("utf-8"), value.encode("utf-8"))
             for key, value in (headers or {}).items()
         ]
-        return Request({
-            "type": "http",
-            "method": method,
-            "path": split.path,
-            "query_string": split.query.encode("utf-8"),
-            "headers": raw_headers,
-        })
+        return Request(
+            {
+                "type": "http",
+                "method": method,
+                "path": split.path,
+                "query_string": split.query.encode("utf-8"),
+                "headers": raw_headers,
+            }
+        )
 
     @staticmethod
     def _html_response(response) -> RouteResponse:
@@ -182,7 +184,9 @@ class RouteClient:
             if route_path == "/portal/payment-return":
                 query = dict(parse_qsl(split.query, keep_blank_values=True))
                 return self._redirect_response(
-                    payment_return_page(query["payment_id"], settings)
+                    payment_return_page(
+                        query["payment_id"], query.get("return_nonce"), settings
+                    )
                 )
             if route_path == "/review/start":
                 query = dict(parse_qsl(split.query, keep_blank_values=True))

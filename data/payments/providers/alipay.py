@@ -64,8 +64,9 @@ class AlipayProvider:
             "timestamp": datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S"),
             "version": "1.0",
             "notify_url": self.notify_url,
-            "return_url": self._append_query_param(
-                self.return_url, "payment_id", payment_id
+            "return_url": self._append_query_params(
+                self.return_url,
+                {"payment_id": payment_id, "return_nonce": portal_token},
             ),
             "biz_content": json.dumps(
                 {
@@ -114,7 +115,9 @@ class AlipayProvider:
             "status": str(payload.get("trade_status") or "TRADE_SUCCESS"),
             "app_id": str(payload.get("app_id") or ""),
             "notify_id": str(payload.get("notify_id") or ""),
-            "merchant_id": str(payload.get("seller_id") or payload.get("merchant_id") or ""),
+            "merchant_id": str(
+                payload.get("seller_id") or payload.get("merchant_id") or ""
+            ),
         }
 
     def sign_payload(self, payload: dict[str, Any]) -> str:
@@ -159,14 +162,16 @@ class AlipayProvider:
         return "&".join(f"{key}={value}" for key, value in pairs)
 
     @staticmethod
-    def _append_query_param(url: str, key: str, value: str) -> str:
+    def _append_query_params(url: str, params: dict[str, str]) -> str:
         parts = urlsplit(url)
         query = parse_qsl(parts.query, keep_blank_values=True)
-        query.append((key, value))
-        return urlunsplit((
-            parts.scheme,
-            parts.netloc,
-            parts.path,
-            urlencode(query),
-            parts.fragment,
-        ))
+        query.extend((key, value) for key, value in params.items())
+        return urlunsplit(
+            (
+                parts.scheme,
+                parts.netloc,
+                parts.path,
+                urlencode(query),
+                parts.fragment,
+            )
+        )

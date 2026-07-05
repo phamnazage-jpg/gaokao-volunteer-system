@@ -395,6 +395,50 @@ def test_payment_return_does_not_issue_portal_token_before_paid(client, settings
     assert resp.status_code in {401, 403, 409}
 
 
+def test_payment_return_requires_bound_return_nonce_after_paid(client, settings):
+    create_resp = client.post(
+        "/api/public/orders",
+        json={
+            "service_version": "standard",
+            "amount_cents": 9900,
+            "customer_phone": "13800138000",
+            "candidate_name": "张三",
+            "candidate_province": "湖南",
+        },
+    )
+    assert create_resp.status_code == 201, create_resp.text
+    payment_id = create_resp.json()["checkout_url"].split("/pay/mock/")[1].split("?")[0]
+
+    complete = client.post(f"/pay/mock/{payment_id}/complete", follow_redirects=False)
+    assert complete.status_code == 303, complete.text
+
+    without_nonce = client.get(
+        f"/portal/payment-return?payment_id={payment_id}", follow_redirects=False
+    )
+    assert without_nonce.status_code in {400, 401, 403}
+
+    wrong_nonce = client.get(
+        f"/portal/payment-return?payment_id={payment_id}&return_nonce=wrong",
+        follow_redirects=False,
+    )
+    assert wrong_nonce.status_code in {400, 401, 403}
+
+    payment = PaymentService.for_db(
+        settings.orders_db_path,
+        base_url=settings.payment_base_url,
+        webhook_secret=settings.payment_webhook_secret,
+    ).get_payment(payment_id)
+    assert payment is not None
+    assert payment.checkout_token
+
+    valid = client.get(
+        f"/portal/payment-return?payment_id={payment_id}&return_nonce={payment.checkout_token}",
+        follow_redirects=False,
+    )
+    assert valid.status_code == 303, valid.text
+    assert valid.headers["location"].endswith("/payment-success")
+
+
 def test_partial_artifacts_do_not_expose_delivery_links_before_report_ready(
     client, settings, tmp_path: Path
 ):

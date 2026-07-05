@@ -367,7 +367,9 @@ def complete_alipay_sim_payment(
 
 @router.get("/portal/payment-return", include_in_schema=False)
 def payment_return_page(
-    payment_id: str, settings: Settings = Depends(get_settings_dep)
+    payment_id: str,
+    return_nonce: str | None = None,
+    settings: Settings = Depends(get_settings_dep),
 ) -> RedirectResponse:
     service = _payment_service(settings)
     payment = service.get_payment(payment_id)
@@ -375,6 +377,8 @@ def payment_return_page(
         raise HTTPException(status_code=404, detail="payment not found")
     if payment.status != "paid":
         raise HTTPException(status_code=409, detail="payment not ready")
+    if not payment.checkout_token or return_nonce != payment.checkout_token:
+        raise HTTPException(status_code=403, detail="payment return nonce invalid")
     portal_token = issue_portal_token(payment.order_id, settings.portal_token_secret)
     return RedirectResponse(
         url=f"/portal/{portal_token}/payment-success", status_code=303
