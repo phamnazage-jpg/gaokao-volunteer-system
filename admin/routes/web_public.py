@@ -7,7 +7,9 @@ import logging
 import secrets
 from html import escape
 from pathlib import Path
+from collections import deque
 from datetime import datetime, timedelta, timezone
+import time
 from typing import Any, Literal
 from urllib.parse import parse_qsl
 
@@ -22,7 +24,7 @@ from fastapi.responses import (
 from pydantic import BaseModel, Field
 
 from admin.config import Settings, get_settings_dep
-from admin.errors import DATA_NOT_FOUND, DATA_VALIDATION_FAILED
+from admin.errors import BIZ_RATE_LIMITED, DATA_NOT_FOUND, DATA_VALIDATION_FAILED
 from admin.errors.exceptions import BusinessError
 from data.customer_portal.token import (
     PortalTokenError,
@@ -38,7 +40,7 @@ from data.llm import (
 )
 from data.notifications.email_service import DeliveryNotificationService
 from data.orders import crypto
-from data.orders.dao import OrderNotFound, OrdersDAO
+from data.orders.dao import DuplicateOrder, OrderNotFound, OrdersDAO
 from data.orders.deletion_service import RETENTION_GUARDED_STATUSES
 from data.orders.intake_schema import IntakePayload
 from data.orders.intake_store import IntakeStore
@@ -73,6 +75,39 @@ _SERVICE_PRICES = {
     "premium": 19900,
 }
 _SIMULATED_PAYMENT_ROUTE_NOT_FOUND = "not found"
+
+_PUBLIC_ORDER_RATE_LIMIT = 5
+_PUBLIC_ORDER_RATE_LIMIT_WINDOW_SECONDS = 60.0
+_PUBLIC_ORDER_RATE_LIMIT_BUCKETS: dict[str, deque[float]] = {}
+
+
+def _public_order_rate_limit_key(request: Request, payload: PublicOrderCreate, settings: Settings) -> str:
+    client_host = request.client.host if request.client else "unknown"
+    contact = (payload.customer_phone or payload.customer_wechat or "unknown").strip().lower()
+    return f"{settings.orders_db_path}:{client_host}:{contact}"
+
+
+def _assert_public_order_rate_limit(request: Request, payload: PublicOrderCreate, settings: Settings) -> None:
+    if payload.idempotency_key:
+        return
+    now = time.time()
+    key = _public_order_rate_limit_key(request, payload, settings)
+    bucket = _PUBLIC_ORDER_RATE_LIMIT_BUCKETS.setdefault(key, deque())
+    cutoff = now - _PUBLIC_ORDER_RATE_LIMIT_WINDOW_SECONDS
+    while bucket and bucket[0] < cutoff:
+        bucket.popleft()
+    if len(bucket) >= _PUBLIC_ORDER_RATE_LIMIT:
+        raise BusinessError(
+            BIZ_RATE_LIMITED,
+            detail={"retry_after_seconds": int(_PUBLIC_ORDER_RATE_LIMIT_WINDOW_SECONDS)},
+            http_status=429,
+        )
+    bucket.append(now)
+
+
+def reset_public_order_rate_limit_for_tests() -> None:
+    _PUBLIC_ORDER_RATE_LIMIT_BUCKETS.clear()
+
 
 _DELETION_SCOPE_VALUES = ("order_only", "order_and_attachments", "full_account")
 _DELETION_NEXT_STEP_OUTSIDE = (
@@ -246,8 +281,11 @@ def payment_success_page(
 @router.post("/api/public/orders", response_model=PublicOrderCreated, status_code=201)
 def create_public_order_endpoint(
     payload: PublicOrderCreate,
+    request: Request,
     settings: Settings = Depends(get_settings_dep),
 ) -> PublicOrderCreated:
+    _assert_public_order_rate_limit(request, payload, settings)
+
     try:
         payment_service = _payment_service(settings)
     except PaymentError as exc:
@@ -261,7 +299,15 @@ def create_public_order_endpoint(
 
     try:
         with OrdersDAO.connect(settings.orders_db_path) as dao:
-            order = create_public_order(dao, payload)
+            try:
+                order = create_public_order(dao, payload)
+            except DuplicateOrder:
+                if not payload.idempotency_key:
+                    raise
+                existing = dao.get_by_external_id("web", f"idempotency:{payload.idempotency_key}")
+                if existing is None:
+                    raise
+                order = existing
     except MissingEncryptionKey as exc:
         crypto.get_fernet.cache_clear()
         logger.warning("public order create blocked by missing encryption key: %s", exc)

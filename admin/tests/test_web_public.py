@@ -285,6 +285,50 @@ def test_public_create_order_rejects_price_tampering(client):
     )
 
 
+def test_public_create_order_reuses_order_for_idempotency_key(client, app):
+    payload = {
+        "service_version": "standard",
+        "amount_cents": 9900,
+        "customer_name": "张家长",
+        "customer_phone": "13800138000",
+        "candidate_name": "张三",
+        "candidate_province": "湖南",
+        "idempotency_key": "same-checkout-intent",
+    }
+
+    first = client.post("/api/public/orders", json=payload)
+    second = client.post("/api/public/orders", json=payload)
+
+    assert first.status_code == 201, first.text
+    assert second.status_code == 201, second.text
+    assert first.json()["order_id"] == second.json()["order_id"]
+    assert first.json()["checkout_url"] == second.json()["checkout_url"]
+    with OrdersDAO.connect(app.state.settings.orders_db_path) as dao:
+        assert dao.count() == 1
+
+
+def test_public_create_order_rate_limits_repeated_non_idempotent_requests(client, app):
+    statuses: list[int] = []
+    for index in range(6):
+        resp = client.post(
+            "/api/public/orders",
+            json={
+                "service_version": "standard",
+                "amount_cents": 9900,
+                "customer_name": "张家长",
+                "customer_phone": "13800138000",
+                "candidate_name": f"张三{index}",
+                "candidate_province": "湖南",
+            },
+        )
+        statuses.append(resp.status_code)
+
+    assert statuses[:5] == [201, 201, 201, 201, 201]
+    assert statuses[5] == 429
+    with OrdersDAO.connect(app.state.settings.orders_db_path) as dao:
+        assert dao.count() == 5
+
+
 def test_public_create_order_persists_candidate_province(client, app):
     resp = client.post(
         "/api/public/orders",

@@ -61,6 +61,7 @@ class PublicOrderCreate(BaseModel):
     customer_phone: Optional[str] = Field(default=None, min_length=1)
     customer_wechat: Optional[str] = None
     customer_email: Optional[str] = None
+    idempotency_key: Optional[str] = Field(default=None, min_length=1, max_length=128)
     candidate_name: str = Field(min_length=1)
     candidate_province: Optional[str] = None
     notes: Optional[str] = None
@@ -91,6 +92,7 @@ def create_public_order(dao: OrdersDAO, request: PublicOrderCreate) -> Order:
     order = Order(
         id=generate_order_id(),
         source="web",
+        external_id=f"idempotency:{request.idempotency_key}" if request.idempotency_key else None,
         service_version=request.service_version,
         amount_cents=service_price_for(request.service_version),
         status="pending",
