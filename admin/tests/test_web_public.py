@@ -191,6 +191,60 @@ def test_public_create_order_returns_503_with_friendly_message_when_encryption_k
     assert "当前暂时无法创建订单" in body["detail"]["reason"]
 
 
+def test_public_create_order_masks_payment_provider_readiness_details(
+    tmp_path, monkeypatch
+):
+    admin_db = tmp_path / "admin.db"
+    orders_db = tmp_path / "orders.db"
+    share_db = tmp_path / "share.db"
+    share_reports = tmp_path / "share_reports"
+    share_reports.mkdir()
+
+    monkeypatch.setenv("GAOKAO_ENV", "dev")
+    monkeypatch.setenv("GAOKAO_DB_PATH", str(admin_db))
+    monkeypatch.setenv("GAOKAO_ORDERS_DB_PATH", str(orders_db))
+    monkeypatch.setenv("GAOKAO_SHARE_DB_PATH", str(share_db))
+    monkeypatch.setenv("GAOKAO_SHARE_REPORT_DIR", str(share_reports))
+    monkeypatch.setenv("GAOKAO_ORDERS_FERNET_KEY", "test-fernet-key")
+    monkeypatch.setenv("GAOKAO_JWT_SECRET", "x" * 64)
+    monkeypatch.setenv("GAOKAO_JWT_EXP_MIN", "5")
+    monkeypatch.setenv("GAOKAO_ADMIN_USER", "admin")
+    monkeypatch.setenv("GAOKAO_ADMIN_PASS", "test-pass-123")
+    monkeypatch.setenv("GAOKAO_PAYMENT_PROVIDER", "alipay")
+    monkeypatch.setenv("GAOKAO_PAYMENT_WEBHOOK_SECRET", "w" * 32)
+    monkeypatch.delenv("GAOKAO_PAYMENT_APP_ID", raising=False)
+    monkeypatch.delenv("GAOKAO_PAYMENT_PRIVATE_KEY_PATH", raising=False)
+
+    from admin.app import create_app
+    from admin.config import load_settings
+    from data.orders import crypto
+
+    crypto.get_fernet.cache_clear()
+
+    settings = load_settings()
+    app = create_app(settings)
+
+    with TestClient(app) as client:
+        resp = client.post(
+            "/api/public/orders",
+            json={
+                "service_version": "standard",
+                "amount_cents": 9900,
+                "customer_phone": "13800138000",
+                "candidate_name": "张三",
+                "candidate_province": "湖南",
+            },
+        )
+
+    assert resp.status_code == 503, resp.text
+    raw_body = resp.text
+    assert "当前暂时无法创建订单" in raw_body
+    assert "GAOKAO_PAYMENT" not in raw_body
+    assert "missing env vars" not in raw_body
+    assert "missing files" not in raw_body
+    assert "alipay provider not ready" not in raw_body
+
+
 def test_public_create_order_rejects_missing_minimal_fields(client):
     resp = client.post(
         "/api/public/orders",
@@ -417,16 +471,18 @@ def test_prod_hides_simulated_payment_entrypoints(tmp_path, monkeypatch):
     from admin.config import load_settings
 
     settings = load_settings()
-    request = Request({
-        "type": "http",
-        "method": "POST",
-        "path": "/api/public/payments/mock/webhook",
-        "headers": [],
-        "query_string": b"",
-        "server": ("testserver", 80),
-        "client": ("127.0.0.1", 12345),
-        "scheme": "http",
-    })
+    request = Request(
+        {
+            "type": "http",
+            "method": "POST",
+            "path": "/api/public/payments/mock/webhook",
+            "headers": [],
+            "query_string": b"",
+            "server": ("testserver", 80),
+            "client": ("127.0.0.1", 12345),
+            "scheme": "http",
+        }
+    )
 
     for route_call in (
         lambda: mock_payment_page("pay_123", settings),
@@ -483,7 +539,12 @@ def test_public_create_order_returns_503_without_creating_orphan_order_when_prov
         )
 
     assert resp.status_code == 503, resp.text
-    assert "payment provider unavailable" in resp.text
+    raw_body = resp.text
+    assert "当前暂时无法创建订单" in raw_body
+    assert "payment provider unavailable" not in raw_body
+    assert "alipay provider not ready" not in raw_body
+    assert "missing env vars" not in raw_body
+    assert "GAOKAO_PAYMENT" not in raw_body
     with OrdersDAO.connect(settings.orders_db_path) as dao:
         assert dao.count() == 0
 

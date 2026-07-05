@@ -251,9 +251,12 @@ def create_public_order_endpoint(
     try:
         payment_service = _payment_service(settings)
     except PaymentError as exc:
+        logger.warning(
+            "public order create blocked by payment provider readiness: %s", exc
+        )
         raise HTTPException(
             status_code=503,
-            detail=f"payment provider unavailable: {exc}",
+            detail="当前暂时无法创建订单，请稍后重试或联系客服获取人工协助。",
         ) from exc
 
     try:
@@ -273,9 +276,10 @@ def create_public_order_endpoint(
     except PaymentError as exc:
         with OrdersDAO.connect(settings.orders_db_path) as dao:
             dao.delete(order.id)
+        logger.warning("public order checkout creation failed: %s", exc)
         raise HTTPException(
             status_code=503,
-            detail=f"payment checkout unavailable: {exc}",
+            detail="当前暂时无法创建订单，请稍后重试或联系客服获取人工协助。",
         ) from exc
     return PublicOrderCreated(
         order_id=order.id,
