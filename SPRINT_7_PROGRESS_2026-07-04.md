@@ -1,6 +1,6 @@
 # Sprint 7 Progress · 2026-07-04
 
-> **状态**：✅ 非 Docker / 非外部 token 的 Sprint 7 前端可执行项已完成。
+> **状态**：✅ 非 Docker / 非外部 token 的 Sprint 7 前端可执行项已完成；2026-07-05 已补修 i18n 迁移后的 e2e selector 回归。
 > **本轮范围**：T-D-22 react-intl 基础接入、T-D-23 i18n key 覆盖守门、T-E-01 `/admin/login`、T-E-02 `/admin` Dashboard 最小入口、T-E-03 后台 Layout、T-E-04 `/admin/error` 错误兜底、T-E-05 `<RequireAuth>` 权限守卫、T-E-06 订单列表、T-E-07 订单详情、T-E-08/T-E-09 案例列表与详情、T-E-10 本地 a11y 守门。
 > **环境说明**：本机暂无 Docker；Chromatic / Storybook baseline 仍依赖外部配置和 token，Docker 验证继续等待本机环境可用。
 
@@ -132,7 +132,8 @@
 ## ⏭️ 下一步候选
 
 - T-D-23 全量文案审计：后台入口、登录、403、Dashboard、订单/案例列表与详情、错误页、全局导航壳层、AboutPage、NotFound/ErrorFallback、Plans 模块、ConsultationsPage、Share 管理模块、PosterPreview 海报模块、DataQuery 数据查询模块、HomePage / FormCard 首页信息收集模块、ReviewFlow / LLMEnhancement / AuditReportCard 审核域、PlanCard / CareerCard / FileUploadPrompt / UploadBar 聊天卡片与上传入口、PortalPage 分享门户页、共享默认组件、Chat / LLM runtime 文案已迁移并加守门；非生成生产源码中文硬编码扫描为 0，剩余中文只在测试夹具、mock 数据和 OpenAPI/codegen 生成产物。
-- T-B-25 bundle 预算：已通过临时 outDir production build；`react-intl` 拆入 `intl-vendor` 后 main chunk 降至 133.43 KB gzip，低于单 chunk 150 KB gzip 预算。
+- T-B-25 bundle 预算：2026-07-05 最新 `pnpm run build` 通过；main chunk 146.74 KB gzip，total 393.60 KB gzip，仍低于单 chunk 150 KB / total 500 KB 预算。
 - T-E-10 axe / Lighthouse 复测：公共入口 / 数据查询 / 后台入口 Chromium 运行时 a11y 烟测已补；LHCI 本机复测可启动页面但当前 Chrome 临时目录清理触发 EPERM，建议留给 CI 或修复本机 Chrome 临时目录权限后复跑。
+- T-E-10 e2e 回归复测：`2194f89` 修复 i18n selector 与 mobile admin nav 回归；targeted 8/8、Chromium 29/29、Chromium + WebKit + mobile-chrome 87/87 通过。Firefox 当前为本机 Playwright `browserContext.newPage` 环境异常，需单独环境复验。
 - T-D-24/T-E-11 Chromatic：Admin portal Chromium e2e 已补；Chromatic baseline 仍等待 Storybook/Chromatic 配置与 token。
 - T-C-44 Docker 构建验证：等待本机 Docker 可用后继续。

@@ -1,6 +1,6 @@
-# Sprint 4 阶段进度报告 (V10 选项 B · 9/16 任务)
+# Sprint 4 阶段进度报告 (V10 选项 B · 15/16 任务)
 
-> **日期**：2026-07-04（T-B-27 真实后端回归验证后）
+> **日期**：2026-07-05（e2e i18n 回归修复后）
 > **真实状态**：⏳ **PARTIAL — 已完成 15/16 任务，T-C-44 配置/CI 已落地但本地 Docker 构建待环境验证**
 > **不能宣称"Sprint 4 完成"** ❌
 > **下一步**：剩余阻塞项为 T-C-44 Poster CLI Docker 本地构建验证
@@ -14,8 +14,8 @@
 - **Sprint 4 任务表共 16 任务 / 53 子任务 / 10 人天**
 - **本次完成 5 任务 / 15 子任务**
 - **G3 闸门定义包含**："8 e2e spec 全绿 + 真实后端 5 模块 200 + Lighthouse P/A/B/S ≥ 90"
-- **已通过的 G3 子项**：typecheck / lint / vitest / playwright / build / Lighthouse ≥ 90（P/A/B/S）/ 真实后端回归（5 模块 200）
-- **未通过的 G3 子项**：无
+- **已通过的 G3 子项**：typecheck / lint / vitest / playwright（Chromium + WebKit + mobile-chrome）/ build
+- **待环境复验的 G3 子项**：Lighthouse / 真实后端回归（当前本机无 Docker，pytest 环境未作为本轮复验前置）
 - **待环境验证的 G4 子项**：Poster CLI Docker 镜像本地构建
 
 正确标签应该是"Sprint 4 阶段 1 完成"，而不是"Sprint 4 完成"。
@@ -35,12 +35,12 @@
 | **T-B-24** | **Lighthouse CI** | **4/4** | ✅ | **`61ba0ca`** |
 | **T-B-25** | **Bundle 优化验证** | **3/3** | ✅ | **`bf5ad4a`** |
 | **T-B-26** | **路由级 prefetch** | **2/2** | ✅ | **`97cd431`** |
-| **T-B-27** | **真实后端回归** | **2/2** | ✅ | **working tree** |
-| **T-B-40** | **Share Link 状态面板** | **3/3** | ✅ | **working tree** |
-| **T-B-41** | **ShareLink 失败降级** | **3/3** | ✅ | **working tree** |
-| **T-B-42** | **LLM 增强进度轮询** | **3/3** | ✅ | **working tree** |
-| **T-B-43** | **Poster 异步生成 + 轮询** | **3/3** | ✅ | **working tree** |
-| **T-C-45** | **集成测试套件** | **2/2** | ✅ | **working tree** |
+| **T-B-27** | **真实后端回归** | **2/2** | ✅ | **`06a0f47`** |
+| **T-B-40** | **Share Link 状态面板** | **3/3** | ✅ | **`fecdb67`** |
+| **T-B-41** | **ShareLink 失败降级** | **3/3** | ✅ | **`c955459`** |
+| **T-B-42** | **LLM 增强进度轮询** | **3/3** | ✅ | **`c7f1dd4`** |
+| **T-B-43** | **Poster 异步生成 + 轮询** | **3/3** | ✅ | **`45e6719`** |
+| **T-C-45** | **集成测试套件** | **2/2** | ✅ | **`45e6719`** |
 
 ---
 
@@ -54,7 +54,13 @@
 - ReadableStream 不被 `route.fulfill` 接受 → 用 `Buffer.from(sse, 'utf-8')`
 - Mobile viewport 下 fixed nav 拦截 click → 用 Enter 键 + `{force: true}` + 验证 disabled
 
-最终：21 spec × 4 浏览器 = **84/84 全绿**
+2026-07-05 复验：i18n 迁移导致的 e2e selector 回归已在 `2194f89` 修复。
+
+当前可验证结果：
+- Targeted 回归 spec：**8/8 passed**
+- Chromium 全量：**29/29 passed**
+- Chromium + WebKit + mobile-chrome：**87/87 passed**
+- Firefox：本机 Playwright 环境触发 `browserContext.newPage` 异常，需环境修复后单独复验；不再计入本轮 i18n selector 回归。
 
 ### T-B-24 · Lighthouse CI 集成（1.5d · 4 子任务） ✅ DONE
 - 装 `@lhci/cli` v0.14
@@ -71,7 +77,7 @@
 - `usePrefetchLazyRoute` hook：lazy route loaders 注册表
 - `RouteFallback` Suspense fallback（48px min-height）
 - `Sidebar` NavLink onMouseEnter/onFocus 触发 prefetch
-- main chunk 85.57 → 81.30 KB gzip（-4.27 KB）
+- 2026-07-05 最新构建：main chunk 146.74 KB gzip，total 393.60 KB gzip；仍低于单 chunk 150 KB / total 500 KB 预算，但不再沿用 81.30 KB 旧口径。
 
 ### T-C-44 · Poster CLI Docker（1.0d · 4 子任务）
 - ✅ `Dockerfile.poster` 已补
@@ -88,10 +94,10 @@
 | typecheck | `tsc --noEmit` 0 error | 0 error | ✅ |
 | lint | `eslint .` 0 error 0 warning | 0 error 0 warning | ✅ |
 | vitest | 单测全过 | 69/69 (17 文件) | ✅ |
-| e2e | 8 spec 全绿 (4 浏览器) | **21/21 spec · 84/84 通过** | ✅ |
-| build | bundle 主 chunk < 150KB gzip | main 81.30 KB · total 301 KB | ✅ |
-| **Lighthouse** | **P/A/B/S ≥ 90（desktop）** | **P=100, a11y=95, best=96, seo=91** | ✅ |
-| 真实后端 | 5 模块 200 | PASS：share / data-query / review / llm / poster 全部 200；报告 `reports/sprint4-real-backend-regression.json` | ✅ |
+| e2e | 8+ spec 全绿 | Chromium 29/29；Chromium + WebKit + mobile-chrome 87/87；Firefox 待本机环境修复后复验 | ⚠️ |
+| build | bundle 主 chunk < 150KB gzip | main 146.74 KB · total 393.60 KB | ✅ |
+| **Lighthouse** | **P/A/B/S ≥ 90（desktop）** | 历史 P=100, a11y=95, best=96, seo=91；本轮未复跑 | ⏳ |
+| 真实后端 | 5 模块 200 | 历史报告 `reports/sprint4-real-backend-regression.json` 存在；本轮未复跑 | ⏳ |
 | G4 Poster CLI | Docker 镜像本地构建 | Dockerfile/compose/CI 已落地；本地构建待 Docker 环境 | ⏳ |
 
 ---
