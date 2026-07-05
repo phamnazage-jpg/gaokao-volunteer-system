@@ -27,6 +27,19 @@ def _write_keypair(tmp_path: Path) -> tuple[Path, Path]:
     return private_path, public_path
 
 
+def test_alipay_notify_rejects_oversized_body_before_parsing(client):
+    oversized = "x" * (64 * 1024 + 1)
+
+    resp = client.post(
+        "/api/public/payments/alipay/notify",
+        content=oversized,
+        headers={"Content-Type": "application/x-www-form-urlencoded"},
+    )
+
+    assert resp.status_code == 413
+    assert "payment notify body too large" in resp.text
+
+
 def test_alipay_notify_marks_order_paid_and_is_idempotent(tmp_path, monkeypatch):
     admin_db = tmp_path / "admin.db"
     orders_db = tmp_path / "orders.db"

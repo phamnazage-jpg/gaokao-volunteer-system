@@ -75,19 +75,26 @@ _SERVICE_PRICES = {
     "premium": 19900,
 }
 _SIMULATED_PAYMENT_ROUTE_NOT_FOUND = "not found"
+_ALIPAY_NOTIFY_MAX_BODY_BYTES = 64 * 1024
 
 _PUBLIC_ORDER_RATE_LIMIT = 5
 _PUBLIC_ORDER_RATE_LIMIT_WINDOW_SECONDS = 60.0
 _PUBLIC_ORDER_RATE_LIMIT_BUCKETS: dict[str, deque[float]] = {}
 
 
-def _public_order_rate_limit_key(request: Request, payload: PublicOrderCreate, settings: Settings) -> str:
+def _public_order_rate_limit_key(
+    request: Request, payload: PublicOrderCreate, settings: Settings
+) -> str:
     client_host = request.client.host if request.client else "unknown"
-    contact = (payload.customer_phone or payload.customer_wechat or "unknown").strip().lower()
+    contact = (
+        (payload.customer_phone or payload.customer_wechat or "unknown").strip().lower()
+    )
     return f"{settings.orders_db_path}:{client_host}:{contact}"
 
 
-def _assert_public_order_rate_limit(request: Request, payload: PublicOrderCreate, settings: Settings) -> None:
+def _assert_public_order_rate_limit(
+    request: Request, payload: PublicOrderCreate, settings: Settings
+) -> None:
     if payload.idempotency_key:
         return
     now = time.time()
@@ -99,7 +106,9 @@ def _assert_public_order_rate_limit(request: Request, payload: PublicOrderCreate
     if len(bucket) >= _PUBLIC_ORDER_RATE_LIMIT:
         raise BusinessError(
             BIZ_RATE_LIMITED,
-            detail={"retry_after_seconds": int(_PUBLIC_ORDER_RATE_LIMIT_WINDOW_SECONDS)},
+            detail={
+                "retry_after_seconds": int(_PUBLIC_ORDER_RATE_LIMIT_WINDOW_SECONDS)
+            },
             http_status=429,
         )
     bucket.append(now)
@@ -304,7 +313,9 @@ def create_public_order_endpoint(
             except DuplicateOrder:
                 if not payload.idempotency_key:
                     raise
-                existing = dao.get_by_external_id("web", f"idempotency:{payload.idempotency_key}")
+                existing = dao.get_by_external_id(
+                    "web", f"idempotency:{payload.idempotency_key}"
+                )
                 if existing is None:
                     raise
                 order = existing
@@ -363,7 +374,21 @@ async def alipay_notify_webhook(
     request: Request,
     settings: Settings = Depends(get_settings_dep),
 ) -> PlainTextResponse:
-    body = (await request.body()).decode("utf-8")
+    content_length = request.headers.get("content-length")
+    if content_length:
+        try:
+            if int(content_length) > _ALIPAY_NOTIFY_MAX_BODY_BYTES:
+                raise HTTPException(
+                    status_code=413, detail="payment notify body too large"
+                )
+        except ValueError:
+            raise HTTPException(
+                status_code=400, detail="invalid content-length"
+            ) from None
+    raw_body = await request.body()
+    if len(raw_body) > _ALIPAY_NOTIFY_MAX_BODY_BYTES:
+        raise HTTPException(status_code=413, detail="payment notify body too large")
+    body = raw_body.decode("utf-8")
     payload = {key: value for key, value in parse_qsl(body, keep_blank_values=True)}
     signature = payload.pop("sign", "")
     payload.pop("sign_type", None)
@@ -565,8 +590,13 @@ def _validate_upload(
         ".jpeg": {"image/jpeg"},
         ".webp": {"image/webp"},
     }
-    if normalized_content_type and normalized_content_type not in expected_content_types[suffix]:
-        raise HTTPException(status_code=415, detail="attachment content type does not match extension")
+    if (
+        normalized_content_type
+        and normalized_content_type not in expected_content_types[suffix]
+    ):
+        raise HTTPException(
+            status_code=415, detail="attachment content type does not match extension"
+        )
 
     magic_prefixes = {
         ".pdf": (b"%PDF-",),
@@ -575,20 +605,30 @@ def _validate_upload(
         ".jpeg": (b"\xff\xd8\xff",),
         ".webp": (b"RIFF",),
     }
-    if suffix in magic_prefixes and not any(payload.startswith(prefix) for prefix in magic_prefixes[suffix]):
-        raise HTTPException(status_code=415, detail="attachment content does not match extension")
+    if suffix in magic_prefixes and not any(
+        payload.startswith(prefix) for prefix in magic_prefixes[suffix]
+    ):
+        raise HTTPException(
+            status_code=415, detail="attachment content does not match extension"
+        )
     if suffix == ".webp" and len(payload) >= 12 and payload[8:12] != b"WEBP":
-        raise HTTPException(status_code=415, detail="attachment content does not match extension")
+        raise HTTPException(
+            status_code=415, detail="attachment content does not match extension"
+        )
     if suffix in {".txt", ".md", ".json"}:
         try:
             payload.decode("utf-8")
         except UnicodeDecodeError as exc:
-            raise HTTPException(status_code=415, detail="attachment text must be utf-8") from exc
+            raise HTTPException(
+                status_code=415, detail="attachment text must be utf-8"
+            ) from exc
         if suffix == ".json":
             try:
                 json.loads(payload.decode("utf-8"))
             except json.JSONDecodeError as exc:
-                raise HTTPException(status_code=415, detail="attachment json is invalid") from exc
+                raise HTTPException(
+                    status_code=415, detail="attachment json is invalid"
+                ) from exc
 
 
 def _store_portal_attachment(
