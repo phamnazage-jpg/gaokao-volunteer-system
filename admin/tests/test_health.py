@@ -13,7 +13,8 @@ def test_health_endpoint_returns_minimal_readiness_only(client):
     checks = body["checks"]
     assert checks.get("db_writable") is True
     assert checks.get("disk_writable") is True
-    # settings_ok=True 意味着 prod fail-closed 通过（默认 dev 环境）
+    # settings_valid=True 意味着默认 dev 环境允许本地占位密钥，prod 仍由 load_settings fail-closed 测试覆盖
+    assert checks.get("settings_valid") is True
 
 
 def test_load_settings_prod_rejects_dev_jwt_secret(monkeypatch, tmp_path):

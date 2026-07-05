@@ -63,7 +63,13 @@ def _check_disk_writable(settings: Settings) -> bool:
 
 
 def _check_settings_valid(settings: Settings) -> bool:
-    """检查 prod fail-closed 通过 (JWT + admin password + payment)。"""
+    """检查 prod fail-closed 通过 (JWT + admin password + payment)。
+
+    dev 环境允许占位密钥，仅 prod 环境强制安全密钥。
+    """
+    if settings.env == "dev":
+        # dev 环境允许占位密钥，不做 fail-closed
+        return True
     secure, _ = is_jwt_secret_secure(settings)
     return secure
 
