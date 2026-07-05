@@ -98,6 +98,38 @@ def test_portal_attachment_upload_rejects_before_payment(client, settings):
     assert "payment required" in upload.text
 
 
+
+def test_portal_attachment_upload_rejects_png_extension_with_text_payload(client, settings):
+    order = _seed_order(settings.orders_db_path, order_id="GKO-20260705-UPLOAD-MAGIC")
+    _mark_paid(settings, order)
+    token = issue_portal_token(order.id, settings.portal_token_secret)
+
+    upload = client.post(
+        f"/portal/{token}/attachments",
+        files={"files": ("fake.png", b"not a real png", "image/png")},
+    )
+
+    assert upload.status_code == 415
+    assert "attachment content does not match extension" in upload.text
+
+
+def test_portal_attachment_upload_accepts_real_png_magic_bytes(client, settings):
+    order = _seed_order(settings.orders_db_path, order_id="GKO-20260705-UPLOAD-PNG")
+    _mark_paid(settings, order)
+    token = issue_portal_token(order.id, settings.portal_token_secret)
+    png_payload = b"\x89PNG\r\n\x1a\n" + b"minimal-png-smoke"
+
+    upload = client.post(
+        f"/portal/{token}/attachments",
+        files={"files": ("real.png", png_payload, "image/png")},
+    )
+
+    assert upload.status_code == 200, upload.text
+    meta = upload.json()["attachments"][0]
+    assert meta["original_name"] == "real.png"
+    assert meta["content_type"] == "image/png"
+
+
 def test_portal_attachment_upload_rejects_unsupported_type(client, settings):
     order = _seed_order(settings.orders_db_path, order_id="GKO-20260615-UPLOAD-TYPE")
     _mark_paid(settings, order)

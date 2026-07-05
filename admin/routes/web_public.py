@@ -554,6 +554,42 @@ def _validate_upload(
     if not payload:
         raise HTTPException(status_code=400, detail="empty attachment")
 
+    normalized_content_type = (content_type or "").split(";", 1)[0].strip().lower()
+    expected_content_types = {
+        ".pdf": {"application/pdf"},
+        ".txt": {"text/plain"},
+        ".md": {"text/markdown", "text/plain"},
+        ".json": {"application/json", "text/json"},
+        ".png": {"image/png"},
+        ".jpg": {"image/jpeg"},
+        ".jpeg": {"image/jpeg"},
+        ".webp": {"image/webp"},
+    }
+    if normalized_content_type and normalized_content_type not in expected_content_types[suffix]:
+        raise HTTPException(status_code=415, detail="attachment content type does not match extension")
+
+    magic_prefixes = {
+        ".pdf": (b"%PDF-",),
+        ".png": (b"\x89PNG\r\n\x1a\n",),
+        ".jpg": (b"\xff\xd8\xff",),
+        ".jpeg": (b"\xff\xd8\xff",),
+        ".webp": (b"RIFF",),
+    }
+    if suffix in magic_prefixes and not any(payload.startswith(prefix) for prefix in magic_prefixes[suffix]):
+        raise HTTPException(status_code=415, detail="attachment content does not match extension")
+    if suffix == ".webp" and len(payload) >= 12 and payload[8:12] != b"WEBP":
+        raise HTTPException(status_code=415, detail="attachment content does not match extension")
+    if suffix in {".txt", ".md", ".json"}:
+        try:
+            payload.decode("utf-8")
+        except UnicodeDecodeError as exc:
+            raise HTTPException(status_code=415, detail="attachment text must be utf-8") from exc
+        if suffix == ".json":
+            try:
+                json.loads(payload.decode("utf-8"))
+            except json.JSONDecodeError as exc:
+                raise HTTPException(status_code=415, detail="attachment json is invalid") from exc
+
 
 def _store_portal_attachment(
     *,
