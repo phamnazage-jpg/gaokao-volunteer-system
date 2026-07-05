@@ -106,6 +106,13 @@ def test_get_current_user_accepts_valid_token(client, auth_token):
     assert body["is_active"] is True
 
 
+def test_get_current_user_rejects_query_token(client, auth_token):
+    """Admin JWT 不允许通过 URL query 参数传递，避免进入日志/Referer/历史记录。"""
+    resp = client.get(f"/api/auth/me?t={auth_token}")
+    assert resp.status_code == 401
+    assert resp.headers.get("WWW-Authenticate", "").lower() == "bearer"
+
+
 def test_get_current_user_rejects_inactive(settings):
     """直接构造 inactive 用户 token → 403。"""
     from admin.db import AdminUser, AdminUserRepo, ensure_schema
