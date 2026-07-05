@@ -6,11 +6,18 @@
 
 > 一套面向人工服务运营的高考志愿填报系统：管理后台、订单/分享/渠道同步、AI 审核链路已成形；用户端 Web 自助闭环仍在推进中。
 >
-> 当前真相源：`docs/CURRENT_STATE.md` → `docs/ACTIVE_EXECUTION_BOARD_2026-06-19.md`（6/19 当前版本，6/17 之前版本仅作历史快照）
+> 当前真相源（2026-07-05 Review Remediation 三件套）：
+> - `docs/CURRENT_STATE.md`（本入口）
+> - `docs/ACTIVE_REMEDIATION_2026-07-05_REVIEW.md`（当前仍有效问题）
+> - `docs/ACTIVE_EXECUTION_BOARD_2026-07-05_REVIEW_REMEDIATION.md`（分步实施任务清单）
+> - `reports/REVIEW_REPORT_2026-07-05_COMPREHENSIVE_PROJECT_REVIEW.md`（本轮 Review 输入真相）
+> - `docs/plans/2026-07-05-review-remediation-systemic-fix-plan.md`（系统修复方案）
+>
 > 历史归档报告：`docs/archive/2026-06-historical-snapshots/FINAL_COMPLETION_REPORT_2026-06-13.md`
+> 6/13~6/26 期间的所有 review / closeout / active board 已降级为历史快照，仅作审计参考，不再代表当前状态。
 >
 > 当前项目定位：人工服务运营增强系统；用户端 Web 自助闭环仅为本地 MVP/目标态，不是完整用户端 Web 自助产品。
-> 6/19 新增约束：删除/匿名化已加保留期门禁（E02002 / 180 天），详情见 `docs/plans/2026-06-19-production-readiness-remediation-plan.md`。
+> 当前状态：本地代码与前端门禁已具备；2026-07-05 Review 发现的 P0/P1 问题正在按 Phase 0~5 系统修复；线上真实支付/域名/真实流量 acceptance 仍未完成。
 
 ## 📋 项目简介
 

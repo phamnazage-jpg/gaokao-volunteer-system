@@ -1,48 +1,47 @@
 # CURRENT_STATE
 
-最后更新: 2026-06-26
-状态词: 本地验证完成（v2.1 主链与 6/20/6/21 增量仍成立；crowd_db 全国 31 省口径全部达 high，当前 live 基线为 31 high / 0 usable / 0 skeleton；crowd_db 质量门槛已硬化为综合判定，防静默升级；本地服务启动 + integration/user_simulation E2E 已复跑通过；新增 30 组分段样例复核入口 E2E 已通过；30 组中 26 组公开支持省份已完成完整用户全链路模拟）
+最后更新: 2026-07-05T21:43:52+08:00
+当前 HEAD: `ec3c44465696f9aeb72e7132fe15415d8a5f625c`
 
-本轮增量（当前工作区，基于 HEAD `dbb8fb7` 继续深度升级）:
+状态词: `REQUEST_CHANGES / 系统性整改执行中`
 
-- crowd_db 当前 live 基线已实测为 `31 high / 0 usable / 0 skeleton`
-- `data/crowd_db/*.json` 实存 31 个文件；`loader.py` 已支持全国 31 省级行政区
-- `python -m data.crowd_db.quality_summary --human` 已确认最后 4 省（新疆 / 广西 / 西藏 / 宁夏）已落地并进入 high
-- `pytest -q data/crowd_db/tests/test_score_distribution.py data/crowd_db/tests/test_subject_requirements.py data/crowd_db/tests/test_program_type.py data/crowd_db/tests/test_crowd_db_data_quality.py data/crowd_db/tests/test_provenance_query.py` → `57 passed`
-- 2026-06-26 新增深度接入：`广西` / `宁夏` 已补 `score_distribution`（官方一分一档/一分段统计 + 本科线）
-- 当前 `score_distribution` 覆盖已达 **31/31 省**；其中 `新疆 / 西藏` 已补齐官方最低控制分数线级别接入，但两省暂未检索到公开一分一段表
-- 本轮本地验证附加证据：`GAOKAO_SKIP_INSTALL=1 bash scripts/dev-verify.sh` => `1302 passed, 3 skipped`；`scripts/integration_test.py` => `overall PASS`；`scripts/user_simulation.py` => `overall PASS`
-- 新增 30 组分段样例 E2E：`reports/score_range_e2e_2026_06_26.json` => `review_start 30/30 通过`，且对 6 组公开支持省份样例做了 `公开下单 -> portal status` 深层抽样，结果 `6/6 通过`
-- 新增 30 组完整全链路样例 E2E：`reports/score_range_fullchain_e2e_2026_06_26.json` => 在 30 组样例中，`26` 组属于当前公开下单支持省份，已全部走通 `下单 -> 支付模拟 -> payment-success -> portal info 提交 -> portal status -> review/start -> review/action(full_plan/cwb)`，结果 `26/26 通过`；其余 `4` 组因不在 `_public_supported_provinces()` 中按契约跳过完整下单链路
-- 新增 100 分数真实用户验证：`reports/SCORE_RANGE_FULLCHAIN_100_VALIDATION_2026-06-26.md` => 全量入口 `100/100` 通过、公开支持省份完整主链路 `87/87` 通过、非公开支持省份合同边界 `13/13` 正确阻断；`scripts/dev-verify.sh` 已纳入 `12` 例 smoke E2E 回归
-- 当前工作区未提交修改：`data/crowd_db/xinjiang.json`、`data/crowd_db/xizang.json`、`data/crowd_db/tests/test_score_distribution.py`、`docs/CURRENT_STATE.md`、`docs/CROWD_DB_NATIONALIZATION_SOURCE_OF_TRUTH.md`、`reports/score_range_e2e_2026_06_26.json`、`scripts/score_range_fullchain_e2e.py`、`reports/score_range_fullchain_e2e_2026_06_26.json`、`scripts/score_range_fullchain_100_e2e.py`、`reports/score_range_fullchain_100_cases_2026_06_25.json`、`reports/score_range_fullchain_100_batches_2026_06_26.json`、`reports/score_range_fullchain_100_batches_2026_06_26.csv`、`reports/score_range_fullchain_100_e2e_smoke_2026_06_26.json`、`reports/score_range_fullchain_100_e2e_2026_06_26.json`、`reports/score_range_fullchain_100_e2e_boundary_2026_06_26.json`、`reports/SCORE_RANGE_FULLCHAIN_100_VALIDATION_2026-06-26.md`、`reports/SCORE_RANGE_FULLCHAIN_100_EXEC_SUMMARY_2026-06-26.md`、`tests/test_score_range_fullchain_100_script.py`、`tests/test_score_range_fullchain_e2e_typing.py`、`tests/test_dev_verify_entrypoint.py`
+当前真实状态:
+
+- 2026-07-05 全面 Review 已完成并写入：`reports/REVIEW_REPORT_2026-07-05_COMPREHENSIVE_PROJECT_REVIEW.md`。
+- Review 发现的 P0/P1/P2 问题已转成系统修复方案与执行板：
+  - `docs/plans/2026-07-05-review-remediation-systemic-fix-plan.md`
+  - `docs/ACTIVE_REMEDIATION_2026-07-05_REVIEW.md`
+  - `docs/ACTIVE_EXECUTION_BOARD_2026-07-05_REVIEW_REMEDIATION.md`
+- 当前执行位置：Phase 0 / T0-01，正在收敛 README 与 CURRENT_STATE 入口真相。
+- 本地前端 `pnpm typecheck/lint/test/build` 已在 2026-07-05 补装依赖后 fresh gate 通过；但 Playwright e2e / LHCI / Chromatic / 真实浏览器视觉验收仍未全部闭环。
+- 后端总门禁 `scripts/dev-verify.sh` 当前仍因 mypy 9 errors 失败；不能宣称后端质量门禁通过。
+- 项目仍不能宣称生产级完成；线上真实支付、真实域名、真实用户流量 acceptance 仍未执行。
 
 真相源优先级:
 
-1. 本文件
-2. `reports/STRICT_SYSTEM_REVIEW_2026-06-24.md`（6/24 最新严格系统复审汇总版；149 passed, 1 warning，当前建议作为最新审查结论）
-3. `reports/STRICT_SYSTEM_REVIEW_2026-06-23.md`（6/23~6/24 历史滚动审查过程稿，保留发现/修复轨迹）
-4. `docs/CROWD_DB_NATIONALIZATION_SOURCE_OF_TRUTH.md`（全国高信任建设当前口径与批次真相）
-5. `docs/ACTIVE_REMEDIATION_2026-06-20.md`（6/20 当前整改清单，**取代 6/19 历史快照**）
-6. `docs/ACTIVE_EXECUTION_BOARD_2026-06-20.md`（6/20 当前执行板，**取代 6/19 历史快照**）
-7. `docs/ACTIVE_REMEDIATION_2026-06-19.md`（**已降级为历史快照**）
-8. `docs/ACTIVE_EXECUTION_BOARD_2026-06-19.md`（**已降级为历史快照**）
-9. `docs/plans/2026-06-23-national-high-trust-crowd-db-plan.md`（全国高信任建设详细计划）
-10. `docs/plans/2026-06-19-production-readiness-remediation-plan.md`（6/19 整改计划）
-11. `reports/PRODUCTION_STRICT_REVIEW_2026-06-19.md`（6/19 复审报告）
-12. `docs/plans/2026-06-17-phase2-majors-catalog-implementation-plan.md`（Phase 2 已收口快照）
-13. `docs/DESIGN_RULES_TRUSTED_CLI_2026-06-16.md`（设计快照；Phase 编号需与执行口径消歧）
-14. `docs/PROJECT_PLANNING_REALIGNMENT_2026-06-16.md`（历史规划/实现漂移审计）
-15. `docs/RULES_SOURCE_OF_TRUTH.md`（规则真相源索引；待补建）
-16. `docs/MAJOR_DATA_SOURCE_OF_TRUTH.md`（专业目录真相源索引）
-17. `docs/CLI_API_MAPPING.md`（CLI/API 映射索引）
-18. `docs/P0_P1_P2_REMEDIATION_PLAN_2026-06-14.md`（历史整改板；§4 卡片以 §2.1 状态归一为准）
-19. `docs/FRONTEND_UI_AUDIT_2026-06-16.md` / `docs/FRONTEND_UI_EXECUTION_BOARD_2026-06-16.md`
-20. `docs/ACTIVE_REMEDIATION_2026-06-13.md`（**已降级为历史快照**）
-21. `docs/ACTIVE_EXECUTION_BOARD_2026-06-13.md`（**已降级为历史快照**）
-22. `product/PRD.md` / `product/ROADMAP.md` / `docs/IMPLEMENTATION_PLAN_v2.md`
-23. `docs/PRODUCTION_DEPLOYMENT_CHECKLIST_2026-06-15.md`
-24. `reports/PRODUCT_PLANNING_TECH_ALIGNMENT_REVIEW_2026-06-13.md`（历史评审快照）
+1. `docs/CURRENT_STATE.md`（本文件，当前入口）
+2. `docs/ACTIVE_EXECUTION_BOARD_2026-07-05_REVIEW_REMEDIATION.md`（当前分步骤实施任务清单）
+3. `docs/ACTIVE_REMEDIATION_2026-07-05_REVIEW.md`（当前仍有效问题清单）
+4. `docs/plans/2026-07-05-review-remediation-systemic-fix-plan.md`（完整修复定义与系统方案）
+5. `reports/REVIEW_REPORT_2026-07-05_COMPREHENSIVE_PROJECT_REVIEW.md`（本轮 Review 输入真相）
+6. `reports/REVIEW_REPORT_V10_FRONTEND_2026-07-05.md`（V10 前端历史复核，需通过本文件解释）
+7. `REVIEW_REPORT_2026-07-02_SENIOR_DEVELOPER.md`、`REVIEW_REPORT_SPRINT_1_TO_4_2026-07-03.md`、`SPRINT_*` 文档（历史快照/阶段记录，不代表当前完成状态）
+8. `docs/ACTIVE_REMEDIATION_2026-06-20.md`、`docs/ACTIVE_EXECUTION_BOARD_2026-06-20.md` 及更早 active board（历史快照，仅供审计）
+9. `docs/CROWD_DB_NATIONALIZATION_SOURCE_OF_TRUTH.md`（crowd_db 维度真相，独立于本轮 Review Remediation 主线）
+10. `docs/PRODUCTION_DEPLOYMENT_CHECKLIST_2026-06-15.md`（线上真实 acceptance 清单，当前仍未闭环）
+
+禁止提前声称:
+
+- 禁止声称项目整体生产级完成。
+- 禁止声称 Admin 真实 JWT 鉴权闭环已完成。
+- 禁止声称支付/Portal 安全闭环已完成。
+- 禁止声称 CI/LHCI/Chromatic/视觉验收完整闭环。
+- 禁止声称线上真实支付、真实域名、真实用户流量 acceptance 已完成。
+
+历史说明:
+
+- 下方 6/13~6/26 内容保留为历史审计轨迹，不再代表当前 HEAD 的完成状态。
+- 若下方历史段落与本文件顶部冲突，以顶部当前真相源优先级和 2026-07-05 Review Remediation 文档为准。
 
 ---
 
