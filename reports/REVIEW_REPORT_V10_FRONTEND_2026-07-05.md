@@ -1,9 +1,9 @@
 # V10 前端重构 · 真实状态复核报告
 
 > **审查日期**：2026-07-05  
-> **复核更新**：2026-07-05，已纳入 `2194f89 fix: stabilize e2e assertions after i18n migration`  
+> **复核更新**：2026-07-05，已纳入 `2194f89 fix: stabilize e2e assertions after i18n migration` 与系统性二次 review  
 > **审查范围**：Sprint 1 ~ Sprint 8 前端重构任务  
-> **结论**：S1-S7 前端代码已落地，i18n 迁移导致的 14 个 e2e 回归已修复；但 Lighthouse / 后端 regression / Docker / Firefox 本机环境复验 / Sprint 8 仍未完成，不能宣称 V10 全部完成。
+> **结论**：S1-S7 前端代码已落地，i18n 迁移导致的 14 个 e2e 回归已修复；二次 review 又发现后台导航断链、Admin mock 登录未对接真实 JWT、CI/Lighthouse/Chromatic 配置风险；因此仍不能宣称 V10 全部完成。
 
 ---
 
@@ -25,6 +25,8 @@
 |---|---:|---|
 | build | `pnpm run build` 通过；main 146.74 KB gzip，total 393.60 KB gzip | ✅ 通过 |
 | lint | `pnpm run lint` 通过 | ✅ 通过 |
+| typecheck | `pnpm run typecheck` 通过 | ✅ 通过 |
+| vitest | 提权后 `pnpm run test` 通过；85 files / 317 tests | ✅ 通过 |
 | targeted e2e | data-query + navigation + poster，8/8 passed | ✅ 通过 |
 | Chromium e2e | 29/29 passed | ✅ 通过 |
 | 非 Firefox e2e 矩阵 | Chromium + WebKit + mobile-chrome，87/87 passed | ✅ 通过 |
@@ -35,7 +37,46 @@
 
 ---
 
-## 三、Sprint 状态
+## 三、系统性二次 Review Findings
+
+### F1 · 后台导航存在真实断链（High）
+
+- `apps/web/src/layouts/AdminLayout.tsx` 暴露 `/admin/review` 导航项。
+- `apps/web/src/router.tsx` 的 `/admin` 子路由没有 `review`，只有订单、案例、share-links、posters、score-lines、rank-estimator、majors、schools、error 等子路由。
+- 确定性脚本校验结果：`missing admin nav routes: /admin/review`。
+- 影响：后台用户点击“复核 / Review”会进入后台 NotFound，而不是复核页面。
+- 测试缺口：现有 `admin-portal.spec.ts` 只覆盖登录、订单、案例、错误页，没有遍历全部后台导航链接。
+
+### F2 · React Admin 登录仍是前端 mock（High）
+
+- `apps/web/src/pages/admin/LoginPage.tsx` 只接受验证码 `123456`，然后直接 `setUser(... role: 'admin')` 写入 Zustand/localStorage。
+- `apps/web/src/lib/api-client.ts` 没有从 user store 或 auth store 注入 `Authorization: Bearer ...`。
+- 后端 admin API 依赖 `/api/auth/login` 返回 JWT，并通过 `Authorization` 头访问受保护路由。
+- 影响：真实后端环境中可能出现“前端显示已登录，但 admin API 请求 401/403”的集成失败。
+
+### F3 · Lighthouse CI 启动配置存在口径不一致（Medium）
+
+- `.github/workflows/web-ci.yml` 使用 `treosh/lighthouse-ci-action@v12`，URL 指向 `http://127.0.0.1:8080/...`。
+- `apps/web/lighthouserc.cjs` 也使用 8080 URL，但注释写“vite preview 启动（8081）”。
+- workflow 未显式配置 `startServerCommand` / `startServerReadyPattern` / `staticDistDir`。
+- 影响：LHCI 可能在 CI 中因服务未启动或端口口径不一致而假挂；也可能误以为 G3 Lighthouse 已真实复验。
+
+### F4 · Chromatic token 缺失会阻塞 CI（Medium）
+
+- `.github/workflows/web-ci.yml` 的 `chromatic` job 直接使用 `${{ secrets.CHROMATIC_TOKEN }}`，没有 secret 存在性条件。
+- 当前项目状态仍把 Chromatic / Storybook baseline 视为外部 token 待配置项。
+- 影响：未配置 token 的 push / PR 可能被 Chromatic job 阻断，与“外部 token 待配置”的文档口径不一致。
+
+### F5 · 后端非 Docker 测试当前被本机 Python 环境阻塞（Environment）
+
+- `python -m pytest ...` 失败：系统 Python 是 `C:\Python314\python.exe`，未安装 pytest。
+- 项目 `.venv` 不存在。
+- `uv run pytest ...` 失败：`uv trampoline failed to spawn Python child process`。
+- 结论：这不是业务断言失败，但当前本机无法完成后端非 Docker regression 复验。
+
+---
+
+## 四、Sprint 状态
 
 | Sprint | 当前状态 | 说明 |
 |---|---|---|
@@ -50,7 +91,7 @@
 
 ---
 
-## 四、已修复项
+## 五、已修复项
 
 - **B1 e2e 14 个 i18n selector 回归**：已由 `2194f89` 修复。
 - **B2 e2e 数量/状态口径不一致**：核心文档已更新为当前 29 tests/project 与非 Firefox 87/87 复验结果。
@@ -62,8 +103,12 @@
 
 ---
 
-## 五、仍未完成项
+## 六、仍未完成项
 
+- **F1 后台 `/admin/review` 断链**：需要补 admin 子路由或移除/改指导航项，并新增全量后台导航 e2e。
+- **F2 React Admin 真实鉴权**：需要接入 `/api/auth/login`、保存 JWT，并在 `apiClient` 注入 `Authorization`。
+- **F3 Lighthouse CI**：需要显式配置 LHCI 启动方式，统一 8080/8081 口径后在 CI 复跑。
+- **F4 Chromatic CI**：需要在无 token 时跳过或降级为非阻塞 job。
 - **Firefox 项目矩阵**：当前失败是本机 Playwright 环境级 `browserContext.newPage` 异常，需修复环境后补跑。
 - **Lighthouse / LHCI**：需要 CI 或修复本机 Chrome 临时目录权限后复跑。
 - **T-B-27 后端 regression**：需要真实后端与 pytest 环境。
@@ -72,7 +117,7 @@
 
 ---
 
-## 六、最终判断
+## 七、最终判断
 
 **不能宣称 V10 前端重构全部完成。**
 
@@ -81,12 +126,15 @@
 - S1-S7 的主要前端代码已落地。
 - 本轮发现的 14 个 i18n e2e 回归已修复。
 - 非 Firefox 前端 e2e 矩阵已全绿。
+- 本轮系统性二次 review 已完成前端 lint / typecheck / unit / build / Chromium e2e 验证，并识别出新的真实集成风险。
 - 核心进度文档中的 e2e、bundle、commit hash 口径已修正。
 
 仍需完成：
 
-1. 修复 Firefox 本机 Playwright 环境异常并补跑 Firefox 矩阵。
-2. 在 CI 或完整本地环境补跑 Lighthouse + T-B-27 后端 regression。
-3. Docker 环境就绪后跑 T-C-44 Poster Docker 构建。
-4. 启动并完成 Sprint 8。
-
+1. 修复 `/admin/review` 后台导航断链，并补全后台导航 e2e。
+2. 将 React Admin 登录从 mock 改为真实 `/api/auth/login` + Bearer JWT。
+3. 修复 Lighthouse / Chromatic CI 配置口径。
+4. 修复 Firefox 本机 Playwright 环境异常并补跑 Firefox 矩阵。
+5. 在 CI 或完整本地环境补跑 Lighthouse + T-B-27 后端 regression。
+6. Docker 环境就绪后跑 T-C-44 Poster Docker 构建。
+7. 启动并完成 Sprint 8。
