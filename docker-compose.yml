@@ -40,7 +40,7 @@ services:
           "CMD",
           "python",
           "-c",
-          "import json,sys,urllib.request; data=json.load(urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=5)); sys.exit(0 if data.get('status') == 'ok' else 1)",
+          "import json,os,sys,urllib.request; port=os.environ.get('GAOKAO_ADMIN_PORT','8000'); data=json.load(urllib.request.urlopen(f'http://127.0.0.1:{port}/health', timeout=5)); sys.exit(0 if data.get('status') == 'ok' else 1)",
         ]
       interval: 30s
       timeout: 5s
