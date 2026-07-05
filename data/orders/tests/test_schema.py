@@ -243,6 +243,18 @@ def test_get_schema_version_returns_1_after_apply(tmp_db):
 def test_schema_sql_is_nonempty():
     assert "CREATE TABLE IF NOT EXISTS orders" in SCHEMA_SQL
     assert "CREATE TABLE IF NOT EXISTS order_status_history" in SCHEMA_SQL
+    assert "CREATE TABLE IF NOT EXISTS portal_token_revocations" in SCHEMA_SQL
+
+
+def test_portal_token_revocation_table_exists_after_apply(tmp_db):
+    conn = apply_schema(tmp_db)
+    try:
+        row = conn.execute(
+            "SELECT name FROM sqlite_master WHERE type='table' AND name='portal_token_revocations'"
+        ).fetchone()
+        assert row is not None
+    finally:
+        conn.close()
 
 
 def test_intake_payload_submit_accepts_minimal_step1_payload(tmp_db):

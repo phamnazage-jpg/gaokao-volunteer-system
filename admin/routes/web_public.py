@@ -1004,6 +1004,13 @@ def _resolve_order_from_token(token: str, settings: Settings) -> Order:
     except PortalTokenError as exc:
         raise HTTPException(status_code=401, detail=str(exc)) from exc
     with OrdersDAO.connect(settings.orders_db_path) as dao:
+        jti = payload.get("jti")
+        if isinstance(jti, str) and jti:
+            revoked = dao.conn.execute(
+                "SELECT 1 FROM portal_token_revocations WHERE jti=?", (jti,)
+            ).fetchone()
+            if revoked is not None:
+                raise HTTPException(status_code=401, detail="portal token revoked")
         try:
             return dao.get(str(payload["order_id"]))
         except OrderNotFound as exc:

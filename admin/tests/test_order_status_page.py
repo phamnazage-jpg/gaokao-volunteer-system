@@ -375,6 +375,34 @@ def test_real_client_review_action_rejects_json_body_for_form_route(client, sett
     assert "body.action" in missing_fields
 
 
+
+
+def test_revoked_portal_token_is_rejected(client, settings):
+    token_payload = None
+    order = _seed_order(settings.orders_db_path, order_id="GKO-20260705-REVOKE")
+    _mark_paid(settings, order)
+    token = issue_portal_token(order.id, settings.portal_token_secret)
+
+    from data.customer_portal.token import verify_portal_token
+
+    token_payload = verify_portal_token(token, settings.portal_token_secret)
+    assert token_payload["v"] == 2
+    assert token_payload["jti"]
+
+    ok = client.get(f"/portal/{token}/status")
+    assert ok.status_code == 200, ok.text
+
+    with OrdersDAO.connect(settings.orders_db_path) as dao:
+        dao.conn.execute(
+            "INSERT INTO portal_token_revocations(jti, order_id, reason, revoked_at) VALUES (?, ?, ?, ?)",
+            (token_payload["jti"], order.id, "test revoke", "2026-07-05T00:00:00+00:00"),
+        )
+        dao.conn.commit()
+
+    revoked = client.get(f"/portal/{token}/status")
+    assert revoked.status_code == 401, revoked.text
+
+
 def test_payment_return_does_not_issue_portal_token_before_paid(client, settings):
     create_resp = client.post(
         "/api/public/orders",

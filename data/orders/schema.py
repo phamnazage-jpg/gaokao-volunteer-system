@@ -83,6 +83,17 @@ CREATE TABLE IF NOT EXISTS order_status_history (
 );
 
 CREATE INDEX IF NOT EXISTS idx_status_history_order ON order_status_history(order_id);
+
+-- Portal token revoke list（v2 token jti 撤销表）
+CREATE TABLE IF NOT EXISTS portal_token_revocations (
+    jti         TEXT PRIMARY KEY,
+    order_id    TEXT,
+    reason      TEXT,
+    revoked_at  TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_portal_token_revocations_order
+    ON portal_token_revocations(order_id);
 """
 
 

@@ -4,6 +4,7 @@ import base64
 import hashlib
 import hmac
 import json
+import secrets
 import time
 from typing import Any
 
@@ -27,6 +28,8 @@ def issue_portal_token(
     payload = {
         "order_id": order_id,
         "exp": int(time.time()) + ttl_seconds,
+        "v": 2,
+        "jti": secrets.token_urlsafe(18),
     }
     payload_raw = json.dumps(payload, separators=(",", ":"), ensure_ascii=False).encode(
         "utf-8"
@@ -58,4 +61,10 @@ def verify_portal_token(token: str, secret: str) -> dict[str, Any]:
     order_id = payload.get("order_id")
     if not isinstance(order_id, str) or not order_id:
         raise PortalTokenError("portal token missing order_id")
+    jti = payload.get("jti")
+    if jti is not None and not isinstance(jti, str):
+        raise PortalTokenError("portal token invalid jti")
+    version = payload.get("v", 1)
+    if version not in {1, 2}:
+        raise PortalTokenError("portal token unsupported version")
     return payload
