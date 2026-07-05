@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any, Iterable, Union
 
 from PIL import Image, ImageDraw, ImageFont
 
@@ -42,10 +42,10 @@ class PosterRecommendation:
 class PosterPayload:
     report_id: str
     title: str
-    candidate_name: str
-    score_line: str
-    recommendations: list[PosterRecommendation]
-    share_url: str
+    candidate_name: str = ""
+    score_line: str = ""
+    recommendations: list[PosterRecommendation] = field(default_factory=list)
+    share_url: str = ""
     footer_note: str = "Powered by 龙老师"
 
 
@@ -58,11 +58,11 @@ class PosterRenderResult:
 
 @dataclass(frozen=True)
 class _FontBundle:
-    title: ImageFont.ImageFont
-    subtitle: ImageFont.ImageFont
-    body: ImageFont.ImageFont
-    small: ImageFont.ImageFont
-    brand: ImageFont.ImageFont
+    title: Union[ImageFont.FreeTypeFont, ImageFont.ImageFont]
+    subtitle: Union[ImageFont.FreeTypeFont, ImageFont.ImageFont]
+    body: Union[ImageFont.FreeTypeFont, ImageFont.ImageFont]
+    small: Union[ImageFont.FreeTypeFont, ImageFont.ImageFont]
+    brand: Union[ImageFont.FreeTypeFont, ImageFont.ImageFont]
 
 
 @dataclass(frozen=True)
@@ -82,12 +82,16 @@ class _Box:
 
 
 def build_poster_payload(
-    report: dict[str, Any], *, code: str, share_url: str | None = None, mask_name_value: bool = True
+    report: dict[str, Any],
+    *,
+    code: str,
+    share_url: str | None = None,
+    mask_name_value: bool = True,
 ) -> PosterPayload:
     report_id = str(report.get("report_id") or code)
     title = str(report.get("title") or "高考志愿填报方案")
     candidate_raw = str(report.get("candidate_name") or report.get("name") or "考生")
-    candidate_name = mask_name(candidate_raw) if mask_name_value else candidate_raw
+    candidate_name = str(mask_name(candidate_raw) if mask_name_value else candidate_raw)
     score_value = report.get("score")
     score_text = (
         f"{score_value}分"
@@ -165,10 +169,14 @@ def render_poster(payload: PosterPayload) -> Image.Image:
     return canvas
 
 
-def _draw_header(draw: ImageDraw.ImageDraw, fonts: _FontBundle, payload: PosterPayload) -> None:
+def _draw_header(
+    draw: ImageDraw.ImageDraw, fonts: _FontBundle, payload: PosterPayload
+) -> None:
     box = _Box(_PADDING_X, 64, POSTER_SIZE[0] - _PADDING_X, 420)
     draw.rounded_rectangle((box.x0, box.y0, box.x1, box.y1), radius=36, fill="#194fb6")
-    draw.text((box.x0 + 42, box.y0 + 44), "高考志愿填报方案", font=fonts.brand, fill="#dbeafe")
+    draw.text(
+        (box.x0 + 42, box.y0 + 44), "高考志愿填报方案", font=fonts.brand, fill="#dbeafe"
+    )
     title_lines = _wrap_text(draw, payload.title, fonts.title, box.width - 84)
     title_y = box.y0 + 114
     for line in title_lines[:2]:
@@ -182,11 +190,22 @@ def _draw_header(draw: ImageDraw.ImageDraw, fonts: _FontBundle, payload: PosterP
     )
 
 
-def _draw_candidate_summary(draw: ImageDraw.ImageDraw, fonts: _FontBundle, payload: PosterPayload) -> None:
+def _draw_candidate_summary(
+    draw: ImageDraw.ImageDraw, fonts: _FontBundle, payload: PosterPayload
+) -> None:
     box = _Box(_PADDING_X, 456, POSTER_SIZE[0] - _PADDING_X, 640)
-    draw.rounded_rectangle((box.x0, box.y0, box.x1, box.y1), radius=_CARD_RADIUS, fill="#ffffff")
-    draw.text((box.x0 + 34, box.y0 + 28), "考生信息", font=fonts.subtitle, fill="#172033")
-    draw.text((box.x0 + 34, box.y0 + 82), f"考生：{payload.candidate_name}", font=fonts.body, fill="#1e293b")
+    draw.rounded_rectangle(
+        (box.x0, box.y0, box.x1, box.y1), radius=_CARD_RADIUS, fill="#ffffff"
+    )
+    draw.text(
+        (box.x0 + 34, box.y0 + 28), "考生信息", font=fonts.subtitle, fill="#172033"
+    )
+    draw.text(
+        (box.x0 + 34, box.y0 + 82),
+        f"考生：{payload.candidate_name}",
+        font=fonts.body,
+        fill="#1e293b",
+    )
     score_lines = _wrap_text(draw, payload.score_line, fonts.body, box.width - 68)
     y = box.y0 + 124
     for line in score_lines[:2]:
@@ -194,20 +213,36 @@ def _draw_candidate_summary(draw: ImageDraw.ImageDraw, fonts: _FontBundle, paylo
         y += _line_height(draw, fonts.body, line) + 8
 
 
-def _draw_recommendations(draw: ImageDraw.ImageDraw, fonts: _FontBundle, payload: PosterPayload) -> None:
+def _draw_recommendations(
+    draw: ImageDraw.ImageDraw, fonts: _FontBundle, payload: PosterPayload
+) -> None:
     start_y = 692
-    draw.text((_PADDING_X, start_y), "推荐院校 TOP3", font=fonts.subtitle, fill="#172033")
+    draw.text(
+        (_PADDING_X, start_y), "推荐院校 TOP3", font=fonts.subtitle, fill="#172033"
+    )
     card_top = start_y + 52
     card_height = 146
     for idx, rec in enumerate(payload.recommendations[:3], start=1):
         top = card_top + (idx - 1) * (card_height + _CARD_GAP)
         box = _Box(_PADDING_X, top, POSTER_SIZE[0] - _PADDING_X, top + card_height)
-        draw.rounded_rectangle((box.x0, box.y0, box.x1, box.y1), radius=_CARD_RADIUS, fill="#ffffff")
+        draw.rounded_rectangle(
+            (box.x0, box.y0, box.x1, box.y1), radius=_CARD_RADIUS, fill="#ffffff"
+        )
         badge_box = (box.x0 + 26, box.y0 + 30, box.x0 + 94, box.y0 + 92)
         draw.rounded_rectangle(badge_box, radius=22, fill="#e0ecff")
-        draw.text((box.x0 + 48, box.y0 + 44), str(idx), font=fonts.subtitle, fill="#194fb6", anchor="mm")
-        draw.text((box.x0 + 120, box.y0 + 30), rec.school, font=fonts.body, fill="#172033")
-        draw.text((box.x0 + 120, box.y0 + 78), rec.major, font=fonts.small, fill="#5b6b88")
+        draw.text(
+            (box.x0 + 48, box.y0 + 44),
+            str(idx),
+            font=fonts.subtitle,
+            fill="#194fb6",
+            anchor="mm",
+        )
+        draw.text(
+            (box.x0 + 120, box.y0 + 30), rec.school, font=fonts.body, fill="#172033"
+        )
+        draw.text(
+            (box.x0 + 120, box.y0 + 78), rec.major, font=fonts.small, fill="#5b6b88"
+        )
         prob_text = rec.probability
         prob_bbox = draw.textbbox((0, 0), prob_text, font=fonts.body)
         prob_x = box.x1 - (prob_bbox[2] - prob_bbox[0]) - 34
@@ -221,9 +256,18 @@ def _draw_qr_section(
     payload: PosterPayload,
 ) -> None:
     box = _Box(_PADDING_X, 1248, POSTER_SIZE[0] - _PADDING_X, 1760)
-    draw.rounded_rectangle((box.x0, box.y0, box.x1, box.y1), radius=_CARD_RADIUS, fill="#ffffff")
-    draw.text((box.x0 + 34, box.y0 + 28), "扫码查看完整方案", font=fonts.subtitle, fill="#172033")
-    draw.text((box.x0 + 34, box.y0 + 78), payload.share_url, font=fonts.small, fill="#5b6b88")
+    draw.rounded_rectangle(
+        (box.x0, box.y0, box.x1, box.y1), radius=_CARD_RADIUS, fill="#ffffff"
+    )
+    draw.text(
+        (box.x0 + 34, box.y0 + 28),
+        "扫码查看完整方案",
+        font=fonts.subtitle,
+        fill="#172033",
+    )
+    draw.text(
+        (box.x0 + 34, box.y0 + 78), payload.share_url, font=fonts.small, fill="#5b6b88"
+    )
     qr = _make_qr_image(payload.share_url)
     qr_x = box.x0 + (box.width - qr.width) // 2
     qr_y = box.y0 + 136
@@ -237,9 +281,13 @@ def _draw_qr_section(
     )
 
 
-def _draw_footer(draw: ImageDraw.ImageDraw, fonts: _FontBundle, payload: PosterPayload) -> None:
+def _draw_footer(
+    draw: ImageDraw.ImageDraw, fonts: _FontBundle, payload: PosterPayload
+) -> None:
     footer_y = 1822
-    draw.text((_PADDING_X, footer_y), payload.footer_note, font=fonts.body, fill="#194fb6")
+    draw.text(
+        (_PADDING_X, footer_y), payload.footer_note, font=fonts.body, fill="#194fb6"
+    )
     draw.text(
         (_PADDING_X, footer_y + 42),
         "本海报仅供沟通参考，最终请以正式报告与考试院信息为准。",
@@ -266,7 +314,9 @@ def _format_probability(value: Any) -> str:
     return str(value)
 
 
-def _load_font(size: int, *, weight: str) -> ImageFont.ImageFont:
+def _load_font(
+    size: int, *, weight: str
+) -> Union[ImageFont.FreeTypeFont, ImageFont.ImageFont]:
     for candidate in _FONT_CANDIDATES[weight]:
         path = Path(candidate)
         if path.exists():
@@ -285,7 +335,10 @@ def _load_fonts() -> _FontBundle:
 
 
 def _wrap_text(
-    draw: ImageDraw.ImageDraw, text: str, font: ImageFont.ImageFont, max_width: int
+    draw: ImageDraw.ImageDraw,
+    text: str,
+    font: Union[ImageFont.FreeTypeFont, ImageFont.ImageFont],
+    max_width: int,
 ) -> list[str]:
     words = list(_iter_text_units(text))
     if not words:
@@ -314,23 +367,29 @@ def _iter_text_units(text: str) -> Iterable[str]:
         yield char
 
 
-def _text_width(draw: ImageDraw.ImageDraw, text: str, font: ImageFont.ImageFont) -> int:
+def _text_width(
+    draw: ImageDraw.ImageDraw,
+    text: str,
+    font: Union[ImageFont.FreeTypeFont, ImageFont.ImageFont],
+) -> int:
     left, _, right, _ = draw.textbbox((0, 0), text, font=font)
-    return right - left
+    return int(right - left)
 
 
-def _line_height(draw: ImageDraw.ImageDraw, font: ImageFont.ImageFont, sample: str) -> int:
+def _line_height(
+    draw: ImageDraw.ImageDraw,
+    font: Union[ImageFont.FreeTypeFont, ImageFont.ImageFont],
+    sample: str,
+) -> int:
     _, top, _, bottom = draw.textbbox((0, 0), sample or "Hg", font=font)
-    return bottom - top
+    return int(bottom - top)
 
 
 def _make_qr_image(content: str) -> Image.Image:
     try:
-        import qrcode
+        import qrcode  # type: ignore[import-untyped]
     except ImportError as exc:  # pragma: no cover - exercised in CLI/runtime only
-        raise RuntimeError(
-            "缺少 qrcode 依赖，请先安装 requirements-admin.txt"
-        ) from exc
+        raise RuntimeError("缺少 qrcode 依赖，请先安装 requirements-admin.txt") from exc
 
     qr = qrcode.QRCode(
         version=None,

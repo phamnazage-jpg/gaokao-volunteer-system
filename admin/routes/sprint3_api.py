@@ -11,7 +11,7 @@ import base64
 import secrets
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
-from typing import Literal
+from typing import Literal, cast
 
 from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel, Field
@@ -289,11 +289,14 @@ def apply_review_action(payload: ReviewActionInput, request: Request) -> ReviewS
     review = _review_store(request).get(payload.reviewId)
     if review is None:
         raise HTTPException(status_code=404, detail="review not found")
-    next_status: ReviewStatus = {
-        "approve": "approved",
-        "reject": "rejected",
-        "request_changes": "changes_requested",
-    }[payload.action]
+    next_status: ReviewStatus = cast(
+        ReviewStatus,
+        {
+            "approve": "approved",
+            "reject": "rejected",
+            "request_changes": "changes_requested",
+        }[payload.action],
+    )
     updated = review.model_copy(
         update={
             "status": next_status,

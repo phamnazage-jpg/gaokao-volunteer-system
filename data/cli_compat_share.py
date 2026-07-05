@@ -40,8 +40,14 @@ def main(argv: list[str] | None = None) -> int:
         parser = _shortlink_help_parser()
         parser.prog = "gaokao-cli share"
         parser.description = "T7 分享命令面：短链接与海报生成"
-        sub = parser._subparsers._group_actions[0]  # type: ignore[attr-defined]
-        sub.add_parser("poster", help="生成分享海报")
+        subparsers = parser._subparsers
+        if subparsers is not None:
+            group = subparsers._group_actions[0]  # type: ignore[union-attr]
+            choices = getattr(group, "choices", None)
+            if isinstance(choices, dict) and "poster" not in choices:
+                add_parser_fn = getattr(group, "add_parser", None)
+                if callable(add_parser_fn):
+                    add_parser_fn("poster", help="生成分享海报")
         parser.print_help()
         return 0
     if tokens[0] == "poster":
