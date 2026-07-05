@@ -3,19 +3,27 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { LockKeyhole, ShieldCheck } from 'lucide-react';
+import { LockKeyhole, ShieldCheck, UserRound } from 'lucide-react';
 import { z } from 'zod';
 import { SubmitButton } from '@/components/shared/SubmitButton';
 import { toast } from '@/components/shared/Toast';
+import { apiClient } from '@/lib/api-client';
+import { getLocalizedApiErrorMessage } from '@/lib/error-messages';
 import { useUserStore } from '@/stores/user';
 
 function createLoginSchema(formatMessage: ReturnType<typeof useIntl>['formatMessage']) {
   return z.object({
-    phone: z.string().regex(/^1[3-9]\d{9}$/, formatMessage({ id: 'admin.login.validation.phone' })),
-    code: z.string().regex(/^\d{6}$/, formatMessage({ id: 'admin.login.validation.code' })),
+    username: z.string().trim().min(1, formatMessage({ id: 'admin.login.validation.username' })).max(64),
+    password: z.string().min(1, formatMessage({ id: 'admin.login.validation.password' })).max(256),
     remember: z.boolean().default(true),
   });
 }
+
+const loginResponseSchema = z.object({
+  access_token: z.string(),
+  token_type: z.string().default('bearer'),
+  expires_in: z.number().int().positive(),
+});
 
 type LoginFormValues = z.infer<ReturnType<typeof createLoginSchema>>;
 
@@ -28,7 +36,7 @@ export function AdminLoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const isLoggedIn = useUserStore((state) => state.isLoggedIn);
-  const setUser = useUserStore((state) => state.setUser);
+  const setAdminSession = useUserStore((state) => state.setAdminSession);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const from = (location.state as LocationState | null)?.from ?? '/admin';
   const loginSchema = createLoginSchema(intl.formatMessage);
@@ -40,8 +48,8 @@ export function AdminLoginPage() {
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      phone: '',
-      code: '',
+      username: '',
+      password: '',
       remember: true,
     },
   });
@@ -52,23 +60,24 @@ export function AdminLoginPage() {
 
   const onSubmit = async (values: LoginFormValues): Promise<void> => {
     setSubmitError(null);
-    await new Promise((resolve) => window.setTimeout(resolve, 80));
-
-    if (values.code !== '123456') {
-      setSubmitError(intl.formatMessage({ id: 'admin.login.mockCodeError' }));
-      return;
+    try {
+      const login = await apiClient.post('/auth/login', { username: values.username, password: values.password }, loginResponseSchema);
+      setAdminSession({
+        username: values.username,
+        accessToken: login.access_token,
+        tokenType: login.token_type,
+        expiresIn: login.expires_in,
+      });
+      toast.success(intl.formatMessage({ id: 'admin.login.toastSuccess' }), {
+        description: intl.formatMessage({ id: 'admin.login.toastSuccessDescription' }),
+      });
+      void navigate(from, { replace: true });
+    } catch (error) {
+      const errorLike = error as { code?: unknown; message?: unknown };
+      const code = typeof errorLike.code === 'string' ? errorLike.code : undefined;
+      const fallback = typeof errorLike.message === 'string' ? errorLike.message : undefined;
+      setSubmitError(getLocalizedApiErrorMessage(code)?.message ?? fallback ?? intl.formatMessage({ id: 'admin.login.genericError' }));
     }
-
-    setUser({
-      id: `admin-${values.phone.slice(-4)}`,
-      name: intl.formatMessage({ id: 'admin.login.mockAdminName' }, { suffix: values.phone.slice(-4) }),
-      phone: values.phone,
-      role: 'admin',
-    });
-    toast.success(intl.formatMessage({ id: 'admin.login.toastSuccess' }), {
-      description: intl.formatMessage({ id: 'admin.login.toastSuccessDescription' }),
-    });
-    void navigate(from, { replace: true });
   };
 
   return (
@@ -103,46 +112,47 @@ export function AdminLoginPage() {
                 <FormattedMessage id="admin.login.title" />
               </h2>
               <p className="text-sm text-slate-500 dark:text-slate-400">
-                <FormattedMessage id="admin.login.mockHint" />
+                <FormattedMessage id="admin.login.realHint" />
               </p>
             </div>
           </div>
 
           <form className="mt-8 space-y-5" onSubmit={(event) => void handleSubmit(onSubmit)(event)}>
             <div>
-              <label htmlFor="admin-phone" className="text-sm font-medium text-slate-700 dark:text-slate-200">
-                <FormattedMessage id="admin.login.phoneLabel" />
+              <label htmlFor="admin-username" className="text-sm font-medium text-slate-700 dark:text-slate-200">
+                <FormattedMessage id="admin.login.usernameLabel" />
               </label>
-              <input
-                id="admin-phone"
-                type="tel"
-                autoComplete="tel"
-                placeholder="13800138000"
-                className="mt-2 min-h-12 w-full rounded-2xl border border-slate-200 bg-white px-4 text-sm text-slate-950 shadow-sm transition placeholder:text-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-950 dark:text-white"
-                aria-invalid={Boolean(errors.phone)}
-                {...register('phone')}
-              />
-              {errors.phone && <p className="mt-2 text-xs text-red-600 dark:text-red-300">{errors.phone.message}</p>}
+              <div className="relative mt-2">
+                <UserRound className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" aria-hidden="true" />
+                <input
+                  id="admin-username"
+                  type="text"
+                  autoComplete="username"
+                  placeholder="admin"
+                  className="min-h-12 w-full rounded-2xl border border-slate-200 bg-white px-11 text-sm text-slate-950 shadow-sm transition placeholder:text-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-950 dark:text-white"
+                  aria-invalid={Boolean(errors.username)}
+                  {...register('username')}
+                />
+              </div>
+              {errors.username && <p className="mt-2 text-xs text-red-600 dark:text-red-300">{errors.username.message}</p>}
             </div>
 
             <div>
-              <label htmlFor="admin-code" className="text-sm font-medium text-slate-700 dark:text-slate-200">
-                <FormattedMessage id="admin.login.codeLabel" />
+              <label htmlFor="admin-password" className="text-sm font-medium text-slate-700 dark:text-slate-200">
+                <FormattedMessage id="admin.login.passwordLabel" />
               </label>
               <div className="relative mt-2">
                 <LockKeyhole className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" aria-hidden="true" />
                 <input
-                  id="admin-code"
-                  type="text"
-                  inputMode="numeric"
-                  autoComplete="one-time-code"
-                  placeholder="123456"
+                  id="admin-password"
+                  type="password"
+                  autoComplete="current-password"
                   className="min-h-12 w-full rounded-2xl border border-slate-200 bg-white px-11 text-sm text-slate-950 shadow-sm transition placeholder:text-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-950 dark:text-white"
-                  aria-invalid={Boolean(errors.code)}
-                  {...register('code')}
+                  aria-invalid={Boolean(errors.password)}
+                  {...register('password')}
                 />
               </div>
-              {errors.code && <p className="mt-2 text-xs text-red-600 dark:text-red-300">{errors.code.message}</p>}
+              {errors.password && <p className="mt-2 text-xs text-red-600 dark:text-red-300">{errors.password.message}</p>}
             </div>
 
             <label className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
