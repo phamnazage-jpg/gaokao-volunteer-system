@@ -156,6 +156,19 @@ _STATUS_TIMESTAMP: dict[str, str] = {
     "completed": "completed_at",
 }
 
+_DELETION_AUDIT_SCHEMA_SQL = """
+CREATE TABLE IF NOT EXISTS order_deletion_audits (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    order_id TEXT NOT NULL,
+    action TEXT NOT NULL CHECK(action IN ('delete','anonymize')),
+    actor TEXT,
+    reason TEXT,
+    files_deleted INTEGER NOT NULL DEFAULT 0,
+    created_at TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_order_deletion_audits_order_id ON order_deletion_audits(order_id);
+"""
+
 
 # ---------------------------------------------------------------------------
 # DAO 主类
@@ -902,22 +915,38 @@ class OrdersDAO:
     # 删除（保留 — 业务上极少使用，但测试 + GDPR 流程可能需要）
     # ------------------------------------------------------------------
 
-    def delete(self, order_id: str, *, hard: bool = False) -> bool:
-        """删除订单。
+    def delete(
+        self,
+        order_id: str,
+        *,
+        actor: str,
+        reason: str,
+        files_deleted: int = 0,
+        hard: bool = False,
+    ) -> bool:
+        """物理删除订单，并在同一事务写入独立 deletion audit。
 
-        - ``hard=False``（默认）：仅删除订单行，order_status_history
-          由 ``ON DELETE CASCADE`` 自动清理。**该模式用于业务侧强制
-          删除（如恶意订单）**；请注意：已加密的 PII 字段随行一起
-          消失，状态历史同样消失。
-        - ``hard=True``：当前等价于 ``hard=False``；预留 ``PRAGMA
-          secure_delete`` 配置接口。
-        - 不存在返回 False；成功删除返回 True。
-
-        注意：状态机不提供"删除"操作 — 这是物理删除，不会写 status_history。
-        如需审计可改用 :class:`DataDeletionAudit` 单独的审计表。
+        物理删除会级联清理 ``order_status_history``，因此必须先写入
+        ``order_deletion_audits`` 保留 actor/reason/files_deleted 证据。
+        直接 DAO 删除也不能绕过审计。
         """
         del hard  # 当前未使用 — 预留
+        if not actor or not actor.strip():
+            raise ValueError("delete actor is required")
+        if not reason or not reason.strip():
+            raise ValueError("delete reason is required")
         with self.transaction():
+            self._conn.executescript(_DELETION_AUDIT_SCHEMA_SQL)
+            existing = self._conn.execute("SELECT id FROM orders WHERE id=?", (order_id,)).fetchone()
+            if existing is None:
+                return False
+            self._conn.execute(
+                """
+                INSERT INTO order_deletion_audits(order_id, action, actor, reason, files_deleted, created_at)
+                VALUES (?, 'delete', ?, ?, ?, ?)
+                """,
+                (order_id, actor, reason, files_deleted, utc_now_iso()),
+            )
             cur = self._conn.execute("DELETE FROM orders WHERE id=?", (order_id,))
         return cur.rowcount > 0
 

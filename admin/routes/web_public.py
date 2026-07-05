@@ -332,7 +332,7 @@ def create_public_order_endpoint(
         checkout = payment_service.create_checkout(order.id)
     except PaymentError as exc:
         with OrdersDAO.connect(settings.orders_db_path) as dao:
-            dao.delete(order.id)
+            dao.delete(order.id, actor="public_web", reason="checkout_creation_failed")
         logger.warning("public order checkout creation failed: %s", exc)
         raise HTTPException(
             status_code=503,

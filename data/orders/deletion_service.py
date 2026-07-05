@@ -102,16 +102,14 @@ class OrderDeletionService:
                 intake_payload=intake_payload,
                 artifact_paths=(order.audit_report, order.pdf_path),
             )
-            deleted = dao.delete(order_id)
-            if not deleted:
-                raise OrderNotFound(f"订单不存在: {order_id}")
-            self._insert_audit(
-                order_id=order_id,
-                action="delete",
+            deleted = dao.delete(
+                order_id,
                 actor=actor,
                 reason=reason,
                 files_deleted=files_deleted,
             )
+            if not deleted:
+                raise OrderNotFound(f"订单不存在: {order_id}")
             self._conn.commit()
             return DeletionResult(
                 order_id=order_id, action="deleted", files_deleted=files_deleted

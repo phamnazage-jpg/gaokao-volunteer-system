@@ -287,7 +287,9 @@ class RouteClient:
                     model = PublicOrderCreate.model_validate(payload or {})
                 except ValidationError as exc:
                     return self._validation_error_response(exc)
-                request = self._request(path, method="POST", headers=kwargs.get("headers"))
+                request = self._request(
+                    path, method="POST", headers=kwargs.get("headers")
+                )
                 created = create_public_order_endpoint(model, request, settings)
                 return self._json_response(created.model_dump(), status_code=201)
             if route_path.startswith("/pay/mock/") and route_path.endswith("/complete"):
@@ -365,6 +367,9 @@ def settings(tmp_path, secure_secret, monkeypatch):
     monkeypatch.setenv("GAOKAO_DELETION_REQUEST_LOG", deletion_request_log)
 
     from admin.config import load_settings
+    from data.orders import crypto
+
+    crypto.get_fernet.cache_clear()
 
     return load_settings()
 

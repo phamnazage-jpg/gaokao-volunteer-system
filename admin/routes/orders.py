@@ -458,7 +458,7 @@ def _cleanup_demo_seed_orders(settings: Settings) -> tuple[list[str], dict[str, 
     deleted_ids: list[str] = []
     with OrdersDAO.connect(settings.orders_db_path) as dao:
         for order_id in _list_demo_seed_order_ids(dao):
-            if dao.delete(order_id):
+            if dao.delete(order_id, actor="admin_hidden_seed", reason="cleanup_demo_seed"):
                 deleted_ids.append(order_id)
     return deleted_ids, {
         "scenario": "cleanup_demo_seed",

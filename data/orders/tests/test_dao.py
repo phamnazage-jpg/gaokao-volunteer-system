@@ -816,16 +816,28 @@ class TestRowFactoryIsolation:
 
 
 class TestDelete:
-    def test_delete_existing_returns_true(self, dao, sample_order):
+    def test_delete_existing_returns_true_and_writes_audit(self, dao, sample_order):
         created = dao.create(sample_order)
-        assert dao.delete(created.id) is True
+        assert dao.delete(created.id, actor="unit-test", reason="cleanup") is True
         with pytest.raises(OrderNotFound):
             dao.get(created.id)
+        row = dao.conn.execute(
+            "SELECT action, actor, reason, files_deleted FROM order_deletion_audits WHERE order_id=?",
+            (created.id,),
+        ).fetchone()
+        assert tuple(row) == ("delete", "unit-test", "cleanup", 0)
+
+    def test_delete_requires_actor_and_reason(self, dao, sample_order):
+        created = dao.create(sample_order)
+        with pytest.raises(ValueError, match="actor"):
+            dao.delete(created.id, actor="", reason="cleanup")
+        with pytest.raises(ValueError, match="reason"):
+            dao.delete(created.id, actor="unit-test", reason="")
 
     def test_delete_nonexistent_returns_false(self, dao):
-        assert dao.delete("GKO-NOT-EXIST") is False
+        assert dao.delete("GKO-NOT-EXIST", actor="unit-test", reason="cleanup") is False
 
-    def test_delete_cascades_status_history(self, conn, sample_order):
+    def test_delete_cascades_status_history_but_keeps_deletion_audit(self, conn, sample_order):
         dao = OrdersDAO(conn)
         created = dao.create(sample_order)
         dao.transition_status(created.id, "paid")
@@ -835,13 +847,18 @@ class TestDelete:
             (created.id,),
         ).fetchone()[0]
         assert hist_before == 2
-        dao.delete(created.id)
+        dao.delete(created.id, actor="unit-test", reason="cleanup", files_deleted=2)
         # 状态历史随 ON DELETE CASCADE 消失
         hist_after = conn.execute(
             "SELECT COUNT(*) FROM order_status_history WHERE order_id=?",
             (created.id,),
         ).fetchone()[0]
         assert hist_after == 0
+        audit_after = conn.execute(
+            "SELECT files_deleted FROM order_deletion_audits WHERE order_id=?",
+            (created.id,),
+        ).fetchone()[0]
+        assert audit_after == 2
 
 
 # ---------------------------------------------------------------------------
