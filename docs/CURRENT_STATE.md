@@ -1,20 +1,21 @@
 # CURRENT_STATE
 
-最后更新: 2026-07-06T08:30:07+08:00
-当前 HEAD: `7d1a1dc176f32e2ff714f9cb271cc14527efac14`
+最后更新: 2026-07-06T12:02:53+08:00
+当前 HEAD: `fced452f3c94ea708981b57ea20cdcca132425d9`
 
-状态词: `本地验证完成（Phase 0~4 全部通过）/ 线上真实 acceptance 仍待执行`
+状态词: `本地验证完成（Phase 0~5 全部通过）/ 线上真实 acceptance 仍待执行`
 
 当前真实状态:
 
 - 2026-07-05 全面 Review 已完成并写入：`reports/REVIEW_REPORT_2026-07-05_COMPREHENSIVE_PROJECT_REVIEW.md`。
-- Review Remediation Phase 0~4 已全部完成并三远端同步：
+- Review Remediation Phase 0~5 已全部完成并三远端同步：
   - Phase 0 (T0-01~T0-03): 真相源收敛、历史快照标记、前端 runbook
   - Phase 1 (T1-01~T1-05): Admin JWT query 移除、真实登录、Bearer 注入、RequireAuth 校验、/admin/review 断链修复 + 全导航 e2e
   - Phase 2 (T2-01~T2-04): payment-return return_nonce、公共错误脱敏、公开下单限流+幂等、Portal token v2/jti/revocation
   - Phase 3 (T3-01~T3-04): 附件 magic bytes、Alipay notify body limit、删除审计强制化、schema_migrations 版本化
   - Phase 4 (T4-01~T4-04): mypy 0 errors、Poster Docker 可复现构建、compose healthcheck 端口一致、LHCI/Chromatic/smoke gate 语义
-- Phase 5 (T5-01): 全量本地门禁已通过：
+  - Phase 5 (T5-01~T5-03): 全量本地门禁通过、浏览器视觉/用户流验收通过、文档状态回写
+- Phase 5 全量本地门禁结果：
   - dev-verify: 1373 passed, 3 skipped, 0 failed
   - coverage: 90.10%
   - mypy: 0 errors in 268 source files
@@ -23,6 +24,13 @@
   - 前端 e2e (chromium): 4 passed
   - 100-case smoke: PASS
   - Docker poster build: PASS
+- Phase 5 浏览器视觉/用户流验收结果（T5-02）：
+  - 验收报告：`reports/T5_02_VISUAL_USER_FLOW_ACCEPTANCE_2026-07-06.md`
+  - 截图目录：`reports/t5_02_screenshots/`
+  - 验收链路：首页 → pricing → checkout → mock payment → payment-success → portal/status → portal/info → admin login → admin dashboard
+  - Console errors: 0
+  - Page errors: 0
+  - 状态: PASS
 - 仍不能宣称生产级完成；线上真实支付/域名/真实用户流量 acceptance 仍未执行。
 
 真相源优先级:
@@ -33,12 +41,12 @@
 4. `docs/plans/2026-07-05-review-remediation-systemic-fix-plan.md`（完整修复定义与系统方案）
 5. `reports/REVIEW_REPORT_2026-07-05_COMPREHENSIVE_PROJECT_REVIEW.md`（本轮 Review 输入真相）
 6. `docs/FRONTEND_GATE_RUNBOOK_2026-07-05.md`（前端本地门禁 runbook）
+7. `reports/T5_02_VISUAL_USER_FLOW_ACCEPTANCE_2026-07-06.md`（T5-02 浏览器验收报告）
 
 禁止提前声称:
 
 - 禁止声称项目整体生产级完成。
 - 禁止声称线上真实支付/域名/真实用户流量 acceptance 已完成。
-- Phase 5 视觉验收（T5-02）尚未执行。
 
 历史说明:
 
