@@ -18,15 +18,34 @@ async function seedAdminSession(page: Page): Promise<void> {
       'gaokao-user-store',
       JSON.stringify({
         state: {
-          id: 'admin-a11y',
-          name: 'Runtime Admin',
-          phone: '13800138000',
+          id: 'admin:admin-a11y',
+          name: 'admin-a11y',
+          phone: null,
           role: 'admin',
           isLoggedIn: true,
+          token: 'e2e-a11y-token',
+          tokenType: 'bearer',
+          tokenExpiresAt: Date.now() + 60 * 60 * 1000,
         },
         version: 0,
       }),
     );
+  });
+}
+
+async function mockAdminAuth(page: Page): Promise<void> {
+  await page.route('**/api/auth/me', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        id: 1,
+        username: 'admin-a11y',
+        role: 'admin',
+        is_active: true,
+        created_at: '2026-07-05T00:00:00.000Z',
+      }),
+    });
   });
 }
 
@@ -62,11 +81,12 @@ test.describe('Runtime accessibility smoke (non-Docker)', () => {
     await page.goto('/admin/login');
 
     await expect(page.getByRole('main')).toBeVisible();
-    await expect(page.getByLabel(/手机号|Phone/)).toBeVisible();
-    await expect(page.getByLabel(/验证码|Code/)).toBeVisible();
-    await expectKeyboardFocus(page.getByLabel(/手机号|Phone/));
+    await expect(page.getByLabel(/用户名|Username/)).toBeVisible();
+    await expect(page.getByLabel(/密码|Password/)).toBeVisible();
+    await expectKeyboardFocus(page.getByLabel(/用户名|Username/));
 
     await seedAdminSession(page);
+    await mockAdminAuth(page);
     await page.goto('/admin');
 
     await expect(page.getByRole('navigation', { name: /后台导航|Admin navigation/ })).toBeVisible();
