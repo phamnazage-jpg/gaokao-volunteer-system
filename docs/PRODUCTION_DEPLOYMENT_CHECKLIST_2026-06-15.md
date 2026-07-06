@@ -1,6 +1,7 @@
 # PRODUCTION_DEPLOYMENT_CHECKLIST
 
-最后更新: 2026-06-15
+最后更新: 2026-07-06T16:17:01+08:00
+状态: Review Remediation Phase 0~5 已全部通过；本清单仅剩外部凭证依赖项
 适用范围: `gaokao-volunteer-system` 在在线服务器上的首次部署 / 上线前联调
 真相源: `docs/CURRENT_STATE.md`
 
@@ -265,14 +266,40 @@ PY
 
 ### A. 必须通过
 
-- [ ] prod 配置可成功启动
-- [ ] 真实支付回调成功落库
-- [ ] portal 支付后状态自动推进
+#### 已通过（Phase 0~5 本地验证）
+
+- [x] prod 配置 fail-closed 机制（JWT/portal token/admin password/payment provider）
+- [x] `/health` 端点返回 readiness checks（db_writable / disk_writable / settings_valid）
+- [x] 公共下单限流 + 幂等 + 错误脱敏
+- [x] payment-return 需 return_nonce（不再裸 payment_id 换 token）
+- [x] Portal token v2/jti/revocation
+- [x] 附件 magic bytes + MIME 校验
+- [x] Alipay notify body size limit
+- [x] 删除审计强制化（DAO 层 actor/reason 必填）
+- [x] schema_migrations 版本化迁移
+- [x] Admin JWT 不允许 query token
+- [x] Admin 真实 /api/auth/login + Bearer 注入 + RequireAuth 校验
+- [x] Admin 全导航 e2e（含 /admin/review）
+- [x] 前端 typecheck/lint/test/build/e2e 全通过
+- [x] mypy 0 errors / ruff clean / coverage 90%+
+- [x] Docker poster build 可复现
+- [x] compose healthcheck 端口一致
+- [x] 100-case smoke PASS
+- [x] 浏览器视觉/用户流验收 PASS（T5-02）
+- [x] systemd/cron/backup 脚本语法/编译通过
+
+#### 待外部凭证（部署后执行）
+
+- [ ] prod 配置在目标服务器可成功启动（需 GAOKAO_ENV=prod + 全部密钥）
+- [ ] 真实支付回调成功落库（需 GAOKAO_PAYMENT_PROVIDER=alipay + 商户密钥）
+- [ ] portal 支付后状态自动推进（需真实回调 URL）
 - [ ] 资料提交后状态推进到 processing
-- [ ] watchdog 失败时产生真实告警
+- [ ] watchdog 失败时产生真实告警（需 SMTP/IM 配置）
 - [ ] `/admin/notifications` 可查看通知审计
 - [ ] `/admin/ops-alerts` 可查看运维告警
 - [ ] `bash scripts/backup_verify.sh --from-backup ...` 在目标机可跑通
+- [ ] LLM provider 生产配置可用（需 GAOKAO_LLM_API_KEY）
+
 
 ### B. 不可伪完成
 
@@ -290,6 +317,6 @@ PY
 - “支付已上线”
 - “告警已联通”
 
-只有在本清单第 7 节 A 全部打勾后，才能说：
+只有在本清单第 7 节 A 的「待外部凭证」部分全部打勾后，才能说：
 
 > 当前版本已达到生产上线前的最小可验证标准。
