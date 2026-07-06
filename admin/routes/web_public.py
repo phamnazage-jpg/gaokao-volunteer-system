@@ -18,8 +18,10 @@ from fastapi import APIRouter, Depends, File, Form, HTTPException, Request, Uplo
 from fastapi.responses import (
     FileResponse,
     HTMLResponse,
+    JSONResponse,
     PlainTextResponse,
     RedirectResponse,
+    Response,
 )
 from pydantic import BaseModel, Field
 
@@ -490,23 +492,51 @@ def review_start_page(
     return HTMLResponse(_render_review_start_page(contract, token))
 
 
-@router.get("/portal/{token}/cwb", include_in_schema=False)
+@router.get("/portal/{token}/cwb", include_in_schema=True, response_model=None)
 def cwb_placeholder_page(
-    token: str, settings: Settings = Depends(get_settings_dep)
-) -> HTMLResponse:
+    token: str, request: Request, settings: Settings = Depends(get_settings_dep)
+) -> Response:
     order = _resolve_order_from_token(token, settings)
     contract = _load_latest_review_result(order.id, settings)
     context = _build_portal_context(order, settings)
+    if "application/json" in request.headers.get("accept", ""):
+        intake = context.get("intake_summary") or {}
+        score_type = "history" if "历史" in "".join(intake.get("candidate_subjects") or []) else "physics"
+        score = int(intake.get("candidate_score") or order.candidate_score or 0)
+        rank = int(intake.get("candidate_rank") or order.candidate_rank or 1)
+        return JSONResponse({
+            "token": token,
+            "province": intake.get("candidate_province") or order.candidate_province or "湖南",
+            "year": 2026,
+            "scoreType": score_type,
+            "score": score,
+            "rank": rank,
+            "equivalentScore": max(150, round(680 - rank / 350, 1)),
+        })
     return HTMLResponse(_render_cwb_placeholder_page(token, order, contract, context))
 
 
-@router.get("/portal/{token}/full-plan", include_in_schema=False)
+@router.get("/portal/{token}/full-plan", include_in_schema=True, response_model=None)
 def full_plan_placeholder_page(
-    token: str, settings: Settings = Depends(get_settings_dep)
-) -> HTMLResponse:
+    token: str, request: Request, settings: Settings = Depends(get_settings_dep)
+) -> Response:
     order = _resolve_order_from_token(token, settings)
     context = _build_portal_context(order, settings)
     contract = _load_latest_review_result(order.id, settings)
+    if "application/json" in request.headers.get("accept", ""):
+        return JSONResponse({
+            "token": token,
+            "plan": {
+                "id": f"plan-{order.id}",
+                "title": f"{order.candidate_province or '湖南'} 志愿方案",
+                "schools": [
+                    {"id": "rush-1", "name": "中山大学", "majors": ["计算机类", "软件工程"], "admissionProbability": "冲"},
+                    {"id": "stable-1", "name": "湖南大学", "majors": ["自动化", "信息安全"], "admissionProbability": "稳"},
+                    {"id": "safe-1", "name": "长沙理工大学", "majors": ["电气工程", "交通运输"], "admissionProbability": "保"},
+                ],
+            },
+            "createdAt": utc_now_iso(),
+        })
     return HTMLResponse(
         _render_full_plan_placeholder_page(
             token, order, context, contract, settings=settings

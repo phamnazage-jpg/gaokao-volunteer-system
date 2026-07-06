@@ -38,6 +38,44 @@ function renderAppLayoutWithBrokenRoute() {
   );
 }
 
+function renderAppLayoutWithPlansRoute() {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: { retry: false },
+      mutations: { retry: false },
+    },
+  });
+
+  render(
+    <QueryClientProvider client={queryClient}>
+      <IntlProvider locale="zh-CN" messages={messages['zh-CN']} onError={() => undefined}>
+        <MemoryRouter initialEntries={['/plans']}>
+          <Routes>
+            <Route path="/" element={<AppLayout />}>
+              <Route index element={<main>首页新对话</main>} />
+              <Route path="plans" element={<main>方案页</main>} />
+            </Route>
+          </Routes>
+        </MemoryRouter>
+      </IntlProvider>
+    </QueryClientProvider>,
+  );
+}
+
+describe('AppLayout new chat navigation', () => {
+  it('returns users from feature pages to a new empty chat on the home route', async () => {
+    renderAppLayoutWithPlansRoute();
+
+    expect(screen.getByText('方案页')).toBeInTheDocument();
+    expect(screen.queryByText('首页新对话')).not.toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole('button', { name: /新建对话/ }));
+
+    expect(await screen.findByText('首页新对话')).toBeInTheDocument();
+    expect(screen.queryByText('方案页')).not.toBeInTheDocument();
+  });
+});
+
 describe('AppLayout error boundary', () => {
   afterEach(() => {
     vi.restoreAllMocks();

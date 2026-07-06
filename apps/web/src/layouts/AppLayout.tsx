@@ -4,7 +4,7 @@
 import { Suspense } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { FormattedMessage } from 'react-intl';
-import { Outlet, useLocation } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { Sidebar } from '@/components/navigation/Sidebar';
 import { MobileNav } from '@/components/navigation/MobileNav';
 import { ErrorFallback } from '@/components/shared/ErrorFallback';
@@ -17,6 +17,7 @@ import { useConsultationsQuery } from '@/hooks/useConsultationQueries';
 
 export function AppLayout() {
   const location = useLocation();
+  const navigate = useNavigate();
   const activeRecordId = useChatStore((s) => s.activeRecordId);
   const clearMessages = useChatStore((s) => s.clearMessages);
   const setActiveRecordId = useChatStore((s) => s.setActiveRecordId);
@@ -28,6 +29,7 @@ export function AppLayout() {
     clearMessages();
     resetForm();
     setActiveRecordId(null);
+    void navigate('/');
   };
 
   const handleSelectChat = (id: string): void => {

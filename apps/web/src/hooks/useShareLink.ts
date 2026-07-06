@@ -5,7 +5,7 @@
  */
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { z } from 'zod';
-import { apiClient } from '@/lib/api-client';
+import { apiClient, HttpError } from '@/lib/api-client';
 
 export const SHARE_LINK_RETRY_DELAY_MS = 100;
 
@@ -107,7 +107,16 @@ export function useShareLinkDelete() {
 export function useShareLinkLatestQuery() {
   return useQuery<ShareLinkResponse | null>({
     queryKey: shareLinkKeys.latest(),
-    queryFn: () => apiClient.get<ShareLinkResponse | null>('/share-link/latest', ShareLinkLatestResponseSchema),
+    queryFn: async () => {
+      try {
+        return await apiClient.get<ShareLinkResponse | null>('/share-link/latest', ShareLinkLatestResponseSchema);
+      } catch (error) {
+        if (error instanceof HttpError && (error.status === 401 || error.status === 404)) {
+          return null;
+        }
+        throw error;
+      }
+    },
     staleTime: 60 * 1000,
     retry: retryShareLinkOnce,
     retryDelay: SHARE_LINK_RETRY_DELAY_MS,

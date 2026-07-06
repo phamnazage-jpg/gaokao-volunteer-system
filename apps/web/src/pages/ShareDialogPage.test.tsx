@@ -30,6 +30,21 @@ describe('ShareDialogPage', () => {
     expect(screen.getByRole('button', { name: 'New share link' })).toBeInTheDocument();
   });
 
+  it('treats unauthenticated latest share-link status as no existing link', async () => {
+    server.use(
+      http.get('/api/share-link/latest', () => {
+        return HttpResponse.json({ message: 'unauthenticated' }, { status: 401 });
+      }),
+    );
+
+    renderWithProviders(<ShareDialogPage />);
+
+    expect(await screen.findByText('暂无分享链接')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: '创建第一个分享链接' })).toBeInTheDocument();
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    expect(screen.queryByText('分享状态暂不可用')).not.toBeInTheDocument();
+  });
+
   it('shows a fallback when the latest share-link status fails', async () => {
     server.use(
       http.get('/api/share-link/latest', () => {
