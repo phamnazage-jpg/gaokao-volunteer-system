@@ -538,9 +538,9 @@ apps/web/node_modules exists
 
 ### L1 · 历史 review 与当前 review 容易混用
 
-仓库内存在多个历史 review：`reports/REVIEW_REPORT_V10_FRONTEND_2026-07-05.md`、`REVIEW_REPORT_2026-07-02_SENIOR_DEVELOPER.md`、`STRICT_SYSTEM_REVIEW_*` 等。历史报告仍有价值，但不应替代当前 HEAD + 当前门禁结果。
+仓库曾存在多个历史 review / 规划文档，当前已清理根目录中过期的 V2/V10 前端路线图、Sprint 拆解与失效 closeout，避免与当前 HEAD + 当前门禁结果混用。
 
-**建议：** 将本报告作为 2026-07-05 当前全面 review 真相入口；旧报告顶部应逐步加“历史快照”提示或 CURRENT REVIEW 指针。
+**建议：** 继续以本报告和 `docs/CURRENT_STATE.md` 作为当前真相入口；剩余历史报告只作为审计材料，不作为当前验收依据。
 
 ### L2 · 旧截图报告产物仍在仓库中，易被误当当前前端验收材料
 

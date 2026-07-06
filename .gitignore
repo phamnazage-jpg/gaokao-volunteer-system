@@ -74,6 +74,7 @@ admin/_tmp_test.txt
 
 # 本地工具元数据 / 运行产物
 .serena/
+.workbuddy/
 /data/alerts/
 /data/portal_uploads/
 /=0.0.20,
@@ -86,8 +87,10 @@ node_modules/
 .pnp/
 .pnp.js
 .yarn/
+package-lock.json
+npm-shrinkwrap.json
 
-# Next.js 构建产物
+# 前端构建产物
 .next/
 out/
 next-env.d.ts

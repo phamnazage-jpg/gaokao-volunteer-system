@@ -101,8 +101,7 @@
 - **B1 e2e 14 个 i18n selector 回归**：已由 `2194f89` 修复。
 - **B2 e2e 数量/状态口径不一致**：核心文档已更新为当前 29 tests/project 与非 Firefox 87/87 复验结果。
 - **S1 bundle 数值过时**：已更新为 main 146.74 KB gzip、total 393.60 KB gzip，仍在预算内。
-- **S3 Sprint 4 标题不一致**：`SPRINT_4_PROGRESS_2026-07-03.md` 已从 9/16 修正为 15/16。
-- **S4 working tree 标记过时**：Sprint 4 文档已改为实际 commit hash。
+- **S3 Sprint 4 状态文档过时**：旧根目录 Sprint progress/closeout 文档已清理，当前状态以 `docs/CURRENT_STATE.md` 和 2026-07-05 review remediation 文档为准。
 - **N1 MobileNav aria-label 测试不兼容 i18n**：e2e 已使用中英双语可访问名称匹配。
 - **N2 poster alt 中文依赖**：e2e 已改为 `getByRole('img', { name: /海报预览|Poster preview/ })` 并补齐 job/status mock。
 
