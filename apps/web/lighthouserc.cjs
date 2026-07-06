@@ -12,7 +12,7 @@
 module.exports = {
   ci: {
     collect: {
-      // 静态服务器从 vite preview 启动（8081），见 CI workflow
+      // LHCI 由 treosh/lighthouse-ci-action 自动启动 vite preview @ 8080
       url: [
         'http://127.0.0.1:8080/',
         'http://127.0.0.1:8080/data-query',

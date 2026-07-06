@@ -117,8 +117,13 @@ run_checks() {
   python -m data.crowd_db.quality_summary --human
 
   # P1-7/P1-8: 100-case smoke 作为独立验证步骤，失败不阻断核心门禁
-  log "running 100-case smoke e2e (non-blocking)"
-  python scripts/score_range_fullchain_100_e2e.py --batch smoke || log "WARN: 100-case smoke e2e failed (non-blocking, see /tmp/score-range-fullchain-100-e2e.log)"
+  # 但必须明确输出 PASS/FAIL 状态，不能只 warning
+  log "running 100-case smoke e2e (business main chain)"
+  if python scripts/score_range_fullchain_100_e2e.py --batch smoke; then
+    log "BUSINESS MAIN CHAIN SMOKE: PASS"
+  else
+    log "BUSINESS MAIN CHAIN SMOKE: FAIL (non-blocking, see /tmp/score-range-fullchain-100-e2e.log)"
+  fi
 }
 
 main() {
