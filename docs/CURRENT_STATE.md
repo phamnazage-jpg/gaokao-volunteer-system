@@ -1,21 +1,29 @@
 # CURRENT_STATE
 
-最后更新: 2026-07-05T21:43:52+08:00
-当前 HEAD: `ec3c44465696f9aeb72e7132fe15415d8a5f625c`
+最后更新: 2026-07-06T08:30:07+08:00
+当前 HEAD: `7d1a1dc176f32e2ff714f9cb271cc14527efac14`
 
-状态词: `REQUEST_CHANGES / 系统性整改执行中`
+状态词: `本地验证完成（Phase 0~4 全部通过）/ 线上真实 acceptance 仍待执行`
 
 当前真实状态:
 
 - 2026-07-05 全面 Review 已完成并写入：`reports/REVIEW_REPORT_2026-07-05_COMPREHENSIVE_PROJECT_REVIEW.md`。
-- Review 发现的 P0/P1/P2 问题已转成系统修复方案与执行板：
-  - `docs/plans/2026-07-05-review-remediation-systemic-fix-plan.md`
-  - `docs/ACTIVE_REMEDIATION_2026-07-05_REVIEW.md`
-  - `docs/ACTIVE_EXECUTION_BOARD_2026-07-05_REVIEW_REMEDIATION.md`
-- 当前执行位置：Phase 0 / T0-01，正在收敛 README 与 CURRENT_STATE 入口真相。
-- 本地前端 `pnpm typecheck/lint/test/build` 已在 2026-07-05 补装依赖后 fresh gate 通过；但 Playwright e2e / LHCI / Chromatic / 真实浏览器视觉验收仍未全部闭环。
-- 后端总门禁 `scripts/dev-verify.sh` 当前仍因 mypy 9 errors 失败；不能宣称后端质量门禁通过。
-- 项目仍不能宣称生产级完成；线上真实支付、真实域名、真实用户流量 acceptance 仍未执行。
+- Review Remediation Phase 0~4 已全部完成并三远端同步：
+  - Phase 0 (T0-01~T0-03): 真相源收敛、历史快照标记、前端 runbook
+  - Phase 1 (T1-01~T1-05): Admin JWT query 移除、真实登录、Bearer 注入、RequireAuth 校验、/admin/review 断链修复 + 全导航 e2e
+  - Phase 2 (T2-01~T2-04): payment-return return_nonce、公共错误脱敏、公开下单限流+幂等、Portal token v2/jti/revocation
+  - Phase 3 (T3-01~T3-04): 附件 magic bytes、Alipay notify body limit、删除审计强制化、schema_migrations 版本化
+  - Phase 4 (T4-01~T4-04): mypy 0 errors、Poster Docker 可复现构建、compose healthcheck 端口一致、LHCI/Chromatic/smoke gate 语义
+- Phase 5 (T5-01): 全量本地门禁已通过：
+  - dev-verify: 1373 passed, 3 skipped, 0 failed
+  - coverage: 90.10%
+  - mypy: 0 errors in 268 source files
+  - ruff: All checks passed
+  - 前端 typecheck/lint/build: PASS
+  - 前端 e2e (chromium): 4 passed
+  - 100-case smoke: PASS
+  - Docker poster build: PASS
+- 仍不能宣称生产级完成；线上真实支付/域名/真实用户流量 acceptance 仍未执行。
 
 真相源优先级:
 
@@ -24,19 +32,13 @@
 3. `docs/ACTIVE_REMEDIATION_2026-07-05_REVIEW.md`（当前仍有效问题清单）
 4. `docs/plans/2026-07-05-review-remediation-systemic-fix-plan.md`（完整修复定义与系统方案）
 5. `reports/REVIEW_REPORT_2026-07-05_COMPREHENSIVE_PROJECT_REVIEW.md`（本轮 Review 输入真相）
-6. `reports/REVIEW_REPORT_V10_FRONTEND_2026-07-05.md`（V10 前端历史复核，需通过本文件解释）
-7. `REVIEW_REPORT_2026-07-02_SENIOR_DEVELOPER.md`、`REVIEW_REPORT_SPRINT_1_TO_4_2026-07-03.md`、`SPRINT_*` 文档（历史快照/阶段记录，不代表当前完成状态）
-8. `docs/ACTIVE_REMEDIATION_2026-06-20.md`、`docs/ACTIVE_EXECUTION_BOARD_2026-06-20.md` 及更早 active board（历史快照，仅供审计）
-9. `docs/CROWD_DB_NATIONALIZATION_SOURCE_OF_TRUTH.md`（crowd_db 维度真相，独立于本轮 Review Remediation 主线）
-10. `docs/PRODUCTION_DEPLOYMENT_CHECKLIST_2026-06-15.md`（线上真实 acceptance 清单，当前仍未闭环）
+6. `docs/FRONTEND_GATE_RUNBOOK_2026-07-05.md`（前端本地门禁 runbook）
 
 禁止提前声称:
 
 - 禁止声称项目整体生产级完成。
-- 禁止声称 Admin 真实 JWT 鉴权闭环已完成。
-- 禁止声称支付/Portal 安全闭环已完成。
-- 禁止声称 CI/LHCI/Chromatic/视觉验收完整闭环。
-- 禁止声称线上真实支付、真实域名、真实用户流量 acceptance 已完成。
+- 禁止声称线上真实支付/域名/真实用户流量 acceptance 已完成。
+- Phase 5 视觉验收（T5-02）尚未执行。
 
 历史说明:
 
