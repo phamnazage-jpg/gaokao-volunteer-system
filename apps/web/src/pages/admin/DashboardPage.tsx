@@ -1,4 +1,5 @@
 import { useIntl } from 'react-intl';
+import type { IntlShape } from 'react-intl';
 import { useQuery } from '@tanstack/react-query';
 import { z } from 'zod';
 import { DataTable, type DataTableColumn } from '@/components/shared/DataTable';
@@ -39,16 +40,18 @@ function toRecentOrder(order: AdminOrderSummary): RecentOrder {
   };
 }
 
-function statusLabel(status: string): string {
-  const labels: Record<string, string> = {
-    pending: '待处理',
-    paid: '已支付',
-    serving: '服务中',
-    delivered: '已交付',
-    completed: '已完成',
-    refunded: '已退款',
-  };
-  return labels[status] ?? status;
+const statusMessageIds: Record<string, string> = {
+  pending: 'admin.dashboard.orderStatus.pending',
+  paid: 'admin.dashboard.orderStatus.paid',
+  serving: 'admin.dashboard.orderStatus.serving',
+  delivered: 'admin.dashboard.orderStatus.delivered',
+  completed: 'admin.dashboard.orderStatus.completed',
+  refunded: 'admin.dashboard.orderStatus.refunded',
+};
+
+function statusLabel(status: string, intl: IntlShape): string {
+  const id = statusMessageIds[status];
+  return id ? intl.formatMessage({ id }) : status;
 }
 
 function formatCurrency(amountCents: number): string {
@@ -88,7 +91,7 @@ export function AdminDashboardPage() {
     { key: 'id', header: intl.formatMessage({ id: 'admin.dashboard.columns.orderId' }), accessor: (row) => row.id, sortable: true },
     { key: 'student', header: intl.formatMessage({ id: 'admin.dashboard.columns.student' }), accessor: (row) => row.student ?? '-' },
     { key: 'province', header: intl.formatMessage({ id: 'admin.dashboard.columns.province' }), accessor: (row) => row.province ?? '-' },
-    { key: 'status', header: intl.formatMessage({ id: 'admin.dashboard.columns.status' }), accessor: (row) => statusLabel(row.status), sortable: true },
+    { key: 'status', header: intl.formatMessage({ id: 'admin.dashboard.columns.status' }), accessor: (row) => statusLabel(row.status, intl), sortable: true },
     { key: 'amount', header: intl.formatMessage({ id: 'admin.dashboard.columns.amount' }), accessor: (row) => formatCurrency(row.amountCents), align: 'right' },
   ];
 

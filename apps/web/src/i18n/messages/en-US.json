@@ -742,5 +742,11 @@
   "admin.login.realHint": "Sign in with admin credentials issued by /api/auth/login.",
   "admin.login.usernameLabel": "Username",
   "admin.login.passwordLabel": "Password",
-  "admin.login.genericError": "Login failed. Try again later."
+  "admin.login.genericError": "Login failed. Try again later.",
+  "admin.dashboard.orderStatus.pending": "Pending",
+  "admin.dashboard.orderStatus.paid": "Paid",
+  "admin.dashboard.orderStatus.serving": "In service",
+  "admin.dashboard.orderStatus.delivered": "Delivered",
+  "admin.dashboard.orderStatus.completed": "Completed",
+  "admin.dashboard.orderStatus.refunded": "Refunded"
 }

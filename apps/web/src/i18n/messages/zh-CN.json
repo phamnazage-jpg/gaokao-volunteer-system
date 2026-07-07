@@ -742,5 +742,11 @@
   "admin.login.realHint": "使用后台账号密码登录，凭证由 /api/auth/login 签发。",
   "admin.login.usernameLabel": "用户名",
   "admin.login.passwordLabel": "密码",
-  "admin.login.genericError": "登录失败，请稍后重试。"
+  "admin.login.genericError": "登录失败，请稍后重试。",
+  "admin.dashboard.orderStatus.pending": "待处理",
+  "admin.dashboard.orderStatus.paid": "已支付",
+  "admin.dashboard.orderStatus.serving": "服务中",
+  "admin.dashboard.orderStatus.delivered": "已交付",
+  "admin.dashboard.orderStatus.completed": "已完成",
+  "admin.dashboard.orderStatus.refunded": "已退款"
 }
