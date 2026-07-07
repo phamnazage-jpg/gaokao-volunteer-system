@@ -17,7 +17,7 @@
 > 6/13~6/26 期间的所有 review / closeout / active board 已降级为历史快照，仅作审计参考，不再代表当前状态。
 >
 > 当前项目定位：人工服务运营增强系统；用户端 Web 自助闭环仅为本地 MVP/目标态，不是完整用户端 Web 自助产品。
-> 当前状态：本地代码与前端门禁已具备；2026-07-05 Review 发现的 P0/P1 问题正在按 Phase 0~5 系统修复；线上真实支付/域名/真实流量 acceptance 仍未完成。
+> 当前状态：2026-07-07 二次严格 Review 发现后端 mypy / 前端 i18n / Playwright E2E 三项门禁回归未闭环，正在按 `docs/plans/2026-07-07-review-remediation-execution-plan-v2.md` 系统修复；线上真实支付/域名/真实流量 acceptance 仍未完成。
 
 ## 📋 项目简介
 

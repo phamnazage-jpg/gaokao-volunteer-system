@@ -1,5 +1,11 @@
 # ACTIVE_REMEDIATION_2026-07-05_REVIEW
 
+> ⚠️ **历史快照（2026-07-07）**：本文件所称"Phase 0~5 全部完成"已被 2026-07-07 二次严格 Review 推翻。  
+> 当前真相源：`docs/CURRENT_STATE.md` + `reports/REVIEW_REPORT_2026-07-07_SYSTEMIC_REVIEW.md`  
+> 修复计划：`docs/plans/2026-07-07-review-remediation-execution-plan-v2.md`  
+> 本文件仅作历史审计轨迹，不再代表当前 HEAD 的完成状态。
+
+
 > 生成时间：2026-07-05T21:33:52+08:00  
 > 来源：`reports/REVIEW_REPORT_2026-07-05_COMPREHENSIVE_PROJECT_REVIEW.md`  
 > 配套方案：`docs/plans/2026-07-05-review-remediation-systemic-fix-plan.md`  

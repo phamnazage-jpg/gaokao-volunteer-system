@@ -1,5 +1,11 @@
 # ACTIVE_EXECUTION_BOARD_2026-07-05_REVIEW_REMEDIATION
 
+> ⚠️ **历史快照（2026-07-07）**：本文件所称"Phase 0~5 全部完成"已被 2026-07-07 二次严格 Review 推翻。  
+> 当前真相源：`docs/CURRENT_STATE.md` + `reports/REVIEW_REPORT_2026-07-07_SYSTEMIC_REVIEW.md`  
+> 修复计划：`docs/plans/2026-07-07-review-remediation-execution-plan-v2.md`  
+> 本文件仅作历史审计轨迹，不再代表当前 HEAD 的完成状态。
+
+
 > 生成时间：2026-07-05T21:33:52+08:00  
 > 执行原则：先定义完整修复标准，再按依赖顺序实施。每个任务必须 TDD、验证、提交、三远端同步。
 > 状态：Phase 0~5 全部完成。最后更新：2026-07-06T12:02:53+08:00

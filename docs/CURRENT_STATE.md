@@ -3,34 +3,14 @@
 最后更新: 2026-07-06T12:02:53+08:00
 当前 HEAD: `fced452f3c94ea708981b57ea20cdcca132425d9`
 
-状态词: `本地验证完成（Phase 0~5 全部通过）/ 线上真实 acceptance 仍待执行`
+状态词: `本地门禁回归中 / REQUEST_CHANGES / 线上真实 acceptance 待执行`
 
 当前真实状态:
 
-- 2026-07-05 全面 Review 已完成并写入：`reports/REVIEW_REPORT_2026-07-05_COMPREHENSIVE_PROJECT_REVIEW.md`。
-- Review Remediation Phase 0~5 已全部完成并三远端同步：
-  - Phase 0 (T0-01~T0-03): 真相源收敛、历史快照标记、前端 runbook
-  - Phase 1 (T1-01~T1-05): Admin JWT query 移除、真实登录、Bearer 注入、RequireAuth 校验、/admin/review 断链修复 + 全导航 e2e
-  - Phase 2 (T2-01~T2-04): payment-return return_nonce、公共错误脱敏、公开下单限流+幂等、Portal token v2/jti/revocation
-  - Phase 3 (T3-01~T3-04): 附件 magic bytes、Alipay notify body limit、删除审计强制化、schema_migrations 版本化
-  - Phase 4 (T4-01~T4-04): mypy 0 errors、Poster Docker 可复现构建、compose healthcheck 端口一致、LHCI/Chromatic/smoke gate 语义
-  - Phase 5 (T5-01~T5-03): 全量本地门禁通过、浏览器视觉/用户流验收通过、文档状态回写
-- Phase 5 全量本地门禁结果：
-  - dev-verify: 1373 passed, 3 skipped, 0 failed
-  - coverage: 90.10%
-  - mypy: 0 errors in 268 source files
-  - ruff: All checks passed
-  - 前端 typecheck/lint/build: PASS
-  - 前端 e2e (chromium): 4 passed
-  - 100-case smoke: PASS
-  - Docker poster build: PASS
-- Phase 5 浏览器视觉/用户流验收结果（T5-02）：
-  - 验收报告：`reports/T5_02_VISUAL_USER_FLOW_ACCEPTANCE_2026-07-06.md`
-  - 截图目录：`reports/t5_02_screenshots/`
-  - 验收链路：首页 → pricing → checkout → mock payment → payment-success → portal/status → portal/info → admin login → admin dashboard
-  - Console errors: 0
-  - Page errors: 0
-  - 状态: PASS
+- 2026-07-07 二次严格 Review 已完成：`reports/REVIEW_REPORT_2026-07-07_SYSTEMIC_REVIEW.md`。
+- 当前 fresh gates 结果：后端 mypy 3 errors、前端 i18n gate 1 failed、Playwright E2E poster/share 真实交互失败；当前结论为 `REQUEST_CHANGES`。
+- 系统性修复计划：`docs/plans/2026-07-07-review-remediation-execution-plan-v2.md`。
+- 2026-07-05 Review Remediation 文档已降级为历史快照；其中“Phase 0~5 全部完成 / dev-verify 全绿”等语句不再代表当前 HEAD 的真实状态。
 - 仍不能宣称生产级完成；线上真实支付/域名/真实用户流量 acceptance 仍未执行。
 
 真相源优先级:
