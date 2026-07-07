@@ -3,14 +3,15 @@
 最后更新: 2026-07-06T12:02:53+08:00
 当前 HEAD: `fced452f3c94ea708981b57ea20cdcca132425d9`
 
-状态词: `本地门禁回归中 / REQUEST_CHANGES / 线上真实 acceptance 待执行`
+状态词: `本地核心门禁通过 / 浏览器视觉验收阻塞（vision provider key expired）/ 线上真实 acceptance 待执行`
 
 当前真实状态:
 
-- 2026-07-07 二次严格 Review 已完成：`reports/REVIEW_REPORT_2026-07-07_SYSTEMIC_REVIEW.md`。
-- 当前 fresh gates 结果：后端 mypy 3 errors、前端 i18n gate 1 failed、Playwright E2E poster/share 真实交互失败；当前结论为 `REQUEST_CHANGES`。
-- 系统性修复计划：`docs/plans/2026-07-07-review-remediation-execution-plan-v2.md`。
-- 2026-07-05 Review Remediation 文档已降级为历史快照；其中“Phase 0~5 全部完成 / dev-verify 全绿”等语句不再代表当前 HEAD 的真实状态。
+- Review remediation Phase 0~5 已完成并三远端同步。
+- Phase 6 本地核心门禁已通过，证据报告：`reports/PHASE6_LOCAL_GATE_EVIDENCE_2026-07-07.md`。
+- Phase 6 core gates fresh evidence：`dev-verify` 1386 passed / 3 skipped；frontend typecheck/lint/test/build 通过；Playwright E2E all projects 90 passed；Docker poster build 通过；compose prod config 无 mock payment provider。
+- 本地运行态 smoke：使用 `.venv/bin/python` + env file secrets 启动 admin app，`/health.settings_valid=true`，核心公开页与后台登录页 HTTP 200。
+- 浏览器 snapshot 已覆盖 `/`, `/pricing`, `/admin/login`；但 `browser_vision` / `vision_analyze` 均因 provider `Key expired` 失败，所以视觉质量验收仍为 BLOCKED，不得宣称视觉验收 PASS。
 - 仍不能宣称生产级完成；线上真实支付/域名/真实用户流量 acceptance 仍未执行。
 
 真相源优先级:

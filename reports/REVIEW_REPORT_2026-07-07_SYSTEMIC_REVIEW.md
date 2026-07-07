@@ -882,3 +882,29 @@ quality_summary_import OK
 - targeted chromium e2e 进一步证明 poster/share 是真实交互失败，不只是浏览器缺失。
 - TestClient/OpenAPI 探针证明基础服务可导入并响应，但合同矩阵仍需补齐。
 - 当前 active truth 文档仍需按 fresh report 降级同步。
+
+
+---
+
+## 12. 2026-07-07 Remediation Phase 0-6 回写
+
+> 更新时间: 2026-07-07T13:14:04
+
+### 已完成
+
+- Phase 0: Truth source sync 完成，旧 2026-07-05 active board 已标记为历史快照。
+- Phase 1: Python mypy blocker 修复完成，`dev-verify` 已回到通过。
+- Phase 2: Dashboard i18n hardcoded Chinese blocker 修复完成，frontend unit gate 通过。
+- Phase 3: poster/share E2E blocker 修复完成，Chromium targeted 与全项目 E2E 通过。
+- Phase 4: CSV formula injection、README secret 启动方式、compose prod override、data/share DB artifact ignore、innerHTML 安全边界均完成。
+- Phase 5: `web_public.py` 结构治理第一刀、Contract Quartet matrix、LLM/domain data coverage gate、artifact governance 完成。
+- Phase 6 core gates: 本地核心门禁通过，详见 `reports/PHASE6_LOCAL_GATE_EVIDENCE_2026-07-07.md`。
+
+### 仍未完成 / 不得提前宣称
+
+- Browser visual quality acceptance: BLOCKED；`browser_vision` 与 `vision_analyze` 均返回 `Key expired`，不能报告视觉验收 PASS。
+- 线上真实支付 / 生产域名 / 真实用户流量 acceptance: 待执行。
+
+### 当前推荐状态词
+
+`本地核心门禁通过 / 浏览器视觉验收阻塞（vision provider key expired）/ 线上真实 acceptance 待执行`

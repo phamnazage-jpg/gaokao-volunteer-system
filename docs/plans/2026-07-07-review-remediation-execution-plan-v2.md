@@ -1050,3 +1050,16 @@ done
 | Phase 4 | CSV/innerHTML/escape/README/compose/gitignore 均闭环 | targeted pytest + compose config + git status |
 | Phase 5 | M3/M8/M9/L2 均有代码/脚本/文档级闭环 | contract/data/artifact scripts pass |
 | Phase 6 | 本地全量 + 视觉 + Docker + 三远端 readback | T6-01~T6-05 |
+
+
+---
+
+## Phase 6 Completion Evidence
+
+> 更新时间: 2026-07-07T13:14:04
+
+- Core gates: PASS，详见 `reports/PHASE6_LOCAL_GATE_EVIDENCE_2026-07-07.md`。
+- Runtime smoke: PASS，`/health.settings_valid=true`，核心页面 HTTP 200。
+- Browser snapshots: PASS for `/`, `/pricing`, `/admin/login` accessibility snapshots。
+- Visual acceptance: BLOCKED，原因是 `browser_vision` / `vision_analyze` provider key expired。
+- Online real acceptance: pending，真实支付/域名/真实流量未执行。
