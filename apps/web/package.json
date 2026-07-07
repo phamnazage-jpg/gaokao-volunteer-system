@@ -19,7 +19,9 @@
     "lhci": "lhci autorun --config=./lighthouserc.cjs",
     "codegen": "tsx scripts/codegen.ts",
     "codegen:check": "tsx scripts/codegen-check.ts",
-    "clean": "rm -rf dist .vite .turbo coverage playwright-report test-results"
+    "clean": "rm -rf dist .vite .turbo coverage playwright-report test-results",
+    "test:e2e:mock": "playwright test",
+    "test:e2e:real-backend": "GAOKAO_E2E_REAL_BACKEND=1 playwright test"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",

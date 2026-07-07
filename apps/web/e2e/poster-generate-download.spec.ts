@@ -5,6 +5,7 @@
  * 注意：路由 /poster（不是 /poster/:planId，因为页面写死 planId = 'plan-sample-001'）
  */
 import { test, expect } from '@playwright/test';
+import { mockGenericApiFallback, mockPlans } from './helpers/mock-api';
 
 test.describe('Poster Generate + Download (V10 Sprint 4 · T-B-23.8)', () => {
   test('poster page renders 3 templates + generates poster', async ({ page }) => {
@@ -40,11 +41,8 @@ test.describe('Poster Generate + Download (V10 Sprint 4 · T-B-23.8)', () => {
         }),
       });
     });
-
-    // fallback 只 catch 其他 API（不包括 poster/generate）
-    await page.route((url) => url.pathname.startsWith('/api/') && !url.pathname.includes('/poster/'), async (route) => {
-      await route.fulfill({ status: 200, contentType: 'application/json', body: '{}' });
-    });
+    await mockPlans(page);
+    await mockGenericApiFallback(page);
 
     await page.goto('/poster');
 
@@ -60,6 +58,7 @@ test.describe('Poster Generate + Download (V10 Sprint 4 · T-B-23.8)', () => {
     await expect(page.getByRole('button', { name: '现代' })).toHaveAttribute('aria-pressed', 'true');
 
     // 生成
+    await expect(page.getByRole('button', { name: /生成海报/ })).toBeEnabled();
     await page.getByRole('button', { name: /生成海报/ }).click();
 
     // 海报预览（src 是 url() 校验过的合法 URL）
@@ -118,11 +117,10 @@ test.describe('Poster Generate + Download (V10 Sprint 4 · T-B-23.8)', () => {
       });
     });
 
-    await page.route((url) => url.pathname.startsWith('/api/') && !url.pathname.includes('/poster/'), async (route) => {
-      await route.fulfill({ status: 200, contentType: 'application/json', body: '{}' });
-    });
-
+    await mockPlans(page);
+    await mockGenericApiFallback(page);
     await page.goto('/poster');
+    await expect(page.getByRole('button', { name: /生成海报/ })).toBeEnabled();
     await page.getByRole('button', { name: /生成海报/ }).click();
 
     await expect(page.getByRole('progressbar', { name: /海报生成进度|Poster generation progress/ })).toHaveAttribute('aria-valuenow', '40');
@@ -144,11 +142,10 @@ test.describe('Poster Generate + Download (V10 Sprint 4 · T-B-23.8)', () => {
         }),
       });
     });
-    await page.route((url) => url.pathname.startsWith('/api/') && !url.pathname.includes('/poster/generate'), async (route) => {
-      await route.fulfill({ status: 200, contentType: 'application/json', body: '{}' });
-    });
-
+    await mockPlans(page);
+    await mockGenericApiFallback(page);
     await page.goto('/poster');
+    await expect(page.getByRole('button', { name: /生成海报/ })).toBeEnabled();
     await page.getByRole('button', { name: /生成海报/ }).click();
 
     // 校验失败，posterUrl 不会写入 store，没有 img 渲染
