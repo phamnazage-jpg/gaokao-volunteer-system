@@ -18,8 +18,10 @@ export function SharePanel({ planId, planTitle }: SharePanelProps) {
   const posterGen = usePosterGenerateMutation();
   const code = create.data?.code ?? null;
   const stats = useShareLinkStatsQuery(code);
+  const canCreate = Boolean(planId);
 
   const handleCreate = (): void => {
+    if (!canCreate) return;
     create.mutate({ planId, expiresIn: 30 });
   };
 
@@ -58,10 +60,15 @@ export function SharePanel({ planId, planTitle }: SharePanelProps) {
               <FormattedMessage id="share.panel.createError" />
             </div>
           )}
+          {!canCreate && (
+            <p className="rounded-lg border border-amber-100 bg-amber-50 px-3 py-2 text-sm text-amber-700 dark:border-amber-900/60 dark:bg-amber-950/40 dark:text-amber-300" role="alert">
+              <FormattedMessage id="share.panel.selectPlan" />
+            </p>
+          )}
           <button
             type="button"
             onClick={handleCreate}
-            disabled={create.isPending}
+            disabled={create.isPending || !canCreate}
             className="w-full min-h-[48px] py-3 rounded-xl bg-blue-600 text-white font-medium hover:bg-blue-700 disabled:opacity-50 transition-colors"
           >
             <FormattedMessage id={create.isPending ? 'share.panel.creating' : create.isError ? 'share.panel.retryCreate' : 'share.panel.createWithExpiry'} />

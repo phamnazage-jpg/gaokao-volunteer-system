@@ -10,6 +10,7 @@ interface PosterPreviewProps {
   statusSnapshot: PosterSnapshot | null;
   isGenerating?: boolean;
   isGenerateError?: boolean;
+  isGenerateDisabled?: boolean;
   onTemplateChange: (template: PosterTemplate) => void;
   onGenerate: () => void;
   onCopyQrCode?: (qrCode: string) => void;
@@ -26,6 +27,7 @@ export function PosterPreview({
   statusSnapshot,
   isGenerating = false,
   isGenerateError = false,
+  isGenerateDisabled = false,
   onTemplateChange,
   onGenerate,
   onCopyQrCode,
@@ -63,7 +65,7 @@ export function PosterPreview({
       <button
         type="button"
         onClick={onGenerate}
-        disabled={isGenerating || isPosterPending}
+        disabled={isGenerating || isPosterPending || isGenerateDisabled}
         className="mt-6 flex min-h-[48px] w-full items-center justify-center gap-2 rounded-xl bg-blue-600 py-3 font-medium text-white hover:bg-blue-700 disabled:opacity-50"
       >
         {isGenerating || isPosterPending ? (

@@ -151,6 +151,27 @@ export const handlers = [
   }),
 
   // ====== Admin ======
+  http.get(`${API}/admin/stats/dashboard`, () => {
+    return HttpResponse.json({
+      summary: {
+        total_orders: 2,
+        pending_orders: 0,
+        total_users: 1,
+        total_shares: 1,
+      },
+      by_status: { paid: 1, serving: 1 },
+      by_source: { web: 1, wechat: 1 },
+      by_service_version: { standard: 1, premium: 1 },
+      trends: {
+        orders_7d: [
+          { date: '2026-07-01', count: 1 },
+          { date: '2026-07-02', count: 2 },
+        ],
+      },
+      generated_at: '2026-07-07T00:00:00.000Z',
+    });
+  }),
+
   http.get(`${API}/admin/orders`, ({ request }) => {
     const url = new URL(request.url);
     const status = url.searchParams.get('status');

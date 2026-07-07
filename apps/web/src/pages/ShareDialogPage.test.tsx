@@ -3,6 +3,7 @@
  */
 import { describe, expect, it } from 'vitest';
 import { screen, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { ShareDialogPage } from './ShareDialogPage';
 import { renderWithProviders } from '@/test/renderWithProviders';
@@ -28,6 +29,17 @@ describe('ShareDialogPage', () => {
     const panel = await screen.findByRole('region', { name: 'Share status panel' });
     expect(within(panel).getByText('Latest link')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'New share link' })).toBeInTheDocument();
+  });
+
+  it('does not show sample plan copy when opening the create-share dialog', async () => {
+    renderWithProviders(<ShareDialogPage />);
+
+    await screen.findByRole('region', { name: '分享状态面板' });
+    await userEvent.click(screen.getByRole('button', { name: '新建分享链接' }));
+
+    const dialog = await screen.findByRole('dialog', { name: '分享方案' });
+    expect(within(dialog).queryByText(/示例方案|sample plan|plan-sample/i)).not.toBeInTheDocument();
+    expect(within(dialog).queryByText(/广东物理 620|guangdong physics 620/i)).not.toBeInTheDocument();
   });
 
   it('treats unauthenticated latest share-link status as no existing link', async () => {

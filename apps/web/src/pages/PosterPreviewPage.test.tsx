@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { PosterPreviewPage } from './PosterPreviewPage';
@@ -7,6 +7,45 @@ import { renderWithProviders } from '@/test/renderWithProviders';
 import { server } from '@/test/mocks/server';
 
 describe('PosterPreviewPage', () => {
+  it('does not generate a poster with a sample plan id when no real plan is selected', async () => {
+    const posterGeneratePayloads: Array<{ planId?: string }> = [];
+    const hasPlanSelectionPrompt = (): boolean =>
+      Boolean(screen.queryByRole('alert') ?? screen.queryByText(/请选择.*方案|选择.*方案|select.*plan|choose.*plan/i));
+
+    server.use(
+      http.post('/api/poster/generate', async ({ request }) => {
+        posterGeneratePayloads.push((await request.json()) as { planId?: string });
+        return HttpResponse.json({
+          status: 'queued',
+          progress: 0,
+          posterUrl: null,
+          qrCode: null,
+          expiresAt: null,
+        });
+      }),
+    );
+
+    renderWithProviders(<PosterPreviewPage />);
+
+    const generateButton = screen.getByRole('button', { name: /生成海报/ });
+    if (generateButton.hasAttribute('disabled')) {
+      expect(generateButton).toBeDisabled();
+      expect(posterGeneratePayloads).toHaveLength(0);
+      return;
+    }
+
+    await userEvent.click(generateButton);
+
+    await waitFor(() => {
+      expect(hasPlanSelectionPrompt() || posterGeneratePayloads.length > 0).toBe(true);
+    });
+    expect(
+      hasPlanSelectionPrompt() ||
+        posterGeneratePayloads.some((payload) => payload.planId !== undefined && payload.planId !== 'plan-sample-001'),
+    ).toBe(true);
+    expect(posterGeneratePayloads).not.toContainEqual(expect.objectContaining({ planId: 'plan-sample-001' }));
+  });
+
   it('renders poster generation progress while async job is processing', async () => {
     server.use(
       http.post('/api/poster/generate', () => {

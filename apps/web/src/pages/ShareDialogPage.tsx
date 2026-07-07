@@ -4,22 +4,16 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import { useShareLinkLatestQuery } from '@/hooks/useShareLink';
 import { ShareDialog } from '@/components/ShareDialog';
 import { ShareStatusPanel } from '@/components/ShareStatusPanel';
-import type { AccessDataPoint } from '@/components/AccessTrendChart';
 
-const SAMPLE_TREND: ReadonlyArray<AccessDataPoint> = [
-  { date: '07-01', views: 3 },
-  { date: '07-02', views: 7 },
-  { date: '07-03', views: 12 },
-  { date: '07-04', views: 18 },
-  { date: '07-05', views: 25 },
-  { date: '07-06', views: 31 },
-  { date: '07-07', views: 42 },
-];
 
 export function ShareDialogPage() {
   const intl = useIntl();
   const [open, setOpen] = useState(false);
   const latest = useShareLinkLatestQuery();
+  const selectedPlanId = latest.data?.planId ?? '';
+  const selectedPlanTitle = selectedPlanId
+    ? intl.formatMessage({ id: 'share.page.selectedPlanTitle' }, { planId: selectedPlanId })
+    : intl.formatMessage({ id: 'share.page.noPlanSelectedTitle' });
 
   return (
     <div className="p-6 max-w-2xl mx-auto">
@@ -36,7 +30,7 @@ export function ShareDialogPage() {
           latest={latest.data}
           isLoading={latest.isLoading}
           isError={latest.isError}
-          trend={SAMPLE_TREND}
+          trend={[]}
           onCreate={() => setOpen(true)}
           onRetry={() => void latest.refetch()}
         />
@@ -51,8 +45,8 @@ export function ShareDialogPage() {
       </div>
 
       <ShareDialog
-        planId="plan-sample-001"
-        planTitle={intl.formatMessage({ id: 'share.page.samplePlanTitle' })}
+        planId={selectedPlanId}
+        planTitle={selectedPlanTitle}
         open={open}
         onClose={() => setOpen(false)}
       />
