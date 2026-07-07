@@ -28,6 +28,10 @@ from pydantic import BaseModel, Field
 from admin.config import Settings, get_settings_dep
 from admin.errors import BIZ_RATE_LIMITED, DATA_NOT_FOUND, DATA_VALIDATION_FAILED
 from admin.errors.exceptions import BusinessError
+from admin.routes.public_content_helpers import (
+    public_supported_provinces,
+    render_trust_banner_html,
+)
 from data.customer_portal.token import (
     PortalTokenError,
     issue_portal_token,
@@ -1875,24 +1879,6 @@ def _current_intake_payload(context: dict[str, Any]) -> dict[str, Any]:
     return {}
 
 
-def _render_trust_banner_html(
-    *,
-    province: str,
-    official_source: str,
-    last_updated: str,
-    scope: str,
-    confidence_label: str,
-    boundary_note: str,
-) -> str:
-    return (
-        '<div class="trust-banner">'
-        f'<p class="meta">可信度说明：官方来源：{escape(official_source)} · 更新时间：{escape(last_updated or "未公布")}</p>'
-        f'<p class="meta">适用范围：{escape(scope)} · 适用省份：{escape(province)} · 置信等级：{escape(confidence_label)}</p>'
-        f'<p class="meta">{escape(boundary_note)}</p>'
-        "</div>"
-    )
-
-
 def _helper_entry_hrefs(payload: dict[str, Any], order: Order) -> tuple[str, str]:
     province = (
         str(
@@ -1974,43 +1960,11 @@ def _sync_report_version_metadata(
         intake_store.close()
 
 
-def _public_supported_provinces() -> set[str]:
-    return {
-        "北京",
-        "天津",
-        "上海",
-        "重庆",
-        "河北",
-        "河南",
-        "山东",
-        "山西",
-        "陕西",
-        "辽宁",
-        "吉林",
-        "黑龙江",
-        "江苏",
-        "浙江",
-        "安徽",
-        "福建",
-        "江西",
-        "湖北",
-        "湖南",
-        "广东",
-        "海南",
-        "四川",
-        "贵州",
-        "云南",
-        "甘肃",
-        "青海",
-        "新疆",
-    }
-
-
 @router.get("/policy-center", include_in_schema=False)
 def policy_center_page(province: str = "湖南") -> HTMLResponse:
     safe_province = province or "湖南"
-    supported = safe_province in _public_supported_provinces()
-    trust_banner = _render_trust_banner_html(
+    supported = safe_province in public_supported_provinces()
+    trust_banner = render_trust_banner_html(
         province=safe_province,
         official_source=f"{safe_province}省教育考试院",
         last_updated="2026-06-22",
@@ -2035,7 +1989,7 @@ def policy_center_page(province: str = "湖南") -> HTMLResponse:
 @router.get("/same-score-reference", include_in_schema=False)
 def same_score_reference_page(province: str = "湖南", score: int = 0) -> HTMLResponse:
     safe_province = province or "湖南"
-    supported = safe_province in _public_supported_provinces()
+    supported = safe_province in public_supported_provinces()
     loader = CrowdDBLoader(warn_low_confidence=False)
     metadata = loader.load_metadata(safe_province) if supported else None
     metadata = metadata or {
@@ -2068,7 +2022,7 @@ def same_score_reference_page(province: str = "湖南", score: int = 0) -> HTMLR
         if supported and isinstance(confidence, (int, float)) and confidence >= 0.8
         else ("参考" if supported else "暂不支持")
     )
-    trust_banner = _render_trust_banner_html(
+    trust_banner = render_trust_banner_html(
         province=safe_province,
         official_source=str(
             metadata.get("source") or f"{safe_province}省公开同分段参考整理"

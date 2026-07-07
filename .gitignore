@@ -116,3 +116,5 @@ storybook-static/
 .turbo/
 /data/share/*.db
 /data/share/*.db-*
+apps/web/test-results/
+.turbo/cache/
