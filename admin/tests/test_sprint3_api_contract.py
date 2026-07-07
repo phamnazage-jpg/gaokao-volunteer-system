@@ -129,18 +129,22 @@ def _assert_admin_share_link_shape(item: dict[str, object]) -> None:
     assert item.get("result_type") in {"review_result", "report", None} or item.get("resultType") in {"review_result", "report"}
     for numeric_key in ["access_count", "views", "unique_visitors", "uniqueVisitors"]:
         if numeric_key in item and item[numeric_key] is not None:
-            assert isinstance(item[numeric_key], int)
-            assert item[numeric_key] >= 0
+            value: object = item[numeric_key]
+            assert isinstance(value, int)
+            assert value >= 0
 
 
 def _assert_admin_share_link_page(body: dict[str, object], *, limit: int, offset: int) -> None:
     assert body.keys() >= {"total", "limit", "offset", "items"}
     assert body["limit"] == limit
     assert body["offset"] == offset
-    assert isinstance(body["total"], int)
-    assert body["total"] >= len(body["items"])
-    assert isinstance(body["items"], list)
-    for item in body["items"]:
+    total: object = body["total"]
+    assert isinstance(total, int)
+    items: object = body["items"]
+    assert isinstance(items, list)
+    assert total >= len(items)
+    for item in items:
+        assert isinstance(item, dict)
         _assert_admin_share_link_shape(item)
 
 
@@ -158,10 +162,13 @@ def _assert_admin_poster_page(body: dict[str, object], *, limit: int, offset: in
     assert body.keys() >= {"total", "limit", "offset", "items"}
     assert body["limit"] == limit
     assert body["offset"] == offset
-    assert isinstance(body["total"], int)
-    assert body["total"] >= len(body["items"])
-    assert isinstance(body["items"], list)
-    for item in body["items"]:
+    total: object = body["total"]
+    assert isinstance(total, int)
+    items: object = body["items"]
+    assert isinstance(items, list)
+    assert total >= len(items)
+    for item in items:
+        assert isinstance(item, dict)
         _assert_admin_poster_shape(item)
 
 
