@@ -16,6 +16,8 @@ from .state_machine import InvalidStateTransition
 
 DEFAULT_DB_PATH = Path("data/orders.db")
 _EXPORT_HEADERS = ("订单号", "渠道", "金额", "状态", "创建时间")
+_CSV_FORMULA_PREFIXES = ("=", "+", "-", "@")
+
 
 
 def _emit(payload: dict[str, Any], *, human: bool) -> None:
@@ -299,6 +301,12 @@ def _format_amount_cents(amount_cents: int) -> str:
     return f"{amount_cents / 100:.2f}"
 
 
+def _csv_safe_value(value: str) -> str:
+    if value.startswith(_CSV_FORMULA_PREFIXES):
+        return f"'{value}"
+    return value
+
+
 def _export_row(order: Order) -> dict[str, str]:
     return {
         "订单号": order.id,
@@ -328,7 +336,7 @@ def cmd_export(args: argparse.Namespace) -> int:
         writer = csv.writer(fh)
         writer.writerow(_EXPORT_HEADERS)
         for row in rows:
-            writer.writerow([row[header] for header in _EXPORT_HEADERS])
+            writer.writerow([_csv_safe_value(row[header]) for header in _EXPORT_HEADERS])
 
     payload = {
         "action": "exported",

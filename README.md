@@ -145,12 +145,22 @@ python -m pip install --upgrade pip
 # 安装管理后台依赖（统一受 constraints.txt 锁定）
 pip install -c constraints.txt -r requirements-admin.txt -r requirements-dev.txt
 
-# 启动服务
-export GAOKAO_JWT_SECRET="$(python -c 'import secrets; print(secrets.token_hex(32))')"
+# 生成 secret 到临时 env 文件（避免内联 secret 在 agent/CI/shell 里被脱敏为 ***）
+python3 -c "
+import secrets
+from cryptography.fernet import Fernet
+print(f'export GAOKAO_JWT_SECRET={secrets.token_hex(32)}')
+print(f'export GAOKAO_PORTAL_TOKEN_SECRET={secrets.token_hex(32)}')
+print(f'export GAOKAO_PAYMENT_WEBHOOK_SECRET={secrets.token_hex(32)}')
+print(f'export GAOKAO_ORDERS_FERNET_KEY={Fernet.generate_key().decode()}')
+" > /tmp/gaokao.env && chmod 600 /tmp/gaokao.env
+
+# source 后启动服务
+set -a; source /tmp/gaokao.env; set +a
 python -m admin.app --port 8000
 
-# 验证 Swagger / OpenAPI
-curl http://127.0.0.1:8000/health
+# 验证 Swagger / OpenAPI，并确认 settings_valid=true
+curl -s http://127.0.0.1:8000/health | python3 -c "import sys,json; d=json.load(sys.stdin); print('settings_valid:', d['checks']['settings_valid'])"
 curl http://127.0.0.1:8000/openapi.json
 xdg-open http://127.0.0.1:8000/docs
 ```

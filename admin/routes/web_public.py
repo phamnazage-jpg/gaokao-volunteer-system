@@ -1278,7 +1278,13 @@ window.showLoading = function(container, msg) {
   if (!container) return null;
   var el = document.createElement('div');
   el.className = 'state-loading';
-  el.innerHTML = '<div class="state-loading__spinner"></div><p class="state-loading__text">' + (msg || '加载中…') + '</p>';
+  el.replaceChildren();
+  const spinner = document.createElement('div');
+  spinner.className = 'state-loading__spinner';
+  const text = document.createElement('p');
+  text.className = 'state-loading__text';
+  text.textContent = msg || '加载中…';
+  el.append(spinner, text);
   container.appendChild(el);
   return el;
 };
@@ -2918,7 +2924,7 @@ def _render_landing_page(request: Request, settings: Settings) -> str:
                 form.appendChild(globalHint);
               }}
               if (allErrs.length) {{
-                globalHint.innerHTML = allErrs.join('；');
+                globalHint.textContent = allErrs.join('；');
                 globalHint.style.display = 'block';
               }} else {{
                 globalHint.style.display = 'none';

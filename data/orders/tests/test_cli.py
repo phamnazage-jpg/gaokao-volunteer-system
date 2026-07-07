@@ -360,3 +360,39 @@ def test_module_main_missing_show_returns_error(
     captured = capsys.readouterr()
     assert result == 1
     assert "missing-order" in captured.err
+
+def test_export_command_neutralizes_csv_formula_injection(tmp_db_path: Path) -> None:
+    created = _run_cli(
+        "--db",
+        str(tmp_db_path),
+        "create",
+        "--source",
+        "=malicious-channel",
+        "--service-version",
+        "premium",
+        "--amount-cents",
+        "19900",
+        "--customer-name",
+        "=cmd|'/C calc'!A0",
+    )
+    assert created.returncode == 0, created.stderr
+
+    export_path = tmp_db_path.parent / "orders-formula-safe.csv"
+    exported = _run_cli(
+        "--db",
+        str(tmp_db_path),
+        "export",
+        "--output",
+        str(export_path),
+    )
+    assert exported.returncode == 0, exported.stderr
+
+    with export_path.open("r", encoding="utf-8-sig", newline="") as fh:
+        rows = list(csv.DictReader(fh))
+    assert rows
+    for row in rows:
+        for value in row.values():
+            if value:
+                assert not value.startswith(("=", "+", "-", "@")), value
+    assert rows[0]["渠道"].startswith("'=")
+

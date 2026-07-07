@@ -21,6 +21,7 @@ services:
       GAOKAO_ORDERS_DB_PATH: /var/lib/gaokao/orders.db
       GAOKAO_SHARE_DB_PATH: /var/lib/gaokao/share/short_links.db
       GAOKAO_SHARE_REPORT_DIR: /var/lib/gaokao/share/reports
+      # 本地开发默认 mock；生产必须用 docker-compose.prod.yml 或显式设置 GAOKAO_PAYMENT_PROVIDER=alipay
       GAOKAO_PAYMENT_PROVIDER: ${GAOKAO_PAYMENT_PROVIDER:-mock}
       GAOKAO_PAYMENT_BASE_URL: ${GAOKAO_PAYMENT_BASE_URL:-https://example.com}
       GAOKAO_PAYMENT_WEBHOOK_SECRET: ${GAOKAO_PAYMENT_WEBHOOK_SECRET:-dev-only-local-payment-webhook-secret-please-change-before-production-1234567890abcdef}

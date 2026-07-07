@@ -1,0 +1,4 @@
+services:
+  gaokao-admin:
+    environment:
+      GAOKAO_PAYMENT_PROVIDER: ${GAOKAO_PAYMENT_PROVIDER:?GAOKAO_PAYMENT_PROVIDER must be set in prod}

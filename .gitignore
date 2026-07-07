@@ -114,4 +114,5 @@ storybook-static/
 
 # Turbo
 .turbo/
-
+/data/share/*.db
+/data/share/*.db-*
