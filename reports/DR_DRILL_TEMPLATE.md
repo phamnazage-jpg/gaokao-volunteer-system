@@ -13,9 +13,9 @@
 - 验证 `bash scripts/backup_verify.sh --from-backup <backup-dir>` 可在目标主机跑通
 - 验证恢复副本最小服务链：
   - `health_status = 200`
-  - `portal_status = 200`
-  - `portal_report = 200`
-  - `portal_pdf = 200`
+  - `restored_order_status = delivered`
+  - `report_html_exists = true`
+  - `report_pdf = 200`
 - 记录密钥位置、恢复耗时、异常与补救动作
 
 ## 2. 前置条件
@@ -54,9 +54,9 @@ bash scripts/backup_verify.sh --from-backup <backup-dir>
 - `manifest_ok`:
 - `sqlite_ok`:
 - `health_status`:
-- `portal_status`:
-- `portal_report`:
-- `portal_pdf`:
+- `restored_order_status`:
+- `report_html_exists`:
+- `report_pdf`:
 - 耗时:
 - 失败/异常:
 

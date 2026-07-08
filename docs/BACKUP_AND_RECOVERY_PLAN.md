@@ -186,9 +186,9 @@ bash scripts/backup_verify.sh
     ▼
 2. 校验阶段: backup_verify.sh 走 restore smoke
     │        ├─ 200 healthz
-    │        ├─ 200 portal_status
-    │        ├─ 200 portal_report
-    │        └─ 200 portal_pdf
+    │        ├─ restored_order_status = delivered
+    │        ├─ report_html_exists = true
+    │        └─ report_pdf = 200
     │
     ▼
 3. 失败处理: watchdog 退出码 != 0

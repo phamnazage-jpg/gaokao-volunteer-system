@@ -115,8 +115,8 @@ def test_portal_token_issued_via_issue_endpoint_cannot_be_verified_with_jwt_secr
     assert payload["order_id"].startswith("GKO-")
 
 
-def test_portal_status_page_uses_independent_secret(route_client):
-    """回归:端到端 portal status 页应当使用独立 secret 并能正常访问。"""
+def test_public_order_issue_endpoint_returns_portal_urls(route_client):
+    """公共下单 API 仍返回 portal 能力 URL；旧 portal HTML GET 页面已删除。"""
     resp = route_client.post(
         "/api/public/orders",
         json={
@@ -130,15 +130,10 @@ def test_portal_status_page_uses_independent_secret(route_client):
         },
     )
     assert resp.status_code == 201, resp.text
-    token = resp.json()["portal_status_url"].split("/portal/")[1].split("/status")[0]
-    status_resp = route_client.get(f"/portal/{token}/status")
-    assert status_resp.status_code == 200, status_resp.text
-    assert "订单" in status_resp.text or "支付" in status_resp.text
+    body = resp.json()
+    assert body["portal_status_url"].startswith("/portal/")
+    assert body["portal_info_url"].startswith("/portal/")
 
-
-# ---------------------------------------------------------------------------
-# P2-5: payment webhook secret fail-closed in prod
-# ---------------------------------------------------------------------------
 
 
 def test_payment_webhook_secret_fails_closed_when_missing_in_prod(monkeypatch):

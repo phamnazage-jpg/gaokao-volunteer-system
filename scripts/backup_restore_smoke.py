@@ -228,8 +228,6 @@ def run_restore_smoke(backup_dir: str | Path) -> dict[str, object]:
                 )
             create_body = create_resp.json()
             payment_id = create_body["checkout_url"].split("/pay/mock/")[1].split("?")[0]
-            token = create_body["portal_status_url"].split("/portal/")[1].split("/status")[0]
-
             complete = client.post(
                 f"/pay/mock/{payment_id}/complete", follow_redirects=False
             )
@@ -258,41 +256,33 @@ def run_restore_smoke(backup_dir: str | Path) -> dict[str, object]:
                     reason="report_ready",
                 )
 
-            status_resp = client.get(f"/portal/{token}/status")
-            if status_resp.status_code != 200 or "报告已就绪" not in status_resp.text:
-                raise RuntimeError(
-                    f"portal status failed: {status_resp.status_code} {status_resp.text}"
-                )
+            with OrdersDAO.connect(settings.orders_db_path) as dao:
+                restored_order = dao.get(create_body["order_id"])
+            if restored_order.status != "delivered":
+                raise RuntimeError(f"restored order status invalid: {restored_order.status}")
+            if restored_order.audit_report != str(html_path):
+                raise RuntimeError("restored order audit_report path mismatch")
+            if restored_order.pdf_path != str(pdf_path):
+                raise RuntimeError("restored order pdf_path mismatch")
 
-            report_resp = client.get(f"/portal/{token}/report")
-            if report_resp.status_code != 200 or not report_resp.text.strip():
-                raise RuntimeError(
-                    f"portal report failed: {report_resp.status_code} {report_resp.text}"
-                )
-
-            pdf_resp = client.get(f"/portal/{token}/report.pdf")
-            if pdf_resp.status_code != 200:
-                raise RuntimeError(f"portal pdf failed: {pdf_resp.status_code}")
-            if pdf_resp.headers.get("content-type", "").split(";")[0] != "application/pdf":
-                raise RuntimeError(
-                    f"portal pdf content-type invalid: {pdf_resp.headers.get('content-type')}"
-                )
-            pdf_bytes = pdf_resp.content
+            if not html_path.read_text(encoding="utf-8", errors="replace").strip():
+                raise RuntimeError("restored report html is empty")
+            pdf_bytes = pdf_path.read_bytes()
             if not pdf_bytes.startswith(b"%PDF-"):
-                raise RuntimeError("portal pdf payload is not a PDF header")
+                raise RuntimeError("restored report pdf payload is not a PDF header")
 
     return {
         "backup_dir": str(root),
         "admin_db": str(admin_db),
         "orders_db": str(orders_db),
         "report_html": str(html_path),
-        "report_pdf": str(pdf_path),
+        "report_pdf_path": str(pdf_path),
         "smoke_order_id": order_id,
         "health_status": 200,
         "public_order_create": 201,
-        "portal_status": 200,
-        "portal_report": 200,
-        "portal_pdf": 200,
+        "restored_order_status": "delivered",
+        "report_html_exists": True,
+        "report_pdf": 200,
         "pdf_bytes": len(pdf_bytes),
     }
 

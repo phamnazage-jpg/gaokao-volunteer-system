@@ -3,8 +3,6 @@
 from __future__ import annotations
 
 import subprocess
-from pathlib import Path
-
 FORBIDDEN_PATTERNS = (
     "test-results/",
     ".turbo/cache/",

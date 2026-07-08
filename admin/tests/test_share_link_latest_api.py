@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from admin.tests.test_order_status_page import _mark_paid, _seed_order
+from admin.tests.order_test_helpers import _mark_paid, _seed_order, _seed_review_result
 from data.customer_portal.token import issue_portal_token
 from data.orders.dao import OrdersDAO
 
@@ -11,7 +11,7 @@ def test_admin_latest_share_link_returns_stats_payload(client, auth_headers, set
     order = _seed_order(settings.orders_db_path, order_id="GKO-20260630-SHARE-LATEST")
     _mark_paid(settings, order)
     token = issue_portal_token(order.id, settings.portal_token_secret)
-    client.get(f"/review/start?source=status&token={token}")
+    _seed_review_result(settings, token)
 
     created = client.post(
         "/api/share-link",

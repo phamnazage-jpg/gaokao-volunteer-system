@@ -14,8 +14,8 @@ import json
 import sys
 from dataclasses import dataclass
 from pathlib import Path
-from typing import cast, Literal
-from urllib.parse import parse_qsl, urlsplit
+from typing import Literal, cast
+from urllib.parse import urlsplit
 
 import pytest
 from fastapi import HTTPException
@@ -147,123 +147,48 @@ class RouteClient:
         return RouteClient._json_response(payload, status_code=422)
 
     def get(self, path: str, **kwargs):
-        from admin.routes.web_public import (
-            ServiceVersion,
-            checkout_page,
-            deletion_policy_page,
-            order_info_page,
-            order_status_page,
-            payment_return_page,
-            payment_success_page,
-            pricing_page,
-            privacy_page,
-            report_pdf_download,
-            report_view_page,
-            review_start_page,
-            service_terms_page,
-        )
+        """Direct-route GET helper for removed legacy page surfaces.
 
+        The React/Vite app is the frontend. Legacy backend-rendered public GET
+        pages intentionally return 404 in tests so stale UI cannot be reused.
+        API/health/admin routes should use FastAPI TestClient directly.
+        """
         split = urlsplit(path)
         route_path = split.path
-        settings = self.app.state.settings
-
-        try:
-            if route_path == "/":
-                request = self._request(path, method="GET")
-                from admin.routes.web_public import landing_page
-
-                return self._html_response(landing_page(request, settings))
-            if route_path == "/pricing":
-                request = self._request(path, method="GET")
-                return self._html_response(pricing_page(request))
-            if route_path.startswith("/checkout/"):
-                service_version = cast(
-                    ServiceVersion, route_path.split("/checkout/", 1)[1]
-                )
-                return self._html_response(checkout_page(service_version))
-            if route_path == "/portal/payment-return":
-                query = dict(parse_qsl(split.query, keep_blank_values=True))
-                return self._redirect_response(
-                    payment_return_page(
-                        query["payment_id"], query.get("return_nonce"), settings
-                    )
-                )
-            if route_path == "/review/start":
-                query = dict(parse_qsl(split.query, keep_blank_values=True))
-                return self._html_response(
-                    review_start_page(
-                        cast(
-                            Literal["home", "status", "report", "direct"],
-                            query.get("source") or "direct",
-                        ),
-                        query.get("token"),
-                        query.get("province"),
-                        query.get("score"),
-                        query.get("goal"),
-                        query.get("consult"),
-                        settings,
-                    )
-                )
-            if route_path.startswith("/portal/") and route_path.endswith(
-                "/payment-success"
-            ):
-                token = route_path.split("/portal/", 1)[1].rsplit(
-                    "/payment-success", 1
-                )[0]
-                return self._html_response(payment_success_page(token, settings))
-            if route_path.startswith("/portal/") and route_path.endswith("/status"):
-                token = route_path.split("/portal/", 1)[1].rsplit("/status", 1)[0]
-                return self._html_response(order_status_page(token, settings))
-            if route_path.startswith("/portal/") and route_path.endswith("/info"):
-                token = route_path.split("/portal/", 1)[1].rsplit("/info", 1)[0]
-                return self._html_response(order_info_page(token, settings))
-            if route_path.startswith("/portal/") and route_path.endswith("/cwb"):
-                token = route_path.split("/portal/", 1)[1].rsplit("/cwb", 1)[0]
-                from admin.routes.web_public import cwb_placeholder_page
-
-                return self._html_response(cwb_placeholder_page(token, settings))
-            if route_path.startswith("/portal/") and route_path.endswith("/full-plan"):
-                token = route_path.split("/portal/", 1)[1].rsplit("/full-plan", 1)[0]
-                from admin.routes.web_public import full_plan_placeholder_page
-
-                return self._html_response(full_plan_placeholder_page(token, settings))
-            if route_path.startswith("/portal/") and route_path.endswith("/report.pdf"):
-                token = route_path.split("/portal/", 1)[1].rsplit("/report.pdf", 1)[0]
-                response = report_pdf_download(token, settings)
-                return RouteResponse(
-                    status_code=response.status_code,
-                    headers=dict(response.headers),
-                    text="",
-                )
-            if route_path.startswith("/portal/") and route_path.endswith("/report"):
-                token = route_path.split("/portal/", 1)[1].rsplit("/report", 1)[0]
-                return self._html_response(report_view_page(token, settings))
-            if route_path == "/privacy":
-                query = dict(parse_qsl(split.query, keep_blank_values=True))
-                return self._html_response(privacy_page(query.get("token")))
-            if route_path == "/service-terms":
-                query = dict(parse_qsl(split.query, keep_blank_values=True))
-                return self._html_response(service_terms_page(query.get("token")))
-            if route_path == "/policy-center":
-                query = dict(parse_qsl(split.query, keep_blank_values=True))
-                from admin.routes.web_public import policy_center_page
-
-                return self._html_response(
-                    policy_center_page(query.get("province") or "湖南")
-                )
-            if route_path == "/same-score-reference":
-                query = dict(parse_qsl(split.query, keep_blank_values=True))
-                from admin.routes.web_public import same_score_reference_page
-
-                score = int(query.get("score") or 0)
-                return self._html_response(
-                    same_score_reference_page(query.get("province") or "湖南", score)
-                )
-            if route_path == "/deletion-policy":
-                return self._html_response(deletion_policy_page())
-        except HTTPException as exc:
-            return self._http_exception_response(exc)
-
+        removed_public_gets = {
+            "/",
+            "/pricing",
+            "/privacy",
+            "/service-terms",
+            "/deletion-policy",
+            "/policy-center",
+            "/same-score-reference",
+            "/my-orders",
+            "/my-reports",
+            "/data-query",
+            "/score-line-query",
+            "/rank-estimator",
+            "/majors-query",
+            "/schools-query",
+            "/compare-reports",
+        }
+        removed_portal_suffixes = (
+            "/payment-success",
+            "/status",
+            "/info",
+            "/cwb",
+            "/full-plan",
+            "/report",
+            "/report.pdf",
+            "/notifications",
+            "/deletion-request",
+        )
+        if route_path in removed_public_gets or route_path.startswith("/checkout/"):
+            return self._json_response({"detail": "legacy public page removed"}, status_code=404)
+        if route_path.startswith("/portal/") and any(route_path.endswith(suffix) for suffix in removed_portal_suffixes):
+            return self._json_response({"detail": "legacy portal HTML page removed"}, status_code=404)
+        if route_path == "/portal/payment-return" or route_path == "/review/start":
+            return self._json_response({"detail": "legacy public page removed"}, status_code=404)
         raise NotImplementedError(f"unsupported GET path in RouteClient: {path}")
 
     def post(self, path: str, **kwargs):

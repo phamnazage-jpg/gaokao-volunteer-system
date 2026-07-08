@@ -35,9 +35,9 @@ bash scripts/backup_verify.sh --from-backup /tmp/gaokao-backups/backup-<UTC_TIME
 - SQLite 文件输出 `sqlite_ok`
 - restore smoke JSON 至少包含：
   - `health_status = 200`
-  - `portal_status = 200`
-  - `portal_report = 200`
-  - `portal_pdf = 200`
+  - `restored_order_status = delivered`
+  - `report_html_exists = true`
+  - `report_pdf = 200`
 
 ## 4. 设计约束
 

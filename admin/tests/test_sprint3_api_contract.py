@@ -2,7 +2,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from admin.tests.test_order_status_page import _mark_paid, _seed_order
+from admin.tests.order_test_helpers import _mark_paid, _seed_order
 from data.customer_portal.token import issue_portal_token
 from data.orders.dao import OrdersDAO
 from data.orders.intake_store import IntakeStore

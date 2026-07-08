@@ -64,12 +64,6 @@ def test_portal_attachment_upload_persists_metadata_and_file(client, settings):
         assert "storage_path" not in meta
 
 
-    page = client.get(f"/portal/{token}/info")
-    assert page.status_code == 200, page.text
-    assert "已上传附件" in page.text
-    assert "qianwen-plan.txt" in page.text
-    assert "doubao-plan.json" in page.text
-
 
 def test_portal_attachment_response_does_not_expose_storage_path(client, settings):
     order = _seed_order(settings.orders_db_path, order_id="GKO-20260624-UPLOAD-HIDE")

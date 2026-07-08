@@ -55,10 +55,11 @@ def test_refund_request_marks_portal_as_refunded(client, settings):
     )
 
     token = issue_portal_token(order.id, settings.portal_token_secret)
-    status_page = client.get(f"/portal/{token}/status")
-    assert status_page.status_code == 200, status_page.text
-    assert "已退款" in status_page.text
-    assert "退款申请中" not in status_page.text
+    from admin.routes.web_public import _resolve_order_from_token
+
+    resolved = _resolve_order_from_token(token, settings)
+    assert resolved.id == order.id
+    assert resolved.status == "refunded"
 
 
 def test_refund_pending_legacy_status_is_removed():

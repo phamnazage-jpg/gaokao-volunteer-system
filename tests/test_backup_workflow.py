@@ -259,9 +259,9 @@ def test_backup_verify_runs_restore_smoke_on_snapshot(settings, tmp_path):
 
     assert proc.returncode == 0, proc.stderr
     assert "manifest_ok files=" in proc.stdout
-    assert '"portal_status": 200' in proc.stdout
-    assert '"portal_report": 200' in proc.stdout
-    assert '"portal_pdf": 200' in proc.stdout
+    assert '"restored_order_status": "delivered"' in proc.stdout
+    assert '"report_html_exists": true' in proc.stdout
+    assert '"report_pdf": 200' in proc.stdout
     assert "backup verification finished" in proc.stdout
 
 
@@ -302,7 +302,7 @@ def test_dr_drill_template_exists_and_references_target_machine_acceptance():
     body = report.read_text(encoding="utf-8")
     assert "目标主机" in body
     assert "backup_verify.sh --from-backup" in body
-    assert "portal_status" in body
+    assert "restored_order_status" in body
 
 
 def test_backup_plan_references_dr_drill_template():
